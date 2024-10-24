@@ -1,0 +1,70 @@
+---
+title: "Mapping Wetland Inundation Dynamics of Lake Chilwa Basin"
+author: "Murphy, S."
+date: "2024-08-24"
+output: 
+  html_document:
+    keep_md: TRUE
+    toc: TRUE
+    toc_float: TRUE
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, htmltools.preserve.raw = FALSE)
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE,
+  error = FALSE, comment = NA, tidy.opts = list(width.cutoff = 6)
+) 
+
+requirements <- c(
+  "sf", "terra", "sits", "tmap", "RStoolbox", "mapview", "mapedit",
+  "raster", "tidyverse", "rasterVis", "jsonlite",
+  "stringr", "httr", "gdalUtilities", "maptiles")
+
+setup <- function(requirements){
+  missing.packages <- requirements[!(requirements %in% installed.packages()[,"Package"])];
+  if(length(missing.packages)) {install.packages(
+    missing.packages, repos = "https://cloud.r-project.org/"); }
+  for(package_name in requirements){library(
+    package_name,character.only=TRUE,quietly=TRUE);
+  }
+}
+
+setup(requirements)
+```
+
+# Objective
+
+
+# Project AOI
+
+```{r, eval=FALSE, echo=FALSE}
+# tmap_mode("plot")
+tm_shape(basemap) + 
+  tm_rgb() + 
+  tm_shape(aoi) +
+  tm_borders(col = "red") +
+  tm_graticules() +
+  tm_compass(position = c("left", "bottom")) +
+  tm_scale_bar()
+
+# tmap_mode("view")
+tm_shape(aoi) +
+  tm_borders(col = "red") +
+  tm_basemap("Esri.WorldImagery")
+```
+
+```{r load-aoi, message=FALSE, warning=FALSE, error=FALSE}
+tmap::tmap_mode("plot")
+tmap::tmap_options(check.and.fix = T)
+aoi = read_sf("./inputs/chilwa_watershed_4326.shp") 
+basemap = get_tiles(aoi, provider = "OpenTopoMap", zoom = 12, crop = TRUE)
+
+tm_shape(basemap) + 
+  tm_rgb() + 
+  tm_shape(aoi) +
+  tm_borders(col = "red") +
+  tm_graticules() +
+  tm_compass(position = c("left", "bottom")) +
+  tm_scale_bar()
+```
