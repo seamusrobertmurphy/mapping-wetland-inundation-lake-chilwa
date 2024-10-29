@@ -16,10 +16,19 @@ knitr::opts_chunk$set(
   error = FALSE, comment = NA, tidy.opts = list(width.cutoff = 6)
 ) 
 
-requirements <- c(
-  "sf", "terra", "sits", "tmap", "RStoolbox", "mapview", "mapedit",
-  "raster", "tidyverse", "rasterVis", "jsonlite",
-  "stringr", "httr", "gdalUtilities", "maptiles")
+requirements = c(
+  "sf", "terra", "sits", "tmap", "RStoolbox", "mapview", "mapedit", 
+  "raster", "tidyverse", "rasterVis", "jsonlite", "parallel",
+  "stringr", "httr", "gdalUtilities", "maptiles", "aws.s3", 
+  "stars", "rts", "aws.s3", "covr", "dendextend", "dtwclust", 
+  "DiagrammeR", "digest", "aws.s3", "caret", "cli", "cols4all", 
+  "e1071", "exactextractr", "FNN", "future", "gdalcubes", "geojsonsf",
+  "httr2", "jsonlite", "kohonen", "leafem", "luz", "methods",
+  "mgcv", "nnet", "openxlsx", "randomForest", "RColorBrewer", 
+  "RcppArmadillo", "Rcpp", "RcppCensSpatial", "RcppEigen", 
+  "RcppParallel", "scales", "spdep", "supercells", "testthat", 
+  "tools", "xgboost", "hdf5r", "ncdf4", "gdalcubes", "libgeos",
+  "pacman")
 
 setup <- function(requirements){
   missing.packages <- requirements[!(requirements %in% installed.packages()[,"Package"])];
@@ -31,14 +40,30 @@ setup <- function(requirements){
 }
 
 setup(requirements)
+
+pacman::p_load(
+  "sf", "terra", "sits", "tmap", "RStoolbox", "mapview", "mapedit", 
+  "raster", "tidyverse", "rasterVis", "jsonlite", "parallel",
+  "stringr", "httr", "gdalUtilities", "maptiles", "aws.s3", 
+  "stars", "rts", "aws.s3", "covr", "dendextend", "dtwclust", 
+  "DiagrammeR", "digest", "aws.s3", "caret", "cli", "cols4all", 
+  "e1071", "exactextractr", "FNN", "future", "gdalcubes", "geojsonsf",
+  "httr2", "jsonlite", "kohonen", "leafem", "luz", "methods",
+  "mgcv", "nnet", "openxlsx", "randomForest", "RColorBrewer", 
+  "RcppArmadillo", "Rcpp", "RcppCensSpatial", "RcppEigen", 
+  "RcppParallel", "scales", "spdep", "supercells", "testthat", 
+  "tools", "xgboost", "hdf5r", "ncdf4", "gdalcubes", "libgeos",
+  "pacman"
+  )
 ```
 
 # Objective
 
+Lake Chilwa recessions occured in the years of 1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967, 1973, 1995 and 2012.
 
 # Project AOI
 
-```{r, eval=FALSE, echo=FALSE}
+```{r, eval=F, echo=F}
 # tmap_mode("plot")
 tm_shape(basemap) + 
   tm_rgb() + 
@@ -54,17 +79,283 @@ tm_shape(aoi) +
   tm_basemap("Esri.WorldImagery")
 ```
 
-```{r load-aoi, message=FALSE, warning=FALSE, error=FALSE}
+```{r load-aoi, message=FALSE, warning=FALSE, error=FALSE, comment=F}
 tmap::tmap_mode("plot")
 tmap::tmap_options(check.and.fix = T)
 aoi = read_sf("./inputs/chilwa_watershed_4326.shp") 
-basemap = get_tiles(aoi, provider = "OpenTopoMap", zoom = 12, crop = TRUE)
+bbox = terrainr::add_bbox_buffer(aoi, 40000, distance_unit = "meters") 
+vbox = ext(vect(bbox))
 
-tm_shape(basemap) + 
-  tm_rgb() + 
-  tm_shape(aoi) +
-  tm_borders(col = "red") +
-  tm_graticules() +
-  tm_compass(position = c("left", "bottom")) +
-  tm_scale_bar()
+basemap = get_tiles(aoi, 
+  zoom      = 12, 
+  crop      = T,
+  provider  = "OpenTopoMap"
+  )
+
+tm_shape(basemap) + tm_rgb() + 
+  tm_shape(aoi) + tm_borders(col = "red") +
+  tm_compass(position = c("left", "bottom")) + 
+  tm_scale_bar() +
+  tm_graticules()
+```
+
+# InSAR processing
+
+SAR is effective for mapping water surfaces due to its sensitivity to backscatter differences between smooth water and rough land. Calm water yields low backscatter, while vegetated areas increase surface roughness and backscatter. Long wavelengths enhance penetration through vegetation, while urban structures can complicate backscatter interpretations by introducing double-bounce scattering effects. Wet soils also exhibit higher backscatter than dry soils due to their increased dielectric constant.
+
+Environmental conditions, such as wind-driven waves, can further complicate water surface mapping. A common mapping approach involves thresholding backscatter values to distinguish between water and land. The backscatter contrast improves with higher incidence angles, and for polarization, HH is preferable for wetland detection, whereas VV is sensitive to soil moisture. Cross-polarization (HV or VH) effectively differentiates between woody and herbaceous vegetation.
+
+Significant changes in water body extents, particularly due to land reclamation, have occurred in the Firth, notably resulting in a loss of intertidal areas. Regular monitoring of these changes is crucial for environmental management and conservation efforts.
+
+Initial data preparation was implemented in the following before standard processing steps were applied all images as shown in the ESA-SNAP's model builder below:
+
+![](inputs/InSAR-processing.png)
+
+```{r SAR-processing, eval=FALSE}
+dir_dry      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/CDSE/2014-11"
+dir_wet      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/CDSE/2015-05"
+dir_out      = "/Volumes/TOSHIBA_EXT/chilwa/data/reg_cube/SAR"
+
+cube_s1_dry <- sits_cube(
+  source     = "CDSE",
+  collection = "SENTINEL-1-RTC",
+  roi        = aoi,
+  bands      = c("VV", "VH"),
+  orbit      = "descending",
+  start_date = "2014-11-01",
+  end_date   = "2014-12-01",
+  output_dir = dir_dry
+)
+
+cube_s1_wet <- sits_cube(
+  source     = "CDSE",
+  collection = "SENTINEL-1-RTC",
+  roi        = aoi,
+  bands      = c("VV", "VH"),
+  orbit      = "descending",
+  start_date = "2015-05-01",
+  end_date   = "2015-06-01",
+  data_dir   = dir_wet
+  )
+
+cube_s1_reg <- sits_regularize(
+  cube       = cube_s1_local,
+  period     = "P1M",
+  res        = 10,
+  roi        = aoi,
+  memsize    = 12,
+  multicores = 8,
+  output_dir = dir_reg
+)
+
+#s1_list     = list.files(dir_dry, pattern = '.tiff$', full.names   = T)
+s1_list      = list.files(dir_wet, pattern = '.tiff$', full.names   = T)
+rast_list    = lapply(s1_list, raster)
+rast_merge   = do.call(merge, c(rast_list, tolerance = 1))
+# error: some tiles at different rotation
+
+# rectify rotational angles
+s1_1         = rast(s1_list[1])
+s1_2         = rast(s1_list[2])
+s1_3         = rast(s1_list[3])
+s1_1_rectify = rectify(s1_1, aoi = vbox)
+s1_2_rectify = rectify(s1_2, aoi = vbox)
+s1_3_rectify = rectify(s1_3, aoi = vbox)
+
+# apply mask & save subsets
+s1_1_crop    = terra::crop(s1_1_rectify, vect(aoi), mask=T)
+s1_2_crop    = terra::crop(s1_2_rectify, vect(aoi), mask=T)
+s1_3_crop    = terra::crop(s1_3_rectify, vect(aoi), mask=T)
+
+# Coregister by resampling slave to master images
+master = s1_1_crop
+s1_3_resampled = resample(s1_3_crop, master)
+s1_2_resampled = resample(s1_2_crop, master)
+s1_1_resampled = resample(s1_1_crop, master)
+
+#Matrices for gradient calculation: jensenda11/Landfast_Ice_Algorithm 
+m<- matrix(c(-1/2,0,1/2))
+m1<- cbind(0,m,0)
+m2<- rbind(0,t(m),0)
+
+# Prep for horizontal & vertical calibration
+igrad1<- focal(s1_1_resampled, m1)
+jgrad1<- focal(s1_1_resampled, m2)
+igrad2<- focal(s1_2_resampled, m1)
+jgrad2<- focal(s1_2_resampled, m2)
+igrad3<- focal(s1_3_resampled, m1)
+jgrad3<- focal(s1_3_resampled, m2)
+rm(s1_1_resampled, s1_2_resampled, s1_3_resampled) 
+rm(m, m1, m2)
+
+#Horizontal correction
+hori1<- abs(jgrad1-jgrad2)
+hori2<- abs(jgrad1-jgrad3)
+hori3<- abs(jgrad2-jgrad3)
+hori_field<- hori1 + hori2 + hori3
+
+#Vertical correction
+vert1<- abs(igrad1-igrad2)
+vert2<- abs(igrad1-igrad3)
+vert3<- abs(igrad2-igrad3)
+vert_field<- vert1 + vert2 + vert3
+
+#Magnitude correction
+mag<- sqrt((vert_field^2)+(hori_field^2))
+
+#Save outputs  
+writeRaster(mag, "./gradient.tif", overwrite = T)
+```
+
+# InSAR analysis
+
+```{r SAR-analysis, eval=FALSE}
+
+
+```
+
+# Landsat time series cube
+
+```{r derive-cube, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+dir_raw      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/MPC"
+dir_reg      = "/Volumes/TOSHIBA_EXT/chilwa/data/reg_cube/MPC"
+
+cube <- sits_cube(
+  source     = "MPC",
+  collection = "LANDSAT-C2-L2",
+  bands      = c("BLUE", "GREEN", "RED", "NIR08", "SWIR16", "SWIR22", "CLOUD"),
+  start_date = "1994-07-01",
+  end_date   = "2015-07-01",
+  roi        = bbox
+)
+
+# Faster when cube saved locally
+cube_raw = sits_cube_copy(
+  cube,
+  roi        = aoi,
+  res        = 30,
+  n_tries    = 5,
+  output_dir = dir_raw,
+  progress   = T
+)
+
+# Normalize by cloudless pixel ranking & monthly medians
+cube_reg <- sits_regularize(
+  cube       = cube_raw,
+  output_dir = dir_reg,
+  res        = 30,
+  period     = "P1M",
+  multicores = 8
+)
+```
+
+```{r local-reload, echo=F, warning=F, message=F, comment=F, error=F, eval=T}
+dir_raw      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/MPC"
+dir_reg      = "/Volumes/TOSHIBA_EXT/chilwa/data/reg_cube/MPC"
+dir_reg_test = "/Volumes/TOSHIBA_EXT/chilwa/data/reg_cube/test"
+dir_reg_s1   = "/Volumes/TOSHIBA_EXT/chilwa/data/reg_cube/test/S1-RTC"
+
+cube_reg <- sits_cube(
+  source     = "MPC",
+  collection = "LANDSAT-C2-L2",
+  bands      = c("BLUE", "GREEN", "RED", "NIR08", "SWIR16", "SWIR22", "CLOUD"),
+  start_date = "2010-07-01",
+  end_date   = "2012-07-01",
+  roi        = bbox,
+  data_dir   = dir_raw,
+  parse_info = c("satellite", "sensor", "tile", "band", "date"),
+  delim      = "_"
+  )
+
+sits_view(cube_reg, 
+  red        = "RED",
+  green      = "GREEN",
+  blue       = "BLUE"  
+  )
+```
+
+```{r cube-spectral, eval=F}
+cube_index = sits_apply(
+  NDVI       = (NIR08 - RED) / (NIR08 + RED), 
+  data       = cube_reg,
+  output_dir = dir_reg,
+  memsize    = 4,
+  multicores = 6,
+  progress   = T
+  )
+
+cube_index = sits_apply(
+  NDWI       = (GREEN - NIR08) / (GREEN + NIR08), 
+  data       = cube_index,
+  output_dir = dir_reg,
+  memsize    = 6,
+  multicores = 8,
+  progress   = T
+  )
+
+cube_index = sits_apply(
+  MNDWI      = (GREEN - SWIR16) / (GREEN + SWIR16),
+  data       = cube_index,
+  output_dir = dir_reg,
+  memsize    = 6,
+  multicores = 8,
+  progress   = T
+  ) 
+
+cube_index = sits_apply(
+  NDPI       = (SWIR16 - GREEN) / (SWIR16 + GREEN),
+  data       = cube_index,
+  output_dir = dir_reg,
+  memsize    = 6,
+  multicores = 8,
+  progress   = T
+  )
+
+cube_index = sits_apply(
+  AWEIsh     = (BLUE+2.5(GREEN)−1.5(NIR+SWIR1)−0.25(SWIR2)),
+  data       = cube_index,
+  output_dir = dir_reg,
+  memsize    = 6,
+  multicores = 8,
+  progress   = T
+  )
+
+cube_index = sits_apply(
+  NDPI       = (SWIR16 - GREEN) / (SWIR16 + GREEN),
+  data       = cube_index,
+  output_dir = dir_reg,
+  memsize    = 6,
+  multicores = 8,
+  progress   = T
+  )
+  
+cube_index = sits_apply(
+  WRI        = (GREEN + RED) / (NIR08 + SWIR16),
+  data       = cube_reg,
+  output_dir = dir_reg,
+  memsize    = 6,
+  multicores = 8,
+  progress   = T
+  )
+```
+
+# Training sample
+
+```{r training-sample, echo=T, eval=T}
+points <- sits_view(cube_reg, r = 4, g = 3, b = 2) %>% editMap()
+clouds <- points$finished$geometry %>% st_sf() %>% 
+  mutate(class = "clouds", id = 1)
+forest <- points$finished$geometry %>% st_sf() %>% 
+  mutate(class = "clouds", id = 1)
+grassland <- points$finished$geometry %>% st_sf() %>% 
+  mutate(class = "clouds", id = 1)
+cropland <- points$finished$geometry %>% st_sf() %>% 
+  mutate(class = "clouds", id = 1)
+wetland <- points$finished$geometry %>% st_sf() %>% 
+  mutate(class = "clouds", id = 1)
+bare_land  <- points$finished$geometry %>% st_sf() %>% 
+  mutate(class = "clouds", id = 1)
+water  <- points$finished$geometry %>% st_sf() %>% 
+  mutate(class = "clouds", id = 1)
+
 ```
