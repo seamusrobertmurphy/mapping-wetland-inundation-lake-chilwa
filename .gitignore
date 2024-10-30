@@ -4,3 +4,6 @@
 .Ruserdata
 .Rprofile
 /inputs
+/outputs
+notes-script.R
+notes-setup.R
