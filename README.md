@@ -1,24 +1,14 @@
----
-title: "InSAR-Landsat time series analysis of wetland dynamics in Lake Chilwa Basin"
-author: "Murphy, S."
-date: "2024-08-24"
-output: 
-  html_document:
-    keep_md: TRUE
-    toc: TRUE
-    toc_float: TRUE
----
+# InSAR-Landsat time series analysis of wetland dynamics in the Lake Chilwa Basin"
 
+#### **Author: "Murphy, S."**
 
+#### **Date: "2024-08-24"**
 
 # Objective
 
-Lake Chilwa recessions occured in the years of 1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967, 1973, 1995 and 2012.
+~~Lake Chilwa recessions 1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967, 1973, 1995 and 2012.~~
 
-# Project AOI
-
-
-
+Project AOI
 
 ``` r
 tmap::tmap_mode("plot")
@@ -65,7 +55,7 @@ ggdraw() +
 plotRGB(multi_temp, r=2, g=1, b=1, stretch="lin") #stretch="hist"
 ```
 
-<img src="mapping-wetland-inundation-lake-chilwa_files/figure-html/load-aoi-1.png" width="50%" /><img src="mapping-wetland-inundation-lake-chilwa_files/figure-html/load-aoi-2.png" width="50%" />
+<img src="mapping-wetland-inundation-lake-chilwa_files/figure-html/load-aoi-1.png" width="50%"/><img src="mapping-wetland-inundation-lake-chilwa_files/figure-html/load-aoi-2.png" width="50%"/>
 
 # InSAR dataset
 
@@ -78,7 +68,6 @@ Significant changes in water body extents, particularly due to land reclamation,
 Data was acquired from the Copernicus Dataspace, downloaded to local directory, examined, cleaned and prepared for batch processing. A batch processing script was derived in `.xml` format using the SNAP graphical application, which was then exported and deployed using the `gpt` command-line shell. This image pre-processing included several radiometric, geometric, intensity and phase corrections, as shown below.
 
 ![](inputs/InSAR-processing.png)
-
 
 ``` r
 dir_in      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/SAR/inputs"
@@ -162,7 +151,6 @@ writeRaster(mag, "./inputs/gradient.tif", overwrite = T)
 
 # InSAR batch processing
 
-
 ``` r
 # define input/output paths 
 gpt = "/Applications/esa-snap/gpt.sh"
@@ -208,7 +196,6 @@ cmd = paste0(gpt," ", xml_file," -e -t ", outfile," -Pinfile=", infile)
 
 # InSAR Visualization
 
-
 ``` r
 sigma0_wet = raster::raster("./outputs/sar/Sigma_VV_db_slv_WET.tif")
 sigma0_dry = raster::raster("./outputs/sar/Sigma_VV_db_mst_DRY.tif")
@@ -228,7 +215,6 @@ plotRGB(multi_temp, r=2, g=1, b=1, stretch="lin") #stretch="hist"
 ![](mapping-wetland-inundation-lake-chilwa_files/figure-html/sar-viz-2.png)<!-- -->
 
 # Landsat time series cube
-
 
 ``` r
 dir_raw      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/MPC"
@@ -262,9 +248,6 @@ cube_reg <- sits_regularize(
   multicores = 8
 )
 ```
-
-
-
 
 ``` r
 cube_index = sits_apply(
@@ -332,7 +315,6 @@ cube_index = sits_apply(
 ```
 
 # Training sample
-
 
 ``` r
 # run to manually derive training plots from multi-temporal InSAR wetland image
