@@ -1,5 +1,5 @@
 ---
-title: "Mapping Wetland Inundation Dynamics of Lake Chilwa Basin"
+title: "InSAR-Landsat time series analysis of wetland dynamics in Lake Chilwa Basin"
 author: "Murphy, S."
 date: "2024-08-24"
 output: 
@@ -53,7 +53,7 @@ pacman::p_load(
   "RcppArmadillo", "Rcpp", "RcppCensSpatial", "RcppEigen", 
   "RcppParallel", "scales", "spdep", "supercells", "testthat", 
   "tools", "xgboost", "hdf5r", "ncdf4", "gdalcubes", "libgeos",
-  "pacman"
+  "pacman", "cowplot"
   )
 ```
 
@@ -77,14 +77,7 @@ tm_shape(basemap) +
 tm_shape(aoi) +
   tm_borders(col = "red") +
   tm_basemap("Esri.WorldImagery")
-```
 
-```{r load-aoi, message=FALSE, warning=FALSE, error=FALSE, comment=F}
-tmap::tmap_mode("plot")
-tmap::tmap_options(check.and.fix = T)
-aoi = read_sf("./inputs/chilwa_watershed_4326.shp") 
-bbox = terrainr::add_bbox_buffer(aoi, 40000, distance_unit = "meters") 
-vbox = ext(vect(bbox))
 
 basemap = get_tiles(aoi, 
   zoom      = 12, 
@@ -92,14 +85,54 @@ basemap = get_tiles(aoi,
   provider  = "OpenTopoMap"
   )
 
-tm_shape(basemap) + tm_rgb() + 
-  tm_shape(aoi) + tm_borders(col = "red") +
-  tm_compass(position = c("left", "bottom")) + 
-  tm_scale_bar() +
-  tm_graticules()
 ```
 
-# InSAR processing
+```{r load-aoi, message=F, warning=F, error=F, comment=F, fig.show='hold', out.width="50%"}
+tmap::tmap_mode("plot")
+tmap::tmap_options(check.and.fix = T)
+aoi = read_sf("./inputs/chilwa_watershed_4326.shp") 
+sigma0_wet = raster::raster("./outputs/sar/Sigma_VV_db_slv_WET.tif")
+sigma0_dry = raster::raster("./outputs/sar/Sigma_VV_db_mst_DRY.tif")
+multi_temp = raster::stack(sigma0_wet, sigma0_dry)
+bbox = terrainr::add_bbox_buffer(aoi, 40000, distance_unit = "meters") 
+vbox = ext(vect(bbox))
+  
+sites_locator <- st_as_sf(data.frame(
+  longitude = c(32, 36), latitude = c(-8,-16)), 
+  coords = c("longitude", "latitude"), crs = 4326, agr = "constant")
+
+malawi = ggplot(data = world) +
+  geom_sf(fill = "antiquewhite1") +
+  annotate(geom = "text", x = 35.5, y = -8.5, label = "Malawi", 
+           color = "grey22", size = 4.5) +
+  coord_sf(xlim = c(32, 36.5), ylim = c(-8.5, -18)) +
+  xlab("Longitude")+ ylab("Latitude") + 
+  theme(panel.grid.major = element_line(
+    colour = gray(0.5), linetype = "dashed", size = 0.5), 
+    panel.background = element_rect(fill = "aliceblue"),
+    panel.border = element_rect(fill = NA))
+
+chilwa <- ggplot(aoi) +
+  geom_sf() +
+  theme_void() +
+  theme(
+    panel.border = element_rect(fill = NA, colour = "black"),
+    plot.background = element_rect(fill = "antiquewhite1")
+  )
+
+lake = ggplot(aoi) +
+  theme_void() +
+  geom_sf(lwd = 20, color = "red")
+
+ggdraw() +
+  draw_plot(malawi) +
+  draw_plot(chilwa, height = 0.15, x = -0.05, y = 0.15) +
+  draw_plot(lake, height = 0.02, x = 0.1, y = 0.4)
+
+plotRGB(multi_temp, r=2, g=1, b=1, stretch="lin") #stretch="hist"
+```
+
+# InSAR dataset
 
 SAR is effective for mapping water surfaces due to its sensitivity to backscatter differences between smooth water and rough land. Calm water yields low backscatter, while vegetated areas increase surface roughness and backscatter. Long wavelengths enhance penetration through vegetation, while urban structures can complicate backscatter interpretations by introducing double-bounce scattering effects. Wet soils also exhibit higher backscatter than dry soils due to their increased dielectric constant.
 
@@ -107,16 +140,15 @@ Environmental conditions, such as wind-driven waves, can further complicate wate
 
 Significant changes in water body extents, particularly due to land reclamation, have occurred in the Firth, notably resulting in a loss of intertidal areas. Regular monitoring of these changes is crucial for environmental management and conservation efforts.
 
-Initial data preparation was implemented in the following before standard processing steps were applied all images as shown in the ESA-SNAP's model builder below:
+Data was acquired from the Copernicus Dataspace, downloaded to local directory, examined, cleaned and prepared for batch processing. A batch processing script was derived in `.xml` format using the SNAP graphical application, which was then exported and deployed using the `gpt` command-line shell. This image pre-processing included several radiometric, geometric, intensity and phase corrections, as shown below.
 
 ![](inputs/InSAR-processing.png)
 
 ```{r SAR-processing, eval=FALSE}
-dir_dry      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/CDSE/2014-11"
-dir_wet      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/CDSE/2015-05"
-dir_out      = "/Volumes/TOSHIBA_EXT/chilwa/data/reg_cube/SAR"
+dir_in      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/SAR/inputs"
+dir_out      = "/Volumes/TOSHIBA_EXT/chilwa/data/reg_cube/SAR/outpus"
 
-cube_s1_dry <- sits_cube(
+cube_s1 <- sits_cube(
   source     = "CDSE",
   collection = "SENTINEL-1-RTC",
   roi        = aoi,
@@ -124,35 +156,23 @@ cube_s1_dry <- sits_cube(
   orbit      = "descending",
   start_date = "2014-11-01",
   end_date   = "2014-12-01",
-  output_dir = dir_dry
+  output_dir = dir_in
 )
 
-cube_s1_wet <- sits_cube(
-  source     = "CDSE",
-  collection = "SENTINEL-1-RTC",
-  roi        = aoi,
-  bands      = c("VV", "VH"),
-  orbit      = "descending",
-  start_date = "2015-05-01",
-  end_date   = "2015-06-01",
-  data_dir   = dir_wet
-  )
-
 cube_s1_reg <- sits_regularize(
-  cube       = cube_s1_local,
+  cube       = cube_s1,
   period     = "P1M",
   res        = 10,
   roi        = aoi,
   memsize    = 12,
   multicores = 8,
-  output_dir = dir_reg
+  output_dir = dir_in
 )
 
-#s1_list     = list.files(dir_dry, pattern = '.tiff$', full.names   = T)
+#s1_list_dry     = list.files(dir_in, pattern = '2014$', full.names   = T)
 s1_list      = list.files(dir_wet, pattern = '.tiff$', full.names   = T)
 rast_list    = lapply(s1_list, raster)
 rast_merge   = do.call(merge, c(rast_list, tolerance = 1))
-# error: some tiles at different rotation
 
 # rectify rotational angles
 s1_1         = rast(s1_list[1])
@@ -162,12 +182,12 @@ s1_1_rectify = rectify(s1_1, aoi = vbox)
 s1_2_rectify = rectify(s1_2, aoi = vbox)
 s1_3_rectify = rectify(s1_3, aoi = vbox)
 
-# apply mask & save subsets
+# apply mask & extract subsets
 s1_1_crop    = terra::crop(s1_1_rectify, vect(aoi), mask=T)
 s1_2_crop    = terra::crop(s1_2_rectify, vect(aoi), mask=T)
 s1_3_crop    = terra::crop(s1_3_rectify, vect(aoi), mask=T)
 
-# Coregister by resampling slave to master images
+# resample slaves to master images
 master = s1_1_crop
 s1_3_resampled = resample(s1_3_crop, master)
 s1_2_resampled = resample(s1_2_crop, master)
@@ -186,7 +206,6 @@ jgrad2<- focal(s1_2_resampled, m2)
 igrad3<- focal(s1_3_resampled, m1)
 jgrad3<- focal(s1_3_resampled, m2)
 rm(s1_1_resampled, s1_2_resampled, s1_3_resampled) 
-rm(m, m1, m2)
 
 #Horizontal correction
 hori1<- abs(jgrad1-jgrad2)
@@ -202,16 +221,65 @@ vert_field<- vert1 + vert2 + vert3
 
 #Magnitude correction
 mag<- sqrt((vert_field^2)+(hori_field^2))
-
-#Save outputs  
-writeRaster(mag, "./gradient.tif", overwrite = T)
+writeRaster(mag, "./inputs/gradient.tif", overwrite = T)
 ```
 
-# InSAR analysis
+# InSAR batch processing
 
 ```{r SAR-analysis, eval=FALSE}
+# define input/output paths 
+gpt = "/Applications/esa-snap/gpt.sh"
+dir_in = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/SAR/inputs"
+dir_out = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/SAR/outputs"
 
+# compile xml scripts from your SNAP graph folder  
+graphXml_files = list.files(
+  "/Users/seamus/SAR", 
+  pattern=glob2rx("*.xml"), 
+  full.names = TRUE
+  )
 
+for(xml_file in graphXml_files){
+  print(xml_file)
+  }
+
+# compile input images
+input_files = list.files(dir_in, 
+  pattern=glob2rx("S2A_MSIL2A*.SAFE"),
+  full.names = TRUE
+  )
+
+for(infile in input_files){
+  print(infile)
+}
+
+# testing
+for(infile in input_files){
+  print(paste0("Processing file ", infile))
+for(xml_file in graphXml_files){
+    print(xml_file)
+# copy xml filename and apply prefix to output file
+prefix = substring(basename(xml_file), 1, nchar(basename(xml_file))-4)
+outname = substring(basename(infile), 1, nchar(basename(infile))-5)
+outfile = paste0(output_path, "/", prefix, "_", outname, ".dim")
+# shortcut for graph processing tool
+cmd = paste0(gpt," ", xml_file," -e -t ", outfile," -Pinfile=", infile)
+    system(cmd)
+  }
+}
+```
+
+# InSAR Visualization
+
+```{r sar-viz}
+sigma0_wet = raster::raster("./outputs/sar/Sigma_VV_db_slv_WET.tif")
+sigma0_dry = raster::raster("./outputs/sar/Sigma_VV_db_mst_DRY.tif")
+multi_temp = raster::stack(sigma0_wet, sigma0_dry)
+par(mfrow = c(1, 2))
+plot(sigma0_wet)
+plot(sigma0_dry)
+par(mfrow = c(1, 1))
+plotRGB(multi_temp, r=2, g=1, b=1, stretch="lin") #stretch="hist"
 ```
 
 # Landsat time series cube
@@ -249,7 +317,7 @@ cube_reg <- sits_regularize(
 )
 ```
 
-```{r local-reload, echo=F, warning=F, message=F, comment=F, error=F, eval=T}
+```{r local-reload, echo=F, warning=F, message=F, comment=F, error=F, eval=F}
 dir_raw      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/MPC"
 dir_reg      = "/Volumes/TOSHIBA_EXT/chilwa/data/reg_cube/MPC"
 dir_reg_test = "/Volumes/TOSHIBA_EXT/chilwa/data/reg_cube/test"
@@ -341,8 +409,9 @@ cube_index = sits_apply(
 
 # Training sample
 
-```{r training-sample, echo=T, eval=T}
-points <- sits_view(cube_reg, r = 4, g = 3, b = 2) %>% editMap()
+```{r training-sample, echo=T, eval=F}
+# run to manually derive training plots from multi-temporal InSAR wetland image
+points <- plotRGB(multi_temp, r=2, g=1, b=1, stretch="lin") %>% editMap()
 clouds <- points$finished$geometry %>% st_sf() %>% 
   mutate(class = "clouds", id = 1)
 forest <- points$finished$geometry %>% st_sf() %>% 
@@ -357,5 +426,4 @@ bare_land  <- points$finished$geometry %>% st_sf() %>%
   mutate(class = "clouds", id = 1)
 water  <- points$finished$geometry %>% st_sf() %>% 
   mutate(class = "clouds", id = 1)
-
 ```
