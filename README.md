@@ -1,8 +1,8 @@
 # InSAR-Landsat time series analysis of wetland dynamics in the Lake Chilwa Basin"
 
-#### **Author: "Murphy, S."**
+#### **Author: Murphy, S.**
 
-#### **Date: "2024-08-24"**
+#### **Date: 2024-08-24**
 
 # Objective
 
