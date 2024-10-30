@@ -67,7 +67,7 @@ Significant changes in water body extents, particularly due to land reclamation,
 
 Data was acquired from the Copernicus Dataspace, downloaded to local directory, examined, cleaned and prepared for batch processing. A batch processing script was derived in `.xml` format using the SNAP graphical application, which was then exported and deployed using the `gpt` command-line shell. This image pre-processing included several radiometric, geometric, intensity and phase corrections, as shown below.
 
-![](inputs/InSAR-processing.png)
+![](mapping-wetland-inundation-lake-chilwa_files/figure-html/InSAR-processing.png)<!-- -->
 
 ``` r
 dir_in      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/SAR/inputs"
