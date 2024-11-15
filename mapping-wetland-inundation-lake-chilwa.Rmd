@@ -28,7 +28,7 @@ requirements = c(
   "RcppArmadillo", "Rcpp", "RcppCensSpatial", "RcppEigen", 
   "RcppParallel", "scales", "spdep", "supercells", "testthat", 
   "tools", "xgboost", "hdf5r", "ncdf4", "gdalcubes", "libgeos",
-  "pacman")
+  "pacman", "terrainr")
 
 setup <- function(requirements){
   missing.packages <- requirements[!(requirements %in% installed.packages()[,"Package"])];
