@@ -91,28 +91,14 @@ easypackages::packages(
   "tools", 
   "tmap", 
   "xgboost"
-=======
-pacman::p_load(
-  "sf", "terra", "sits", "tmap", "RStoolbox", "mapview", "mapedit", 
-  "raster", "tidyverse", "rasterVis", "jsonlite", "parallel",
-  "stringr", "httr", "gdalUtilities", "maptiles", "aws.s3", 
-  "stars", "rts", "aws.s3", "covr", "dendextend", "dtwclust", 
-  "DiagrammeR", "digest", "aws.s3", "caret", "cli", "cols4all", 
-  "e1071", "exactextractr", "FNN", "future", "gdalcubes", "geojsonsf",
-  "httr2", "jsonlite", "kohonen", "leafem", "luz", "methods",
-  "mgcv", "nnet", "openxlsx", "randomForest", "RColorBrewer", 
-  "RcppArmadillo", "Rcpp", "RcppCensSpatial", "RcppEigen", 
-  "RcppParallel", "scales", "spdep", "supercells", "testthat", 
-  "tools", "xgboost", "hdf5r", "ncdf4", "gdalcubes", "libgeos",
-  "pacman"
->>>>>>> 5f17393cfe51369bb5504401acb5dd0b7393547a
-  )
+)
 
+#pacman::p_load() # alternative install
 ```
 
 # Objective
 
-Lake Chilwa recessions occured in the years of 1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967, 1973, 1995 and 2012.
+~~Lake Chilwa recessions occured in the years of 1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967, 1973, 1995 and 2012.~~
 
 # Project AOI
 
@@ -148,7 +134,7 @@ basemap = get_tiles(aoi,
 tm_shape(basemap) + tm_rgb() + 
   tm_shape(aoi) + tm_borders(col = "red") +
   tm_compass(position = c("left", "bottom")) + 
-  tm_scale_bar() +
+  tm_scalebar() +
   tm_graticules()
 ```
 
