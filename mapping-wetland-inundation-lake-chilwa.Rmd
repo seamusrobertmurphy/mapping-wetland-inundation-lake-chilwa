@@ -17,18 +17,7 @@ knitr::opts_chunk$set(
 ) 
 
 requirements = c(
-  "sf", "terra", "sits", "tmap", "RStoolbox", "mapview", "mapedit", 
-  "raster", "tidyverse", "rasterVis", "jsonlite", "parallel",
-  "stringr", "httr", "gdalUtilities", "maptiles", "aws.s3", 
-  "stars", "rts", "aws.s3", "covr", "dendextend", "dtwclust", 
-  "DiagrammeR", "digest", "aws.s3", "caret", "cli", "cols4all", 
-  "e1071", "exactextractr", "FNN", "future", "gdalcubes", "geojsonsf",
-  "httr2", "jsonlite", "kohonen", "leafem", "luz", "methods",
-  "mgcv", "nnet", "openxlsx", "randomForest", "RColorBrewer", 
-  "RcppArmadillo", "Rcpp", "RcppCensSpatial", "RcppEigen", 
-  "RcppParallel", "scales", "spdep", "supercells", "testthat", 
-  "tools", "xgboost", "hdf5r", "ncdf4", "gdalcubes", "libgeos",
-  "pacman")
+  "pacman", "easypackages")
 
 setup <- function(requirements){
   missing.packages <- requirements[!(requirements %in% installed.packages()[,"Package"])];
@@ -41,20 +30,69 @@ setup <- function(requirements){
 
 setup(requirements)
 
-pacman::p_load(
-  "sf", "terra", "sits", "tmap", "RStoolbox", "mapview", "mapedit", 
-  "raster", "tidyverse", "rasterVis", "jsonlite", "parallel",
-  "stringr", "httr", "gdalUtilities", "maptiles", "aws.s3", 
-  "stars", "rts", "aws.s3", "covr", "dendextend", "dtwclust", 
-  "DiagrammeR", "digest", "aws.s3", "caret", "cli", "cols4all", 
-  "e1071", "exactextractr", "FNN", "future", "gdalcubes", "geojsonsf",
-  "httr2", "jsonlite", "kohonen", "leafem", "luz", "methods",
-  "mgcv", "nnet", "openxlsx", "randomForest", "RColorBrewer", 
-  "RcppArmadillo", "Rcpp", "RcppCensSpatial", "RcppEigen", 
-  "RcppParallel", "scales", "spdep", "supercells", "testthat", 
-  "tools", "xgboost", "hdf5r", "ncdf4", "gdalcubes", "libgeos",
-  "pacman", "cowplot"
+#pacman::p_load(
+easypackages::packages(  
+  "aws.s3", 
+  "caret", 
+  "cli", 
+  "cols4all", 
+  "covr", 
+  "cowplot",
+  "dendextend", 
+  "digest",
+  "DiagrammeR",
+  "dtwclust", 
+  "e1071", 
+  "exactextractr", 
+  "FNN", 
+  "future",
+  "gdalcubes", 
+  "gdalUtilities", 
+  "geojsonsf",
+  "hdf5r", 
+  "httr", 
+  "httr2",
+  "jsonlite", 
+  "kohonen", 
+  "leafem", 
+  "libgeos",
+  "luz",
+  "mapedit", 
+  "mapview", 
+  "maptiles", 
+  "methods",
+  "mgcv", 
+  "ncdf4", 
+  "nnet", 
+  "openxlsx", 
+  "parallel",
+  "randomForest", 
+  "rasterVis", 
+  "raster", 
+  "Rcpp", 
+  "RcppArmadillo", 
+  "RcppCensSpatial", 
+  "RcppEigen", 
+  "RcppParallel", 
+  "RColorBrewer", 
+  "rsconnect",
+  "RStoolbox", 
+  "rts", 
+  "sf", 
+  "scales", 
+  "sits",
+  "spdep", 
+  "stars", 
+  "stringr",
+  "supercells", 
+  "terra", 
+  "testthat", 
+  "tidyverse",
+  "tools", 
+  "tmap", 
+  "xgboost"
   )
+
 ```
 
 # Objective
