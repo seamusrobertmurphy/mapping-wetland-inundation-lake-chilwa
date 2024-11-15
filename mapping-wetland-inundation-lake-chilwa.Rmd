@@ -17,22 +17,7 @@ knitr::opts_chunk$set(
 ) 
 
 requirements = c(
-<<<<<<< HEAD
   "pacman", "easypackages")
-=======
-  "sf", "terra", "sits", "tmap", "RStoolbox", "mapview", "mapedit", 
-  "raster", "tidyverse", "rasterVis", "jsonlite", "parallel",
-  "stringr", "httr", "gdalUtilities", "maptiles", "aws.s3", 
-  "stars", "rts", "aws.s3", "covr", "dendextend", "dtwclust", 
-  "DiagrammeR", "digest", "aws.s3", "caret", "cli", "cols4all", 
-  "e1071", "exactextractr", "FNN", "future", "gdalcubes", "geojsonsf",
-  "httr2", "jsonlite", "kohonen", "leafem", "luz", "methods",
-  "mgcv", "nnet", "openxlsx", "randomForest", "RColorBrewer", 
-  "RcppArmadillo", "Rcpp", "RcppCensSpatial", "RcppEigen", 
-  "RcppParallel", "scales", "spdep", "supercells", "testthat", 
-  "tools", "xgboost", "hdf5r", "ncdf4", "gdalcubes", "libgeos",
-  "pacman", "terrainr")
->>>>>>> 5f17393cfe51369bb5504401acb5dd0b7393547a
 
 setup <- function(requirements){
   missing.packages <- requirements[!(requirements %in% installed.packages()[,"Package"])];
@@ -45,7 +30,6 @@ setup <- function(requirements){
 
 setup(requirements)
 
-<<<<<<< HEAD
 #pacman::p_load(
 easypackages::packages(  
   "aws.s3", 
