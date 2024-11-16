@@ -133,8 +133,8 @@ basemap = get_tiles(aoi,
 
 tm_shape(basemap) + tm_rgb() + 
   tm_shape(aoi) + tm_borders(col = "red") +
-  tm_compass(position = c("left", "bottom")) + 
-  tm_scalebar() +
+  tm_compass(position = c("left", "top")) + 
+  tm_scalebar(position = c("left", "top")) +
   tm_graticules()
 ```
 
