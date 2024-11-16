@@ -122,20 +122,31 @@ tm_shape(aoi) +
 tmap::tmap_mode("plot")
 tmap::tmap_options(check.and.fix = T)
 aoi = read_sf("./inputs/chilwa_watershed_4326.shp") 
-bbox = terrainr::add_bbox_buffer(aoi, 40000, distance_unit = "meters") 
-vbox = ext(vect(bbox))
+bbox  = terrainr::add_bbox_buffer(aoi, 10000, "meters")
 
-basemap = get_tiles(aoi, 
+# 'zoom' = resolution (higher than tm_basemap)
+basemap = maptiles::get_tiles(
+  bbox, 
   zoom      = 12, 
   crop      = T,
   provider  = "OpenTopoMap"
-  )
+)
 
-tm_shape(basemap) + tm_rgb() + 
-  tm_shape(aoi) + tm_borders(col = "red") +
-  tm_compass(position = c("left", "top")) + 
-  tm_scalebar(position = c("left", "top")) +
-  tm_graticules()
+tmap::tm_shape(basemap) + tm_rgb() + 
+  tmap::tm_shape(aoi) +
+  tmap::tm_borders(lwd = 2, col = "red") +
+  tmap::tm_compass(position = c("right", "top")) + 
+  tmap::tm_graticules(lines=T,labels.rot=c(0,90), lwd=0.2) +
+  tmap::tm_scalebar(c(0, 10, 20, 40), position = c("right", "bottom")) -> fieldmap
+# tmap::tm_credits(maptiles::get_credit("OpenTopoMap"))
+fieldmap
+
+# width & height = res, dpi = size of add-ons
+tmap::tmap_save(
+  fieldmap, 
+  "./outputs/fieldmap-opentopo.png", 
+  width=21600, height=21600, asp=0, dpi=2400)
+
 ```
 
 # InSAR processing
