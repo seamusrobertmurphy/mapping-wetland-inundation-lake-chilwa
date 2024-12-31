@@ -63,8 +63,6 @@ SAR is effective for mapping water surfaces due to its sensitivity to backscatte
 
 Environmental conditions, such as wind-driven waves, can further complicate water surface mapping. A common mapping approach involves thresholding backscatter values to distinguish between water and land. The backscatter contrast improves with higher incidence angles, and for polarization, HH is preferable for wetland detection, whereas VV is sensitive to soil moisture. Cross-polarization (HV or VH) effectively differentiates between woody and herbaceous vegetation.
 
-Significant changes in water body extents, particularly due to land reclamation, have occurred in the Firth, notably resulting in a loss of intertidal areas. Regular monitoring of these changes is crucial for environmental management and conservation efforts.
-
 Data was acquired from the Copernicus Dataspace, downloaded to local directory, examined, cleaned and prepared for batch processing. A batch processing script was derived in `.xml` format using the SNAP graphical application, which was then exported and deployed using the `gpt` command-line shell. This image pre-processing included several radiometric, geometric, intensity and phase corrections, as shown below.
 
 ![](mapping-wetland-inundation-lake-chilwa_files/figure-html/InSAR-processing.png)<!-- -->
