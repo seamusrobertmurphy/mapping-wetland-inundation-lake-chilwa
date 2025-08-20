@@ -7,3 +7,5 @@
 /outputs
 notes-script.R
 notes-setup.R
+.DS_Store
+*.tif
