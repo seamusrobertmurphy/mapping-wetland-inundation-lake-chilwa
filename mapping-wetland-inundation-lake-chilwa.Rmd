@@ -4,7 +4,7 @@ subtitle: "Lake Chilwa Basin Analysis"
 author: "Murphy, S."
 date: "2024-08-24"
 output: 
-  github_document:
+  word_document:
     number_sections: TRUE
     toc: TRUE
     #toc_float: TRUE
