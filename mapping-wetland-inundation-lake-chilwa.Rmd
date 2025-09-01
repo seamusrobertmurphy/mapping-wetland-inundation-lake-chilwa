@@ -4,11 +4,11 @@ subtitle: "Lake Chilwa Basin Analysis"
 author: "Murphy, S."
 date: "2024-08-24"
 output: 
-  word_document:
-    number_sections: TRUE
+  html_document:
+    number_sections: FALSE
     toc: TRUE
-    #toc_float: TRUE
-    #keep_md: TRUE
+    toc_float: TRUE
+    keep_md: TRUE
     
 bibliography: references.bib
 link-citations: true
@@ -129,7 +129,7 @@ This analysis presents an integrated remote sensing and participatory mapping ap
 
 ------------------------------------------------------------------------
 
-## Introduction
+## 1. Introduction
 
 Historical records indicate major recession events occurred cyclically, providing crucial context for interpreting observed patterns within the lake's documented century-scale variability. The 21-year observation period (1994-2015) represents a temporally constrained but methodologically comprehensive analysis that must be interpreted within longer-term ecological cycles.
 
@@ -306,7 +306,7 @@ The basin's high population density and productivity have created complex resour
 
 <img src="outputs/03-locator-map.png" width="50%"/><img src="outputs/04-population-map.png" width="50%"/>
 
-## Method
+## 2. Method
 
 ### Socio-Ecological Systems Framework
 
@@ -781,7 +781,7 @@ class producers_accuracy users_accuracy f1_score temporal_stability Open Water 0
 
 ------------------------------------------------------------------------
 
-## Results
+## 3. Results
 
 ```{r socioecological-analysis, eval=FALSE}
 # Migration pattern analysis
@@ -827,7 +827,7 @@ knitr::kable(key_findings, caption = "Integrated Socio-Ecological Findings")
 
 ------------------------------------------------------------------------
 
-## Discussion
+## 4. Discussion
 
 The integration of remote sensing and participatory methods in the Lake Chilwa Basin revealed critical challenges while demonstrating innovative solutions for wetland conservation research. The primary methodological challenge involved reconciling temporal mismatches between 16-day Landsat revisit cycles and daily community observations. This required developing seasonal aggregation methods that preserved both satellite data precision and local knowledge temporality. Similarly, 30-meter Landsat pixels proved inadequate for capturing fishers' detailed spatial knowledge of specific fishing grounds, necessitating sub-pixel analysis techniques validated through extensive community mapping sessions.
 
@@ -841,7 +841,7 @@ The 21-year analysis period provides a robust foundation for understanding conte
 
 ------------------------------------------------------------------------
 
-## References
+### References
 
 [@a96a; @ab88a; @aduah2015a; @ag99a; @al02a; @allison2002a; @am02a; @ap04a; @ar99a; @as00a; @awa03a]
 
