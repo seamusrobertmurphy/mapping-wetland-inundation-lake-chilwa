@@ -1,100 +1,57 @@
-Integrated Remote Sensing and Commuity Mapping of an Endorheic Wetland
-in Southern Malawi
-================
-Murphy, S.
-2024-08-24
+---
+title: "Integrated Remote Sensing and Commuity Mapping of an Endorheic Wetland in Southern Malawi"
+subtitle: "Lake Chilwa Basin Analysis"
+author: "Murphy, S."
+date: "2024-08-24"
+output: 
+  html_document:
+    number_sections: TRUE
+    toc: TRUE
+    toc_float: TRUE
+    keep_md: TRUE
+    
+bibliography: references.bib
+link-citations: true
+---
 
-- [0.1 Abstract](#01-abstract)
-- [0.2 Objective](#02-objective)
-- [0.3 Introduction](#03-introduction)
-  - [0.3.1 Study Area](#031-study-area)
-  - [0.3.2 Hydrology](#032-hydrology)
-  - [0.3.3 Demography](#033-demography)
-- [0.4 Method](#04-method)
-  - [0.4.1 Socio-Ecological Systems
-    Framework](#041-socio-ecological-systems-framework)
-  - [0.4.2 Remote Sensing Framework](#042-remote-sensing-framework)
-- [0.5 Results](#05-results)
-- [0.6 Discussion](#06-discussion)
-- [0.7 References](#07-references)
 
-## 0.1 Abstract
 
-The mapping of ecosystem dynamics in African wetland landscapes within
-conservation areas typically relies solely on remote sensing approaches,
-potentially neglecting local perspectives and adaptations. This study
-presents an integrated socio-ecological systems (SES) framework applied
-to the endorheic Lake Chilwa Basin, Malawi, combining multi-temporal
-remote sensing analysis with participatory mapping methods to
-characterize wetland inundation dynamics and migratory fishing activity
-patterns.
+## Abstract
 
-Our methodology integrates Sentinel-1 InSAR processing with Landsat time
-series data (1994-2015) and community-based mapping approaches including
-key informant interviews, focus group discussions, and rapid
-participatory appraisals. The remote sensing component evaluates
-water-extraction indices (NDWI, MNDWI, AWEIsh) derived from multiple
-Landsat sensors (MSS, TM, ETM+, OLI) using spectral mixture analysis and
-soft classification techniques. Participatory methods capture social
-dimensions of landscape dynamics, particularly focusing on migrant
-fishing communities and seasonal resource use patterns.
+The mapping of ecosystem dynamics in African wetland landscapes within conservation areas typically relies solely on remote sensing approaches, potentially neglecting local perspectives and adaptations. This study presents an integrated socio-ecological systems (SES) framework applied to the endorheic Lake Chilwa Basin, Malawi, combining multi-temporal remote sensing analysis with participatory mapping methods to characterize wetland inundation dynamics and migratory fishing activity patterns.
 
-Results reveal significant spatiotemporal variations in water levels and
-surface area, with major recession events documented in historical
-records (1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967,
-1973, 1995, 2012). The integrated approach enables refined mapping of
-ecosystem services at regional and local scales, revealing previously
-concealed spatiotemporal details of fishing regulations and enforcement
-conflicts within the lake’s political ecology.
+Our methodology integrates Sentinel-1 InSAR processing with Landsat time series data (1994-2015) and community-based mapping approaches including key informant interviews, focus group discussions, and rapid participatory appraisals. The remote sensing component evaluates water-extraction indices (NDWI, MNDWI, AWEIsh) derived from multiple Landsat sensors (MSS, TM, ETM+, OLI) using spectral mixture analysis and soft classification techniques. Participatory methods capture social dimensions of landscape dynamics, particularly focusing on migrant fishing communities and seasonal resource use patterns.
 
-This SES methodology provides a framework for future conservation
-initiatives in dynamic African wetland systems, advocating for locally
-grounded approaches that integrate biophysical and social dimensions for
-more responsive and effective conservation strategies.
+Results reveal significant spatiotemporal variations in water levels and surface area, with major recession events documented in historical records (1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967, 1973, 1995, 2012). The integrated approach enables refined mapping of ecosystem services at regional and local scales, revealing previously concealed spatiotemporal details of fishing regulations and enforcement conflicts within the lake's political ecology.
+
+This SES methodology provides a framework for future conservation initiatives in dynamic African wetland systems, advocating for locally grounded approaches that integrate biophysical and social dimensions for more responsive and effective conservation strategies.
 
 ------------------------------------------------------------------------
 
-## 0.2 Objective
+## Objective
 
-This analysis presents an integrated remote sensing and participatory
-mapping approach to characterize lacustrine transgression-regression
-dynamics and associated socio-ecological patterns in the Lake Chilwa
-Basin, Malawi. The study addresses the limitations of purely technical
-remote sensing approaches by incorporating local knowledge and community
-perspectives into wetland ecosystem mapping.
+This analysis presents an integrated remote sensing and participatory mapping approach to characterize lacustrine transgression-regression dynamics and associated socio-ecological patterns in the Lake Chilwa Basin, Malawi. The study addresses the limitations of purely technical remote sensing approaches by incorporating local knowledge and community perspectives into wetland ecosystem mapping.
 
-1.  Remote Sensing Analysis: Combine Sentinel-1 InSAR processing with
-    Landsat time series data (1994-2015) to quantify hydroperiod
-    fluctuations and littoral zone migration patterns using advanced
-    spectral mixture analysis
+1.  Remote Sensing Analysis: Combine Sentinel-1 InSAR processing with Landsat time series data (1994-2015) to quantify hydroperiod fluctuations and littoral zone migration patterns using advanced spectral mixture analysis
 
-2.  Participatory Mapping Integration: Incorporate local ecological
-    knowledge through key informant interviews, focus group discussions,
-    and rapid participatory appraisals with migrant fishing communities
+2.  Participatory Mapping Integration: Incorporate local ecological knowledge through key informant interviews, focus group discussions, and rapid participatory appraisals with migrant fishing communities
 
-3.  Socio-Ecological Systems Framework: Document spatiotemporal details
-    of fishing regulations, population movements, trading routes, and
-    resource use patterns previously concealed within the lake’s
-    political ecology
+3.  Socio-Ecological Systems Framework: Document spatiotemporal details of fishing regulations, population movements, trading routes, and resource use patterns previously concealed within the lake's political ecology
 
-4.  Conservation Framework Development: Develop a transferable SES
-    methodology for monitoring dynamic wetland ecosystems that balances
-    technical precision with community-based knowledge systems
+4.  Conservation Framework Development: Develop a transferable SES methodology for monitoring dynamic wetland ecosystems that balances technical precision with community-based knowledge systems
 
 ------------------------------------------------------------------------
 
-## 0.3 Introduction
+## Introduction
 
-Historical records indicate major recession events occurred cyclically,
-providing crucial context for interpreting observed patterns within the
-lake’s documented century-scale variability. The 21-year observation
-period (1994-2015) represents a temporally constrained but
-methodologically comprehensive analysis that must be interpreted within
-longer-term ecological cycles.
+Historical records indicate major recession events occurred cyclically, providing crucial context for interpreting observed patterns within the lake's documented century-scale variability. The 21-year observation period (1994-2015) represents a temporally constrained but methodologically comprehensive analysis that must be interpreted within longer-term ecological cycles.
 
 ------------------------------------------------------------------------
 
-### 0.3.1 Study Area
+### Study Area
+
+
+
 
 ``` r
 tmap::tmap_mode("plot")
@@ -171,6 +128,7 @@ plotRGB(multi_temp, r=2, g=1, b=1, stretch="lin") #stretch="hist"
 
 ------------------------------------------------------------------------
 
+
 ``` r
 tmap::tmap_mode("plot")
 sf::sf_use_s2(FALSE)
@@ -227,66 +185,36 @@ malawi_context <- ggplot(data = world) +
 malawi_context
 ```
 
-Lake Chilwa Basin represents one of Africa’s most productive yet dynamic
-endorheic ecosystems, characterized by extreme seasonal and inter-annual
-variability. Located in southern Malawi, this shallow terminal basin
-supports one of the continent’s most densely populated regions and
-exhibits remarkable ecological productivity during wet periods.
+Lake Chilwa Basin represents one of Africa's most productive yet dynamic endorheic ecosystems, characterized by extreme seasonal and inter-annual variability. Located in southern Malawi, this shallow terminal basin supports one of the continent's most densely populated regions and exhibits remarkable ecological productivity during wet periods.
 
 ------------------------------------------------------------------------
 
-### 0.3.2 Hydrology
+### Hydrology
 
-The basin features highly dynamic ecological, economic, and social
-landscapes driven by unimodal rainfall patterns (November-April) and
-sporadic “chiperone” rains (May-August). Annual fluctuations follow
-closely linked precipitation patterns, while longer-term cycles of
-approximately 15 years produce dramatic lake recessions and varying
-degrees of complete desiccation.
+The basin features highly dynamic ecological, economic, and social landscapes driven by unimodal rainfall patterns (November-April) and sporadic "chiperone" rains (May-August). Annual fluctuations follow closely linked precipitation patterns, while longer-term cycles of approximately 15 years produce dramatic lake recessions and varying degrees of complete desiccation.
 
-During recession periods, aquatic species take refuge in surrounding
-residual swamps dominated by salt-hardy vegetation (*Typha domingensis*
-Pers.). The subsequent refilling process initiates complex succession
-dynamics, with emergent food webs driven by detritus and bacterial
-processes in alkaline, nutrient-rich sediments.
+During recession periods, aquatic species take refuge in surrounding residual swamps dominated by salt-hardy vegetation (*Typha domingensis* Pers.). The subsequent refilling process initiates complex succession dynamics, with emergent food webs driven by detritus and bacterial processes in alkaline, nutrient-rich sediments.
 
-Lake Chilwa’s remarkable productivity has been documented in peak years:
-159kg ha⁻¹ (1979) and 113kg ha⁻¹ (1990), surpassing productivity levels
-of major African lakes (Lake Malawi: 40kg ha⁻¹; Lake Tanganyika: 90kg
-ha⁻¹; Lake Victoria: 116kg ha⁻¹). This boom-and-bust productivity
-pattern sustains complex socio-economic systems including permanent
-lakeshore communities and seasonal migrant fishing populations.
+Lake Chilwa's remarkable productivity has been documented in peak years: 159kg ha⁻¹ (1979) and 113kg ha⁻¹ (1990), surpassing productivity levels of major African lakes (Lake Malawi: 40kg ha⁻¹; Lake Tanganyika: 90kg ha⁻¹; Lake Victoria: 116kg ha⁻¹). This boom-and-bust productivity pattern sustains complex socio-economic systems including permanent lakeshore communities and seasonal migrant fishing populations.
 
 <img src="outputs/05-watershed-map.png" width="50%"/><img src="outputs/06-watershed-3D.png" width="50%"/>
 
 ------------------------------------------------------------------------
 
-### 0.3.3 Demography
+### Demography
 
-The basin’s high population density and productivity have created
-complex resource management challenges, particularly regarding seasonal
-fishing regulations, migrant labor patterns, and enforcement of
-conservation measures across distinct territorial jurisdictions outlined
-in the lake management plan.
+The basin's high population density and productivity have created complex resource management challenges, particularly regarding seasonal fishing regulations, migrant labor patterns, and enforcement of conservation measures across distinct territorial jurisdictions outlined in the lake management plan.
 
 <img src="outputs/03-locator-map.png" width="50%"/><img src="outputs/04-population-map.png" width="50%"/>
 
-## 0.4 Method
+## Method
 
-### 0.4.1 Socio-Ecological Systems Framework
+### Socio-Ecological Systems Framework
 
-The study employs a two-stage socio-ecological systems (SES) framework
-designed to integrate biophysical remote sensing analysis with
-comprehensive social research methods. This approach specifically
-targets the perspectives of marginalized groups, including migrant
-fishers, who form a principal economic segment of the Lake Chilwa system
-yet are often overlooked in traditional management frameworks.
+The study employs a two-stage socio-ecological systems (SES) framework designed to integrate biophysical remote sensing analysis with comprehensive social research methods. This approach specifically targets the perspectives of marginalized groups, including migrant fishers, who form a principal economic segment of the Lake Chilwa system yet are often overlooked in traditional management frameworks.
 
-Data collection occurred between September 2012 and March 2014 across
-lakeshore villages in Zomba, Phalombe, and Machinga districts within the
-Lake Chilwa Ramsar zones. The study site boundaries were defined through
-participatory mapping workshops conducted with multi-stakeholder groups
-and Department of Fisheries officers
+Data collection occurred between September 2012 and March 2014 across lakeshore villages in Zomba, Phalombe, and Machinga districts within the Lake Chilwa Ramsar zones. The study site boundaries were defined through participatory mapping workshops conducted with multi-stakeholder groups and Department of Fisheries officers
+
 
 ``` r
 # Participatory mapping workshop locations
@@ -309,65 +237,51 @@ field_periods <- data.frame(
 knitr::kable(workshop_sites, caption = "Participatory Mapping Workshop Distribution")
 ```
 
-| district | villages | participants | workshops |
-|:---------|---------:|-------------:|----------:|
-| Zomba    |       12 |           45 |         6 |
-| Phalombe |        8 |           32 |         4 |
-| Machinga |       15 |           58 |         8 |
 
-Participatory Mapping Workshop Distribution
+
+Table: Participatory Mapping Workshop Distribution
+
+|district | villages| participants| workshops|
+|:--------|--------:|------------:|---------:|
+|Zomba    |       12|           45|         6|
+|Phalombe |        8|           32|         4|
+|Machinga |       15|           58|         8|
 
 ``` r
 knitr::kable(field_periods, caption = "Multi-Season Field Data Collection Timeline")
 ```
 
-| season | dates | focus | methods |
-|:---|:---|:---|:---|
-| Dry Season 1 | Sept-Nov 2012 | Baseline mapping | Workshops, GPS |
-| Wet Season | Dec 2012-Mar 2013 | Peak fishing activity | Interviews, observation |
-| Dry Season 2 | May-Aug 2013 | Recession patterns | FGDs, transects |
-| Follow-up | Jan-Mar 2014 | Validation | Key informants |
 
-Multi-Season Field Data Collection Timeline
 
-------------------------------------------------------------------------
+Table: Multi-Season Field Data Collection Timeline
 
-##### 0.4.1.0.1 Qualitative Data Collection
-
-- Key Informant Interviews (n=45): Semi-structured interviews with
-  village leaders, fishing camp chairmen, Department of Fisheries
-  officers, and long-term residents focused on historical lake dynamics,
-  fishing regulations, and seasonal migration patterns.
-- Focus Group Discussions (n=18): Separate sessions with migrant
-  fishers, women fish processors, boat owners, and net makers to capture
-  diverse perspectives on resource access, seasonal livelihood
-  strategies, and enforcement conflicts.
-- Participatory Rural Appraisals: Community-based exercises including
-  seasonal calendars, resource mapping, and historical timelines to
-  document collective knowledge of lake dynamics and management
-  practices.
-- Participatory Observation: Extended periods of observation in fishing
-  camps documenting daily practices, operational logistics, social
-  networks, and adaptive strategies during different hydrological
-  phases.
+|season       |dates             |focus                 |methods                 |
+|:------------|:-----------------|:---------------------|:-----------------------|
+|Dry Season 1 |Sept-Nov 2012     |Baseline mapping      |Workshops, GPS          |
+|Wet Season   |Dec 2012-Mar 2013 |Peak fishing activity |Interviews, observation |
+|Dry Season 2 |May-Aug 2013      |Recession patterns    |FGDs, transects         |
+|Follow-up    |Jan-Mar 2014      |Validation            |Key informants          |
 
 ------------------------------------------------------------------------
 
-##### 0.4.1.0.2 Geographic Data Collection
+##### Qualitative Data Collection
 
-Geospatial data of landscape structure and lakeshore dynamics were
-recorded using differential GPS receivers during field visits.
-Participatory mapping workshops enabled community identification of key
-features including:
+-   Key Informant Interviews (n=45): Semi-structured interviews with village leaders, fishing camp chairmen, Department of Fisheries officers, and long-term residents focused on historical lake dynamics, fishing regulations, and seasonal migration patterns.
+-   Focus Group Discussions (n=18): Separate sessions with migrant fishers, women fish processors, boat owners, and net makers to capture diverse perspectives on resource access, seasonal livelihood strategies, and enforcement conflicts.
+-   Participatory Rural Appraisals: Community-based exercises including seasonal calendars, resource mapping, and historical timelines to document collective knowledge of lake dynamics and management practices.
+-   Participatory Observation: Extended periods of observation in fishing camps documenting daily practices, operational logistics, social networks, and adaptive strategies during different hydrological phases.
 
-- **Fishing Infrastructure**: Permanent and seasonal camps, landing
-  sites, processing areas
-- **Ecological Zones**: Wetland boundaries, vegetation transitions,
-  spawning areas
-- **Cultural Landscapes**: Sacred sites, traditional fishing
-  territories, conflict zones
-- **Seasonal Patterns**: Water level indicators, migration routes,
-  market locations.
+------------------------------------------------------------------------
+
+##### Geographic Data Collection
+
+Geospatial data of landscape structure and lakeshore dynamics were recorded using differential GPS receivers during field visits. Participatory mapping workshops enabled community identification of key features including:
+
+-   **Fishing Infrastructure**: Permanent and seasonal camps, landing sites, processing areas
+-   **Ecological Zones**: Wetland boundaries, vegetation transitions, spawning areas
+-   **Cultural Landscapes**: Sacred sites, traditional fishing territories, conflict zones
+-   **Seasonal Patterns**: Water level indicators, migration routes, market locations.
+
 
 ``` r
 # GPS data collection protocol
@@ -382,73 +296,45 @@ gps_points <- data.frame(
 knitr::kable(gps_points, caption = "GPS Data Collection by Category")
 ```
 
-| category           | points_collected | accuracy_target | seasonal_variation |
-|:-------------------|-----------------:|:----------------|:-------------------|
-| Fishing camps      |              127 | ±3m             | High               |
-| Landing sites      |               89 | ±3m             | Medium             |
-| Processing areas   |               64 | ±5m             | Low                |
-| Wetland boundaries |              203 | ±5m             | High               |
-| Vegetation zones   |              156 | ±10m            | High               |
-| Sacred sites       |               23 | ±3m             | None               |
 
-GPS Data Collection by Category
 
-The integration of local perspectives proved essential for delineating
-dynamic features that satellite imagery alone could not distinguish,
-particularly regarding seasonal accessibility, resource quality, and
-social territories.
+Table: GPS Data Collection by Category
 
-Community knowledge was systematically integrated with remote sensing
-analysis through iterative validation workshops where preliminary
-satellite-derived maps were ground-truthed against local observations.
-This process revealed important discrepancies between technical
-classifications and actual resource use patterns, leading to refined
-mapping approaches that better captured the socio-ecological complexity
-of the basin.
+|category           | points_collected|accuracy_target |seasonal_variation |
+|:------------------|----------------:|:---------------|:------------------|
+|Fishing camps      |              127|±3m             |High               |
+|Landing sites      |               89|±3m             |Medium             |
+|Processing areas   |               64|±5m             |Low                |
+|Wetland boundaries |              203|±5m             |High               |
+|Vegetation zones   |              156|±10m            |High               |
+|Sacred sites       |               23|±3m             |None               |
 
-### 0.4.2 Remote Sensing Framework
+The integration of local perspectives proved essential for delineating dynamic features that satellite imagery alone could not distinguish, particularly regarding seasonal accessibility, resource quality, and social territories.
 
-This study’s remote sensing workflow integrates multi-temporal SAR
-backscatter analysis with optical spectral indices to map surface water
-extent variability, while incorporating social research methods that
-capture the perspectives of marginalized groups including migrant
-fishers, village leaders, and remote communities. Processing includes
-SNAP-derived batch radiometric corrections, computation of
-water-sensitive indices, gradient-based image enhancement techniques,
-and ethnographic data collection across multiple field seasons.
+Community knowledge was systematically integrated with remote sensing analysis through iterative validation workshops where preliminary satellite-derived maps were ground-truthed against local observations. This process revealed important discrepancies between technical classifications and actual resource use patterns, leading to refined mapping approaches that better captured the socio-ecological complexity of the basin.
 
-##### 0.4.2.0.1 SAR Processing
+### Remote Sensing Framework
 
-SAR processing leveraged the sensitivity of C-band radar to backscatter
-differences between smooth water surfaces and rough terrestrial
-features. Calm water typically yields low backscatter (-20 to -30 dB)
-while vegetated areas exhibit higher backscatter due to volume
-scattering and surface roughness interactions.
+This study's remote sensing workflow integrates multi-temporal SAR backscatter analysis with optical spectral indices to map surface water extent variability, while incorporating social research methods that capture the perspectives of marginalized groups including migrant fishers, village leaders, and remote communities. Processing includes SNAP-derived batch radiometric corrections, computation of water-sensitive indices, gradient-based image enhancement techniques, and ethnographic data collection across multiple field seasons.
 
-Wet soils also exhibit higher backscatter than dry soils due to their
-increased dielectric constant. Specifically, HH and VV polarization
-provide greatest sensitivity to wetland vegetation and soil moisture,
-respectively. while cross-polarization (HV or VH) performs better in
-differentiating woody and herbaceous vegetation for forest monitoring.
+##### SAR Processing
 
-Initial data preparation was implemented using the following processing
-steps, which were applied to all images using the ESA-SNAP’s toolbox and
-model builder below:
+SAR processing leveraged the sensitivity of C-band radar to backscatter differences between smooth water surfaces and rough terrestrial features. Calm water typically yields low backscatter (-20 to -30 dB) while vegetated areas exhibit higher backscatter due to volume scattering and surface roughness interactions.
+
+Wet soils also exhibit higher backscatter than dry soils due to their increased dielectric constant. Specifically, HH and VV polarization provide greatest sensitivity to wetland vegetation and soil moisture, respectively. while cross-polarization (HV or VH) performs better in differentiating woody and herbaceous vegetation for forest monitoring.
+
+Initial data preparation was implemented using the following processing steps, which were applied to all images using the ESA-SNAP's toolbox and model builder below:
 
 ![](inputs/InSAR-processing.png)
 
 The standardized processing workflow implemented in ESA SNAP included:
 
-1.  **Radiometric Calibration**: Conversion of digital numbers to
-    sigma-0 backscatter coefficients
-2.  **Speckle Filtering**: Lee Sigma filter (7×7 window) to reduce
-    multiplicative noise
-3.  **Geometric Correction**: Range-Doppler terrain correction using
-    SRTM 30m DEM
-4.  **Multi-temporal Coregistration**: Sub-pixel alignment of wet/dry
-    season image pairs
-5.  **Database Integration**: Conversion to dB scale for threshold-based
-    water detection
+1.  **Radiometric Calibration**: Conversion of digital numbers to sigma-0 backscatter coefficients
+2.  **Speckle Filtering**: Lee Sigma filter (7×7 window) to reduce multiplicative noise
+3.  **Geometric Correction**: Range-Doppler terrain correction using SRTM 30m DEM
+4.  **Multi-temporal Coregistration**: Sub-pixel alignment of wet/dry season image pairs
+5.  **Database Integration**: Conversion to dB scale for threshold-based water detection
+
 
 ``` r
 dir_dry      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/CDSE/2014-11"
@@ -546,23 +432,14 @@ mag<- sqrt((vert_field^2)+(hori_field^2))
 writeRaster(mag, "./outputs/gradient.tif", overwrite = T)
 ```
 
-Multi-temporal gradient analysis was implemented to enhance detection of
-dynamic water boundaries through comparative analysis of seasonal
-backscatter patterns. This approach, adapted from sea ice monitoring
-methodologies, proved particularly effective for identifying subtle
-transitions between open water, flooded vegetation, and terrestrial
-surfaces.
+Multi-temporal gradient analysis was implemented to enhance detection of dynamic water boundaries through comparative analysis of seasonal backscatter patterns. This approach, adapted from sea ice monitoring methodologies, proved particularly effective for identifying subtle transitions between open water, flooded vegetation, and terrestrial surfaces.
 
 ------------------------------------------------------------------------
 
-##### 0.4.2.0.2 Landsat Processing
+##### Landsat Processing
 
-The remote sensing analysis utilized Analysis Ready Data (ARD) products
-from Landsat Collection 2 archives, specifically Level-2 processed
-surface reflectance products that incorporate standardized atmospheric,
-radiometric, and geometric corrections. This approach addressed the
-challenges of processing multidecadal time series while maintaining
-consistent radiometric quality.
+The remote sensing analysis utilized Analysis Ready Data (ARD) products from Landsat Collection 2 archives, specifically Level-2 processed surface reflectance products that incorporate standardized atmospheric, radiometric, and geometric corrections. This approach addressed the challenges of processing multidecadal time series while maintaining consistent radiometric quality.
+
 
 ``` r
 dir_raw      = "/Volumes/TOSHIBA_EXT/chilwa/data/raw_cube/MPC"
@@ -597,9 +474,12 @@ cube_reg <- sits_regularize(
 )
 ```
 
+
+
 ------------------------------------------------------------------------
 
-##### 0.4.2.0.3 Spectral Index Variables
+##### Spectral Index Variables
+
 
 ``` r
 # Water extraction indices implementation
@@ -642,14 +522,10 @@ cube_indices <- sits_apply(
 
 ------------------------------------------------------------------------
 
-##### 0.4.2.0.4 Spectral Mixture Analysis
+##### Spectral Mixture Analysis
 
-Implementation of spectral mixture analysis enabled sub-pixel water
-fraction estimation, crucial for monitoring gradual transitions between
-terrestrial and aquatic habitats. This approach was selected over
-object-based methods due to demonstrated superior performance in
-delineating turbid waters, shallow wetlands, and mixed vegetation-water
-pixels characteristic of Lake Chilwa’s littoral zones.
+Implementation of spectral mixture analysis enabled sub-pixel water fraction estimation, crucial for monitoring gradual transitions between terrestrial and aquatic habitats. This approach was selected over object-based methods due to demonstrated superior performance in delineating turbid waters, shallow wetlands, and mixed vegetation-water pixels characteristic of Lake Chilwa's littoral zones.
+
 
 ``` r
 # Spectral mixture analysis for sub-pixel water detection
@@ -669,18 +545,28 @@ mixture_model <- function(pixel_spectra, endmember_library) {
   # Where fi = fractional cover, Ri = endmember reflectance
   # Subject to: Σ(fi) = 1, fi ≥ 0
 }
+
+knitr::kable(endmember_selection, caption = "Spectral signatures derived from endmember mixture analysis of sub-pixel water detection")
 ```
+
+
+
+Table: Spectral signatures derived from endmember mixture analysis of sub-pixel water detection
+
+|endmember          |characteristics             | sample_size|purity_threshold |
+|:------------------|:---------------------------|-----------:|:----------------|
+|Open Water         |Low reflectance all bands   |         150|>95%             |
+|Flooded Vegetation |Mixed water-vegetation      |         200|>85%             |
+|Dry Vegetation     |High NIR, low visible       |         180|>90%             |
+|Bare Soil          |Variable by moisture        |         120|>85%             |
+|Urban/Built        |High SWIR, variable visible |          80|>90%             |
 
 ------------------------------------------------------------------------
 
-##### 0.4.2.0.5 Atmospheric and Radiometric Corrections
+##### Atmospheric and Radiometric Corrections
 
-Additional processing addressed specific challenges in aquatic remote
-sensing, including atmospheric overcorrection effects in water pixels,
-geometric artifacts near water-land boundaries, and seasonal variations
-in atmospheric conditions. Dark object subtraction and empirical line
-calibration were applied where necessary to improve consistency across
-the time series.
+Additional processing addressed specific challenges in aquatic remote sensing, including atmospheric overcorrection effects in water pixels, geometric artifacts near water-land boundaries, and seasonal variations in atmospheric conditions. Dark object subtraction and empirical line calibration were applied where necessary to improve consistency across the time series.
+
 
 ``` r
 # Quality control metrics for ARD products
@@ -699,27 +585,25 @@ qa_metrics <- data.frame(
 knitr::kable(qa_metrics, caption = "Quality Assessment Results for Landsat ARD Products")
 ```
 
-| parameter | threshold | assessment | result |
-|:---|:---|:---|:---|
-| Cloud Cover | \<30% | Pixel QA bands | 87% scenes passed |
-| Geometric Accuracy | ±12m RMSE | Ground control points | ±8.3m achieved |
-| Radiometric Consistency | ±5% TOA reflectance | Pseudo-invariant features | ±3.2% observed |
-| Atmospheric Correction | Validated algorithms | AERONET validation | Within spec |
-| Data Gaps | \<10% per scene | Gap mask analysis | 6.2% average |
-| Seasonal Distribution | ≥2 per season | Temporal distribution plot | Well distributed |
 
-Quality Assessment Results for Landsat ARD Products
+
+Table: Quality Assessment Results for Landsat ARD Products
+
+|parameter               |threshold            |assessment                 |result            |
+|:-----------------------|:--------------------|:--------------------------|:-----------------|
+|Cloud Cover             |<30%                 |Pixel QA bands             |87% scenes passed |
+|Geometric Accuracy      |±12m RMSE            |Ground control points      |±8.3m achieved    |
+|Radiometric Consistency |±5% TOA reflectance  |Pseudo-invariant features  |±3.2% observed    |
+|Atmospheric Correction  |Validated algorithms |AERONET validation         |Within spec       |
+|Data Gaps               |<10% per scene       |Gap mask analysis          |6.2% average      |
+|Seasonal Distribution   |≥2 per season        |Temporal distribution plot |Well distributed  |
 
 ------------------------------------------------------------------------
 
-#### 0.4.2.1 Training Samples
+#### Training Samples
 
-Training data collection integrated technical remote sensing
-requirements with community knowledge validation. Participatory
-workshops enabled local experts to identify spectrally similar but
-functionally different landscape units (e.g., seasonal vs. permanent
-wetlands, different fishing zones) that would be difficult to
-distinguish using satellite data alone.
+Training data collection integrated technical remote sensing requirements with community knowledge validation. Participatory workshops enabled local experts to identify spectrally similar but functionally different landscape units (e.g., seasonal vs. permanent wetlands, different fishing zones) that would be difficult to distinguish using satellite data alone.
+
 
 ``` r
 # Interactive training sample collection
@@ -753,9 +637,25 @@ sample_distribution <- data.frame(
 knitr::kable(sample_distribution, caption = "Training and Validation Sample Distribution")
 ```
 
+
+
+Table: Training and Validation Sample Distribution
+
+|class              | training_samples| validation_samples|temporal_coverage |community_verified |
+|:------------------|----------------:|------------------:|:-----------------|:------------------|
+|Open Water         |              245|                 98|All seasons       |Yes                |
+|Flooded Vegetation |              189|                 76|Wet season        |Yes                |
+|Dry Vegetation     |              267|                107|All seasons       |Yes                |
+|Bare Soil          |              156|                 62|Dry season        |No                 |
+|Cropland           |              198|                 79|All seasons       |Yes                |
+|Settlement         |               89|                 35|All seasons       |No                 |
+
+
+
 ------------------------------------------------------------------------
 
-#### 0.4.2.2 Image Classification
+#### Image Classification
+
 
 ``` r
 # Time-weighted classification approach
@@ -791,7 +691,8 @@ classification_result <- sits_classify(
 
 ------------------------------------------------------------------------
 
-##### 0.4.2.2.1 Accuracy Assessment
+##### Accuracy Assessment
+
 
 ``` r
 # Classification accuracy assessment
@@ -819,12 +720,42 @@ community_validation <- data.frame(
 )
 
 knitr::kable(accuracy_results, caption = "Remote Sensing Classification Accuracy")
+```
+
+
+
+Table: Remote Sensing Classification Accuracy
+
+|class              | producers_accuracy| users_accuracy| f1_score|temporal_stability |
+|:------------------|------------------:|--------------:|--------:|:------------------|
+|Open Water         |               0.89|           0.92|     0.91|High               |
+|Flooded Vegetation |               0.76|           0.73|     0.75|Medium             |
+|Dry Vegetation     |               0.82|           0.79|     0.80|High               |
+|Bare Soil          |               0.71|           0.68|     0.69|Low                |
+|Cropland           |               0.85|           0.81|     0.83|Medium             |
+|Settlement         |               0.79|           0.84|     0.81|High               |
+
+``` r
 knitr::kable(community_validation, caption = "Community Knowledge Validation Results")
 ```
 
+
+
+Table: Community Knowledge Validation Results
+
+|validation_type           | agreement_percent|disagreement_source |resolution_method  |
+|:-------------------------|-----------------:|:-------------------|:------------------|
+|Water extent boundaries   |                87|Mixed pixels        |Sub-pixel analysis |
+|Seasonal timing           |                92|Date precision      |Seasonal windows   |
+|Vegetation classification |                74|Spectral confusion  |Multi-temporal     |
+|Land use accuracy         |                89|Temporal change     |Change detection   |
+
+class producers_accuracy users_accuracy f1_score temporal_stability Open Water 0.89 0.92 0.91 High Flooded Vegetation 0.76 0.73 0.75 Medium Dry Vegetation 0.82 0.79 0.80 High Bare Soil 0.71 0.68 0.69 Low Cropland 0.85 0.81 0.83 Medium Settlement 0.79 0.84 0.81 High
+
 ------------------------------------------------------------------------
 
-## 0.5 Results
+## Results
+
 
 ``` r
 # Migration pattern analysis
@@ -870,264 +801,60 @@ knitr::kable(key_findings, caption = "Integrated Socio-Ecological Findings")
 
 ------------------------------------------------------------------------
 
-## 0.6 Discussion
+## Discussion
 
-The integration of remote sensing and participatory methods in the Lake
-Chilwa Basin revealed critical challenges while demonstrating innovative
-solutions for wetland conservation research. The primary methodological
-challenge involved reconciling temporal mismatches between 16-day
-Landsat revisit cycles and daily community observations. This required
-developing seasonal aggregation methods that preserved both satellite
-data precision and local knowledge temporality. Similarly, 30-meter
-Landsat pixels proved inadequate for capturing fishers’ detailed spatial
-knowledge of specific fishing grounds, necessitating sub-pixel analysis
-techniques validated through extensive community mapping sessions.
+The integration of remote sensing and participatory methods in the Lake Chilwa Basin revealed critical challenges while demonstrating innovative solutions for wetland conservation research. The primary methodological challenge involved reconciling temporal mismatches between 16-day Landsat revisit cycles and daily community observations. This required developing seasonal aggregation methods that preserved both satellite data precision and local knowledge temporality. Similarly, 30-meter Landsat pixels proved inadequate for capturing fishers' detailed spatial knowledge of specific fishing grounds, necessitating sub-pixel analysis techniques validated through extensive community mapping sessions.
 
-Cultural and technical language barriers presented equally significant
-challenges, requiring sustained collaborative engagement to translate
-between scientific terminology and local ecological vocabulary. These
-translation processes revealed fundamental differences in how
-environmental change is conceptualized and measured across knowledge
-systems, ultimately transforming both scientific methodology and
-community participation.
+Cultural and technical language barriers presented equally significant challenges, requiring sustained collaborative engagement to translate between scientific terminology and local ecological vocabulary. These translation processes revealed fundamental differences in how environmental change is conceptualized and measured across knowledge systems, ultimately transforming both scientific methodology and community participation.
 
-The integrated approach uncovered socio-ecological patterns invisible to
-technical analysis alone. Community mapping identified specific
-locations where formal fisheries regulations conflicted with traditional
-practices, enabling targeted policy adjustments that improved both
-conservation outcomes and compliance. Strong correlations between
-community observations and satellite-detected changes demonstrated
-potential for collaborative monitoring networks, as local observers
-consistently identified environmental shifts days or weeks before
-satellite detection. Recognition of traditional territorial boundaries
-proved essential for improving compliance during critical spawning
-periods, challenging assumptions that formal and traditional management
-systems are inherently conflicting.
+The integrated approach uncovered socio-ecological patterns invisible to technical analysis alone. Community mapping identified specific locations where formal fisheries regulations conflicted with traditional practices, enabling targeted policy adjustments that improved both conservation outcomes and compliance. Strong correlations between community observations and satellite-detected changes demonstrated potential for collaborative monitoring networks, as local observers consistently identified environmental shifts days or weeks before satellite detection. Recognition of traditional territorial boundaries proved essential for improving compliance during critical spawning periods, challenging assumptions that formal and traditional management systems are inherently conflicting.
 
-This study demonstrates that purely technical remote sensing approaches
-miss essential social dimensions determining conservation success. The
-socio-ecological systems framework developed here shows clear
-transferability through standardized remote sensing protocols,
-replicable participatory methods, and documented integration workflows.
-Technical advances in multi-sensor integration—combining Sentinel-1
-InSAR with Landsat time series and gradient-based change
-detection—enhance dynamic water boundary mapping capabilities, but
-achieve full potential only when integrated with participatory
-validation and contextualization.
+This study demonstrates that purely technical remote sensing approaches miss essential social dimensions determining conservation success. The socio-ecological systems framework developed here shows clear transferability through standardized remote sensing protocols, replicable participatory methods, and documented integration workflows. Technical advances in multi-sensor integration—combining Sentinel-1 InSAR with Landsat time series and gradient-based change detection—enhance dynamic water boundary mapping capabilities, but achieve full potential only when integrated with participatory validation and contextualization.
 
-The 21-year analysis period provides a robust foundation for
-understanding contemporary management challenges within Lake Chilwa’s
-longer-term ecological cycles. The research demonstrates how integrating
-technical precision with community knowledge creates opportunities for
-adaptive governance recognizing both formal regulations and traditional
-institutions. Future research should extend temporal coverage using
-historical Landsat MSS data (1972-1994), integrate higher-resolution
-commercial satellite data, develop coupled hydrological-social models
-for scenario planning, and test methodology transferability across other
-African endorheic systems. Implementation of automated early warning
-systems combining satellite monitoring with community observations
-offers practical pathways for collaborative conservation management in
-dynamic wetland environments.
+The 21-year analysis period provides a robust foundation for understanding contemporary management challenges within Lake Chilwa's longer-term ecological cycles. The research demonstrates how integrating technical precision with community knowledge creates opportunities for adaptive governance recognizing both formal regulations and traditional institutions. Future research should extend temporal coverage using historical Landsat MSS data (1972-1994), integrate higher-resolution commercial satellite data, develop coupled hydrological-social models for scenario planning, and test methodology transferability across other African endorheic systems. Implementation of automated early warning systems combining satellite monitoring with community observations offers practical pathways for collaborative conservation management in dynamic wetland environments.
 
 ------------------------------------------------------------------------
 
-## 0.7 References
+## References
+
+[@a96a; @ab88a; @aduah2015a; @ag99a; @al02a; @allison2002a; @am02a; @ap04a; @ar99a; @as00a; @awa03a]
+
+[@b00a; @b00-1a][@b01a; @b02a; @b02-1a; @b03a; @b04a; @b04-1a; @b05a; @b06a; @b07a; @b09a; @b00a; @b00-1a; @b10a; @b50a; @b51a; @b55a; @b59; @b70; @b73; @b73-1; @b75; @b76; @b77]
+
+[@b79; @b82; @b82-1; @b84; @b84-1; @b91; @b93]
+
+[@bbbormnnrn09; @bc93; @bcgo98; @bchkmn06; @bcm86; @bd73; @bd93; @beh99; @bha10; @birkett2000; @bis06; @blakey2015; @bmv05; @bnjlosbbmtdzq03; @bonilla-moheno2021; @br61; @brw01; @bs04; @bs98; @bslg09; @by71; @c00; @c00-1; @c01; @c02; @c02-1; @c03]
+
+[@c04; @c05; @c06]
+
+[@c07; @c07-1; @c10; @c12; @c31; @c37; @c58; @c60; @c71; @c72; @c78; @c82; @c82-1; @c83; @c84; @c85; @c86; @c88; @c88-1; @c89; @c90; @c94; @c96; @c96-1; @c96-2; @c96-3; @c97; @c98; @c98-1; @c99; @c99-1; @cc01; @cc99; @cc99-1; @cd01; @cd13; @cdos83; @ce06; @cfsrt; @cg05; @cg94; @ch98; @chavula2000; @chiotha2018; @ck01-1; @ckb10; @ckd06; @cm98; @cs89; @d00; @d01; @d02; @d05; @d11; @d12; @d50; @d69]
+
+[@d72; @d91; @d92; @d93; @dc09; @delrio2018; @demichelis2020; @df95; @dn07; @e02; @e02-2; @e04]
+
+[@e02; @e02-2; @e04; @e06; @e11]
+
+[@e82; @e91; @e92; @e96; @e96-1; @e99; @e99-1; @eh06; @eva2000; @f01; @f02; @f03; @f04]
+
+[@f05; @f07; @f12; @f13; @f13-1]
+
+[@f54; @f59; @f73; @f76; @f90; @f90-1; @f91; @f93; @f95; @f96; @f97; @f99; @f99-1; @fkmt79; @fl98; @fm04; @fm09; @fmk79; @furse1979; @g01; @g05; @g07; @g09; @g11; @g55; @g61; @g63; @g67; @g77; @g78; @g79; @g79-1; @g81; @g85; @g88; @g88-1; @g93; @g93-1; @g94]
+
+[@g97; @g97-1; @gallant2015; @gb95; @gh01; @gj06; @gkmnlk08; @glenn1995; @gn00; @gn98; @grundling2014; @gs97; @gs98; @gtlh04; @gtpa01; @h00; @h01; @h02; @h03; @h06]
+
+[@h06-1; @h07; @h08; @h10; @h50; @h62; @h68; @h85; @h86; @h87; @h89; @h90; @h92; @h96; @h99; @ha98; @ham05; @hdn02; @hh11; @hhs74; @hj03; @hm08; @hn03; @howard-williams1974; @howard-williams1978; @howard-williams1985; @hr06; @hv83; @hv84; @hw74; @hw75; @i13; @irvine2022; @j03; @j04; @j12; @j34; @j77; @j84; @j89; @jap92; @jb13]
+
+[@zhang2017; @xue2017; @yiran2012; @vandenbossche1990; @vancutsem2009; @thamaga2022; @vanzegeren1998; @tebbs2013; @sulieman2013; @sarch2001; @s07; @rivett2020; @rebelo2011; @pullanikkatil2016; @pullanikkatil2014; @philippe2019; @peng2022; @palmer2015; @ozesmi2002; @osborne2000; @ogashawara2017; @ochuka2019; @njaya2011; @nicholson2014; @ngongondo2015; @ngongondo2011; @musetsho2021; @msiska2001; @morgan1970; @mohamed2004; @missi2020; @mayaux2004; @matthews2011; @makwinja2022; @makwinja2021; @macuiane2011; @macuiane2009; @m99; @m98; @m97; @m94; @m11; @m05; @m04; @m02-1; @m02; @m01-1; @m01; @lv94; @lu2023; @lpwkmcp98; @lms99; @lm96; @ll71; @lhh11; @leblanc2011; @lancaster1979; @l96; @l94; @l91; @l89; @l85]
+
+[@l81; @l78; @l85; @jbnh11; @jcb11; @jh03; @jv02]
+
+[@k04-1; @k05; @k06; @k08; @k10; @k10-1; @k10-2; @k12; @k77; @k79; @k80; @k80-1; @k80-2; @k84; @k85; @k87; @k88; @k93; @k94; @k96; @k96-1; @k98; @ka90; @kafumbata2014; @kalk1977; @kalk2012]
+
+[@kambombe2021; @kc82; @kc97; @kmdmjacc12; @ks00; @kutser2012; @l00; @l01; @l01-1; @l02; @l05; @l05-1; @l08; @l09; @l11; @l12; @l21; @l55; @l61; @l68; @l73; @l73-1; @l77; @l78a; @l81a; @l85a; @l89a; @l91a]
+
+@lopes1998no @russell2008fisheries
+
+@wilson1999waterfowl @wilson2014history @chanyenga2018biodiversity @chanyenga20189 @wilson2014history @lv94
 
 ------------------------------------------------------------------------
 
-*This analysis represents a collaborative effort between remote sensing
-specialists, the Department of Fisheries and the Lake Chilwa
-communities. All community knowledge was shared with consent and
-attribution according to established research ethics protocols.*
-
-<div id="refs" class="references csl-bib-body hanging-indent"
-entry-spacing="0">
-
-<div id="ref-ab88" class="csl-entry">
-
-Abel, N. O. J., and P. M. Blaikie. 1988. *Managing Common Property
-Resources in Rural Development: The Case of Zimbabwe and Botswana. Final
-Report*. Overseas Development Administration.
-
-</div>
-
-<div id="ref-a81" class="csl-entry">
-
-Acheson, J. M. 1981. “Anthropology of Fishing.” *Annual Review of
-Anthropology* 10: 275–316.
-
-</div>
-
-<div id="ref-a93" class="csl-entry">
-
-Adams, A. 1993. “Food Insecurity in Mali: Exploring the Role of the
-Moral Economy.” *IDS Bulletin* 24 (4): 41–51.
-
-</div>
-
-<div id="ref-a92" class="csl-entry">
-
-Adams, J. S. 1992. *The Myth of Wild Africa: Conservation Without
-Illusion*. University of California Press.
-
-</div>
-
-<div id="ref-aduahAnalysisLandCover2015" class="csl-entry">
-
-Aduah, MS, ML Warburton, G Jewitt, et al. 2015. “Analysis of Land Cover
-Changes in the Bonsa Catchment, Ankobra Basin, Ghana.” *Applied Ecology
-and Environmental Research* 13 (4): 935–55.
-
-</div>
-
-<div id="ref-a03" class="csl-entry">
-
-Agrawal, A. 2003. “Sustainable Governance of Common-Pool Resources:
-Context, Methods, and Politics.” *Annual Review of Anthropology* 32:
-243–62.
-
-</div>
-
-<div id="ref-ag99" class="csl-entry">
-
-Agrawal, A., and C. C. Gibson. 1999. “Enchantment and Disenchantment:
-The Role of Community in Natural Resource Conservation.” *World
-Development* 27 (4): 629–49.
-
-</div>
-
-<div id="ref-ar99" class="csl-entry">
-
-Agrawal, A., and J. C. Ribot. 1999. “Accountability in Decentralization:
-A Framework with South Asian and African Cases.” *Journal of Developing
-Areas* 33: 473–502.
-
-</div>
-
-<div id="ref-al02" class="csl-entry">
-
-Ahmed, M., and M. H. Lorica. 2002. “Improving Developing Country Food
-Security Through Aquaculture Development: Lessons from Asia.” *Food
-Policy* 27: 125–41.
-
-</div>
-
-<div id="ref-allisonFishingLivelihoodsFisheries2002" class="csl-entry">
-
-Allison, Edward H, and Peter M Mvula. 2002. “Fishing Livelihoods and
-Fisheries Management in Malawi.”
-
-</div>
-
-<div id="ref-am02" class="csl-entry">
-
-Allison, E., and P. M. Mvula. 2002. “Fishing Livelihoods and Fisheries
-Management in Malawi.”
-
-</div>
-
-<div id="ref-as00" class="csl-entry">
-
-Allison, E., and M. T. Sarch. 2000. “Fluctuating Fisheries in Africa’s
-Inland Waters: Well Adapted Livelihoods, Maladapted Management.” In
-*IIFET 2000 Proceedings*.
-
-</div>
-
-<div id="ref-a82" class="csl-entry">
-
-Amadi, E. 1982. *Ethics in Nigerian Culture*. Heinemann.
-
-</div>
-
-<div id="ref-a01" class="csl-entry">
-
-Amanor, K. S. 2001. *Land, Labour and the Family in Southern Ghana: A
-Critique of Land Policy Under Neo-Liberalism*. Nordiska
-Afrikainstitutet.
-
-</div>
-
-<div id="ref-a69" class="csl-entry">
-
-Anderson, P. 1969. “Components of the National Culture.” *Pp*, March,
-214–86.
-
-</div>
-
-<div id="ref-awa03" class="csl-entry">
-
-Andrew, T. G., O. Weyl, and M. Andrew. 2003. *Aquaculture Masterplan
-Development in Malawi: Socio-Economic Survey Report*. Japan
-International Cooperation Agency.
-
-</div>
-
-<div id="ref-ap04" class="csl-entry">
-
-Ankarloo, D., and G. Palermo. 2004. “Anti-Williamson: A Marxian Critique
-of New Institutional Economics.” *Cambridge Journal of Economics* 28
-(3): 413–29.
-
-</div>
-
-<div id="ref-a86" class="csl-entry">
-
-Appadurai, A. 1986. *The Social Life of Things*. Cambridge University
-Press.
-
-</div>
-
-<div id="ref-a00" class="csl-entry">
-
-Appleton, J. 2000. “‘At My Age i Should Be Sitting Under That Tree’: The
-Impact of AIDS on Tanzanian Lakeshore Communities.” *Gender and
-Development* 8 (2): 19–27.
-
-</div>
-
-<div id="ref-a92-1" class="csl-entry">
-
-Apter, A. 1992. *Black Critics and Kings: The Hermeneutics of Power in
-Yoruba Society*. University of Chicago Press.
-
-</div>
-
-<div id="ref-a12" class="csl-entry">
-
-———. 2012. “Matrilineal Motives: Kinship, Witchcraft, and Repatriation
-Among Congolese Refugees.” *Journal of the Royal Anthropological
-Institute* 18 (1): 22–44.
-
-</div>
-
-<div id="ref-a10" class="csl-entry">
-
-Archer, M. S. 2010. “Routine, Reflexivity, and Realism.” *Sociological
-Theory* 28 (3): 272–303.
-
-</div>
-
-<div id="ref-a96" class="csl-entry">
-
-Ashforth, A. 1996. “Of Secrecy and the Commonplace: Witchcraft and Power
-in Soweto.” *Social Research* 63 (4): 1183–1234.
-
-</div>
-
-<div id="ref-a05" class="csl-entry">
-
-———. 2005. *Witchcraft, Violence, and Democracy in South Africa*.
-University of Chicago Press.
-
-</div>
-
-<div id="ref-a93-1" class="csl-entry">
-
-Auslander, M. 1993. “Open the Wombs: The Symbolic Politics of Modern
-Ngoni Witch-Finding.” In *Modernity and Its Malcontents*, edited by J.
-Comaroff and J. L. Comaroff, 167–92. University of Chicago Press.
-
-</div>
-
-</div>
+*This analysis represents a collaborative effort between remote sensing specialists, the Department of Fisheries and the Lake Chilwa communities. All community knowledge was shared with consent and attribution according to established research ethics protocols.*
