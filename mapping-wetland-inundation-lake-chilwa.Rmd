@@ -1,17 +1,16 @@
 ---
-title: "Integrated Remote Sensing and Commuity Mapping of an Endorheic Wetland in Southern Malawi"
-subtitle: "Lake Chilwa Basin Analysis"
-author: "Murphy, S."
-date: "2024-08-24"
+title: "Integrated Remote Sensing and Commuity Mapping of an Endorheic Wetland in Southern Malawi" 
+subtitle: "Lake Chilwa Basin Analysis" 
+author: "Murphy, S." 
+date: "2024-08-24" 
 output: 
-  html_document:
-    number_sections: FALSE
-    toc: TRUE
-    toc_float: TRUE
-    keep_md: TRUE
-    
-bibliography: references.bib
-link-citations: true
+    html_document: 
+number_sections: FALSE 
+toc: TRUE 
+toc_float: TRUE 
+keep_md: TRUE
+bibliography: references.bib 
+link-citations: TRUE
 ---
 
 ```{r setup, include=FALSE}
@@ -883,4 +882,4 @@ The 21-year analysis period provides a robust foundation for understanding conte
 
 ------------------------------------------------------------------------
 
-*This analysis represents a collaborative effort between remote sensing specialists, the Department of Fisheries and the Lake Chilwa communities. All community knowledge was shared with consent and attribution according to established research ethics protocols.*
+*This analysis represents a collaborative effort between remote sensing specialists, the Department of Fisheries and the Lake Chilwa communities. All community knowledge was shared with consent and attribution according to established research ethics protocols.* }}}
