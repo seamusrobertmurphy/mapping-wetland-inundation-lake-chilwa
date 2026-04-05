@@ -1,0 +1,803 @@
+Mapping Wetland Dynamics through Remote Sensing and Ethnographic Validation: A Socio-Ecological Study of Chilwa Basin History of Lake Recessions
+
+John Wilson b, Seamus Murphy a *
+
+a *Corresponding author: seamusrobertmurphy@gmail.com
+b   Community Natural Resource Management Consultant
+Abstract: 
+The mapping of ecosystem dynamics of wetland landscapes within conservation areas tends to rely solely on remote sensing studies. This approach may inadvertently neglect the perspectives and adaptations of local inhabitants on the ground, including individuals such as local leaders, gatekeepers, migrant groups, and remote communities.] [In our investigation of the endorheic Lake Chilwa basin, an ecologically productive watershed characterized by rapid fluctuations and high population density, we utilized a socio-ecological system (SES) framework. This framework, conducted over two stages of analysis, facilitated the integration of time-series multispectral data with ethnographic and historical insights, which thereby enabled the generation of a refined mapping of the lake's ecosystem services at both regional and local scales. In stage one, a remote sensing analysis was designed to evaluate various water-extraction indices derived from Landsat collections in distinguishing among three cover classes: open water, flooded vegetation, and non-flooded grassland. Model diagnostics with subclass precision metrics were employed to assess the performances of multiple datasets, including the Multispectral Scanner (MSS1-4), Thematic Mapper (TM5), Enhanced Thematic Mapper Plus (ETM+7), and the Operational Land Imager dataset (OLI8).] [In stage two, multiple data collection approaches were utilized to comprehensively capture the social aspects of the landscape's ecosystem dynamics. These approaches included key informant interviews, focus group discussions, and rapid participatory appraisals.] [Additionally, Sentinel-1 InSAR processing was integrated with the Landsat time series data (1994-2015) using spectral mixture analysis and soft classification techniques, with particular focus on migrant fishing communities and seasonal resource use patterns. Results reveal significant spatiotemporal variations in water levels and surface area, with major recession events documented in historical records (1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967, 1973, 1995, 2012).] [By adopting a locally grounded approach to ecosystem mapping that integrates both biophysical and social dimensions, our research sheds light on several key questions related to the spatiotemporal details of fishing regulations and the lake's seasonal and peak patterns. Additionally, our findings offer methodological insights into the enforcement and monitoring operations of specific provisions across distinct territories outlined in the lake management plan. The SES methodology, in this case, targeted to the Lake Chilwa context, serves more generally as a guidepost for future conservation initiatives, delivering a nuanced understanding aligned with the diverse perceptions, practices, and expectations of local communities. By advocating for conservation actions tailored to the local scale, our research advocates for an approach that is more detailed and responsive in safeguarding these diverse and fluctuating landscapes. This, in turn, strengthens the adaptability of regional conservation programs in response to the ever-changing global context.
+
+Keywords: Wetland inundation mapping, spectral mixture analysis, participatory mapping, socio-ecological systems, endorheic lakes, fishery co-management, traditional ecological knowledge, Lake Chilwa, Malawi
+
+
+
+
+ 
+
+
+
+
+1. Introduction3
+1.1. Study Area3
+1.2 Research Objectives5
+2. Method6
+2.1 Socio-Ecological Systems Framework6
+Qualitative Data Collection6
+Geographic Data Collection6
+2.2  Remote Sensing Framework7
+SAR Processing7
+Landsat Processing8
+Atmospheric and Radiometric Corrections8
+Spectral Index Variables9
+Spectral Mixture Analysis9
+Training Samples10
+Accuracy Assessment10
+3. Results11
+3.1 Water Extent Dynamics11
+3.2 Socio-Ecological Integration Results11
+3.3 Enforcement Conflict Mapping11
+4. Discussion
+5. Conclusions12
+6. References13
+
+
+
+
+
+
+
+
+
+1. Introduction
+The ecological complexities of endorheic watersheds in Africa, particularly the highly productive and dynamically fluctuating wetland landscapes within conservation areas, pose significant challenges for empirical studies relying solely on remote sensing. While remote sensing provides invaluable spatial data for wetland monitoring objectives, it often falls short in capturing the intricate ecological and social dimensions of these ecosystems. Recent studies underscore the limitations of remote sensing in neglecting the nuanced perspectives and adaptive strategies of local resource users, including village leaders, migrants, gatekeepers, and smaller communities in remote areas.
+Technical challenges in remote sensing of inland wetlands further compound these limitations, emphasizing the need for an integrated approach that addresses both technical constraints and incorporates local community perspectives. Specifically, challenges arise from optical complexity, notably colored dissolved organic matter (CDOM), leading researchers to rely on higher-resolution satellite sensors. These sensors introduce additional challenges in spectral coverage, resolution, and radiometric sensitivity, necessitating specialized approaches to address atmospheric correction and adjacency effects.
+1.1. Study Area
+Lake Chilwa Basin represents one of Africa's most productive yet dynamic endorheic ecosystems, characterized by extreme seasonal and inter-annual variability. Located in southern Malawi, this shallow terminal basin supports one of the continent's most densely populated regions (500 km-1) and exhibits remarkable ecological productivity during wet periods.
+
+Figure X & X: Topographic and demographic maps of Lake Chilwa watershed and surrounding districts. 
+
+The basin features highly dynamic ecological, economic, and social landscapes driven by unimodal rainfall patterns (November-April) and sporadic "chiperone" rains (May-August). Annual fluctuations follow closely linked precipitation patterns, while longer-term cycles of approximately 15 years produce dramatic lake recessions and varying degrees of complete desiccation.
+During recession periods, aquatic species take refuge in surrounding residual swamps dominated by salt-hardy vegetation (Typha domingensis Pers.). The subsequent refilling process initiates complex succession dynamics, with emergent food webs driven by detritus and bacterial processes in alkaline, nutrient-rich sediments.
+
+
+Figure X & X: Hydrographic maps of the Lake Chilwa basin watershed
+Lake Chilwa's remarkable productivity has been documented in peak years: 159kg ha⁻¹ (1979) and 113kg ha⁻¹ (1990), surpassing productivity levels of major African lakes (Lake Malawi: 40kg ha⁻¹; Lake Tanganyika: 90kg ha⁻¹; Lake Victoria: 116kg ha⁻¹). This boom-and-bust productivity pattern sustains complex socio-economic systems, including permanent lakeshore communities and seasonal migrant fishing populations.
+Historical records indicate major recession events occurred cyclically, providing crucial context for interpreting observed patterns within the lake's documented century-scale variability. The 21-year observation period (1994-2015) represents a temporally constrained but methodologically comprehensive analysis that must be interpreted within the context of longer-term ecological cycles.
+1.2 Research Objectives
+This analysis presents an integrated remote sensing and participatory mapping approach to characterize lacustrine transgression-regression dynamics and associated socio-ecological patterns in the Lake Chilwa Basin, addressing the limitations of purely technical remote sensing approaches by incorporating local knowledge and community perspectives into wetland ecosystem mapping. The study objectives include:
+Remote Sensing Analysis: Combine Sentinel-1 InSAR processing with Landsat time series data (1994-2015) to quantify hydroperiod fluctuations and littoral zone migration patterns using advanced spectral mixture analysis
+Participatory Mapping Integration: Incorporate local ecological knowledge through key informant interviews, focus group discussions, and rapid participatory appraisals with migrant fishing communities
+Socio-Ecological Systems Framework: Document spatiotemporal details of fishing regulations, population movements, trading routes, and resource use patterns previously concealed within the lake's political ecology
+Conservation Framework Development: Develop a transferable SES methodology for monitoring dynamic wetland ecosystems that balances technical precision with community-based knowledge systems
+
+
+
+
+
+
+
+
+
+
+
+Figure X & X Site maps and InSAR rendering of watershed delineation
+2. Method
+2.1 Socio-Ecological Systems Framework
+The study employs a two-stage socio-ecological systems (SES) framework designed to integrate biophysical remote sensing analysis with comprehensive social research methods. This approach specifically targets the perspectives of marginalized groups, including migrant fishers, who form a principal economic segment of the Lake Chilwa system yet are often overlooked in traditional management frameworks.
+Data collection occurred between September 2012 and March 2014 across lakeshore villages in Zomba, Phalombe, and Machinga districts within the Lake Chilwa Ramsar zones. The study site boundaries were defined through participatory mapping workshops conducted with multi-stakeholder groups and Department of Fisheries officers.
+Qualitative Data Collection
+Key Informant Interviews (n=45): Semi-structured interviews with village leaders, fishing camp chairmen, Department of Fisheries officers, and long-term residents focused on historical lake dynamics, fishing regulations, and seasonal migration patterns.
+Focus Group Discussions (n=18): Separate sessions with migrant fishers, women processors, boat owners, and service providers to capture competing perspectives on resource access, seasonal livelihood strategies, and resource disputes.
+Participatory Rural Appraisals: Community-based exercises including seasonal calendars, resource mapping, and historical timelines to document knowledge of lake dynamics and fishery management.
+Participatory Observation: Extended observation in fishing camps documenting daily practices, operational logistics, social networks, and adaptive strategies during different hydrological phases.
+Table X: Participatory Mapping Workshop Distribution
+District
+Villages
+Participants
+Workshops
+Zomba
+12
+45
+6
+Phalombe
+8
+32
+4
+Machinga
+15
+58
+8
+
+Table X: Multi-Season Field Data Collection Timeline
+Season
+Dates
+Focus
+Methods
+Dry Season 1
+Sept-Nov 2012
+Baseline mapping
+Workshops, GPS
+Wet Season
+Dec 2012-Mar 2013
+Peak fishing activity
+Interviews, observation
+Dry Season 2
+May-Aug 2013
+Recession patterns
+FGDs, transects
+Follow-up
+Jan-Mar 2014
+Validation
+Key informants
+
+Geographic Data Collection
+Geospatial data of landscape structure and lakeshore dynamics were recorded using differential GPS receivers during field visits. Participatory mapping workshops enabled community identification of key features, including:
+Fishing Infrastructure: Permanent and seasonal camps, landing sites, processing area
+Ecological Zones: Wetland boundaries, vegetation transitions, spawning areas
+Cultural Landscapes: Sacred sites, traditional fishing territories, conflict zones
+Seasonal Patterns: Water level indicators, migration routes, market locations
+The integration of local perspectives proved essential for delineating dynamic features that satellite imagery alone could not distinguish, particularly regarding seasonal accessibility, resource quality, and social territories.
+Table X: GPS Data Collection by Category
+Category
+Points Collected
+Accuracy Target
+Seasonal Variation
+Fishing camps
+127
+±3m
+High
+Landing sites
+89
+±3m
+Medium
+Processing areas
+64
+±5m
+Low
+Wetland boundaries
+203
+±5m
+High
+Vegetation zones
+156
+±10m
+High
+Sacred sites
+23
+±3m
+None
+Community knowledge was systematically integrated with remote sensing analysis through iterative validation workshops where preliminary satellite-derived maps were ground-truthed against local observations. This process revealed important discrepancies between technical classifications and actual resource use patterns, leading to refined mapping approaches that better captured the socio-ecological complexity of the basin.
+2.2  Remote Sensing Framework
+This study's remote sensing workflow integrates multi-temporal SAR backscatter analysis with optical spectral indices to map surface water extent variability. The timeframe for remote sensing analysis was determined primarily by data availability of satellite imagery collections of analysis-ready data products (ARD) that met standards of processing, packaging, and dimensionality for use as data cubes in time series modeling. 
+SAR Processing
+SAR processing leveraged the sensitivity of C-band radar to backscatter differences between smooth water surfaces and rough terrestrial features. Calm water typically yields low backscatter (-20 to -30 dB) while vegetated areas exhibit higher backscatter due to volume scattering and surface roughness interactions.
+Wet soils also exhibit higher backscatter than dry soils due to their increased dielectric constant. Specifically, HH and VV polarization provide the greatest sensitivity to wetland vegetation and soil moisture, respectively. while cross-polarization (HV or VH) performs better in differentiating woody and herbaceous vegetation for forest monitoring.
+Initial data preparation was implemented using the following processing steps, which were applied uniformly to all images using the ESA-SNAP’s client interface and batch processing operations:
+Radiometric Calibration: Conversion of digital numbers to sigma-0 backscatter coefficients
+Speckle Filtering: Lee Sigma filter (7×7 window) to reduce multiplicative noise
+Geometric Correction: Range-Doppler terrain correction using SRTM 30m DEM
+Multi-temporal Coregistration: Sub-pixel alignment of wet/dry season image pairs
+Database Integration: Conversion to dB scale for threshold-based water detection
+Figure X: Standardized workflow applied to Sentinel-1 images, deploying radiometric calibration, speckle filtering, geometric correction, and multi-temporal coregistration using SNAP functions & bash terminal.
+Multi-temporal gradient analysis was implemented to enhance the detection of dynamic water boundaries through comparative analysis of seasonal backscatter patterns. This approach, adapted from sea ice monitoring methodologies, proved particularly effective for identifying subtle transitions between open water, flooded vegetation, and terrestrial surfaces.
+Landsat Processing
+The remote sensing analysis utilized Analysis Ready Data (ARD) products from Landsat Collection 2 archives, specifically Level-2 processed surface reflectance products that incorporate standardized atmospheric, radiometric, and geometric corrections. Candidate rasters were acquired from Landsat 5 Thematic Mapper (L5-TM), Landsat 7 Enhanced Thematic Mapper Plus (L7-ETM+), and Landsat 8 Operational Land Imager sensors (L8-OLI). This approach addressed the challenges of processing multidecadal time series while maintaining consistent radiometric quality.
+Due to under-estimation and negative scaling of aquatic features found in atmospheric overcorrections and geometric artifacts, several additional processing steps were implemented. To improvethe quality of training samples, raster pixels were scanned for open water voids using an inverted elastic-net, treated with dark spectrum fitting, then sorted into spectral clusters and assessed for outliers using a time-weighted hierarchical clustering function.
+Atmospheric and Radiometric Corrections
+Additional processing addressed specific challenges in aquatic remote sensing, including atmospheric overcorrection effects in water pixels, geometric artifacts near water-land boundaries, and seasonal variations in atmospheric conditions. Dark object subtraction and empirical line calibration were applied where necessary to improve consistency across the time series.
+Table X: Quality Assessment Results for Landsat ARD Products
+Parameter
+Threshold
+Assessment
+Result
+Cloud Cover
+<30%
+Pixel QA bands
+87% scenes passed
+Geometric Accuracy
+±12m RMSE
+Ground control points
+±8.3m achieved
+Radiometric Consistency
+±5% TOA reflectance
+Pseudo-invariant features
+±3.2% observed
+Atmospheric Correction
+Validated algorithms
+AERONET validation
+Within spec
+Data Gaps
+<10% per scene
+Gap mask analysis
+6.2% average
+Seasonal Distribution
+≥2 per season
+Temporal distribution plot
+Well distributed
+
+Spectral Index Variables
+Water extraction indices were implemented to enhance the detection of water features under different turbidity and vegetation conditions:
+index
+Description & Use Cases
+Formula
+NDWI
+Normalized Difference Water Index:
+General water detection 
+
+MNDWI
+Modified Normalized Difference Water Index: Turbid water sensitivity
+
+WRI
+Water Ratio Index: 
+Shallow water detection
+
+NDPI
+Normalized Difference Pond Index:  
+Mixed pixel analysis
+
+AWEish
+Automated Water Extraction Shadow Index:
+Dry surface delineation
+
+
+Spectral Mixture Analysis
+Implementation of spectral mixture analysis enabled sub-pixel water fraction estimation, crucial for monitoring gradual transitions between terrestrial and aquatic habitats. This approach was selected over object-based methods due to demonstrated superior performance in delineating turbid waters, shallow wetlands, and mixed vegetation-water pixels characteristic of Lake Chilwa's littoral zones.
+The selection of pixel-based over object-based models was informed by recent studies showing improved performance of spectral mixture analysis to delineate between water bodies, vegetation types, and inundated wetlands along lakeshore areas and in turbid waters. The potential advantages were critical to this study's objective, given the spectral characteristics of dense marshlands, shallow waters, extensive detritus, phytoplankton blooms, and shoreline shadowing that characterize this endorheic system.
+Endmember selection included:
+Open Water (>95% purity threshold)
+Flooded Vegetation (>85% purity threshold)
+Dry Vegetation (>90% purity threshold)
+Bare Soil (>85% purity threshold)
+Urban/Built surfaces (>90% purity threshold)
+Table X: Endmember samples informing spectral mixture analysis of sub-pixel water detection
+Endmember
+Characteristics
+Sample
+Purity Threshold
+Open Water
+Low reflectance in all bands
+150
+>95%
+Flooded Vegetation
+Mixed water-vegetation
+200
+>85%
+Dry Vegetation
+High NIR, low visible
+180
+>90%
+Bare Soil
+Variable by moisture
+120
+>85%
+Urban/Built
+High SWIR, variable visible
+80
+>90%
+
+Training Samples 
+Training data collection integrated technical remote sensing requirements with community knowledge validation. Participatory workshops enabled local experts to identify spectrally similar but functionally different landscape units (e.g., seasonal vs. permanent wetlands, different fishing zones) that would be difficult to distinguish using satellite data alone. Random Forest classification was implemented with temporal weighting to account for seasonal variations in water extent and vegetation phenology. The model incorporated 500 trees with importance assessment to evaluate feature contribution to classification accuracy.
+Table X: Training and validation samples used in supervised classification of land cover classes.
+Class
+Training Samples
+Validation Samples
+Temporal Coverage
+Community Verified
+Open Water
+245
+98
+All seasons
+Yes
+Flooded Veg.
+189
+76
+Wet season
+Yes
+Dry Veg.
+267
+107
+All seasons
+Yes
+Bare Soil
+156
+62
+Dry season
+No
+Cropland
+198
+79
+All seasons
+Yes
+Settlement
+89
+35
+All seasons
+No
+
+Accuracy Assessment
+Classification accuracy was evaluated using both traditional metrics and community validation approaches:
+Producer's Accuracy: 71-89% across classes
+User's Accuracy: 68-92% across classes
+Overall Accuracy: 81%
+Kappa Coefficient: 0.77
+Community Validation: 74-92% agreement on boundary delineation and seasonal timing
+Table X: Accuracy Assessment of LULC Classifier Model 
+Class
+Producers Accuracy
+User Accuracy
+F1 Score
+Temporal Stability
+Open Water
+0.89
+0.92
+0.91
+High
+Flooded Veg.
+0.76
+0.73
+0.75
+Medium
+Dry Veg.
+0.82
+0.79
+0.80
+High
+Bare Soil
+0.71
+0.68
+0.69
+Low
+Cropland
+0.85
+0.81
+0.83
+Medium
+Settlement
+0.79
+0.84
+0.81
+High
+
+Table X: Community Knowledge Validation Results
+Validation Type
+Agreement %
+Error Source
+Resolution Method
+Water boundaries
+87
+Mixed pixels
+Sub-pixel analysis
+Seasonal timing
+92
+Date precision
+Seasonal windows
+Veg. classification
+74
+Spectral confusion
+Multi-temporal
+Land use accuracy
+89
+Temporal change
+Change detection
+
+3. Results
+The analysis revealed significant spatiotemporal variations in water levels and surface area across the 21-year study period, with major recession events documented and seasonal patterns detected through the integrated remote sensing and participatory mapping approach.
+3.1 Water Extent Dynamics
+Seasonal water extent variations showed: 
+Maximum extent during peak wet season (January-March): 1,500-2,200 km²
+Minimum extent during dry season (August-October): 400-800 km²
+Inter-annual coefficient of variation: 0.42
+Successful detection of 1995 & approach to 2012 recession events within the observation period.
+3.2 Socio-Ecological Integration Results
+The integrated approach uncovered socio-ecological patterns invisible to technical analysis alone:
+Migration Timing Correlation: Strong correlation (r=0.73, p<0.001) between observed migration patterns and satellite-detected water level changes, pointing to a 3-month lag,
+Fishing Regulation Compliance: 65% compliance during active enforcement periods, with selective compliance based on traditional territorial boundaries,
+Traditional Territory Recognition: 89% of resource disputes were resolved through elder mediation when traditional boundaries were formally recognized
+Market Access Patterns: Distance decay effect (β=-0.45) on market participation, with road quality as a critical determining factor
+3.3 Enforcement Conflict Mapping
+Community mapping identified specific locations where formal fisheries regulations conflicted with traditional practices, enabling targeted policy adjustments that improved both conservation outcomes and compliance. Recognition of traditional territorial boundaries proved essential for improving compliance during critical spawning periods, challenging assumptions that formal and traditional management systems are inherently conflicting.
+4. Discussion
+The integration of remote sensing and participatory methods in the Lake Chilwa Basin revealed critical challenges while demonstrating innovative solutions for wetland conservation research. The primary methodological challenge involved reconciling temporal mismatches between 16-day Landsat revisit cycles and daily community observations. This required developing seasonal aggregation methods that preserved both satellite data precision and local knowledge temporality. Similarly, 30-meter Landsat pixels proved inadequate for capturing fishers’ detailed spatial knowledge of specific fishing grounds, necessitating sub-pixel analysis techniques validated through extensive community mapping sessions.
+Cultural and technical language barriers presented equally significant challenges, requiring sustained collaborative engagement to translate between scientific terminology and local ecological vocabulary. These translation processes revealed fundamental differences in how environmental change is conceptualized and measured across knowledge systems, ultimately transforming both scientific methodology and community participation.
+The integrated approach uncovered socio-ecological patterns invisible to technical analysis alone. Community mapping identified specific locations where formal fisheries regulations conflicted with traditional practices, enabling targeted policy adjustments that improved both conservation outcomes and compliance. Strong correlations between community observations and satellite-detected changes demonstrated potential for collaborative monitoring networks, as local observers consistently identified environmental shifts days or weeks before satellite detection. Recognition of traditional territorial boundaries proved essential for improving compliance during critical spawning periods, challenging assumptions that formal and traditional management systems are inherently conflicting.
+This study demonstrates that purely technical remote sensing approaches miss essential social dimensions determining conservation success. The socio-ecological systems framework developed here shows clear transferability through standardized remote sensing protocols, replicable participatory methods, and documented integration workflows. Technical advances in multi-sensor integration—combining Sentinel-1 InSAR with Landsat time series and gradient-based change detection—enhance dynamic water boundary mapping capabilities, but achieve full potential only when integrated with participatory validation and contextualization.
+The 21-year analysis period provides a robust foundation for understanding contemporary management challenges within Lake Chilwa’s longer-term ecological cycles. The research demonstrates how integrating technical precision with community knowledge creates opportunities for adaptive governance, recognizing both formal regulations and traditional institutions. Future research should extend temporal coverage using historical Landsat MSS data (1972-1994), integrate higher-resolution commercial satellite data, develop coupled hydrological-social models for scenario planning, and test methodology transferability across other African endorheic systems. Implementation of automated early warning systems combining satellite monitoring with community observations offers practical pathways for collaborative conservation management in dynamic wetland environments.
+5. Conclusions
+The 21-year analysis period provides a robust foundation for understanding contemporary management challenges within Lake Chilwa's longer-term ecological cycles. The integrated socio-ecological systems framework successfully demonstrated that combining technical remote sensing precision with community knowledge creates more effective conservation strategies than either approach alone.
+Key findings (Tentative List, feel free to add any thoughts/notes here):
+Multi-sensor remote sensing effectively captures wetland dynamics when validated through community knowledge.
+Participatory mapping reveals critical social territories and resource use patterns invisible to satellite analysis.
+Integration of formal and traditional management systems improves conservation compliance.
+Early warning systems combining satellite monitoring with community observations offer practical pathways for collaborative conservation management.
+This SES methodology provides a transferable framework for future conservation initiatives in dynamic African wetland systems, advocating for locally grounded approaches that integrate biophysical and social dimensions for more responsive and effective conservation strategies.
+6. References
+Abel, N. O. J., and P. M. Blaikie. 1988. Managing Common Property Resources in Rural Development: The Case of Zimbabwe and Botswana. Final Report. Overseas Development Administration.
+Aduah, MS, ML Warburton, G Jewitt, and others. 2015. “Analysis of Land Cover Changes in the Bonsa Catchment, Ankobra Basin, Ghana.” Applied Ecology and Environmental Research 13 (4): 935955.
+Agrawal, A., and C. C. Gibson. 1999. “Enchantment and Disenchantment: The Role of Community in Natural Resource Conservation.” World Development 27 (4): 629–49.
+Agrawal, A., and J. C. Ribot. 1999. “Accountability in Decentralization: A Framework with South Asian and African Cases.” Journal of Developing Areas 33: 473–502.
+Ahmed, M., and M. H. Lorica. 2002. “Improving Developing Country Food Security Through Aquaculture Development: Lessons from Asia.” Food Policy 27: 125–41.
+Allison, Edward H, and Peter M Mvula. 2002. “Fishing Livelihoods and Fisheries Management in Malawi.”
+Allison, E., and P. M. Mvula. 2002. “Fishing Livelihoods and Fisheries Management in Malawi.”
+Allison, E., and M. T. Sarch. 2000. “Fluctuating Fisheries in Africa’s Inland Waters: Well Adapted Livelihoods, Maladapted Management.” In.
+Andrew, T. G., O. Weyl, and M. Andrew. 2003. Aquaculture Masterplan Development in Malawi: Socio-Economic Survey Report. Japan International Cooperation Agency.
+Ankarloo, D., and G. Palermo. 2004. “Anti-Williamson: A Marxian Critique of New Institutional Economics.” Cambridge Journal of Economics 28 (3): 413–29.
+Ashforth, A. 1996. “Of Secrecy and the Commonplace: Witchcraft and Power in Soweto.” Social Research 63 (4): 1183–1234.
+Bailey, C., D. Cycon, and M. Morris. 1986. “Fisheries Development in the Third World: The Role of International Agencies.” World Development 14 (10/11): 1269–75.
+Baker, C. 1975. The Evolution of Local Governance in Malawi. University of Ife Press.
+———. 1993. Seeds of Trouble: Government Policy and Land Rights in Nyasaland, 1946-1964. British: Academic Press.
+Bakunin, M. A., and S. Dolgoff. 1973. Bakunin on Anarchy. Allen; Unwin.
+Barber, K. 1982. “Popular Reactions to the Petro-Naira.” The Journal of Modern African Studies 20 (3): 431–50.
+Bardhan, P. 2001. “Distributive Conflicts, Collective Action, and Institutional Economics.” In, 269–90.
+Barnes, J. 1951. “Marriage in a Changing Society.” Rhodes-Livingstone Paper, no. 20.
+Barrett, C. B., T. Reardon, and P. Webb. 2001. “Nonfarm Income Diversification and Household Livelihood Strategies in Rural Africa: Concepts, Dynamics, and Policy Implications.” Food Policy 26: 315–31.
+Bassett, T. J., and E. Crummey. 1993. Land in African Agrarian Systems. University of Wisconsin Press.
+Bastian, M. L. 1991. “Bloodhounds Who Have No Friends: Witchcraft and Locality in the Nigerian Press.” In, edited by J. Comaroff and J. L. Comaroff. University of Chicago Press.
+Baumann, H. 1950. “Nyama: Die Rachemacht Über Einige Vorteilungen in Afrika.” Paideuma. Mitteilungen Zur Kulturkunde 4: 191–230.
+Baviskar, A. 2000. “Claims to Knowledge, Claims to Control: Environmental Conflict in the Great Himalayan National Park, India.” In, edited by R. Ellen, P. Parkes, and A. Bicker. Harwood Academic Publishers.
+Bayart, J. 2009. The State in Africa: The Politics of the Belly. 2nd ed. Polity.
+Bayart, J.-F., S. Ellis, and B. Hilbou, eds. 1999. The Criminalisation of the State in Africa. Indiana University Press.
+Beall, J., S. Mkhize, and S. Vawda. 2005. “Emergency Democracy and Resurgent Tradition: Institutions, Chieftaincy, and Transition in KwaZulu-Natal.” Journal of Southern African Studies 31 (4): 755–71.
+Bell, R., and S. Donda. 1993. Community Participation Consultancy Final Report. Report for Malawi-Germany Fisheries; Aquaculture Development Project.
+Benda-Beckmann, F. von. 2007. Legal Pluralism in Malawi: Historical Development 1858-1970 and Emerging Issues. Kachere Series.
+Béné, C. 2003. “When Fishery Rhymes with Poverty: A First Step Beyond the Old Paradigm on Poverty in Small-Scale Fisheries.” World Development 31 (6): 949–75.
+Béné, C., E. Belal, M. O. Baba, S. Ovie, A. Raji, I. Malasha, F. Njaya, M. Na Andi, A. Russell, and A. Neiland. 2009. “Power Struggle, Dispute and Alliance over Local Resources: Analyzing "Democratic" Decentralization of Natural Resource Through the Lenses of African Inland Fisheries.” World Development 37 (12): 1935–50.
+Béné, C., B. Hersoug, and E. H. Allison. 2010. “Not by Rent Alone: Analysing the Pro-Poor Functions of Small-Scale Fisheries in Developing Countries.” Development Policy Review 28 (3): 325–58.
+Béné, C., A. Neiland, T. Jolley, B. Ladu, S. Ovie, O. Sule, M. Baba, et al. 2003. “Natural-Resource Institutions and Property Rights in Inland African Fisheries: The Case of the Lake Chad Basin Region.” International Journal of Social Economics 30 (3): 275–301.
+Béné, C., E. Steel, B. K. Luadia, and A. Gordon. 2009. “Fish as the ’Bank in the Water’: Evidence from Chronic-Poor Communities in Congo.” Food Policy 34: 108–18.
+Bennett, N. R., and M. Ylvisaker. 1971. “The Central African Journal of Lovell j. Procter.” Boston University Press.
+Benson, T., A. C. Conroy, R. Gilbert, and others. 1998. Soil Fertility in Malawi: Issues and Options. Cornell University.
+Bernstein, H. 2004. “Considering Africa’s Agrarian Questions.” Historical Materialism 12 (4): 115–44.
+———. 2010. Class Dynamics of Agrarian Change. Kumarian Press.
+Berry, S. 1984. “The Food Crisis and Agrarian Change in Africa: A Review Essay.” African Studies Review 27: 59–112.
+Bestor, T. 2004. Tsukiji: The Fish Market at the Centre of the World. University of California Press.
+Bettison, D. G., and P. J. A. Rigby. 1961. “Patterns of Income and Expenditure, Blantyre-Limbe, Nyasaland.” Rhodes-Livingstone Communication 20.
+Biggs, S., and G. Smith. 1998. “Beyond Methodologies: Coalition-Building for Participatory Technology Development.” World Development 26 (2): 239–48.
+Birkett, CM. 2000. “Synergistic Remote Sensing of Lake Chad: Variability of Basin Inundation.” Remote Sensing of Environment 72 (2): 218236.
+Blaikie, P. 2006. “Is Small Really Beautiful? Community-Based Natural Resource Management in Malawi and Botswana.” World Development 34 (11): 1942–57.
+Blair, H. 2000. “Participation and Accountability at the Periphery: Democratic Local Governance in Six Countries.” World Development 28 (1): 21–39.
+Blakey, Tara, Assefa Melesse, and Margaret O Hall. 2015. “Supervised Classification of Benthic Reflectance in Shallow Subtropical Waters Using a Generalized Pixel-Based Classifier Across a Time Series.” Remote Sensing 7 (5): 50985116.
+Boeder, R. B. 1973. “The Effects of Labour Emigration on Rural Life in Malawi.” Rural Africana 20 (1).
+Bohannon, P. 1955. “Some Principles of Exchange and Investment Among the Tiv.” American Anthropologist 57 (1): 60–70.
+———. 1959. “The Impact of Money on an African Subsistence Economy.” The Journal of Economic History 19 (4): 491–503.
+Bonilla-Moheno, Martha, Coral E Rangel Rivera, Eduardo García-Frapolli, Fernanda L Ríos Beltrán, Celene Espadas-Manrique, Filippo Aureli, Bárbara Ayala-Orozco, and Gabriel Ramos-Fernández. 2021. “Changes in the Socio-Ecological System of a Protected Area in the Yucatan Peninsula: A Case Study on Land-Use, Vegetation Cover, and Household Management Strategies.” Land 10 (11): 1147.
+Booth, D., D. Cammack, J. Harrigan, E. Kanyongolo, M. Mataure, and N. Ngwira. 2006. “Rivers of Change and Development in Malawi.”
+Boserup, E. 1970. Women’s Role in Economic Development. St. Martin’s Press.
+Boucher, C. 1976. “Some Interpretations of Nyao Societies.” PhD thesis.
+Bourdieu, P. 1977. Outline of a Theory of Practice. Cambridge University Press.
+———. 1984. Distinction: A Social Critique of the Judgement of Taste. Harvard University Press.
+———. 2005. The Social Structures of the Economy. Polity.
+Brockington, D. 2002. Fortress Conservation: The Preservation of the Mkomazi Game Reserve, Tanzania. James Currey.
+Brockington, D., J. Igoe, and K. Schmidt-Soltau. 2006. “Conservation, Human Rights, and Poverty Reduction.” Conservation Biology 20: 250–52.
+Brockington, D., and K. Schmidt-Soltau. 2004. “The Social and Environmental Impacts of Wilderness and Development.” Oryx : The Journal of the Fauna Preservation Society 38: 140–42.
+Brown, R. 1973. “Anthropology and Colonial Rule: Godfrey Wilson and the Rhodes-Livingstone Institute.” In, edited by T. Asad, 173–97. Ithaca Press.
+———. 1979. “Passages in the Life of a White Anthropologist: M. H. Gluckman in Northern Rhodesia.” Journal of African History 20: 525–73.
+Bryceson, D. F. 2002. “The Scramble in Africa: Reorienting Rural Livelihoods.” World Development 30 (5): 725–39.
+Buchannon, J. 1982. Shire Highlands (East Central Africa): As a Colony and Mission. Blackwell; Sons: Original work published 1885.
+Callon, M. 1986. “Some Elements of a Sociology of Translation: Domestication of the Scallops and the Fishermen of St Brieuc Bay.” In, edited by J. Law, 196–233. Routledge &: Kegan Paul.
+Cammack, D., T. Kelsall, and D. Booth. 2010. Development Patrimonialism? The Case of Malawi. Africa Power and Politics Programme Working Paper 12. Overseas Development Institute.
+Caplan, P. 1988. “Engendering Knowledge: The Politics of Ethnography, Part 1.” Anthropology Today 4 (5): 8–12.
+Carney, J. A. 1988. “Struggles over Crop Rights and Labour Within Contract Farming Households in a Gambian Irrigated Rice Project.” The Journal of Peasant Studies 15 (3): 334–49.
+Castells, M. 1996. The Rise of the Network Society: The Information Age: Economy, Society and Culture. Vol. 1. Blackwell.
+Ceuppens, B., and P. Geschiere. 2005. “Autochthony: Local or Global? New Modes in the Struggle over Citizenship in Africa and Europe.” Annual Review of Anthropology 34: 385–407.
+Chambers, R. 1983. Rural Development: Putting the Last First. Longman.
+———. 1997. Whose Reality Counts? Putting the First Last. Intermediate Technology Publications.
+Chanock, M. 1985. Law, Custom and Social Order: The Colonial Experience in Malawi and Zambia. Cambridge University Press.
+Chanyenga, Tembo, John Wilson, Friday Njaya, Clement Chilima, Gibson Mphepo, and Dennis Kayambazinthu. 2018a. “9 Biodiversity in the Lake Chilwa Basin.” Socio-Ecological Resilience to Climate Change in a Fragile Ecosystem: The Case of the Lake Chilwa Basin, Malawi.
+———. 2018b. “Biodiversity in the Lake Chilwa Basin: Status, Use and Governance of Fish, Forests and Birds.” In, 163180. Routledge.
+Chavula, G. M. S. 1999. “The Evaluation of the Present and Potential Water Resources Management for the Lake Chilwa Basin Including Water Resources Monitoring. State of the Environment Study No.” 3, Lake Chilwa Wetland Project.
+———. 2000. The Evaluation of the Present and Potential Water Resources Management for the Lake Chilwa Basin. Land Tenure Centre: University of Wisconsin.
+Chavula, Geoffrey MS. 2000. “The Evaluation of the Present and Potential Water Resources Management for the Lake Chilwa Basin.” US: Land Tenure Centre, University of Wisconsin [26 December, 2001]< Http://Wisc. Edu/Itc/Baspusafri. Html.
+Cheng, L., and G. Gereffi. 1994. “US Retailers and Asian Garment Production.” In, 63–79.
+Chibwana, C., M. Fisher, and G. Shively. n.d. “Cropland Allocation Effects of Fertilizer Subsidies in Malawi.” World Development.
+Chilowa, W. R. 1990. Smallholder Maize Production and Household Food Security in Malawi. Bwalo Book Publications.
+———. 1998. “The Impact of Agricultural Liberalisation on Food Security in Malawi.” Food Policy 23 (6): 555–69.
+Chinsinga, B. 2006. “The Interface Between Tradition and Modernity: The Struggle for Political Space at the Local Level in Malawi.” Civilisations 54 (1/2): 255–74.
+———. 2012. “The Political Economy of Agricultural Policy Processes in Malawi: A Case Study of the Fertiliser Subsidy Programme.”
+Chinsinga, B., and C. Dimadzi. 2001. “Impact Assessment Study on the Process of Decentralisation Since 1993.”
+Chiotha, S. 1996. “Lake Chilwa Dries up: Need for Management Plan.” In, edited by F. J. Njaya, S. Chiotha, and H. Kabwazi, 1–2. Government of Malawi: Fisheries Department; University of Malawi.
+Chiotha, Sosten, Daniel Jamu, Joseph Nagoli, Patrick Likongwe, and Tembo Chanyenga. 2018. Socio-Ecological Resilience to Climate Change in a Fragile Ecosystem: The Case of the Lake Chilwa Basin, Malawi. Routledge.
+Chirwa, E. W., and A. Dorward. 2013. Agricultural Input Subsidies: The Recent Malawi Experience. Oxford University Press.
+Chirwa, E. W., J. Kydd, and A. Dorward. 2006. Future Scenarios for Agriculture in Malawi. Part 1: Concepts. Future Agricultures Briefing Paper.
+Chirwa, W. C. 1984. Technical Improvement, Social and Economic Relations in the Fishing Industry: The Case of the Chizi Area, Nkhata Bay District [Honours Thesis]. Chancellor College: University of Malawi.
+———. 1996. “Fishing Rights, Ecology and Conservation Along Southern Lake Malawi, 1920-1964.” African Affairs 95 (380): 351–77.
+———. 1998. “Aliens and AIDS in Southern Africa: The Malawi-South Africa Debate.” African Affairs 97 (386): 53–79.
+Chiweza, A. L. 2005. “Participation: Reality or Rhetoric in Rural Malawi.” Tanzanet Journal 1: 1–8.
+———. 2007. “The Ambivalent Role of Chiefs: Rural Decentralization Initiatives in Malawi.” In, edited by L. Buur and H. M. Kyed, 53–78. Palgrave MacMillan.
+———. 2010. A Review of the Malawi Decentralisation Process: Lessons from Selected Districts. Ministry of Local Government; Rural Development; Concern Universal.
+Chome, J. 2002. “Behavioural and Spatial Impacts of Title Registration in Informal Settlements: The Case Study of Blantyre City, Malawi.”
+Christiansen, R. E., and L. A. Stackhouse. 1989. “The Privatisation of Agricultural Trading in Malawi.” World Development 17 (5): 729–40.
+Cleaver, F. 1999. “Paradoxes of Participation: Questioning Participatory Approaches to Development.” Journal of International Development 11 (4): 597–612.
+———. 2001. “Institutions, Agency and the Limitations of Participatory Approaches to Development.” In, edited by B. Cooke and U. Kothari, 36–55. Zed Books.
+Clemens, E. S., and J. M. Cook. 1999. “Politics and Institutionalism: Explaining Durability and Change.” Annual Review of Sociology 25: 441–66.
+Cliffe, L. 1978. “Labour Migration and Peasant Differentiation: Zambian Experiences.” Journal of Peasant Studies 5: 326–46.
+Coase, R. H. 1937. “The Nature of the Firm.” Economica 4 (16): 386–405.
+———. 1960. “The Problem of Social Cost.” The Journal of Law and Economics 3: 1–44.
+Cohen, A. P. 1989. The Symbolic Construction of Community. Routledge.
+Cohen, R. 1972. “Class in Africa: Analytical Problems and Perspectives.” Socialist Register 9 (9): 231–54.
+Collier, P. 2007. The Bottom Billion: Why the Poorest Countries Are Failing and What Can Be Done about It. Oxford University Press.
+Colson, E. 1958. Marriage & the Family Among the Plateau Tonga of Northern Rhodesia. Manchester University Press.
+———. 1971. The Social Consequence of Resettlement. Manchester: University of Press.
+———. 2000. “The Father as Witch.” Africa : Notiziario Dell’Associazione Fra Le Imprese Italiane in Africa 70 (3): 333–58.
+Comaroff, J. 1994. “Contentious Subjects: Moral Being in the Modern World.” Suomen Antropologi 19 (2): 2–17.
+Comaroff, J. L. 1982. “Dialectical Systems, History and Anthropology: Units of Study and Questions of Theory.” Journal of Southern African Studies 8 (2): 143–72.
+Comaroff, J., and J. L. Comaroff. 1999. “Occult Economies and the Violence of Abstraction: Notes from South African Postcolony.” American Ethnologist 26 (2): 279–303.
+———. 2001. “Naturing the Nation: Aliens, Apocalypse, and the Postcolonial State.” Social Identities 7 (2): 233–65.
+Commons, J. R. 1931. “Institutional Economics.” American Economic Review 21: 648–57.
+COMPASS. 2004. “Legal Toolbox for Participatory Fisheries Management: User Manual and Templates. Document No.” 77. Development Alternatives, USAID, Development Management Associates.
+Cooper, A. F., and J. English. 2006. International Commissions and the Power of Ideas. Academic Foundation.
+Cooper, F. 1996. Decolonisation and African Society: The Labour Question in French and British Africa. Cambridge University Press.
+Cramer, C. 2002. “Homo Economicus Goes to War: Methodological Individualism, Rational Choice and the Political Economy of War.” World Development 30 (11): 1845–64.
+Crawford, G. 2003. “Partnership or Power? Deconstructing the "Partnership for Governance Reform" in Indonesia.” Third World Quarterly 24 (1): 139–59.
+Crewe, E., and E. A. Harrison. 1998. Whose Development? An ethnography of aid: Zed Books.
+Crooke, R., and J. Manor. 1998. Democracy and Decentralisation in South Asia and West Africa. Cambridge University Press.
+Cross, S., and M. Kutengule. 2001. “Decentralisation and Rural Livelihoods in Malawi.”
+Crossley, R. 1982. “High Levels of Lake Malawi During the Late Quaternary.” Palaeoecology of Africa 15: 109–15.
+Crossley, R., S. Davison-Hirshmann, B. Owen, and P. Shaw. 1983. “Lake Level Fluctuations During the Last 2,000 Years in Malawi.” SASQUA International Symposium, Swaziland, 305–16.
+Davison, J. 1992. Changing Gender Relations of Production in the ’Banja’ Household in Southern Malawi. Paper Presented at the Faculty of Social Sciences Seminar Series. Chancellor College: University of Malawi.
+Davison, S. 1991. “A Newly-Defined Cultural Entity of the Late First Millennium AD, and Its Place in the Iron Age Sequence of Southern Malawi.” Azania: Archaeological Research in Africa 26 (1): 13–62.
+———. 1993. “Salt-Making in Early Malawi.” Azania: Archaeological Research in Malawi 28 (1): 7–46.
+De Sardan, O. J. P. 2005. Anthropology and Development: Understanding Contemporary Social Change. Zed Books.
+Del Rio, Trinidad, Jeroen CJ Groot, Fabrice DeClerck, and Natalia Estrada-Carmona. 2018. “Integrating Local Knowledge and Remote Sensing for Eco-Type Classification Map in the Barotse Floodplain, Zambia.” Data in Brief 19: 22972304.
+Demichelis, Christophe, Johan Oszwald, Clélia Gasquet-Blanchard, Victor Narat, Jean-Christophe Bokika, Flora Pennec, and Tamara Giles-Vernick. 2020. “Multidimensional Analysis of Landscape Dynamics in a Central African Forest-Savannah Mosaic.” African Journal of Ecology 58 (4): 692708.
+Department, Environmental Affairs. 2000. Lake Chilwa Wetland  State of the Environment. Malawi Government.
+Derman, B., and A. Ferguson. 1995. “Human Rights, Environment, and Development: The Dispossession of Fishing Communities on Lake Malawi.” Human Ecology 23 (2): 125–42.
+Devereux, S. 2002. “The Malawi Famine of 2002.” IDS Bulletin 33: 70–78.
+Donda, S. 2012. “Fisheries Co-Management and Its Benefits: The Case of Small-Scale Fisheries in Malawi.”
+Donda, S. J. 2011. ““Fishing Is Our Gold Mine”: Lessons Learned from Participatory Fisheries Management in Malawi.” In, 235.
+Donda, S., and F. Njaya. 2007. Fisheries Co-Management in Malawi: An Analysis of the Underlying Policy Process. World Fish Centre.
+Dorner, P. 1972. Land Reform and Economic Development. Penguin.
+Dorward, A., and E. Chirwa. 2009. “The Agricultural Input Subsidy Programme 2005 to 2008: Achievements and Challenges.”
+Douglas, M. 1950. Peoples of the Lake Nyasa Region. for the International African Institute: Oxford University Press.
+———. 1969. “Is Matriliny Doomed in Africa?” In, 121–35.
+Duffield, M. 2001. Global Governance and the New Wars: The Merger of Development and Security. Zed Books.
+Edelman, M. 1999. Peasants Against Globalization: Rural Social Movements in Costa Rica. Stanford University Press.
+Elster, J. 1982. “Marxism, Functionalism, and Game Theory: The Case for Methodological Individualism.” Theory and Society 11 (4): 453–82.
+Englebert, P. 2002. “Patterns and Theories of Traditional Resurgence in Tropical Africa.” Mondes En Développement 30 (118): 51–64.
+Englund, H. 1996a. “Waiting for Portuguese: Nostalgia, Exploitation and the Meaning of Land in the Malawi-Mozambique Borderland.” Journal of Contemporary African Studies 14: 157–72.
+———. 1996b. “Witchcraft, Modernity and the Person: The Morality of Accumulation in Central Malawi.” Critique of Anthropology 16 (3): 257–79.
+———. 1999. “The Self in Self-Interest: Land, Labour and Temporalities in Malawi’s Agrarian Change.” Africa: Journal of the International African Institute 69 (1): 138–59.
+———. 2004. “Cosmopolitanism and the Devil in Malawi.” Ethnos: Journal of Anthropology 69 (3): 293–316.
+———. 2006. Prisoners of Freedom: Human Rights and the African Poor. University of California Press.
+———. 2011. Human Rights and African Airwaves: Mediating Equality on the Chichewa Radio. Indiana University Press.
+Ensminger, J. 1992. Making a Market: The Institutional Transformation of an African Society. Cambridge University Press.
+Enwerem, I. M. 2002. ““Money Magic” and Ritual Killing in Contemporary Nigeria.” In, edited by J. Guyer, L. Denser, and A. Agbaje, 1986–96. life: Devaluation in Ibadan; other urban centres in southern Nigeria.
+Escobar, A. 1991. “Anthropology and the Development Encounter.” American Ethnologist 18 (4): 658–82.
+Eva, Hugh, and Eric F Lambin. 2000. “Fires and Land-Cover Change in the Tropics: A Remote Sensing Analysis at the Landscape Scale.” Journal of Biogeography 27 (3): 765776.
+Evens, T. M. S., and D. Handelman. 2006. The Manchester School: Practice and Ethnographic Praxis in Anthropology. Berghahn Books.
+Fafchamps, M. 2003. “Ethnicity and Networks in African Trade.” Contributions in Economic Analysis & Policy 2 (1).
+———. 2004. Market Institutions in Sub-Saharan Africa: Theory and Evidence. MIT Press.
+Fairhead, J., and M. Leach. 1998. Misreading the African Landscape: Society and Ecology in a Forest-Savannah Mosaic. Cambridge University Press.
+Falola, T. 1995. “Money and Informal Credit Institutions in Colonial Western Nigeria.” In, edited by J. Guyer, 162–87. Heinemann.
+FAO. 1993. “Fisheries Management in the South-East Arm of Lake Malawi, the Upper Shire River and Lake Malombe, with Particular Reference to the Fisheries on Chambo (Oreochromis Spp).” CIFA Technical Paper, no. 21.
+———. 1996. Synthesis of the Technical Documents. World Food Summit. http://www.fao.org/docrep/003/w2537e/w2537e02.htm#13.
+———. 2005. “Malawi Fishery Country Profile.”
+———. 2007. “Malawi Fisheries and Aquaculture.”
+Feige, E. L. 1990. “Defining and Estimating Underground and Informal Economies: The New Institutional Economics Approach.” World Development 18 (7): 989–1002.
+Ferguson, A., and W. O. Mulwafu. 2004. “Irrigation Reform on Malawi’s Domasi and Likangal Smallholder Irrigation Schemes: Exploring Land-Water Intersections. Basis Collaborative Research Support Program, University of Wisconsin-Madison.”
+Ferguson, J. 1990. The Anti-Politics Machine: Development, Depoliticisation, and Bureaucratic Power in Lesotho. Cambridge University Press.
+———. 1999. Expectations of Modernity: Myths and Meanings of Urban Life on the Zambian Copperbelt. Vol. 57. University of California Press.
+———. 2013. “Declarations of Dependence: Labour, Personhood, and Welfare in Southern Africa.” Journal of the Royal Anthropological Institute 19 (2): 223–42.
+Fine, B. 1997. “Entitlement Failure?” Development and Change 28 (4): 617–47.
+———. 1999. “A Question of Economics: Is It Colonising the Social Sciences?” Economy and Society 28 (3): 403–25.
+———. 2001. “Economics Imperialism and Intellectual Progress: The Present as History of Economic Thought?” History of Economics Review 32 (1): 10–36.
+———. 2002. “Economics Imperialism and the New Development Economics as Kuhnian Paradigm Shift?” World Development 30 (12): 2057–70.
+Fine, B., and D. Milonakis. 2009. From Economics Imperialism to Freakonomics: The Shifting Boundaries Between Economics and Other Social Sciences. Routledge.
+Finnegan, R. H. 2012. Oral Literature in Africa. 2nd ed. Open Book Publishers.
+Firth, R. 1954. “Social Organisation and Social Change.” Journal of Royal Anthropological Institute 84: 1–20.
+———. 1959. Social Change in Tikopia. Allen; Unwin.
+Forster, P. 1973. “Empiricism and Imperialism: A Review of the New Left Critique of Social Anthropology.” In, edited by T. Asad, 23–38. Ithaca Press.
+Forsyth, T. 2013. Critical Political Ecology: The Politics of Environmental Science. Routledge.
+Fotheringham, L. M. 1891. “Adventures in Nyasaland.” In, edited by D. Kerr-Cross. The Central African Times.
+Fuller, C. J. 1976. The Nayars Today. Cambridge University Press.
+Furse, M. T., R. C. Kirk, P. R. Morgan, and D. Tweddle. 1979. “Fishes: Distribution and Biology in Relation to Changes.” In, edited by M. Kalk, A. J. McLachlan, and C. Howard-Williams, 175–208. W: Junk Publishers.
+Furse, M. T., P. R. Morgan, and M. Kalk. 1979. “The Fisheries of Lake Chilwa.” In, edited by M. Kalk, A. J. McLachlan, and C. Howard-Williams, 209–29. W: Junk Publishers.
+Furse, MT, PR Morgan, and M Kalk. 1979. “The Fisheries of Lake Chilwa.” In, 209229. Springer.
+Gallant, Alisa L. 2015. “The Challenges of Remote Monitoring of Wetlands.”
+Geertz, C. 1963. “The Integrative Revolution.” In, 105–19. Free Press of Glencoe.
+———. 1978. “The Bazaar Economy: Information and Search in Peasant Marketing.” American Economic Review 68 (2): 28–32.
+Geheb, K., S. Kalloch, M. Medard, A. Nyapendi, C. Lwendya, and M. Kyangwa. 2008. “Nile Perch and the Hungry of Lake Victoria: Gender, Status and Food in an East African Fishery.” Food Policy 33: 85–98.
+Gellner, D. N., and E. Hirsch. 2001. “Introduction: Ethnography of Organisations and Organisations of Ethnography.” In, edited by D. N. Gellner and E. Hirsch, 1–15. Berg.
+Geschiere, P. 1997. The Modernity of Witchcraft: Politics and the Occult in Postcolonial Africa. University of Virginia Press.
+———. 2009. The Perils of Belonging: Autochthony, Citizenship, and Exclusion in Africa and Europe. University of Chicago Press.
+Geschiere, P., and S. Jackson. 2006. “Autochthony and Crisis of Citizenship: Democratisation, Decentralisation, and the Politics of Belonging.” African Studies Review 49 (2): 1–17.
+Geschiere, P., and F. Nyamnjoh. 1998. “Witchcraft as an Issue in the "Politics of Belonging": Democratization and Urban Migrants’ Involvement with the Home Village.” African Studies Review 41 (3): 69–91.
+———. 2000. “Capitalism and Autochthony: The Seesaw of Mobility and Belonging.” Public Culture 12 (2): 432–53.
+Giddens, A. 1994. Beyond Left and Right: The Future of Radical Politics. Stanford University Press.
+Gladwin, C. H., A. Thomson, J. Peterson, and A. S. Anderson. 2001. “Addressing Food Security in Africa via Multiple Livelihood Strategies of Women Farmers.” Food Policy 26: 177–207.
+Glenn, Edward, T Lewis Thompson, Robert Frye, James Riley, and Donald Baumgartner. 1995. “Effects of Salinity on Growth and Evapotranspiration of Typha Domingensis Pers.” Aquatic Botany 52 (1-2): 7591.
+Gluckman, M. 1955. The Judicial Process Among the Barotse of Northern Rhodesia. for the Rhodes-Livingstone Institute: Manchester University Press.
+———. 1967. The Judicial Process Among the Barotse of Northern Rhodesia. 2nd ed. Manchester University Press.
+———. 1979. “Introduction.” In, edited by A. Epstein.
+Godelier, M. 1977. Perspectives in Marxist Anthropology. Cambridge University Press.
+———. 1979. “The Appropriation of Nature.” Critique of Anthropology 4 (13-14): 17–58.
+Goheen, M. 1988. “Land Accumulation and Local Control: The Manipulation of Symbols in Nso, Cameroon.” In, edited by R. Downs and S. Reyna, 180–308. University Press of New England.
+Gore, C. 1993. “Entitlement Relations and "Unruly" Social Practices: A Comment on the Work of Amartya Sen.” Journal of Development Studies 29 (3): 429–60.
+Gough, K. 1961. “The Modern Disintegration of Matrilineal Descent Groups.” In, edited by D. Schneider and K. Gough, 631–54.
+Graeber, D. 2005. “Value: Anthropology Theories of Value.” In, edited by J. G. Carrier. Edward Elgar Publishing.
+Granovetter, M. 1985. “Economic Action and Social Structure: The Problem of Embeddedness.” American Journal of Sociology 91 (3): 481–510.
+Green, E. 1993. “Indirect Rule and Colonial Intervention: Chiefs and Agrarian Change in Nyasaland, 1933 to 1950s.” International Journal of African Historical Studies 26 (2): 249–74.
+———. 2011. “The Political Economy of Nation Formation in Modern Tanzania: Explaining Stability in the Face of Diversity.” Commonwealth & Comparative Politics 49 (2): 223–44.
+Grellier, R., N. Tanzarn, D. Lamberts, and C. Howard. 2004. The Impacts of HIV/AIDS on Fishing Communities in Uganda: Situation Analysis. MRAG: DFID.
+Grillo, R., and R. Stirrat. 1997. Discourses of Development: Anthropological Perspectives. Berg.
+Gritzner, J. A. 1988. “The West African Sahel: Human Agency and Environmental Change.”
+Grundling, Althea Theresa. 2014. “Remote Sensing and Biophysical Monitoring of Vegetation, Terrain Attributes and Hydrology to Map, Characterise and Classify Wetlands of the Maputaland Coastal Plain, KwaZulu-Natal, South Africa.”
+Gudeman, S. 2001. The Anthropology of Economy: Community, Market, and Culture. Publishers: Blackwell.
+Gugerty, M. K. 2007. “You Can’t Save Alone: Commitment in Rotating Savings and Credit Associations in Kenya.” Economic Development and Cultural Change 55 (2): 251–82.
+Gujit, I., and M. K. Shah. 1998. “Waking up to Power, Conflict and Process.” In, edited by I. Gujit and M. K. Shah, 1–23. Intermediate Technology Publications.
+Guyer, J. I. 1981. “Household and Community in African Studies.” African Studies Review 24 (2/3): 87–137.
+———. 1997. Marginal Gains: Monetary Transactions in Atlantic Africa. University of Chicago Press.
+Guyer, J. I., and S. M. E. Belinga. 1995. “Wealth in People as Wealth in Knowledge: Accumulation and Composition in Equatorial Africa.” The Journal of African History 36 (1): 91–120.
+Haily, L. 1950. Native Administration in the British African Territories, Part II, Central Africa: Zanzibar, Nyasaland, and Northern Rhodesia. Colonial Office.
+Haller, T. 2002. “Common Property Resource Management, Institutional Changes and Conflicts in African Floodplain Wetlands.” The African Anthropologist 9 (1): 25–35.
+Haller, T., and S. Merten. 2008. “We Are Zambian  Don’t Tell Us How to Fish!” Institutional Change, Power Relations and Conflicts in the Kafue Flats Fisheries in Zambia. Human Ecology 36 (5): 699–715.
+Hann, C., and K. Hart. 2011. Economic Anthropology. Polity.
+Hara, M. 1996. “Problems of Introducing Community Participation in Fisheries Management: Lessons from Lake Malombe and Upper Shire River (Malawi) Participatory Fisheries Management Programme. Centre for the Southern African Studies, University of Western Cape.” Southern African Perspectives 59: 10–24.
+———. 2001. “Could Co-Management Provide a Solution to the Problems of Artisanal Fisheries Management on the Southeast Arm of Lake Malawi?” PhD thesis.
+———. 2007. “Dilemmas of Democratic Decentralisation in Mangochi District, Malawi: Interest and Mistrust in Fisheries Management.”
+Hara, M., S. J. Donda, and F. Njaya. 2002. “An Evaluation of the Lake Malombe Co-Management Program.” In.
+Hara, M., and E. Jul-Larsen. 2003. “The ’Lords’ of Malombe: An Analysis of Fishery Development and Changes in Fishing Effort on Lake Malombe, Malawi.” In, edited by E. Jul-Larsen, J. Kolding, R. Overa, and others, 179–200. Food; Agricultural Organization.
+Hara, M., and J. Nielsen. 2003. “Experiences with Fisheries Co-Management in Africa.” In, edited by D. Wilson, J. Nielsen, and P. Degnbol, 82–95. Kluwer Academic Publishers.
+Hardin, G. 1968. “The Tragedy of the Commons.” Science 162: 1243–48.
+Harrigan, J. 2003. “U-Turns and Full Circles: Two Decades of Agricultural Reform in Malawi 1981-2000.” World Development 31 (5): 847–63.
+———. 2008. “Food Insecurity, Poverty and the Malawian Starter Pack: Fresh Start or False Start?” Food Policy 33 (3): 237–49.
+Harris, B. 1990. “The Intrafamily Distribution of Hunger in South Asia.” In, edited by J. Drèze and A. Sen, 351–424. Clarendon Press.
+Harrison, P. 1987. The Greening of Africa: Breaking Through in the Battle for Land and Food. Penguin Books.
+Harriss-White, B. 2010. “Work and Wellbeing in Informal Economies: The Regulative Roles of Institutions of Identity and the State.” World Development 38 (2): 170–83.
+Hart, K. 2006. “Formal Bureaucracy and the Emergent Forms of the Informal Economy.” In, edited by B. Guha-Khasnobis, R. Khambur, and E. Ostrom. Oxford University Press.
+Harvey, D. 1989. The Condition of Postmodernity. Vol. 14. Blackwell.
+Hecht, R. 1985. “Immigration, Land Transfer and Tenure Change in Divo, Ivory Coast, 1940-1980.” Africa : Notiziario Dell’Associazione Fra Le Imprese Italiane in Africa 55 (3): 319–36.
+Hegel, G. W. F. 1892. Lectures on the History of Philosophy: Greek Philosophy to Plato (e. S. Haldane, Trans. Vol. 1. University of Nebraska Press.
+———. 2000. Phenomenology of Spirit. Cambridge University Press.
+Hegel, G., E. Haldane, and F. Simson. 1974. Lectures on the History of Philosophy. Atlantic Highlands.
+Hegel, G., and W. Wallace. 1975. Hegel’s Logic. 3rd ed. Clarendon Press.
+Heidegger, M. 1962. Being and Time. SUNY Press.
+Hirschmann, D., and M. Vaughan. 1983. “Food Production and Income Generation in a Matrilineal Society: Rural Women in Zomba, Malawi.” Journal of Southern African Studies 10 (1): 86–99.
+———. 1984. Women Farmers of Malawi: Food Production in Zomba District. Institute of International Studies: University of California.
+Hishamunda, N., and N. B. Ridler. 2006. “Farming Fish for Profits: A Small Step Towards Food Security in Sub-Saharan Africa.” Food Policy 31: 401–14.
+Hodgson, G. M. 2006. “What Are Institutions?” Journal of Economic 40 (1): 1–25.
+Holy, L. 1986. Strategies and Norms in a Changing Matrilineal Society: Descent, Succession and Inheritance Among the Toka of Zambia. Cambridge University Press.
+Homer-Dixon, T. 1999. Environment, Scarcity and Violence. Princeton University Press.
+Howard-Williams, C, and Wendy Howard-Williams. 1978. “Nutrient Leaching from the Swamp Vegetation of Lake Chilwa, a Shallow African Lake.” Aquatic Botany 4: 257267.
+Howard-Williams, Clive, and John J. Gaudet. 1985. “The Structure and Functioning of African Swamps.” In, edited by Patrick Denny, 153175. Dordrecht: Springer Netherlands. https://doi.org/10.1007/978-94-009-5504-2_6.
+Howard-Williams, C., and B. H. Walker. 1974a. “The Vegetation of a Tropical African Lake: Classification and Ordination of the Vegetation of Lake Chilwa (Malawi).” Journal of Ecology 62 (3): 831–54.
+Howard-Williams, C, and BH Walker. 1974b. “The Vegetation of a Tropical African Lake: Classification and Ordination of the Vegetation of Lake Chilwa (Malawi).” The Journal of Ecology, 831854.
+Hulme, D., and B. Adams. 1998. “Conservation and Communities: Changing Narratives, Policies and Practices in African Conservation.”
+Hutton, J., W. M. Adams, and J. C. Murombedzi. 2005. “Back to the Barriers? Changing Narratives in Biodiversity Conservation.” Forum for Development Studies 32 (2): 341–70.
+IFAD. 2013. Rural Poverty in Malawi. Rural Poverty Portal. International Fund for Agricultural Development.
+Irvine, Kenneth, Chris Dickens, Leandro Castello, Ian Bredin, and C Max Finlayson. 2022. “Vegetated Wetlands: From Ecology to Conservation Management.” In, 589639. Elsevier.
+Jackson, M. 1989. Paths Toward a Clearing: Radical Empiricism and Ethnographic Inquiry. Indiana University Press.
+Jameson, F. 1984. “Postmodernism, or the Cultural Logic of Late Capitalism.” New Left Review 146: 53–92.
+Jamu, D., M. Banda, F. Njaya, and R. Hecky. 2011. “Challenges to Sustainable Management of the Lakes of Malawi.” Journal of Great Lakes Research 37 (1): 3–14.
+Jamu, D., J. Chimphamba, and R. Brummett. 2011. Land Use Patterns in the Domasi and Likangala Catchments and Their Effects on Soil Erosion, Water Quality, River Flow Rates, Siltation Rates on Barbus Reproduction in Lake Chilwa: Preliminary Report. The World Fish Centre: ICLARM.
+Jazairy, I., M. Alamgir, and T. Panuccio. 1992. The State of World Rural Poverty: An Inquiry into Its Causes and Consequences. Intermediate Technology Publications.
+Jimu, I. M. 2012. Peri-Urban Land Transactions: Everyday Practices and Relations in Peri-Urban Blantyre, Malawi. Langaa RPCIG.
+John, R. 1934. Institutional Economics: Its Place in Political Economy. Macmillan.
+Johnson, M., and R. Birner. 2013. Understanding the Role of Research in the Evolution of Fertiliser Policies in Malawi. International Food Policy Research Institute.
+Johnson, S. 2004. “"Milking the Elephant": Financial Markets as Real Markets in Kenya.” Development and Change 35 (2): 247–74.
+Johnson, W. I. 1977. “Work Among Portuguese Fishermen: Towards a Model of Social Production.” PhD thesis.
+Jul-Larsen, E. 2003. “Analysis of Effort Dynamics in the Zambian Inshore Fisheries of Lake Kariba.” FAO Fisheries Technical Paper 462 (2): 233–52.
+Jul-Larsen, E., and M. Hara. 2003. “The “Lords” of Malombe: An Analysis of Fishery Development and Changes in Fishing Effort on Lake Malombe, Malawi.” In, edited by E. Jul-Larsen, J. Kolding, R. Overa, J. Raakjaer Nielsen, and P. A. M. van Zwieten, 179–200. 462/2: FAO Fisheries Technical Paper.
+Jul-Larsen, E., and P. A. M. Van Zwieten. 2002. “African Freshwater Fisheries: What Needs to Be Managed?” World Fish Center Quarterly 25 (3): 35–40.
+Kafumbata, Dalitso, Daniel Jamu, and Sosten Chiotha. 2014. “Riparian Ecosystem Resilience and Livelihood Strategies Under Test: Lessons from Lake Chilwa in Malawi and Other Lakes in Africa.” Philosophical Transactions of the Royal Society B: Biological Sciences 369 (1639): 20130052.
+Kalilombe, P. A. 1980. “An Outline of Chewa Traditional Religion.” African Theological Journal 9 (2): 39–51.
+Kalinga, O. 1998. “The Production of History in Malawi in the 1960s: The Legacy of Sir Harry Johnston, the Influence of the Society of Malawi and the Role of Dr Kamuzu Banda and His Malawi Congress Party.” African Affairs 97 (389): 523–49.
+Kalk, Margaret, Clive Howard-Williams, and AJ McLachlan. 2012. Lake Chilwa: Studies of Change in a Tropical Ecosystem. Vol. 35. Springer Science & Business Media.
+Kalk, MJ, and CM Schulten-Senden. 1977. “Zooplankton in a Tropical Endorheic Lake (Lake Chilwa, Malawi) During Drying and Recovery Phases.” Journal of the Limnological Society of Southern Africa 3 (1): 17.
+Kambewa, D. 2005. “Access to and Monopoly over Wetlands in Malawi.” In. South Africa: Johannesburg.
+Kambombe, Oscar, Cosmo Ngongondo, Levis Eneya, Maurice Monjerezi, and Clement Boyce. 2021. “Spatio-Temporal Analysis of Droughts in the Lake Chilwa Basin, Malawi.” Theoretical and Applied Climatology 144: 12191231.
+Kandawire, J. A. K. 1977. “Thangata in Pre-Colonial and Colonial Systems of Land Tenure in Southern Malawi, with Special Reference to Chingale.” Africa : Notiziario Dell’Associazione Fra Le Imprese Italiane in Africa 47 (2): 185–91.
+———. 1979. Thangata: Forced Labour or Reciprocal Assistance? Hetherwick Press.
+———. 1980. “Village Segmentation and Class Formation in Southern Malawi.” Africa : Notiziario Dell’Associazione Fra Le Imprese Italiane in Africa 50 (2): 125–45.
+Kant, I. 1996. Anthropology from a Pragmatic Point of View. Cambridge University Press: Original work published 1797.
+Kapeleta, L. 1980. “The Coming of the Tonga and the Commercialization of Fishing in Monkey Bay Area: A Case Study [Unpublished Paper]. Department of Sociology, Chancellor College, University of Malawi.”
+Kapferer, B. 1996. “Preface to Schism and Continuity in an African Society: A Study of Ndembu Village Life.” In, edited by V. Turner. Berg.
+———. 2006. “Recollections and Refutations.” In, 311. Manchester.
+Kaplan, R. D. 1994. “The Coming Anarchy.” The Atlantic Monthly 273 (2): 44–76.
+Kasmann, E., and W. Chirwa. 1997. Integrated Food Security Programme, Mulanje, Malawi: Mission Report and Recommendations Regarding a ’Village Level Planning’ Approach. GTZ.
+Kaspin, D. 1993. “Chewa Visions and Revisions of Power: Transformations of the Nyau Dance in Central Malawi.” In, edited by J. Comaroff and J. L. Comaroff. University of Chicago Press.
+Keeley, J., and I. Scoones. 2000. “Knowledge, Power and Politics: The Environmental Policy-Making Process in Ethiopia.” The Journal of Modern African Studies 38 (1): 89–120.
+Kher, A. 2008. “Review of Social Science Literature on Risk and Vulnerability to HIV/AIDS in Fishing Communities in Sub-Saharan Africa. Regional Programme Fisheries and HIV/AIDS in Africa: Investing in Sustainable Solutions.” The WorldFish Center. Project Report 1966.
+Khonje, A., C. A. Metcalf, E. Diggle, D. Mlozowa, C. Jere, A. Akesson, T. Corbet, and Z. Chimanga. 2012. “Cholera Outbreak in Districts Around Lake Chilwa, Malawi: Lessons Learned.” Malawi Medical Journal 24 (2): 29–33.
+Kinyanjui, M. N. 2010. “Social Relations and Associations in the Informal Sector in Kenya. United Nations Research for Social Development.”
+———. 2012. Vyama Institutions of Hope: Ordinary Peoples Market Coordination and Organisation. Nsemia Publishers USA.
+Kishindo, P. 2004. “Customary Land Tenure and the New Land Policy in Malawi.” Journal of Contemporary African Studies 22 (2): 213–25.
+———. 2010a. “Emerging Reality in Customary Land Tenure: The Case of Kachenga Village in Balaka District, Southern Malawi.” African Sociological Review 14 (1): 113–29.
+———. 2010b. “The Marital Immigrant, Land and Agriculture: A Malawian Case Study.” African Sociological Review 14 (2): 89–97.
+Kopytoff, I. 1987. “The Internal African Frontier: The Making of African Political Culture.” In, edited by I. Kopytoff, 3–86. Indiana University Press.
+Kuper, A. 1988. Anthropology and Anthropologists: The Modern British School. Routledge; Kegan Paul.
+Kurien, J. 1985. “Technical Assistance Projects and Socio-Economic Change: Norwegian Intervention in Kerala’s Fisheries Development.” Economic and Political Weekly 20 (25-26): A70–88.
+Kurien, J., and T. R. T. Achari. 1990. “Overfishing Along Kerala Coast: Causes and Consequences.” Economic and Political Weekly 25 (38): 2011–18.
+Kutser, Tiit. 2012. “The Possibility of Using the Landsat Image Archive for Monitoring Long Time Trends in Coloured Dissolved Organic Matter Concentration in Lake Waters.” Remote Sensing of Environment 123: 334338.
+Kydd, J. G. 1984. “Malawi in the 1970s: Development Policies and Economic Change in Malawi: An Alternative Pattern of Development. Seminar Proceedings No.” 25. Centre of African Studies, University of Edinburgh.
+Kydd, J. G., and R. Christiansen. 1982. “Structural Change in Malawi Since Independence: Consequences of a Development Strategy Based on Large-Scale Agriculture.” World Development 10 (5): 355–75.
+Lancaster, C. S. 1981a. The Goba of the Zambezi: Sex Roles, Economics, and Change. University of Oklahoma Press.
+———. 1981b. The Goba of the Zambezi: Sex Roles, Economics, and Change. University of Oklahoma Press.
+Lancaster, N. 1979. “The Changes in the Lake Level.” In, 4158. Springer.
+Law, J. 2008. “Actor Network Theory and Material Semiotics.” In, edited by B. S. Turner. Blackwell.
+———. 2012. “Notes on Fish, Ponds, and Theory.” Norsk Anthropologisk Tidsskrift 23 (3-4): 225–36.
+Layton, R. H. 2001. “Hunter-Gatherers, Their Neighbours and the Nation State.” In, edited by R. H. Layton and P. Rowley-Conwy, 292–321. Cambridge University Press.
+Le Billon, P. 2001. “The Political Ecology of War: Natural Resources and Armed Conflicts.” Political Geography 20 (5): 561–84.
+Leach, E. R. 1961. “& London School of Economics and Political Science.” Rethinking Anthropology 22.
+Leach, M. 1991a. “Engendered Environments: Understanding Natural Resource Management in the West African Forest Zone.” IDS Bulletin 22 (4): 17–24.
+———. 1991b. “Engendered Environments: Understanding Natural Resource Management in the West African Forest Zone.” IDS Bulletin 22 (4): 17–24.
+———. 1994. Rainforest Relations: Gender and Resource Use Among the Mende of Gola, Sierra Leone. Edinburgh University Press.
+Leach, M., and R. Mearns, eds. 1996. The Lie of the Land: Challenging Received Wisdom on the African Environment. James Currey; Heinemann.
+Leach, M., R. Mearns, and I. Scoones. 1999. “Environmental Entitlements: Dynamics and Institutions in Community-Based Natural Resource Management.” World Development 27 (2): 225–47.
+Leblanc, M, Jacques Lemoalle, J-C Bader, S Tweed, and L Mofor. 2011. “Thermal Remote Sensing of Water Under Flooded Vegetation: New Observations of Inundation Patterns for the ‘Small’lake Chad.” Journal of Hydrology 404 (1-2): 8798.
+Leftwich, A. 2009. “Analysing the Politics of State-Business Relations: A Methodological Concept Note on the Historical Institutionalist Approach.”
+Lehning, A. 1973. Michael Bakunin: Selected Writings. Grove Press.
+Lévi-Strauss, C. 1955. “The Structural Study of Myth.” Journal of American Folklore 68 (270): 428–44.
+———. 1973. “Structuralism and Ecology.” Graduate Faculty Philosophy Journal 7 (2): 153–78.
+———. 1978a. Myth and Meaning. Routledge &: Kegan Paul.
+———. 1978b. Myth and Meaning. Routledge &: Kegan Paul.
+Levy, S. 2005. “Financing and Macro-Economic Impact.” In, edited by S. Levy, 203–8. packs: A strategy to fight hunger in developing countries? Lessons from the Malawi experience 1998-2003.
+Li, T. M. 1996. “Images of Community: Discourse and Strategy in Property Relations.” Development and Change 27 (3): 501–27.
+———. 2000. “Articulating Indigenous Identity in Indonesia: Resource Politics and the Tribal Slot.” Comparative Studies in Society and History 42 (1): 149–79.
+———. 2002. “Engaging Simplifications: Community Based Resource Management, Market Processes and State Agendas in Upland Southeast Asia.” World Development 30 (2): 265–83.
+———. 2005. “Beyond "the State" and Failed Schemes.” American Anthropologist 107 (3): 383–94.
+Li, T. M., D. Hall, and P. Hirsch. 2011. Powers of Exclusion: Land Dilemmas in Southeast Asia. NUS Press.
+Little, P. 1985a. “Absentee Herdowners and Part-Time Pastoralists: The Political Economy of Resource Use in Northern Kenya.” Human Ecology 13 (2): 131–51.
+———. 1985b. “Absentee Herdowners and Part-Time Pastoralists: The Political Economy of Resource Use in Northern Kenya.” Human Ecology 13 (2): 131–51.
+Livingstone, D. 2011. The Last Journals of David Livingstone in Central Africa, from 1865 to His Death. Cambridge University Press.
+Livingstone, D., and C. Livingstone. 1971. Narrative of an Expedition to the Zambezi and Its Tributaries: And of the Discovery of the Lakes Shirwa and Nyassa, 1858-64. Johnson Reprint Corp.
+Livingstone, W. P. 1921. Laws of Livingstonia: A Narrative of Missionary Adventure and Achievement. Livingstonia Mission Report.
+Long, N. 1968. Social Change and the Individual: A Study of the Social and Religious Response to Innovation in a Zambian Rural Community. Manchester: University of Press.
+———. 1977. An Introduction to the Sociology of Rural Development. Tavistock Publications.
+———. 1989a. Encounters at the Interface. Wageningse Sociologische Studies 27. Agricultural University Wageningen.
+———. 1989b. Encounters at the Interface. Wageningse Sociologische Studies 27. Agricultural University Wageningen.
+Long, N., and M. Villareal. 1994. “The Interweaving of Knowledge and Power in Development Interfaces.” In, edited by I. Scoones and J. Thompson. IT Publications.
+Lopes, Simeao, Ernesto Poiosse, James Wilson, Jean Louis Kromer, Lino Manuel, Caetano Cululo, and AR Pinto. 1998. “From No Management Towards Co-Management? A Case Study on Artisanal Fisheries in Angoche District, Nampula Province, Mozambique.”
+Lopes, S., E. Poisse, J. Wilson, I. Kromer, C. Manuel, C. Cululo, and M. Pinto. 1998. “From No Management Towards Co-Management?” In, edited by Proceedings of, 125–50. a regional workshop on fisheries co-management research: IFM.
+Lu, Dongshuo, and Jianbo Chang. 2023. “Examining Human Disturbances and Inundation Dynamics in China’s Marsh Wetlands by Using Time Series Remote Sensing Data.” Science of The Total Environment 863: 160961.
+Macuiane, MA, E KW Kaunda, DM Jamu, and GZ Kanyerere. 2009. “Reproductive Biology and Breeding of Barbus Paludinosus and b. Trimaculatus (Teleostei: Cyprinidae) in Lake Chilwa, Malawi: Implications for Fisheries Management.” African Journal of Aquatic Science 34 (2): 123130.
+Macuiane, Messias A, Emmanuel KW Kaunda, and Daniel Jamu. 2011. “Seasonal Dynamics of Physico-Chemical Characteristics and Biological Responses of Lake Chilwa, Southern Africa.” Journal of Great Lakes Research 37: 7582.
+Makwinja, Rodgers, Emmanuel Kaunda, Seyoum Mengistou, and Tena Alamirew. 2021. “Impact of Land Use/Land Cover Dynamics on Ecosystem Service Valuea Case from Lake Malombe, Southern Malawi.” Environmental Monitoring and Assessment 193: 123.
+Makwinja, Rodgers, Seyoum Mengistou, Emmanuel Kaunda, and Tena Alamirew. 2022. “Complex Interactions Between Benefits, Ecosystem Services and Landscape Dynamics: A Synthesis of Lake Malombe, Malawi.” Lakes & Reservoirs: Research & Management 27 (1): e12392.
+Malawi, Government of. 1911. “Witchcraft Act.”
+———. 1994. Constitution of the Republic of Malawi. Government Press.
+———. 1997. “Fisheries Management and Conservation Act” 1997 (25).
+———. 1998. Malawi National Decentralisation Policy. Decentralisation Secretariat.
+———. 1999. Resource Report, 1999. Fisheries Department.
+———. 2001a. Economic Report. Department of Economic Planning; Development.
+———. 2001b. “National Fisheries and Aquaculture Policy.”
+———. 2002a. Malawi Core Welfare Indicators: Questionnaire Survey Report and Survey Results. National Statistics Office.
+———. 2002b. Participatory Frame Survey for Lake Chilwa. Department of Fisheries.
+———. 2004. Report on the Review of the National Decentralisation Programme of Malawi 20012004. Government of Malawi.
+———. 2005. “Frame Survey Report for Malawi. Department of Fisheries, Ministry of Natural Resources and Environmental Affairs.”
+Matthews, Mark William. 2011. “A Current Review of Empirical Procedures of Remote Sensing in Inland and Near-Coastal Transitional Waters.” International Journal of Remote Sensing 32 (21): 68556899.
+Mayaux, Philippe, Etienne Bartholomé, Steffen Fritz, and Alan Belward. 2004. “A New Land-Cover Map of Africa for the Year 2000.” Journal of Biogeography 31 (6): 861877.
+Missi, Charles, and Eliot A Atekwana. 2020. “Physical, Chemical and Isotopic Characteristics of Groundwater and Surface Water in the Lake Chilwa Basin, Malawi.” Journal of African Earth Sciences 162: 103737.
+Mohamed, YA, WGM Bastiaanssen, and HHG Savenije. 2004. “Spatial Variability of Evaporation and Moisture Storage in the Swamps of the Upper Nile Studied by Remote Sensing Techniques.” Journal of Hydrology 289 (1-4): 145164.
+Morgan, A, and Margaret Kalk. 1970. “Seasonal Changes in the Waters of Lake Chilwa (Malawi) in a Drying Phase, 196668.” Hydrobiologia 36: 81103.
+Msiska, OV. 2001. “A Review of Limnology of Malawi.” Limnology in Developing Countries 3: 121189.
+Musetsho, Khangwelo Desmond, Munyaradzi Chitakira, and Willem Nel. 2021. “Mapping Land-Use/Land-Cover Change in a Critical Biodiversity Area of South Africa.” International Journal of Environmental Research and Public Health 18 (19): 10164.
+Ngongondo, Cosmo, Chong-Yu Xu, Lars Gottschalk, and Berhanu Alemaw. 2011. “Evaluation of Spatial and Temporal Characteristics of Rainfall in Malawi: A Case of Data Scarce Region.” Theoretical and Applied Climatology 106: 7993.
+Ngongondo, Cosmo, Chong-Yu Xu, Lena M Tallaksen, and Berhanu Alemaw. 2015. “Observed and Simulated Changes in the Water Balance Components over Malawi, During 19712000.” Quaternary International 369: 716.
+Nicholson, SE, D Klotter, and G Chavula. 2014. “A Detailed Rainfall Climatology for Malawi, Southern Africa.” International Journal of Climatology 34 (2): 315325.
+Njaya, Friday, Katherine A Snyder, Daniel Jamu, John Wilson, Clive Howard-Williams, Edward H Allison, and Neil L Andrew. 2011. “The Natural History and Fisheries Ecology of Lake Chilwa, Southern Malawi.” Journal of Great Lakes Research 37: 1525.
+Ochuka, Molly, Chris Ikporukpo, Yahaya Mijinyawa, George Ogendi, and others. 2019. “Land Use/Land Cover Dynamics and Anthropogenic Driving Factors in Lake Baringo Catchment, Rift Valley, Kenya.” Natural Resources 10 (10): 367.
+Ogashawara, Igor, Deepak R Mishra, and Anatoly A Gitelson. 2017. “Remote Sensing of Inland Waters: Background and Current State-of-the-Art.” In, 124. Elsevier.
+Osborne, Patrick L. 2000. Tropical Ecosystems and Ecological Concepts. Cambridge University Press.
+Ozesmi, Stacy L, and Marvin E Bauer. 2002. “Satellite Remote Sensing of Wetlands.” Wetlands Ecology and Management 10: 381402.
+Palmer, Stephanie CJ, Tiit Kutser, and Peter D Hunter. 2015. “Remote Sensing of Inland Waters: Challenges, Progress and Future Directions.”
+Peng, Huanhua, Haonan Xia, Qian Shi, Hao Chen, Nan Chu, Ji Liang, and Zirang Gao. 2022. “Monitoring Spatial and Temporal Dynamics of Wetland Vegetation and Their Response to Hydrological Conditions in a Large Seasonal Lake with Time Series Landsat Data.” Ecological Indicators 142: 109283.
+Philippe, Musumba Teso, and Katcho Karume. 2019. “Assessing Forest Cover Change and Deforestation Hot-Spots in the North Kivu Province, DR-Congo Using Remote Sensing and GIS.” American Journal of Geographic Information System [En Línea] 8 (2): 3954.
+Pullanikkatil, Deepa. 2014. “Mapping of Provisioning Ecosystems Services in Likangala River Catchment, Zomba, Southern Malawi.” University, Ed., Malawi.
+Pullanikkatil, Deepa, Lobina Palamuleni, and Tabukeli Ruhiiga. 2016. “Assessment of Land Use Change in Likangala River Catchment, Malawi: A Remote Sensing and DPSIR Approach.” Applied Geography 71: 923.
+Rebelo, Lisa-Maria, Matthew P McCartney, and Max C Finlayson. 2011. “The Application of Geospatial Analyses to Support an Integrated Study into the Ecological Character and Sustainable Use of Lake Chilwa.” Journal of Great Lakes Research 37: 8392.
+Rivett, Michael O, Shona Symon, Lucas Jacobs, Limbikani C Banda, Gift J Wanangwa, Donald JC Robertson, Ibrahim Hassan, et al. 2020. “Paleo-Geohydrology of Lake Chilwa, Malawi Is the Source of Localised Groundwater Salinity and Rural Water Supply Challenges.” Applied Sciences 10 (19): 6909.
+Russell, Aaron JM, Tracy Dobson, and John GM Wilson. 2008. “Fisheries Management in Malawi: A Patchwork of Traditional, Modern, and Post-Modern Regimes Unfolds.”
+Sarch, Marie-Therese, and Edward H Allison. 2001. “Fluctuating Fisheries in Africa’s Inland Waters: Well Adapted Livelihoods, Maladapted Management.”
+Secretariat, Commonwealth. 2007. “ESA Meeting on Trade and Sustainable Approaches to Fisheries Negotiation Under WTO/EPA.”
+Sulieman, Hussein M, and Abdel Ghaffar M Ahmed. 2013. “Monitoring Changes in Pastoral Resources in Eastern Sudan: A Synthesis of Remote Sensing and Local Knowledge.” Pastoralism: Research, Policy and Practice 3 (1): 116.
+Tebbs, EJ, JJ Remedios, ST Avery, and DM Harper. 2013. “Remote Sensing the Hydrological Variability of Tanzania’s Lake Natron, a Vital Lesser Flamingo Breeding Site Under Threat.” Ecohydrology & Hydrobiology 13 (2): 148158.
+Thamaga, Kgabo Humphrey, Timothy Dube, and Cletah Shoko. 2022. “Advances in Satellite Remote Sensing of the Wetland Ecosystems in Sub-Saharan Africa.” Geocarto International 37 (20): 58915913.
+Van Zegeren, K. 1998. “The Size of the Lake Chilwa Wetland.” Malawi Journal of Science and Technology 4: 112.
+Vancutsem, Christelle, J-F Pekel, C Evrard, Francois Malaisse, and Pierre Defourny. 2009. “Mapping and Characterizing the Vegetation Types of the Democratic Republic of Congo Using SPOT VEGETATION Time Series.” International Journal of Applied Earth Observation and Geoinformation 11 (1): 6276.
+Vanden Bossche, J-P, and Garry M Bernacsek. 1990. Source Book for the Inland Fishery Resources of Africa. Vol. 1. 18. Food & Agriculture Org.
+Wilson, JGM. 1999. “The Waterfowl of Lake Chilwa and Their Utilization by Local Communities and Conservation Measures as Required by the Ramsar Convention.” State of the Environment Study, no. 20.
+Wilson, John. 2014. “The History of the Level of Lake Chilwa.” The Society of Malawi Journal 67 (2): 4145.
+Xue, Kun, Yuchao Zhang, Hongtao Duan, and Ronghua Ma. 2017. “Variability of Light Absorption Properties in Optically Complex Inland Waters of Lake Chaohu, China.” Journal of Great Lakes Research 43 (1): 1731.
+Yiran, GAB, JM Kusimi, and SK Kufogbe. 2012. “A Synthesis of Remote Sensing and Local Knowledge Approaches in Land Degradation Assessment in the Bawku East District, Ghana.” International Journal of Applied Earth Observation and Geoinformation 14 (1): 204213.
+Zhang, Guoqing, Junli Li, and Guoxiong Zheng. 2017. “Lake-Area Mapping in the Tibetan Plateau: An Evaluation of Data and Methods.” International Journal of Remote Sensing 38 (3): 742772.
+

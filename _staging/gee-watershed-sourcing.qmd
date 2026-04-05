@@ -1,0 +1,254 @@
+---
+title: "GEE Watershed Data Sourcing: Lake Chilwa Basin"
+author: "Murphy, S."
+date: today
+format:
+  html:
+    toc: true
+    code-fold: true
+    code-summary: "View Code"
+    theme: cosmo
+execute:
+  eval: false
+  echo: true
+  warning: false
+  message: false
+engine: knitr
+---
+
+## Setup
+
+Initialise GEE via reticulate, matching the main analysis environment.
+
+```{r setup}
+library(sf)
+library(tmap)
+library(dplyr)
+
+reticulate::use_python("/opt/local/bin/python", required = TRUE)
+ee <- reticulate::import("ee")
+ee$Initialize(project = "murphys-deforisk")
+
+# Helpers
+ee_tile_url <- function(ee_image, vis_params) {
+  ee_image$getMapId(vis_params)$tile_fetcher$url_format
+}
+
+ee_to_sf <- function(fc) {
+  geojsonsf::geojson_sf(
+    jsonlite::toJSON(fc$getInfo(), auto_unbox = TRUE)
+  )
+}
+```
+
+## Step 1: Select a Point
+
+The entire workflow begins from a single coordinate pair placed within
+the waterbody of interest. Everything downstream derives from this point.
+
+```{r point}
+# Lake Chilwa centre (lon, lat)
+lon <- 35.55
+lat <- -15.35
+
+poi <- ee$Geometry$Point(c(lon, lat))
+poi_sf <- st_sfc(st_point(c(lon, lat)), crs = 4326)
+```
+
+## Step 2: Identify the Containing Watershed
+
+Query HydroSHEDS basins at multiple levels to find the watershed polygon
+that contains the selected point. Level 6 returns the broadest drainage
+basin; level 8 gives finer sub-catchments nested within it.
+
+```{r watershed-query}
+# Broad basin (level 6)
+basin_l6 <- ee$FeatureCollection("WWF/HydroSHEDS/v1/Basins/hybas_6")$
+  filterBounds(poi)
+basin_l6_sf <- ee_to_sf(basin_l6)
+
+# Sub-catchments (level 8)
+basin_l8 <- ee$FeatureCollection("WWF/HydroSHEDS/v1/Basins/hybas_8")$
+  filterBounds(poi)
+basin_l8_sf <- ee_to_sf(basin_l8)
+
+print(paste("Level 6 basins containing point:", nrow(basin_l6_sf)))
+print(paste("Level 8 sub-catchments:", nrow(basin_l8_sf)))
+```
+
+## Step 3: Define the AOI from the Watershed
+
+Use the level-6 basin as the primary AOI geometry. This becomes the
+clip boundary for all subsequent raster and vector queries.
+
+```{r aoi}
+# Dissolve level-6 features into a single watershed boundary
+aoi_sf <- st_union(basin_l6_sf)
+aoi_ee <- ee$FeatureCollection(basin_l6)$geometry()
+
+# Bounding box for map framing
+aoi_bbox <- st_bbox(aoi_sf)
+```
+
+## Step 4: Visual Check
+
+Confirm the point falls within the derived watershed and that the
+boundary aligns with expected drainage divides.
+
+```{r map-check}
+tmap_mode("view")
+
+tm_shape(st_as_sf(aoi_sf)) +
+  tm_borders(col = "red", lwd = 2) +
+tm_shape(basin_l8_sf) +
+  tm_borders(col = "cyan", lwd = 0.5, lty = "dashed") +
+tm_shape(st_as_sf(poi_sf)) +
+  tm_dots(col = "yellow", size = 0.1) +
+tm_basemap("Esri.WorldImagery") +
+tm_scalebar(position = c("right", "bottom"))
+```
+
+## Step 5: Compare with Local Shapefile
+
+If a local watershed shapefile exists, overlay it against the
+GEE-derived boundary to assess agreement.
+
+```{r compare-local}
+local_aoi <- read_sf("../inputs/chilwa_watershed_4326.shp")
+
+tmap_mode("view")
+
+tm_shape(st_as_sf(aoi_sf)) +
+  tm_borders(col = "red", lwd = 2) +
+tm_shape(local_aoi) +
+  tm_borders(col = "blue", lwd = 2, lty = "dashed") +
+tm_shape(st_as_sf(poi_sf)) +
+  tm_dots(col = "yellow", size = 0.1) +
+tm_basemap("Esri.WorldImagery") +
+tm_scalebar(position = c("right", "bottom"))
+```
+
+## Step 6: Clip Hydrological Rasters to Watershed
+
+With the AOI established, source DEM and flow derivatives from
+HydroSHEDS and MERIT Hydro, clipped to the watershed boundary.
+
+```{r hydrorasters}
+# HydroSHEDS: conditioned DEM (~90m)
+hydrodem <- ee$Image("WWF/HydroSHEDS/03VFDEM")$clip(aoi_ee)
+
+# HydroSHEDS: D8 flow direction
+flowdir <- ee$Image("WWF/HydroSHEDS/03DIR")$clip(aoi_ee)
+
+# HydroSHEDS: flow accumulation
+flowacc <- ee$Image("WWF/HydroSHEDS/03ACC")$clip(aoi_ee)
+```
+
+```{r merit}
+# MERIT Hydro: flow direction
+merit_dir <- ee$Image("MERIT/Hydro/v1_0_1")$select("dir")$clip(aoi_ee)
+
+# MERIT Hydro: upstream drainage area (km2)
+merit_upa <- ee$Image("MERIT/Hydro/v1_0_1")$select("upa")$clip(aoi_ee)
+
+# MERIT Hydro: water surface elevation
+merit_elv <- ee$Image("MERIT/Hydro/v1_0_1")$select("elv")$clip(aoi_ee)
+
+# MERIT Hydro: river channel width
+merit_wth <- ee$Image("MERIT/Hydro/v1_0_1")$select("wth")$clip(aoi_ee)
+```
+
+## Step 7: Cartographic Hydrography
+
+Rivers, streams, and lake polygons for base map context. These are
+cartographic reference layers, not analytical inputs.
+
+```{r rivers}
+# HydroSHEDS free-flowing rivers (global vector, filtered to AOI)
+rivers <- ee$FeatureCollection("WWF/HydroSHEDS/v1/FreeFlowingRivers")$
+  filterBounds(aoi_ee)
+rivers_sf <- ee_to_sf(rivers)
+print(paste("River segments in AOI:", nrow(rivers_sf)))
+```
+
+```{r lakes}
+# HydroLAKES: global lake polygons (community upload)
+lakes <- ee$FeatureCollection(
+  "projects/sat-io/open-datasets/HydroLakes/hydrolakes_polys")$
+  filterBounds(aoi_ee)
+lakes_sf <- ee_to_sf(lakes)
+print(paste("Lakes in AOI:", nrow(lakes_sf)))
+```
+
+```{r streams}
+# MERIT Hydro: derive a stream network from upstream drainage area
+# Threshold at 10 km2 catchment area to extract visible streams
+merit_upa_clip <- ee$Image("MERIT/Hydro/v1_0_1")$
+  select("upa")$clip(aoi_ee)
+streams_raster <- merit_upa_clip$gt(10)
+```
+
+```{r map-hydro}
+tmap_mode("view")
+
+tm_shape(st_as_sf(aoi_sf)) +
+  tm_borders(col = "red", lwd = 2) +
+tm_shape(lakes_sf) +
+  tm_fill(col = "steelblue", alpha = 0.5) +
+  tm_borders(col = "steelblue", lwd = 1) +
+tm_shape(rivers_sf) +
+  tm_lines(col = "dodgerblue", lwd = 1.5) +
+tm_shape(st_as_sf(poi_sf)) +
+  tm_dots(col = "yellow", size = 0.1) +
+tm_basemap("Esri.WorldImagery") +
+tm_scalebar(position = c("right", "bottom"))
+```
+
+## Step 8: Source Surface Water History
+
+JRC Global Surface Water provides Landsat-derived water occurrence,
+seasonality, and monthly presence maps spanning 1984 to 2021. Clip to
+the watershed AOI.
+
+```{r jrc-gsw}
+gsw <- ee$Image("JRC/GSW1_4/GlobalSurfaceWater")$clip(aoi_ee)
+
+gsw_occurrence   <- gsw$select("occurrence")
+gsw_seasonality  <- gsw$select("seasonality")
+gsw_recurrence   <- gsw$select("recurrence")
+gsw_transition   <- gsw$select("transition")
+
+# Monthly water history within the watershed
+gsw_monthly <- ee$ImageCollection("JRC/GSW1_4/MonthlyHistory")$
+  filterBounds(aoi_ee)
+print(paste("JRC monthly images:", gsw_monthly$size()$getInfo()))
+```
+
+## Step 8: Export
+
+Write GEE-sourced vectors to the staging directory for review.
+
+```{r export}
+st_write(basin_l6_sf,
+  "../_staging/chilwa_hydrobasins_l6.gpkg", delete_dsn = TRUE)
+st_write(basin_l8_sf,
+  "../_staging/chilwa_hydrobasins_l8.gpkg", delete_dsn = TRUE)
+st_write(rivers_sf,
+  "../_staging/chilwa_rivers.gpkg", delete_dsn = TRUE)
+st_write(lakes_sf,
+  "../_staging/chilwa_lakes.gpkg", delete_dsn = TRUE)
+```
+
+## Summary
+
+The workflow proceeds in a single chain from point to watershed to data:
+
+1. Place a coordinate in the waterbody of interest.
+2. Query HydroSHEDS basins to retrieve the containing watershed at two
+   nesting levels.
+3. Dissolve the broad basin into a single AOI geometry.
+4. Visually confirm the boundary and compare with any local shapefiles.
+5. Clip HydroSHEDS DEM derivatives and MERIT Hydro layers to the AOI.
+6. Source rivers, streams, and lake polygons for cartographic context.
+7. Clip JRC surface water history to the AOI.
+8. Export vectors to `_staging/` for review.

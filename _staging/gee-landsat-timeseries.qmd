@@ -1,0 +1,385 @@
+---
+title: "Landsat Time Series Processing: Lake Chilwa Basin (1994-2015)"
+author: "Murphy, S."
+date: today
+format:
+  html:
+    toc: true
+    code-fold: true
+    code-summary: "View Code"
+    theme: cosmo
+execute:
+  eval: false
+  echo: true
+  warning: false
+  message: false
+engine: knitr
+---
+
+## Setup
+
+```{r setup}
+library(sf)
+library(tmap)
+library(dplyr)
+library(ggplot2)
+
+reticulate::use_python("/opt/local/bin/python", required = TRUE)
+ee <- reticulate::import("ee")
+ee$Initialize(project = "murphys-deforisk")
+
+ee_to_sf <- function(fc) {
+  geojsonsf::geojson_sf(
+    jsonlite::toJSON(fc$getInfo(), auto_unbox = TRUE)
+  )
+}
+```
+
+## AOI
+
+```{r aoi}
+poi <- ee$Geometry$Point(c(35.55, -15.35))
+
+basin_l6 <- ee$FeatureCollection("WWF/HydroSHEDS/v1/Basins/hybas_6")$
+  filterBounds(poi)
+aoi_ee <- basin_l6$geometry()
+aoi_sf <- ee_to_sf(basin_l6) |> st_union()
+```
+
+## Step 1: Harmonise Landsat 5, 7, and 8 Surface Reflectance
+
+Landsat Collection 2 Level-2 surface reflectance products span the
+study period (1994-2015) across three sensors. Band names differ between
+sensors and must be harmonised to a common naming convention before
+compositing.
+
+```{r band-harmonise}
+# Landsat 5 TM: 1984-2012
+rename_l5 <- function(image) {
+  image$select(
+    c("SR_B1", "SR_B2", "SR_B3", "SR_B4", "SR_B5", "SR_B7", "ST_B6", "QA_PIXEL"),
+    c("Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2", "Thermal", "QA_PIXEL")
+  )$multiply(0.0000275)$add(-0.2)$
+    copyProperties(image, list("system:time_start", "system:index"))
+}
+
+# Landsat 7 ETM+: 1999-present
+rename_l7 <- function(image) {
+  image$select(
+    c("SR_B1", "SR_B2", "SR_B3", "SR_B4", "SR_B5", "SR_B7", "ST_B6", "QA_PIXEL"),
+    c("Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2", "Thermal", "QA_PIXEL")
+  )$multiply(0.0000275)$add(-0.2)$
+    copyProperties(image, list("system:time_start", "system:index"))
+}
+
+# Landsat 8 OLI: 2013-present
+rename_l8 <- function(image) {
+  image$select(
+    c("SR_B2", "SR_B3", "SR_B4", "SR_B5", "SR_B6", "SR_B7", "ST_B10", "QA_PIXEL"),
+    c("Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2", "Thermal", "QA_PIXEL")
+  )$multiply(0.0000275)$add(-0.2)$
+    copyProperties(image, list("system:time_start", "system:index"))
+}
+```
+
+## Step 2: Cloud and Shadow Masking
+
+Apply QA_PIXEL bitmask to remove cloud, cloud shadow, and snow pixels.
+
+```{r cloud-mask}
+mask_clouds <- function(image) {
+  qa <- image$select("QA_PIXEL")
+
+  # Bits 3 (cloud shadow), 4 (cloud), 5 (snow)
+  cloud_shadow <- qa$bitwiseAnd(bitwShiftL(1L, 3L))$eq(0L)
+  cloud        <- qa$bitwiseAnd(bitwShiftL(1L, 4L))$eq(0L)
+  snow         <- qa$bitwiseAnd(bitwShiftL(1L, 5L))$eq(0L)
+
+  mask <- cloud_shadow$And(cloud)$And(snow)
+
+  image$updateMask(mask)$
+    select(c("Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2"))$
+    copyProperties(image, list("system:time_start", "system:index"))
+}
+```
+
+## Step 3: Build the Merged Collection (1994-2015)
+
+Query each sensor for the study period, apply harmonisation and cloud
+masking, then merge into a single image collection.
+
+```{r merge-collection}
+start_date <- "1994-01-01"
+end_date   <- "2016-01-01"
+
+l5 <- ee$ImageCollection("LANDSAT/LT05/C02/T1_L2")$
+  filterBounds(aoi_ee)$
+  filterDate(start_date, "2012-01-01")$
+  filter(ee$Filter$lt("CLOUD_COVER", 30L))$
+  map(rename_l5)$map(mask_clouds)
+
+l7 <- ee$ImageCollection("LANDSAT/LE07/C02/T1_L2")$
+  filterBounds(aoi_ee)$
+  filterDate("1999-01-01", end_date)$
+  filter(ee$Filter$lt("CLOUD_COVER", 30L))$
+  map(rename_l7)$map(mask_clouds)
+
+l8 <- ee$ImageCollection("LANDSAT/LC08/C02/T1_L2")$
+  filterBounds(aoi_ee)$
+  filterDate("2013-04-01", end_date)$
+  filter(ee$Filter$lt("CLOUD_COVER", 30L))$
+  map(rename_l8)$map(mask_clouds)
+
+landsat <- l5$merge(l7)$merge(l8)$sort("system:time_start")
+
+n_scenes <- landsat$size()$getInfo()
+print(paste("Total Landsat scenes (1994-2015):", n_scenes))
+```
+
+## Step 4: Compute Spectral Water Indices
+
+Five indices from the manuscript, computed on every scene in the merged
+collection.
+
+```{r spectral-indices}
+add_water_indices <- function(image) {
+  blue  <- image$select("Blue")
+  green <- image$select("Green")
+  red   <- image$select("Red")
+  nir   <- image$select("NIR")
+  swir1 <- image$select("SWIR1")
+  swir2 <- image$select("SWIR2")
+
+  # NDWI: (Green - NIR) / (Green + NIR)
+  ndwi <- green$subtract(nir)$divide(green$add(nir))$rename("NDWI")
+
+  # MNDWI: (Green - SWIR1) / (Green + SWIR1)
+  mndwi <- green$subtract(swir1)$divide(green$add(swir1))$rename("MNDWI")
+
+  # AWEIsh: Blue + 2.5*Green - 1.5*(NIR + SWIR1) - 0.25*SWIR2
+  aweish <- blue$
+    add(green$multiply(2.5))$
+    subtract(nir$add(swir1)$multiply(1.5))$
+    subtract(swir2$multiply(0.25))$
+    rename("AWEIsh")
+
+  # WRI: (Green + Red) / (NIR + SWIR1)
+  wri <- green$add(red)$divide(nir$add(swir1))$rename("WRI")
+
+  # NDPI: (SWIR1 - Green) / (SWIR1 + Green)
+  ndpi <- swir1$subtract(green)$divide(swir1$add(green))$rename("NDPI")
+
+  image$addBands(c(ndwi, mndwi, aweish, wri, ndpi))$
+    copyProperties(image, list("system:time_start", "system:index"))
+}
+
+landsat_indices <- landsat$map(add_water_indices)
+```
+
+## Step 5: Seasonal Composites
+
+Aggregate to seasonal composites (wet: Nov-Apr, dry: May-Oct) per year
+using median reduction to suppress outliers.
+
+```{r seasonal-composites}
+years <- seq(1994L, 2015L)
+
+make_seasonal <- function(year) {
+  # Wet season: November of prior year through April
+  wet_start <- ee$Date$fromYMD(as.integer(year - 1L), 11L, 1L)
+  wet_end   <- ee$Date$fromYMD(as.integer(year), 5L, 1L)
+
+  # Dry season: May through October
+  dry_start <- ee$Date$fromYMD(as.integer(year), 5L, 1L)
+  dry_end   <- ee$Date$fromYMD(as.integer(year), 11L, 1L)
+
+  wet <- landsat_indices$filterDate(wet_start, wet_end)$median()$
+    set("system:time_start", wet_start$millis())$
+    set("year", year)$set("season", "wet")
+
+  dry <- landsat_indices$filterDate(dry_start, dry_end)$median()$
+    set("system:time_start", dry_start$millis())$
+    set("year", year)$set("season", "dry")
+
+  list(wet, dry)
+}
+
+seasonal_list <- unlist(lapply(years, function(y) {
+  make_seasonal(y)
+}), recursive = FALSE)
+
+landsat_seasonal <- ee$ImageCollection$fromImages(seasonal_list)
+print(paste("Seasonal composites:", landsat_seasonal$size()$getInfo()))
+```
+
+## Step 6: Spectral Mixture Analysis Endmembers
+
+Define endmember spectra for sub-pixel unmixing. These values should be
+refined from training samples, but the initial estimates are drawn from
+GEE spectral profiles of known pure pixels within the AOI.
+
+```{r endmembers}
+# Sample a clean wet-season composite for endmember extraction
+ref_image <- landsat_indices$
+  filterDate("2010-01-01", "2010-04-01")$median()$clip(aoi_ee)
+
+# Endmember coordinates (lon, lat) for pure pixels
+endmember_points <- list(
+  open_water = ee$Geometry$Point(c(35.55, -15.35)),
+  flooded_veg = ee$Geometry$Point(c(35.45, -15.25)),
+  dry_veg = ee$Geometry$Point(c(35.30, -15.10)),
+  bare_soil = ee$Geometry$Point(c(35.65, -15.50)),
+  urban = ee$Geometry$Point(c(35.32, -15.39))
+)
+
+# Extract spectral signatures
+bands <- c("Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2")
+
+extract_endmember <- function(point, label) {
+  values <- ref_image$select(bands)$
+    reduceRegion(
+      reducer = ee$Reducer$mean(),
+      geometry = point,
+      scale = 30L
+    )$getInfo()
+  data.frame(
+    endmember = label,
+    Blue = values$Blue, Green = values$Green, Red = values$Red,
+    NIR = values$NIR, SWIR1 = values$SWIR1, SWIR2 = values$SWIR2,
+    stringsAsFactors = FALSE
+  )
+}
+
+endmembers_df <- do.call(rbind, mapply(
+  extract_endmember,
+  endmember_points,
+  names(endmember_points),
+  SIMPLIFY = FALSE
+))
+print(endmembers_df)
+```
+
+## Step 7: Spectral Unmixing
+
+Apply linear spectral unmixing to estimate sub-pixel fractions for each
+endmember across the time series.
+
+```{r unmixing}
+# Build endmember matrix from extracted values
+em_matrix <- as.list(as.data.frame(t(
+  endmembers_df[, c("Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2")]
+)))
+
+unmix <- function(image) {
+  fractions <- image$select(bands)$unmix(em_matrix, TRUE, TRUE)$
+    rename(c("water_frac", "flooded_veg_frac", "dry_veg_frac",
+             "bare_soil_frac", "urban_frac"))
+  image$addBands(fractions)$
+    copyProperties(image, list("system:time_start", "system:index"))
+}
+
+landsat_unmixed <- landsat_indices$map(unmix)
+```
+
+## Step 8: Time Series Extraction
+
+Extract AOI-mean spectral indices and water fraction per scene to build
+the analysis time series.
+
+```{r time-series}
+extract_ts <- function(image) {
+  stats <- image$select(
+    c("NDWI", "MNDWI", "AWEIsh", "WRI", "NDPI", "water_frac")
+  )$reduceRegion(
+    reducer = ee$Reducer$mean(),
+    geometry = aoi_ee,
+    scale = 30L,
+    maxPixels = as.integer(1e9)
+  )
+  ee$Feature(NULL, stats)$
+    set("date", image$date()$format("YYYY-MM-dd"))
+}
+
+landsat_ts <- landsat_unmixed$map(extract_ts)
+
+# Pull to R (may take time for large collections)
+ts_info <- landsat_ts$getInfo()
+
+landsat_df <- do.call(rbind, lapply(ts_info$features, function(f) {
+  p <- f$properties
+  data.frame(
+    date       = p$date,
+    NDWI       = p$NDWI,
+    MNDWI      = p$MNDWI,
+    AWEIsh     = p$AWEIsh,
+    WRI        = p$WRI,
+    NDPI       = p$NDPI,
+    water_frac = p$water_frac,
+    stringsAsFactors = FALSE
+  )
+}))
+
+landsat_df$date <- as.Date(landsat_df$date)
+landsat_df <- landsat_df[order(landsat_df$date), ]
+print(paste("Time series records:", nrow(landsat_df)))
+```
+
+## Step 9: Quick Plot
+
+Plot the spectral index time series to confirm temporal coverage and
+identify recession events.
+
+```{r plot-ts}
+ggplot(landsat_df, aes(x = date)) +
+  geom_line(aes(y = NDWI, colour = "NDWI"), linewidth = 0.4) +
+  geom_line(aes(y = MNDWI, colour = "MNDWI"), linewidth = 0.4) +
+  geom_line(aes(y = water_frac, colour = "Water fraction"), linewidth = 0.6) +
+  scale_colour_manual(values = c(
+    "NDWI" = "steelblue", "MNDWI" = "darkblue", "Water fraction" = "red"
+  )) +
+  labs(
+    x = NULL, y = "Index value / fraction",
+    title = "Lake Chilwa spectral water indices (1994-2015)",
+    colour = NULL
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## Step 10: Export
+
+```{r export}
+write.csv(landsat_df,
+  "../_staging/landsat_timeseries_indices.csv", row.names = FALSE)
+
+# Export a seasonal composite as GeoTIFF (uncomment as needed):
+# task <- ee$batch$Export$image$toDrive(
+#   image = landsat_seasonal$
+#     filter(ee$Filter$eq("year", 2010L))$
+#     filter(ee$Filter$eq("season", "wet"))$
+#     first()$
+#     select(c("NDWI", "MNDWI", "AWEIsh", "water_frac"))$
+#     clip(aoi_ee),
+#   description = "Landsat_wet_2010",
+#   folder = "GEE_exports",
+#   region = aoi_ee,
+#   scale = 30L,
+#   maxPixels = as.integer(1e9)
+# )
+# task$start()
+```
+
+## Notes
+
+Processing chain: Landsat Collection 2 Level-2 SR from L5-TM, L7-ETM+,
+and L8-OLI. Band harmonisation maps sensor-specific band names to a
+common schema. QA_PIXEL bitmask removes cloud, shadow, and snow. Five
+spectral water indices (NDWI, MNDWI, AWEIsh, WRI, NDPI) computed per
+scene. Linear spectral unmixing estimates sub-pixel water fraction from
+five endmembers. Seasonal composites (wet: Nov-Apr, dry: May-Oct) built
+via median reduction. Scene-level time series extracted as AOI means for
+trend analysis.
+
+The scale factor (0.0000275, offset -0.2) converts Collection 2 Level-2
+integer values to surface reflectance. Cloud cover threshold is 30%
+per scene, consistent with the manuscript QA parameters.

@@ -1,0 +1,322 @@
+---
+title: "Sentinel-1 SAR Processing: Lake Chilwa Basin"
+author: "Murphy, S."
+date: today
+format:
+  html:
+    toc: true
+    code-fold: true
+    code-summary: "View Code"
+    theme: cosmo
+execute:
+  eval: false
+  echo: true
+  warning: false
+  message: false
+engine: knitr
+---
+
+## Setup
+
+```{r setup}
+library(sf)
+library(tmap)
+library(dplyr)
+
+reticulate::use_python("/opt/local/bin/python", required = TRUE)
+ee <- reticulate::import("ee")
+ee$Initialize(project = "murphys-deforisk")
+
+ee_tile_url <- function(ee_image, vis_params) {
+  ee_image$getMapId(vis_params)$tile_fetcher$url_format
+}
+
+ee_to_sf <- function(fc) {
+  geojsonsf::geojson_sf(
+    jsonlite::toJSON(fc$getInfo(), auto_unbox = TRUE)
+  )
+}
+```
+
+## AOI
+
+Derive the watershed AOI from a point, following the workflow in
+`gee-watershed-sourcing.qmd`.
+
+```{r aoi}
+poi <- ee$Geometry$Point(c(35.55, -15.35))
+
+basin_l6 <- ee$FeatureCollection("WWF/HydroSHEDS/v1/Basins/hybas_6")$
+  filterBounds(poi)
+aoi_ee <- basin_l6$geometry()
+aoi_sf <- ee_to_sf(basin_l6) |> st_union()
+```
+
+## Step 1: Query Sentinel-1 GRD Archive
+
+GEE hosts Sentinel-1 Ground Range Detected (GRD) products with
+radiometric calibration and terrain correction already applied via the
+Sentinel-1 Toolbox. The archive begins in October 2014. We filter for
+IW mode, VV and VH polarisations, and descending orbit to maintain
+consistent viewing geometry.
+
+```{r s1-query}
+s1 <- ee$ImageCollection("COPERNICUS/S1_GRD")$
+  filterBounds(aoi_ee)$
+  filter(ee$Filter$eq("instrumentMode", "IW"))$
+  filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VV"))$
+  filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VH"))$
+  filter(ee$Filter$eq("orbitProperties_pass", "DESCENDING"))$
+  select(c("VV", "VH", "angle"))
+
+n_scenes <- s1$size()$getInfo()
+print(paste("Total Sentinel-1 scenes:", n_scenes))
+
+# Date range
+dates <- s1$reduceColumns(
+  ee$Reducer$minMax(), list("system:time_start"))$getInfo()
+print(paste("First scene:", as.Date(as.POSIXct(dates[[1]] / 1000, origin = "1970-01-01"))))
+print(paste("Last scene:", as.Date(as.POSIXct(dates[[2]] / 1000, origin = "1970-01-01"))))
+```
+
+## Step 2: Speckle Filtering
+
+GEE does not apply speckle filtering by default. We implement a focal
+mean approximation. For refined Lee Sigma filtering, export to SNAP.
+The focal approach is sufficient for time series compositing where
+multi-temporal averaging further suppresses speckle.
+
+```{r speckle-filter}
+apply_speckle_filter <- function(image) {
+  # Focal mean with 7x7 kernel (approximates boxcar filter)
+  vv_filtered <- image$select("VV")$
+    focal_mean(radius = 3.5, kernelType = "square", units = "pixels")$
+    rename("VV_filtered")
+  vh_filtered <- image$select("VH")$
+    focal_mean(radius = 3.5, kernelType = "square", units = "pixels")$
+    rename("VH_filtered")
+
+  image$addBands(vv_filtered)$addBands(vh_filtered)$
+    copyProperties(image, list("system:time_start"))
+}
+
+s1_filtered <- s1$map(apply_speckle_filter)
+```
+
+## Step 3: Backscatter Ratio and Difference Bands
+
+VV/VH ratio and difference help distinguish open water from flooded
+vegetation. Open water shows low VV and low VH. Flooded vegetation
+shows moderate VV but elevated VH due to double-bounce scattering.
+
+```{r ratio-bands}
+add_ratio_bands <- function(image) {
+  vv <- image$select("VV_filtered")
+  vh <- image$select("VH_filtered")
+
+  # Ratio (in dB domain, ratio = difference)
+  ratio <- vv$subtract(vh)$rename("VV_VH_ratio")
+
+  # Normalised difference
+  nd <- vv$subtract(vh)$divide(vv$add(vh))$rename("VV_VH_nd")
+
+  image$addBands(ratio)$addBands(nd)$
+    copyProperties(image, list("system:time_start"))
+}
+
+s1_processed <- s1_filtered$map(add_ratio_bands)
+```
+
+## Step 4: Water Detection Thresholding
+
+Calm water surfaces yield low backscatter in both VV and VH channels,
+typically below -15 dB for VV. We use a percentile-based adaptive
+threshold: compute the VV distribution within the AOI on a reference
+scene and take the value that separates the lowest backscatter mode
+(water) from land. A fixed fallback of -15 dB is available if needed.
+
+```{r water-threshold}
+# Reference scene for threshold calibration
+sample_image <- ee$Image(s1_processed$first())$select("VV_filtered")
+
+# Compute percentile-based threshold within AOI
+# The 15th percentile of VV typically captures the water/land break
+# in scenes with substantial water coverage like Chilwa
+percentiles <- sample_image$reduceRegion(
+  reducer = ee$Reducer$percentile(c(15L, 50L)),
+  geometry = aoi_ee,
+  scale = 30L,
+  maxPixels = as.integer(1e9)
+)$getInfo()
+
+threshold_vv <- percentiles$VV_filtered_p15
+print(paste("Adaptive VV threshold (p15):", round(threshold_vv, 2), "dB"))
+print(paste("Median VV:", round(percentiles$VV_filtered_p50, 2), "dB"))
+
+# Use adaptive threshold; fall back to -15 dB if percentile is unreasonable
+if (is.null(threshold_vv) || threshold_vv > -10 || threshold_vv < -25) {
+  threshold_vv <- -15
+  print("Using fixed threshold: -15 dB")
+}
+
+classify_water <- function(image) {
+  water <- image$select("VV_filtered")$lt(threshold_vv)$rename("water")
+  image$addBands(water)$
+    copyProperties(image, list("system:time_start"))
+}
+
+s1_water <- s1_processed$map(classify_water)
+```
+
+## Step 5: Monthly Composites
+
+Aggregate to monthly composites to reduce data volume and suppress
+residual speckle through temporal averaging.
+
+```{r monthly-composites}
+# Build year-month pairs in R, then iterate on the GEE side
+year_month_pairs <- expand.grid(year = 2015L:2024L, month = 1L:12L)
+
+composite_list <- lapply(seq_len(nrow(year_month_pairs)), function(i) {
+  y <- as.integer(year_month_pairs$year[i])
+  m <- as.integer(year_month_pairs$month[i])
+
+  start <- ee$Date$fromYMD(y, m, 1L)
+  end   <- start$advance(1L, "month")
+
+  monthly <- s1_water$filterDate(start, end)
+  n <- monthly$size()$getInfo()
+
+  if (n == 0L) return(NULL)
+
+  monthly$mean()$
+    set("system:time_start", start$millis())$
+    set("year", y)$
+    set("month", m)$
+    set("n_scenes", n)
+})
+
+# Drop empty months
+composite_list <- Filter(Negate(is.null), composite_list)
+
+s1_monthly <- ee$ImageCollection$fromImages(composite_list)
+print(paste("Monthly composites:", length(composite_list)))
+```
+
+## Step 6: Time Series Extraction
+
+Extract mean backscatter and water fraction within the AOI for each
+monthly composite to build the SAR time series.
+
+```{r time-series}
+extract_stats <- function(image) {
+  stats <- image$select(c("VV_filtered", "VH_filtered", "water"))$
+    reduceRegion(
+      reducer = ee$Reducer$mean(),
+      geometry = aoi_ee,
+      scale = 30L,
+      maxPixels = as.integer(1e9)
+    )
+  ee$Feature(NULL, stats)$
+    set("date", image$date()$format("YYYY-MM-dd"))$
+    set("year", image$get("year"))$
+    set("month", image$get("month"))$
+    set("n_scenes", image$get("n_scenes"))
+}
+
+s1_ts <- s1_monthly$map(extract_stats)
+s1_ts_info <- s1_ts$getInfo()
+
+# Convert to data frame
+s1_df <- do.call(rbind, lapply(s1_ts_info$features, function(f) {
+  data.frame(
+    date        = f$properties$date,
+    year        = f$properties$year,
+    month       = f$properties$month,
+    n_scenes    = f$properties$n_scenes,
+    VV_mean     = f$properties$VV_filtered,
+    VH_mean     = f$properties$VH_filtered,
+    water_frac  = f$properties$water,
+    stringsAsFactors = FALSE
+  )
+}))
+
+s1_df$date <- as.Date(s1_df$date)
+print(head(s1_df))
+```
+
+## Step 7: Visual Check
+
+Map a wet-season and dry-season composite side by side.
+
+```{r map-composites}
+# Select a wet month (January) and dry month (August) from same year
+wet <- s1_monthly$
+  filter(ee$Filter$eq("month", 1L))$
+  filter(ee$Filter$eq("year", 2020L))$first()
+
+dry <- s1_monthly$
+  filter(ee$Filter$eq("month", 8L))$
+  filter(ee$Filter$eq("year", 2020L))$first()
+
+vis_sar <- list(bands = list("VV_filtered"), min = -25, max = 0,
+  palette = c("black", "white"))
+vis_water <- list(bands = list("water"), min = 0, max = 1,
+  palette = c("white", "blue"))
+
+# Get tile URLs for wet and dry composites
+wet_sar_url   <- ee_tile_url(wet$clip(aoi_ee), vis_sar)
+dry_sar_url   <- ee_tile_url(dry$clip(aoi_ee), vis_sar)
+wet_water_url <- ee_tile_url(wet$clip(aoi_ee), vis_water)
+dry_water_url <- ee_tile_url(dry$clip(aoi_ee), vis_water)
+
+tmap_mode("view")
+
+# Wet season: VV backscatter + water mask
+map_wet <- tm_shape(st_as_sf(aoi_sf)) +
+  tm_borders(col = "red", lwd = 2) +
+  tm_basemap("Esri.WorldImagery") +
+  tm_tiles(wet_sar_url, group = "Wet VV (Jan 2020)") +
+  tm_tiles(wet_water_url, group = "Wet water mask (Jan 2020)") +
+  tm_scalebar(position = c("right", "bottom"))
+
+# Dry season: VV backscatter + water mask
+map_dry <- tm_shape(st_as_sf(aoi_sf)) +
+  tm_borders(col = "red", lwd = 2) +
+  tm_basemap("Esri.WorldImagery") +
+  tm_tiles(dry_sar_url, group = "Dry VV (Aug 2020)") +
+  tm_tiles(dry_water_url, group = "Dry water mask (Aug 2020)") +
+  tm_scalebar(position = c("right", "bottom"))
+
+# Side by side
+tmap_arrange(map_wet, map_dry, ncol = 2)
+```
+
+## Step 8: Export
+
+Write the time series data frame and flag composites for potential
+raster export.
+
+```{r export}
+write.csv(s1_df, "../_staging/s1_monthly_timeseries.csv", row.names = FALSE)
+
+# To export a composite as GeoTIFF (uncomment and run as needed):
+# task <- ee$batch$Export$image$toDrive(
+#   image = wet$select(c("VV_filtered", "VH_filtered", "water"))$clip(aoi_ee),
+#   description = "S1_wet_2020_01",
+#   folder = "GEE_exports",
+#   region = aoi_ee,
+#   scale = 10L,
+#   maxPixels = as.integer(1e9)
+# )
+# task$start()
+```
+
+## Notes
+
+GEE Sentinel-1 GRD products arrive with radiometric calibration (sigma0)
+and Range-Doppler terrain correction already applied. The processing
+chain here adds speckle filtering (focal mean, 7x7), polarimetric ratio
+bands, Otsu-based water thresholding, and monthly compositing. For
+interferometric analysis or refined Lee Sigma filtering, export raw
+scenes to SNAP.

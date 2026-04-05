@@ -9,3 +9,4 @@ notes-script.R
 notes-setup.R
 .DS_Store
 *.tif
+/2.data
