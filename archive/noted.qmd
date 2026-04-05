@@ -1,0 +1,76 @@
+---
+title: "notes"
+format: html
+editor: visual
+---
+
+```{r load-aoi, message=F, warning=F, error=F, comment=F, eval=F}
+tmap::tmap_mode("plot")
+sf::sf_use_s2(FALSE)
+aoi = read_sf("./inputs/chilwa_watershed_4326.shp") 
+bbox  = terrainr::add_bbox_buffer(aoi, 10000, "meters")
+
+# 'zoom' = resolution (higher than tm_basemap)
+basemap = maptiles::get_tiles(
+  bbox, 
+  zoom      = 12, 
+  crop      = T,
+  provider  = "OpenTopoMap"
+)
+
+tmap::tm_shape(basemap) + tm_rgb() + 
+  tmap::tm_shape(aoi) +
+  tmap::tm_borders(lwd = 2, col = "red") +
+  tmap::tm_compass(position = c("right", "top")) + 
+  tmap::tm_graticules(lines=T,labels.rot=c(0,90), lwd=0.2) +
+  tmap::tm_scalebar(c(0, 10, 20, 40), position = c("right", "bottom")) -> fieldmap
+# tmap::tm_credits(maptiles::get_credit("OpenTopoMap"))
+fieldmap
+
+# width & height = res, dpi = size of add-ons
+tmap::tmap_save(
+  fieldmap, 
+  "./outputs/fieldmap-opentopo.png", 
+  width=21600, height=21600, asp=0, dpi=2400)
+
+aoi = read_sf("./inputs/chilwa_watershed_4326.shp") 
+sigma0_wet = raster::raster("./outputs/sar/Sigma_VV_db_slv_WET.tif")
+sigma0_dry = raster::raster("./outputs/sar/Sigma_VV_db_mst_DRY.tif")
+multi_temp = raster::stack(sigma0_wet, sigma0_dry)
+bbox = terrainr::add_bbox_buffer(aoi, 40000, distance_unit = "meters") 
+vbox = ext(vect(bbox))
+  
+sites_locator <- st_as_sf(data.frame(
+  longitude = c(32, 36), latitude = c(-8,-16)), 
+  coords = c("longitude", "latitude"), crs = 4326, agr = "constant")
+
+malawi = ggplot(data = world) +
+  geom_sf(fill = "antiquewhite1") +
+  annotate(geom = "text", x = 35.5, y = -8.5, label = "Malawi", 
+           color = "grey22", size = 4.5) +
+  coord_sf(xlim = c(32, 36.5), ylim = c(-8.5, -18)) +
+  xlab("Longitude")+ ylab("Latitude") + 
+  theme(panel.grid.major = element_line(
+    colour = gray(0.5), linetype = "dashed", size = 0.5), 
+    panel.background = element_rect(fill = "aliceblue"),
+    panel.border = element_rect(fill = NA))
+
+chilwa <- ggplot(aoi) +
+  geom_sf() +
+  theme_void() +
+  theme(
+    panel.border = element_rect(fill = NA, colour = "black"),
+    plot.background = element_rect(fill = "antiquewhite1")
+  )
+
+lake = ggplot(aoi) +
+  theme_void() +
+  geom_sf(lwd = 20, color = "red")
+
+ggdraw() +
+  draw_plot(malawi) +
+  draw_plot(chilwa, height = 0.15, x = -0.05, y = 0.15) +
+  draw_plot(lake, height = 0.02, x = 0.1, y = 0.4)
+
+plotRGB(multi_temp, r=2, g=1, b=1, stretch="lin") #stretch="hist"
+```
