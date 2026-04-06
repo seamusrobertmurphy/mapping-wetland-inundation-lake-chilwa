@@ -1,5 +1,7 @@
 ---
-title: "Integrated Remote Sensing and Commuity Mapping of an Endorheic Wetland in Southern Malawi" 
+
+
+: "Integrated Remote Sensing and Commuity Mapping of an Endorheic Wetland in Southern Malawi" 
 subtitle: "Lake Chilwa Basin Analysis" 
 author: "Murphy, S." 
 date: "2024-08-24" 
@@ -269,7 +271,17 @@ malawi_context <- ggplot(data = world) +
            color = "grey22", size = 4.5) +
   coord_sf(xlim = c(32, 36.5), ylim = c(-8.5, -18)) +
   labs(
-    title = "Regional Context: Lake Chilwa Basin",
+    
+
+
+
+
+
+
+
+
+
+= "Regional Context: Lake Chilwa Basin",
     x = "Longitude", 
     y = "Latitude"
   ) + 

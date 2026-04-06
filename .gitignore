@@ -10,3 +10,5 @@ notes-setup.R
 .DS_Store
 *.tif
 /2.data
+.claude/
+CLAUDE.md

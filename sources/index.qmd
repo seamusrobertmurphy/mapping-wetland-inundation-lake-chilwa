@@ -1,0 +1,32 @@
+---
+title: "Mapping inundation dynamics and fisher migration across Lake Chilwa's recession cycles Subtitle" 
+subtitle: "Integrating SAR-optical remote sensing with ethnographic fieldwork in an endorheic wetland" 
+author:
+  - name: "Murphy, S."
+    email: seamusrobertmurphy@gmail.com
+    corresponding: true
+  - name: "Wilson, J."
+---
+
+## Abstract
+
+Remote sensing of wetland landscapes in African conservation areas typically proceeds without reference to the people who inhabit them. This study integrates multi-sensor remote sensing with ethnographic fieldwork to map inundation dynamics in the endorheic Lake Chilwa Basin, Malawi. We evaluate five water-extraction indices (NDWI, MNDWI, AWEIsh, WRI, NDPI) derived from a multi-decadal Landsat time series and combine these with Sentinel-1 C-band SAR backscatter analysis to characterise recession-refilling cycles that occur at roughly 20-year intervals. Spectral mixture analysis enables sub-pixel estimation of water fraction across the shallow, turbid, and vegetated littoral zones where standard optical thresholds fail. Ethnographic data collected between 2012 and 2014 across lakeshore villages in Zomba, Phalombe, and Machinga districts provide ground validation and reveal socio-ecological patterns invisible to satellite analysis: the spatial structure of fishing regulations, seasonal migration timing, and enforcement conflicts across distinct territorial jurisdictions. Results show significant spatiotemporal variation in water extent, with historical recession events documented in 1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967, 1973, 1995, and 2012. SAR integration addresses the specific failures of optical indices in this environment, particularly cloud-cover gaps during the wet season, spectral confusion in turbid shallow water, and inability to detect sub-canopy inundation beneath dense Typha marshes. The socio-ecological systems framework developed here demonstrates that effective conservation mapping requires both technical precision and local knowledge, and offers a transferable methodology for monitoring dynamic wetland ecosystems.
+
+**Keywords:** wetland inundation mapping, spectral mixture analysis, SAR backscatter, participatory mapping, socio-ecological systems, endorheic lakes, fishery co-management, Lake Chilwa, Malawi
+
+---
+
+## Project Overview
+
+This website presents the full analytical workflow for an integrated remote sensing and participatory mapping study of the Lake Chilwa Basin, Malawi. The analysis combines Sentinel-1 SAR backscatter processing with a multi-decadal Landsat time series (1984 to 2015) and ethnographic fieldwork conducted between 2012 and 2014.
+
+The workflow is organised as follows:
+
+1. [Introduction](introduction.qmd): the problem with optical indices in inland wetlands, SAR as complement, study area description, and research objectives.
+2. [Socio-Ecological Framework](methods-ses.qmd): qualitative and geographic data collection methods, participatory mapping, community validation.
+3. [Environment Setup](environment.qmd): R and Python packages, Google Earth Engine authentication, AOI derivation, hydrological base layers.
+4. [SAR Processing](methods-sar.qmd): Sentinel-1 query, speckle filtering, polarimetric ratios, water thresholding, monthly composites, and time series extraction.
+5. [Landsat Time Series](methods-landsat.qmd): Landsat Collection 2 query, five spectral water indices, spectral mixture analysis, Random Forest classification, and accuracy assessment.
+6. [Results](results.qmd): spatiotemporal variation in water extent, SAR-optical fusion, accuracy metrics, and socio-ecological findings.
+7. [Discussion](discussion.qmd): methodological challenges, transferability, and implications.
+8. [Conclusions](conclusions.qmd): summary and future directions.
