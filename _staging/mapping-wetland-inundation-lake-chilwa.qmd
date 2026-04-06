@@ -1,0 +1,479 @@
+---
+title: "Wetland Inundation Mapping through Remote Sensing and Ethnographic Validation" 
+subtitle: "A Socio-Ecological Study of Lake Chilwa Basin"
+author: 
+  - name: "Murphy, S."
+  - name: "Wilson, J"
+
+date: today
+format:
+  docx:
+    prefer-html: true
+    reference-doc: ../references/style.docx
+    highlight-style: pygments
+    latex_engine: xelatex
+
+  html:
+    page-layout: full
+    toc: true
+    number-sections: false
+    embed-resources: true
+    toc-title: "**Table of Contents**"
+    toc-location: right
+    toc-depth: 3
+    theme: 
+      - ../references/styles.scss
+      - cosmo
+    code-fold: true
+    code-summary: "View Code"
+    code-tools: true
+    code-link: true
+    max-width: 1000px
+    grid:
+      body-width: 1000px
+      margin-width: 200px
+    
+      
+execute:
+  eval: true
+  echo: true
+  warning: false
+  message: false
+  comment: NA
+
+always_allow_html: true
+engine: knitr
+citeproc: true
+editor: visual
+bibliography: ../references/references.bib
+csl: ../references/apa.csl
+---
+
+## Abstract
+
+The mapping of ecosystem dynamics in African wetland landscapes within conservation areas typically relies solely on remote sensing approaches, potentially neglecting local perspectives and adaptations. This study presents an integrated socio-ecological systems (SES) framework applied to the endorheic Lake Chilwa Basin, Malawi, combining multi-temporal remote sensing analysis with participatory mapping methods to characterize wetland inundation dynamics and migratory fishing activity patterns.
+
+Our methodology integrates Sentinel-1 InSAR processing with Landsat time series data (1994-2015) and community-based mapping approaches including key informant interviews, focus group discussions, and rapid participatory appraisals. The remote sensing component evaluates water-extraction indices (NDWI, MNDWI, AWEIsh) derived from multiple Landsat sensors (MSS, TM, ETM+, OLI) using spectral mixture analysis and soft classification techniques. Participatory methods capture social dimensions of landscape dynamics, particularly focusing on migrant fishing communities and seasonal resource use patterns.
+
+Results reveal significant spatiotemporal variations in water levels and surface area, with major recession events documented in historical records (1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967, 1973, 1995, 2012). The integrated approach enables refined mapping of ecosystem services at regional and local scales, revealing previously concealed spatiotemporal details of fishing regulations and enforcement conflicts within the lake's political ecology.
+
+This SES methodology provides a framework for future conservation initiatives in dynamic African wetland systems, advocating for locally grounded approaches that integrate biophysical and social dimensions for more responsive and effective conservation strategies.
+
+------------------------------------------------------------------------
+
+## Objective
+
+This analysis presents an integrated remote sensing and participatory mapping approach to characterize lacustrine transgression-regression dynamics and associated socio-ecological patterns in the Lake Chilwa Basin, Malawi. The study addresses the limitations of purely technical remote sensing approaches by incorporating local knowledge and community perspectives into wetland ecosystem mapping.
+
+1.  Remote Sensing Analysis: Combine Sentinel-1 InSAR processing with Landsat time series data (1994-2015) to quantify hydroperiod fluctuations and littoral zone migration patterns using advanced spectral mixture analysis
+
+2.  Participatory Mapping Integration: Incorporate local ecological knowledge through key informant interviews, focus group discussions, and rapid participatory appraisals with migrant fishing communities
+
+3.  Socio-Ecological Systems Framework: Document spatiotemporal details of fishing regulations, population movements, trading routes, and resource use patterns previously concealed within the lake's political ecology
+
+4.  Conservation Framework Development: Develop a transferable SES methodology for monitoring dynamic wetland ecosystems that balances technical precision with community-based knowledge systems
+
+------------------------------------------------------------------------
+
+## 1. Introduction
+
+Historical records indicate major recession events occurred cyclically, providing crucial context for interpreting observed patterns within the lake's documented century-scale variability. The 21-year observation period (1994-2015) represents a temporally constrained but methodologically comprehensive analysis that must be interpreted within longer-term ecological cycles.
+
+#### Environment Setup
+
+```{r}
+#| label: environment-setup
+#| comment: NA
+#| warning: false
+#| message: false
+#| error: false
+#| echo: true
+
+
+easypackages::packages(
+  "bslib",
+  "cols4all", "covr", "cowplot",
+  "dendextend", "digest","DiagrammeR","dtwclust", "downlit",
+  "e1071", "exactextractr","elevatr",
+  "FNN", "future", "forestdata",
+  "gdalcubes", "gdalUtilities", "geojsonsf", "geos", "ggplot2", "ggstats",
+  "ggspatial", "ggmap", "ggplotify", "ggpubr", "ggrepel", "giscoR",
+  "hdf5r", "httr", "httr2", "htmltools",
+  "jsonlite",
+  "kohonen",
+  "leaflet.providers", "leafem", "libgeos","luz","lwgeom", "leaflet", "leafgl",
+  "mapedit", "mapview", "maptiles", "methods", "mgcv",
+  "ncdf4", "nnet",
+  "openxlsx", "parallel", "plotly",
+  "randomForest", "rasterVis", "raster", "Rcpp", "RcppArmadillo",
+  "RcppCensSpatial","rayshader", "RcppEigen", "RcppParallel",
+  "RColorBrewer", "reactable", "rgl", "rsconnect","RStoolbox", "rts",
+  "s2", "sf", "scales", "sits","spdep", "stars", "stringr","supercells",
+  "terra", "testthat", "tidyverse", "tidyterra","tools",
+  "tmap", "tmaptools", "terrainr",
+  "xgboost",
+  prompt = F)
+
+# Disable spherical geometry
+sf::sf_use_s2(use_s2 = FALSE)
+
+# Assign working directory to current location
+knitr::opts_knit$set(root.dir = here::here())
+options(repos = c(CRAN = "https://cloud.r-project.org"),
+        htmltools.dir.version = FALSE,
+        htmltools.preserve.raw = FALSE)
+
+# Configure code formatting
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE,
+  error = FALSE, comment = NA,
+  tidy.opts = list(width.cutoff = 60))
+
+# Point runtime to configured Python
+reticulate::use_python("/opt/local/bin/python", required = TRUE)
+
+# GEE: Initialize and Authentical 
+ee <- reticulate::import("ee")
+ee$Initialize(project = "murphys-deforisk")
+
+# Helpers to handle earth engine objects in tmap/leaflet
+ee_tile_url <- function(ee_image, vis_params) {
+  ee_image$getMapId(vis_params)$tile_fetcher$url_format}
+ee_to_sf <- function(fc) {geojsonsf::geojson_sf(
+  jsonlite::toJSON(fc$getInfo(), auto_unbox = TRUE))}
+
+# Derive National and Regional AOI
+aoi_country_ee <- ee$FeatureCollection("FAO/GAUL/2015/level0")$filter(ee$Filter$eq("ADM0_NAME", "Malawi"))
+aoi_country_sf <- ee_to_sf(aoi_country_ee)
+
+```
+
+```{css, echo=FALSE, class.source = 'foldable'}
+div.column {
+    display: inline-block;
+    vertical-align: top;
+    width: 50%;
+}
+
+#TOC::before {
+  content: "";
+  display: block;
+  height:200px;
+  width: 200px;
+  background-image: url('https://raw.githubusercontent.com/seamusrobertmurphy/mapping-wetland-inundation-lake-chilwa/refs/heads/main/assets/PNG/RADAR-render.png');
+  background-size: contain;
+  background-position: 50% 50%;
+  padding-top: 80px !important;
+  background-repeat: no-repeat;
+}
+```
+
+### Import AOI Data
+
+The quick setup, the workflow begins with the coordinates of point location that must be located somewhere within waterbody of interest. From there, we filter out the surrounding basin boundary using the Hydroshed polygon dataset of global watersheds. In first attempt, may need to query multiple levels to find the encompassing polygon of interest.
+
+```{r point}
+# Lake Chilwa centroid, roughly speaking (lon, lat)
+lon <- 35.55
+lat <- -15.35
+poi <- ee$Geometry$Point(c(lon, lat))
+poi_sf <- st_sfc(st_point(c(lon, lat)), crs = 4326)
+
+# Filter regional basins and sub-basin (L6, L8)
+basin_l6 <- ee$FeatureCollection("WWF/HydroSHEDS/v1/Basins/hybas_6")$filterBounds(poi)
+basin_l8 <- ee$FeatureCollection("WWF/HydroSHEDS/v1/Basins/hybas_8")$filterBounds(poi)
+basin_l6_sf <- ee_to_sf(basin_l6)
+basin_l8_sf <- ee_to_sf(basin_l8)
+print(paste("Level 6 basins containing point:", nrow(basin_l6_sf)))
+print(paste("Level 8 sub-catchments:", nrow(basin_l8_sf)))
+```
+
+If a local watershed shapefile exists, overlay it against the GEE-derived boundary to assess agreement. With the AOI established, source DEM and flow derivatives from HydroSHEDS and MERIT Hydro, clipped to the watershed boundary.
+
+```{r watershed-query}
+#| comment: NA
+#| warning: false
+#| message: false
+#| error: false
+#| echo: true
+# Dissolve sheds to derive site boundary
+aoi_sf <- st_union(basin_l6_sf)
+aoi_ee <- ee$FeatureCollection(basin_l6)$geometry()
+aoi_bbox <- st_bbox(aoi_sf)
+sf::st_write(aoi_sf, "./outputs/aoi_sf.shp", delete_dsn=TRUE)
+
+tmap_mode("view")
+tm_shape(st_as_sf(aoi_sf)) + tm_borders(col = "red", lwd = 2) +
+  tm_shape(basin_l8_sf) + tm_borders(col = "blue", lwd = 0.5, lty = "dashed") +
+  tm_shape(st_as_sf(poi_sf)) + tm_symbols(fill = "green", size = 1) +
+  tm_basemap("Esri.WorldImagery") +
+  tm_scalebar(position = c("right", "bottom")) 
+```
+
+Use the level-6 basin as the primary AOI geometry. This becomes the clip boundary for all subsequent raster and vector queries.
+
+### Import Hydrological Data
+
+With the AOI established, we import elevation and processed hydrology data, including flow direction and accumulation, rivers, streams, and waterbody features, annual drainage estimates, monthly water surface elevation and channel width estimates, and monthly water reflectance values. We import these hydraulic layers from multiple sources for cartographic and data validation purposes, which include the [Merit](https://developers.google.com/earth-engine/datasets/catalog/MERIT_Hydro_v1_0_1) (1.0.3), [Hydroshed](https://www.hydrosheds.org) (V1.1), and [JRC Global Surface Water](https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_GlobalSurfaceWater) (V1.4) datasets. Hydrology in these landscapes requires cross-validating between multiple methods and sources, such as comparing Hydrosheds stream networks with streams derived from Merit's upstream drainage layer capped at 10 km2 catchment area.
+
+```{r hydrorasters}
+# HydroSHEDS: conditioned DEM (~90m)
+dem <- ee$Image("WWF/HydroSHEDS/03VFDEM")$clip(aoi_ee)
+hydro_flowdir   <- ee$Image("WWF/HydroSHEDS/03DIR")$clip(aoi_ee)
+hydro_flowacc   <- ee$Image("WWF/HydroSHEDS/03ACC")$clip(aoi_ee)
+hydro_rivers    <- ee$FeatureCollection("WWF/HydroSHEDS/v1/FreeFlowingRivers")$filterBounds(aoi_ee)
+hydro_lakes     <- ee$FeatureCollection("projects/sat-io/open-datasets/HydroLakes/lake_poly_v10")$filterBounds(aoi_ee)
+hydro_rivers_sf <- ee_to_sf(hydro_rivers)
+hydro_lakes_sf  <- ee_to_sf(hydro_lakes)
+
+# MERIT Hydro: flow direction, upstream drainage, water elevation, & channel width
+merit_flowdir   <- ee$Image("MERIT/Hydro/v1_0_1")$select("dir")$clip(aoi_ee)
+merit_drainup   <- ee$Image("MERIT/Hydro/v1_0_1")$select("upa")$clip(aoi_ee)
+merit_elev      <- ee$Image("MERIT/Hydro/v1_0_1")$select("elv")$clip(aoi_ee)
+merit_wth       <- ee$Image("MERIT/Hydro/v1_0_1")$select("wth")$clip(aoi_ee)
+merit_rivers    <- merit_drainup$gt(10)
+
+# JRC Global Surface Water 
+gsw_occurrence   <- ee$Image("JRC/GSW1_4/GlobalSurfaceWater")$select("occurrence")$clip(aoi_ee)
+gsw_seasonality  <- ee$Image("JRC/GSW1_4/GlobalSurfaceWater")$select("seasonality")$clip(aoi_ee)
+gsw_recurrence   <- ee$Image("JRC/GSW1_4/GlobalSurfaceWater")$select("recurrence")$clip(aoi_ee)
+gsw_transition   <- ee$Image("JRC/GSW1_4/GlobalSurfaceWater")$select("transition")$clip(aoi_ee)
+gsw_monthly      <- ee$ImageCollection("JRC/GSW1_4/MonthlyHistory")$filterBounds(aoi_ee)
+
+print(paste("JRC monthly images:", gsw_monthly$size()$getInfo()))
+print(paste("Number of lakes within waterhsed:", nrow(hydro_lakes_sf)))
+```
+
+```{r}
+tmap_mode("view")
+tm_shape(st_as_sf(aoi_sf)) +tm_borders(col = "red", lwd = 2) +
+  tm_shape(hydro_rivers_sf) + tm_lines(col = "steelblue", lwd = 1.5) +
+  tm_shape(hydro_lakes_sf) + tm_polygons(fill = "steelblue", lwd = 1) +
+  tm_shape(st_as_sf(poi_sf)) + tm_symbols(fill = "green", size = 1) +
+  tm_scalebar(position = c("right", "bottom")) +
+  tm_basemap("Esri.WorldImagery") 
+```
+
+### Import SAR Data
+
+GEE hosts Sentinel-1 Ground Range Detected (GRD) products with radiometric calibration and terrain correction implemented using the Sentinel-1 SNAP Toolbox. The dataset's temporal extent spans from October 2014 to 2025. In the following cell, we filter imagery with IW aspect, VV and VH polarisations, and along a descending orbit to ensure consistent veritcal geometry.
+
+```{r s1-query}
+s1 <- ee$ImageCollection("COPERNICUS/S1_GRD")$
+  filterBounds(aoi_ee)$
+  filter(ee$Filter$eq("instrumentMode", "IW"))$
+  filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VV"))$
+  filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VH"))$
+  filter(ee$Filter$eq("orbitProperties_pass", "DESCENDING"))$
+  select(c("VV", "VH", "angle"))
+
+n_scenes <- s1$size()$getInfo()
+print(paste("Total Sentinel-1 scenes:", n_scenes))
+
+# Date range
+dates <- s1$reduceColumns(
+  ee$Reducer$minMax(), list("system:time_start"))$getInfo()
+print(paste("First scene:", as.Date(as.POSIXct(dates[[1]] / 1000, origin = "1970-01-01"))))
+print(paste("Last scene:", as.Date(as.POSIXct(dates[[2]] / 1000, origin = "1970-01-01"))))
+```
+
+### Process SAR Data
+
+#### Speckle Filtering
+
+GEE does not apply speckle filtering by default. We implement a focal mean approximation. For refined Lee Sigma filtering, export to SNAP. The focal approach is sufficient for time series compositing where multi-temporal averaging further suppresses speckle.
+
+```{r speckle-filter}
+apply_speckle_filter <- function(image) {
+  # Focal mean with 7x7 kernel (approximates boxcar filter)
+  vv_filtered <- image$select("VV")$focal_mean(radius = 3.5, kernelType = "square", units = "pixels")$rename("VV_filtered")
+  vh_filtered <- image$select("VH")$focal_mean(radius = 3.5, kernelType = "square", units = "pixels")$rename("VH_filtered")
+  image$addBands(vv_filtered)$addBands(vh_filtered)$copyProperties(image, list("system:time_start"))}
+
+s1_filtered <- s1$map(apply_speckle_filter)
+```
+
+#### Backscatter Ratio Bands
+
+VV/VH ratio and band difference help distinguish open water from flooded vegetation. Open water shows low VV and low VH. Flooded vegetation shows moderate VV but elevated VH due to double-bounce scattering.
+
+```{r ratio-bands}
+# Ratio (in dB domain, ratio = difference)
+add_ratio_bands <- function(image) {
+  vv <- image$select("VV_filtered")
+  vh <- image$select("VH_filtered")
+  ratio <- vv$subtract(vh)$rename("VV_VH_ratio")
+  nd <- vv$subtract(vh)$divide(vv$add(vh))$rename("VV_VH_nd")
+  image$addBands(ratio)$addBands(nd)$copyProperties(image, list("system:time_start"))}
+
+s1_processed <- s1_filtered$map(add_ratio_bands)
+```
+
+## Water Detection Thresholding
+
+Calm water surfaces yield low backscatter in both VV and VH channels, typically below -15 dB for VV. We use a percentile-based adaptive threshold: compute the VV distribution within the AOI on a reference scene and take the value that separates the lowest backscatter mode (water) from land. A fixed fallback of -15 dB is available if needed.
+
+```{r water-threshold}
+# Reference scene for threshold calibration
+sample_image <- ee$Image(s1_processed$first())$select("VV_filtered")
+
+# Compute percentile-based threshold within AOI
+# The 15th percentile of VV typically captures the water/land break
+# in scenes with substantial water coverage like Chilwa
+percentiles <- sample_image$reduceRegion(
+  reducer = ee$Reducer$percentile(c(15L, 50L)),
+  geometry = aoi_ee,
+  scale = 30L,
+  maxPixels = as.integer(1e9)
+)$getInfo()
+
+threshold_vv <- percentiles$VV_filtered_p15
+print(paste("Adaptive VV threshold (p15):", round(threshold_vv, 2), "dB"))
+print(paste("Median VV:", round(percentiles$VV_filtered_p50, 2), "dB"))
+
+# Use adaptive threshold; fall back to -15 dB if percentile is unreasonable
+if (is.null(threshold_vv) || threshold_vv > -10 || threshold_vv < -25) {
+  threshold_vv <- -15
+  print("Using fixed threshold: -15 dB")
+}
+
+classify_water <- function(image) {
+  water <- image$select("VV_filtered")$lt(threshold_vv)$rename("water")
+  image$addBands(water)$
+    copyProperties(image, list("system:time_start"))
+}
+
+s1_water <- s1_processed$map(classify_water)
+```
+
+## Monthly Composites
+
+Aggregate to monthly composites to reduce data volume and suppress residual speckle through temporal averaging.
+
+```{r monthly-composites}
+# Build year-month pairs in the cloud before writing locally 
+year_month_pairs <- expand.grid(year = 2015L:2024L, month = 1L:12L)
+composite_list <- lapply(seq_len(nrow(year_month_pairs)), function(i) {
+  y <- as.integer(year_month_pairs$year[i])
+  m <- as.integer(year_month_pairs$month[i])
+  start <- ee$Date$fromYMD(y, m, 1L)
+  end   <- start$advance(1L, "month")
+  monthly <- s1_water$filterDate(start, end)
+  n <- monthly$size()$getInfo()
+  if (n == 0L) return(NULL)
+  monthly$mean()$
+    set("system:time_start", start$millis())$
+    set("year", y)$
+    set("month", m)$
+    set("n_scenes", n)})
+
+# Drop empty months
+composite_list <- Filter(Negate(is.null), composite_list)
+s1_monthly <- ee$ImageCollection$fromImages(composite_list)
+print(paste("Monthly composites:", length(composite_list)))
+```
+
+## Time Series Trends
+
+Extract mean backscatter and water fraction within the AOI for each monthly composite to build the SAR time series.
+
+```{r time-series}
+extract_stats <- function(image) {
+  stats <- image$select(c("VV_filtered", "VH_filtered", "water"))$
+    reduceRegion(
+      reducer = ee$Reducer$mean(),
+      geometry = aoi_ee,
+      scale = 30L,
+      maxPixels = as.integer(1e9)
+    )
+  ee$Feature(NULL, stats)$
+    set("date", image$date()$format("YYYY-MM-dd"))$
+    set("year", image$get("year"))$
+    set("month", image$get("month"))$
+    set("n_scenes", image$get("n_scenes"))
+}
+
+s1_ts <- s1_monthly$map(extract_stats)
+s1_ts_info <- s1_ts$getInfo()
+
+# Convert to data frame
+s1_df <- do.call(rbind, lapply(s1_ts_info$features, function(f) {
+  data.frame(
+    date        = f$properties$date,
+    year        = f$properties$year,
+    month       = f$properties$month,
+    n_scenes    = f$properties$n_scenes,
+    VV_mean     = f$properties$VV_filtered,
+    VH_mean     = f$properties$VH_filtered,
+    water_frac  = f$properties$water,
+    stringsAsFactors = FALSE)}))
+
+s1_df$date <- as.Date(s1_df$date)
+print(head(s1_df))
+```
+
+## Visualise
+
+Map a wet-season and dry-season composite side by side.
+
+```{r map-composites}
+# Compare months in wet and dry seasons
+wet <- s1_monthly$
+  filter(ee$Filter$eq("month", 1L))$
+  filter(ee$Filter$eq("year", 2020L))$first()
+
+dry <- s1_monthly$
+  filter(ee$Filter$eq("month", 8L))$
+  filter(ee$Filter$eq("year", 2020L))$first()
+
+vis_sar <- list(bands = list("VV_filtered"), min = -25, max = 0,palette = c("black", "white"))
+vis_water <- list(bands = list("water"), min = 0, max = 1,palette = c("white", "blue"))
+wet_sar_url   <- ee_tile_url(wet$clip(aoi_ee), vis_sar)
+dry_sar_url   <- ee_tile_url(dry$clip(aoi_ee), vis_sar)
+wet_water_url <- ee_tile_url(wet$clip(aoi_ee), vis_water)
+dry_water_url <- ee_tile_url(dry$clip(aoi_ee), vis_water)
+
+tmap_mode("view")
+tm_shape(st_as_sf(aoi_sf)) +
+  tm_borders(col = "red", lwd = 2) +
+  tm_basemap("Esri.WorldImagery") +
+  tm_tiles(wet_sar_url, group = "Wet VV (Jan 2020)") +
+  tm_tiles(wet_water_url, group = "Wet water mask (Jan 2020)") +
+  tm_scalebar(position = c("right", "bottom")) -> map_wet
+
+tm_shape(st_as_sf(aoi_sf)) +
+  tm_borders(col = "red", lwd = 2) +
+  tm_basemap("Esri.WorldImagery") +
+  tm_tiles(dry_sar_url, group = "Dry VV (Aug 2020)") +
+  tm_tiles(dry_water_url, group = "Dry water mask (Aug 2020)") +
+  tm_scalebar(position = c("right", "bottom")) -> map_dry
+
+tmap_arrange(map_wet, map_dry, ncol = 2)
+```
+
+#### Export Data
+
+Write the time series data frame and flag composites for potential raster export.
+
+```{r export}
+write.csv(s1_df, "./outputs/s1_monthly_timeseries.csv", row.names = FALSE)
+
+# To export a composite as GeoTIFF (uncomment and run as needed):
+# task <- ee$batch$Export$image$toDrive(
+#   image = wet$select(c("VV_filtered", "VH_filtered", "water"))$clip(aoi_ee),
+#   description = "S1_wet_2020_01",
+#   folder = "GEE_exports",
+#   region = aoi_ee,
+#   scale = 10L,
+#   maxPixels = as.integer(1e9)
+# )
+# task$start()
+```
+
+#### Notes
+
+GEE Sentinel-1 GRD products arrive with radiometric calibration (sigma0) and Range-Doppler terrain correction already applied. The processing chain here adds speckle filtering (focal mean, 7x7), polarimetric ratio bands, Otsu-based water thresholding, and monthly compositing. For interferometric analysis or refined Lee Sigma filtering, export raw scenes to SNAP.
+
+![](assets/PNG/SNAP-processing.png){width="100%"}![](assets/PNG/RADAR-render.png){width="100%"}
+
+------------------------------------------------------------------------
