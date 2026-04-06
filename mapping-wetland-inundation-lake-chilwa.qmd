@@ -8,12 +8,11 @@ author:
 date: today
 format:
   docx:
+    prefer-html: true
     reference-doc: ./references/style.docx
     highlight-style: pygments
     latex_engine: xelatex
-    prefer-html: true
-    link-citations: true 
-    
+
   html:
     page-layout: full
     toc: true
@@ -29,10 +28,10 @@ format:
     code-summary: "View Code"
     code-tools: true
     code-link: true
-    max-width: 1600px
+    max-width: 1000px
     grid:
-      body-width: 1400px
-      margin-width: 0px
+      body-width: 1000px
+      margin-width: 200px
     
       
 execute:
@@ -47,7 +46,6 @@ citeproc: true
 editor: visual
 bibliography: ./references/references.bib
 csl: ./references/apa.csl
-link-citations: true Abstract
 ---
 
 ## Abstract
@@ -380,12 +378,20 @@ Extract mean backscatter and water fraction within the AOI for each monthly comp
 
 ```{r time-series}
 extract_stats <- function(image) {
-  stats <- image$select(c("VV_filtered", "VH_filtered", "water"))$reduceRegion(
-    reducer = ee$Reducer$mean(),geometry = aoi_ee,scale = 30L,maxPixels = as.integer(1e9))ee$Feature(NULL, stats)$
+  stats <- image$select(c("VV_filtered", "VH_filtered", "water"))$
+    reduceRegion(
+      reducer = ee$Reducer$mean(),
+      geometry = aoi_ee,
+      scale = 30L,
+      maxPixels = as.integer(1e9)
+    )
+  ee$Feature(NULL, stats)$
     set("date", image$date()$format("YYYY-MM-dd"))$
     set("year", image$get("year"))$
     set("month", image$get("month"))$
-    set("n_scenes", image$get("n_scenes"))}
+    set("n_scenes", image$get("n_scenes"))
+}
+
 s1_ts <- s1_monthly$map(extract_stats)
 s1_ts_info <- s1_ts$getInfo()
 
@@ -449,7 +455,7 @@ tmap_arrange(map_wet, map_dry, ncol = 2)
 Write the time series data frame and flag composites for potential raster export.
 
 ```{r export}
-write.csv(s1_df, "../_staging/s1_monthly_timeseries.csv", row.names = FALSE)
+write.csv(s1_df, "./outputs/s1_monthly_timeseries.csv", row.names = FALSE)
 
 # To export a composite as GeoTIFF (uncomment and run as needed):
 # task <- ee$batch$Export$image$toDrive(
@@ -467,6 +473,6 @@ write.csv(s1_df, "../_staging/s1_monthly_timeseries.csv", row.names = FALSE)
 
 GEE Sentinel-1 GRD products arrive with radiometric calibration (sigma0) and Range-Doppler terrain correction already applied. The processing chain here adds speckle filtering (focal mean, 7x7), polarimetric ratio bands, Otsu-based water thresholding, and monthly compositing. For interferometric analysis or refined Lee Sigma filtering, export raw scenes to SNAP.
 
-![](assets/PNG/SNAP-processing.png)![](assets/PNG/RADAR-render.png)
+![](assets/PNG/SNAP-processing.png){width="100%"}![](assets/PNG/RADAR-render.png){width="100%"}
 
 ------------------------------------------------------------------------

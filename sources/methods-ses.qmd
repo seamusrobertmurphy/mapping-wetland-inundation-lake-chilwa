@@ -1,0 +1,27 @@
+---
+title: "Socio-Ecological Systems Framework"
+---
+
+## Overview
+
+The study employs a two-stage socio-ecological systems (SES) framework integrating biophysical remote sensing with social research methods. The framework targets the perspectives of marginalised groups, particularly migrant fishers, who form a principal economic segment of the Lake Chilwa system yet are overlooked in conventional management frameworks.
+
+Data collection occurred between September 2012 and March 2014 across lakeshore villages in Zomba, Phalombe, and Machinga districts within the Lake Chilwa Ramsar zones. Study site boundaries were defined through participatory mapping workshops with multi-stakeholder groups and Department of Fisheries officers.
+
+## Qualitative Data Collection
+
+Qualitative data collection comprised four methods.
+
+Key informant interviews (n=45) were semi-structured conversations with village leaders, fishing camp chairmen, Department of Fisheries officers, and long-term residents, focused on historical lake dynamics, fishing regulations, and seasonal migration.
+
+Focus group discussions (n=18) convened separate sessions with migrant fishers, women fish processors, boat owners, and service providers to capture competing perspectives on resource access, livelihood strategies, and enforcement disputes.
+
+Participatory rural appraisals employed seasonal calendars, resource mapping, and historical timelines to document collective knowledge of lake dynamics and fishery management.
+
+Extended participatory observation in fishing camps documented daily practices, operational logistics, social networks, and adaptive strategies during different hydrological phases.
+
+## Geographic Data Collection
+
+Differential GPS receivers recorded landscape structure and lakeshore dynamics during field visits. Participatory workshops enabled community identification of fishing infrastructure (permanent and seasonal camps, landing sites, processing areas), ecological zones (wetland boundaries, vegetation transitions, spawning areas), cultural landscapes (sacred sites, traditional fishing territories, conflict zones), and seasonal patterns (water level indicators, migration routes, market locations).
+
+Community knowledge was integrated with remote sensing through iterative validation workshops where preliminary satellite-derived maps were ground-truthed against local observations. This process revealed discrepancies between technical classifications and actual resource use patterns, leading to refined mapping approaches.
