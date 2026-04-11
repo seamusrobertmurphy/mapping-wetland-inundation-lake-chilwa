@@ -1,0 +1,234 @@
+---
+title: "SAR Processing"
+always_allow_html: true
+---
+
+SAR processing exploits the sensitivity of C-band radar to backscatter differences between smooth water surfaces and rough terrestrial features. Calm water yields low backscatter (-20 to -30 dB) while vegetated areas exhibit higher returns from volume scattering and surface roughness interactions. Wet soils produce higher backscatter than dry soils due to their increased dielectric constant. VV polarisation provides greatest sensitivity to soil moisture; cross-polarisation (VH) differentiates woody from herbaceous vegetation [@tsyganskaya2018].
+
+```{r}
+#| label: setup
+#| include: false
+source("_common.R")
+```
+
+## Sentinel-1 Data Query
+
+GEE hosts Sentinel-1 Ground Range Detected (GRD) products with radiometric calibration and terrain correction applied via the Sentinel-1 SNAP Toolbox. We filter imagery with IW mode, VV and VH polarisations, and descending orbit to ensure consistent vertical geometry.
+
+```{r}
+#| label: s1-query
+
+s1 <- ee$ImageCollection("COPERNICUS/S1_GRD")$
+  filterBounds(aoi_ee)$
+  filter(ee$Filter$eq("instrumentMode", "IW"))$
+  filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VV"))$
+  filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VH"))$
+  filter(ee$Filter$eq("orbitProperties_pass", "DESCENDING"))$
+  select(c("VV", "VH", "angle"))
+
+n_scenes <- s1$size()$getInfo()
+print(paste("Total Sentinel-1 scenes:", n_scenes))
+
+dates <- s1$reduceColumns(
+  ee$Reducer$minMax(), list("system:time_start"))$getInfo()
+print(paste("First scene:", as.Date(as.POSIXct(dates$min / 1000, origin = "1970-01-01"))))
+print(paste("Last scene:", as.Date(as.POSIXct(dates$max / 1000, origin = "1970-01-01"))))
+```
+
+## Speckle Filtering
+
+GEE does not apply speckle filtering by default. We implement a focal mean approximation with a 7x7 kernel. For refined Lee Sigma filtering, export to SNAP. The focal approach is sufficient for time series compositing where multi-temporal averaging further suppresses speckle.
+
+```{r}
+#| label: speckle-filter
+
+apply_speckle_filter <- function(image) {
+  vv_filtered <- image$select("VV")$
+    focal_mean(radius = 3.5, kernelType = "square", units = "pixels")$
+    rename("VV_filtered")
+  vh_filtered <- image$select("VH")$
+    focal_mean(radius = 3.5, kernelType = "square", units = "pixels")$
+    rename("VH_filtered")
+  image$addBands(vv_filtered)$addBands(vh_filtered)$
+    copyProperties(image, list("system:time_start"))
+}
+
+s1_filtered <- s1$map(apply_speckle_filter)
+```
+
+## Backscatter Ratio Bands
+
+VV/VH ratio and normalised difference help distinguish open water from flooded vegetation. Open water shows low VV and low VH. Flooded vegetation shows moderate VV but elevated VH due to double-bounce scattering.
+
+```{r}
+#| label: ratio-bands
+
+add_ratio_bands <- function(image) {
+  vv <- image$select("VV_filtered")
+  vh <- image$select("VH_filtered")
+  ratio <- vv$subtract(vh)$rename("VV_VH_ratio")
+  nd <- vv$subtract(vh)$divide(vv$add(vh))$rename("VV_VH_nd")
+  image$addBands(ratio)$addBands(nd)$
+    copyProperties(image, list("system:time_start"))
+}
+
+s1_processed <- s1_filtered$map(add_ratio_bands)
+```
+
+## Water Detection Thresholding
+
+Calm water surfaces yield low backscatter in both VV and VH channels, typically below -15 dB for VV. We use a percentile-based adaptive threshold: the 15th percentile of VV within the AOI typically captures the water/land break in scenes with substantial water coverage.
+
+```{r}
+#| label: water-threshold
+
+sample_image <- ee$Image(s1_processed$first())$select("VV_filtered")
+
+percentiles <- sample_image$reduceRegion(
+  reducer = ee$Reducer$percentile(c(15L, 50L)),
+  geometry = aoi_ee,
+  scale = 30L,
+  maxPixels = as.integer(1e9)
+)$getInfo()
+
+threshold_vv <- percentiles$VV_filtered_p15
+print(paste("Adaptive VV threshold (p15):", round(threshold_vv, 2), "dB"))
+print(paste("Median VV:", round(percentiles$VV_filtered_p50, 2), "dB"))
+
+if (is.null(threshold_vv) || threshold_vv > -10 || threshold_vv < -25) {
+  threshold_vv <- -15
+  print("Using fixed threshold: -15 dB")
+}
+
+classify_water <- function(image) {
+  water <- image$select("VV_filtered")$lt(threshold_vv)$rename("water")
+  image$addBands(water)$
+    copyProperties(image, list("system:time_start"))
+}
+
+s1_water <- s1_processed$map(classify_water)
+```
+
+## Monthly Composites
+
+Aggregate to monthly composites to reduce data volume and suppress residual speckle through temporal averaging.
+
+```{r}
+#| label: monthly-composites
+
+year_month_pairs <- expand.grid(year = 2015L:2024L, month = 1L:12L)
+composite_list <- lapply(seq_len(nrow(year_month_pairs)), function(i) {
+  y <- as.integer(year_month_pairs$year[i])
+  m <- as.integer(year_month_pairs$month[i])
+  start <- ee$Date$fromYMD(y, m, 1L)
+  end   <- start$advance(1L, "month")
+  monthly <- s1_water$filterDate(start, end)
+  n <- monthly$size()$getInfo()
+  if (n == 0L) return(NULL)
+  monthly$mean()$
+    set("system:time_start", start$millis())$
+    set("year", y)$
+    set("month", m)$
+    set("n_scenes", n)
+})
+
+composite_list <- Filter(Negate(is.null), composite_list)
+s1_monthly <- ee$ImageCollection$fromImages(composite_list)
+print(paste("Monthly composites:", length(composite_list)))
+```
+
+## Time Series Extraction
+
+Extract mean backscatter and water fraction within the AOI for each monthly composite.
+
+```{r}
+#| label: time-series
+
+extract_stats <- function(image) {
+  stats <- image$select(c("VV_filtered", "VH_filtered", "water"))$
+    reduceRegion(
+      reducer = ee$Reducer$mean(),
+      geometry = aoi_ee,
+      scale = 30L,
+      maxPixels = as.integer(1e9)
+    )
+  ee$Feature(NULL, stats)$
+    set("date", image$date()$format("YYYY-MM-dd"))$
+    set("year", image$get("year"))$
+    set("month", image$get("month"))$
+    set("n_scenes", image$get("n_scenes"))
+}
+
+s1_ts <- s1_monthly$map(extract_stats)
+s1_ts_info <- s1_ts$getInfo()
+
+s1_df <- do.call(rbind, lapply(s1_ts_info$features, function(f) {
+  data.frame(
+    date       = f$properties$date,
+    year       = f$properties$year,
+    month      = f$properties$month,
+    n_scenes   = f$properties$n_scenes,
+    VV_mean    = f$properties$VV_filtered,
+    VH_mean    = f$properties$VH_filtered,
+    water_frac = f$properties$water,
+    stringsAsFactors = FALSE)
+}))
+
+s1_df$date <- as.Date(s1_df$date)
+print(head(s1_df))
+```
+
+## Seasonal Comparison Maps
+
+Map a wet-season and dry-season composite side by side to visualise the inundation contrast.
+
+```{r}
+#| label: map-composites
+
+wet <- s1_monthly$
+  filter(ee$Filter$eq("month", 1L))$
+  filter(ee$Filter$eq("year", 2020L))$first()
+
+dry <- s1_monthly$
+  filter(ee$Filter$eq("month", 8L))$
+  filter(ee$Filter$eq("year", 2020L))$first()
+
+vis_sar   <- list(bands = list("VV_filtered"), min = -25, max = 0,
+                  palette = c("black", "white"))
+vis_water <- list(bands = list("water"), min = 0, max = 1,
+                  palette = c("white", "blue"))
+
+wet_sar_url   <- ee_tile_url(wet$clip(aoi_ee), vis_sar)
+dry_sar_url   <- ee_tile_url(dry$clip(aoi_ee), vis_sar)
+wet_water_url <- ee_tile_url(wet$clip(aoi_ee), vis_water)
+dry_water_url <- ee_tile_url(dry$clip(aoi_ee), vis_water)
+
+tmap_mode("view")
+tm_shape(st_as_sf(aoi_sf)) +
+  tm_borders(col = "red", lwd = 2) +
+  tm_basemap("Esri.WorldImagery") +
+  tm_tiles(wet_sar_url, group = "Wet VV (Jan 2020)") +
+  tm_tiles(wet_water_url, group = "Wet water mask (Jan 2020)") +
+  tm_scalebar(position = c("right", "bottom")) -> map_wet
+
+tm_shape(st_as_sf(aoi_sf)) +
+  tm_borders(col = "red", lwd = 2) +
+  tm_basemap("Esri.WorldImagery") +
+  tm_tiles(dry_sar_url, group = "Dry VV (Aug 2020)") +
+  tm_tiles(dry_water_url, group = "Dry water mask (Aug 2020)") +
+  tm_scalebar(position = c("right", "bottom")) -> map_dry
+
+tmap_arrange(map_wet, map_dry, ncol = 2)
+```
+
+## Export
+
+```{r}
+#| label: export-sar
+
+write.csv(s1_df, "./outputs/s1_monthly_timeseries.csv", row.names = FALSE)
+```
+
+![](assets/PNG/SNAP-processing.png){width="100%"}
+
+![](assets/PNG/RADAR-render.png){width="100%"}

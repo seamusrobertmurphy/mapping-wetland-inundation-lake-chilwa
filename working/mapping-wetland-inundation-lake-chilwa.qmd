@@ -1,6 +1,6 @@
 ---
-title: "Wetland Inundation Mapping through Remote Sensing and Ethnographic Validation" 
-subtitle: "A Socio-Ecological Study of Lake Chilwa Basin"
+title: "Mapping Wetland Inundation Cycles through Remote Sensing and Community Validation" 
+subtitle: "A Socio-Ecological History of Lake Chilwa Recessions"
 author: 
   - name: "Murphy, S."
   - name: "Wilson, J"
