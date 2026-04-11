@@ -1,0 +1,82 @@
+---
+title: "Environment Setup"
+always_allow_html: true
+---
+
+This page loads all shared dependencies, authenticates to Google Earth Engine, and derives the study area boundary and hydrological base layers used throughout the analysis.
+
+## Packages, GEE Authentication, and AOI
+
+All computational pages source `_common.R`, which handles package loading, GEE authentication, helper function definitions, and AOI derivation from HydroSHEDS level-6 basins.
+
+```{r}
+#| label: setup
+source("_common.R")
+```
+
+## Area of Interest
+
+We derive the AOI from HydroSHEDS basin boundaries filtered by a point location within Lake Chilwa. The level-6 basin becomes the primary clip boundary for all subsequent raster and vector queries.
+
+```{r}
+#| label: aoi-summary
+print(paste("Level 6 basins containing point:", nrow(basin_l6_sf)))
+print(paste("Level 8 sub-catchments:", nrow(basin_l8_sf)))
+```
+
+```{r}
+#| label: aoi-map
+
+tmap_mode("view")
+tm_shape(st_as_sf(aoi_sf)) + tm_borders(col = "red", lwd = 2) +
+  tm_shape(basin_l8_sf) + tm_borders(col = "blue", lwd = 0.5, lty = "dashed") +
+  tm_shape(st_as_sf(poi_sf)) + tm_symbols(fill = "green", size = 1) +
+  tm_basemap("Esri.WorldImagery") +
+  tm_scalebar(position = c("right", "bottom"))
+```
+
+## Hydrological Base Layers
+
+We import elevation and processed hydrology data from multiple sources for cartographic and cross-validation purposes: [MERIT Hydro](https://developers.google.com/earth-engine/datasets/catalog/MERIT_Hydro_v1_0_1) (v1.0.3), [HydroSHEDS](https://www.hydrosheds.org) (v1.1), and [JRC Global Surface Water](https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_GlobalSurfaceWater) (v1.4).
+
+```{r}
+#| label: hydro-rasters
+
+# HydroSHEDS: conditioned DEM (~90m)
+dem              <- ee$Image("WWF/HydroSHEDS/03VFDEM")$clip(aoi_ee)
+hydro_flowdir    <- ee$Image("WWF/HydroSHEDS/03DIR")$clip(aoi_ee)
+hydro_flowacc    <- ee$Image("WWF/HydroSHEDS/03ACC")$clip(aoi_ee)
+hydro_rivers     <- ee$FeatureCollection("WWF/HydroSHEDS/v1/FreeFlowingRivers")$filterBounds(aoi_ee)
+hydro_lakes      <- ee$FeatureCollection("projects/sat-io/open-datasets/HydroLakes/lake_poly_v10")$filterBounds(aoi_ee)
+hydro_rivers_sf  <- ee_to_sf(hydro_rivers)
+hydro_lakes_sf   <- ee_to_sf(hydro_lakes)
+
+# MERIT Hydro: flow direction, upstream drainage, water elevation, channel width
+merit_flowdir    <- ee$Image("MERIT/Hydro/v1_0_1")$select("dir")$clip(aoi_ee)
+merit_drainup    <- ee$Image("MERIT/Hydro/v1_0_1")$select("upa")$clip(aoi_ee)
+merit_elev       <- ee$Image("MERIT/Hydro/v1_0_1")$select("elv")$clip(aoi_ee)
+merit_wth        <- ee$Image("MERIT/Hydro/v1_0_1")$select("wth")$clip(aoi_ee)
+merit_rivers     <- merit_drainup$gt(10)
+
+# JRC Global Surface Water
+gsw_occurrence   <- ee$Image("JRC/GSW1_4/GlobalSurfaceWater")$select("occurrence")$clip(aoi_ee)
+gsw_seasonality  <- ee$Image("JRC/GSW1_4/GlobalSurfaceWater")$select("seasonality")$clip(aoi_ee)
+gsw_recurrence   <- ee$Image("JRC/GSW1_4/GlobalSurfaceWater")$select("recurrence")$clip(aoi_ee)
+gsw_transition   <- ee$Image("JRC/GSW1_4/GlobalSurfaceWater")$select("transition")$clip(aoi_ee)
+gsw_monthly      <- ee$ImageCollection("JRC/GSW1_4/MonthlyHistory")$filterBounds(aoi_ee)
+
+print(paste("JRC monthly images:", gsw_monthly$size()$getInfo()))
+print(paste("Number of lakes within watershed:", nrow(hydro_lakes_sf)))
+```
+
+```{r}
+#| label: hydro-map
+
+tmap_mode("view")
+tm_shape(st_as_sf(aoi_sf)) + tm_borders(col = "red", lwd = 2) +
+  tm_shape(hydro_rivers_sf) + tm_lines(col = "steelblue", lwd = 1.5) +
+  tm_shape(hydro_lakes_sf) + tm_polygons(fill = "steelblue", lwd = 1) +
+  tm_shape(st_as_sf(poi_sf)) + tm_symbols(fill = "green", size = 1) +
+  tm_scalebar(position = c("right", "bottom")) +
+  tm_basemap("Esri.WorldImagery")
+```

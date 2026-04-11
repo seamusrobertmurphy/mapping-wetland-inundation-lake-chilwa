@@ -12,3 +12,5 @@ notes-setup.R
 /2.data
 .claude/
 CLAUDE.md
+.gitignore
+/.quarto/
