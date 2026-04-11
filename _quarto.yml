@@ -1,0 +1,66 @@
+project:
+  type: book
+  output-dir: _site
+    
+book:
+  title: "Mapping Wetland Inundation Cycles through Remote Sensing and Community Validation"
+  subtitle: "A Socio-Ecological History of Lake Chilwa Recessions"
+  date: "2026-01-19"
+  reader-mode: true
+
+  chapters:
+    - index.qmd
+
+    - part: "Introduction"
+      chapters:
+        - chapters/01-introduction.qmd
+
+    - part: "Methods"
+      chapters:
+        - chapters/02.a-methods-ses.qmd
+        - chapters/02.b-environment.qmd
+        - chapters/02.c-methods-sar.qmd
+        - chapters/02.d-methods-landsat.qmd
+
+    - part: "Results"
+      chapters:
+        - chapters/03-results.qmd
+
+    - part: "Conclusion"
+      chapters:
+        - chapters/04.a-conclusions.qmd
+        - chapters/04.b-discussion.qmd
+
+format:
+  html:
+    theme: 
+      - styles.scss
+      - default
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    code-tools: false
+    code-summary: "View Code"
+    code-link: true	
+    embed-resources: false
+    grid:
+      body-width: 1000px
+      margin-width: 250px
+
+
+  docx:
+    highlight-style: pygments
+    latex_engine: xelatex
+    prefer-html: true
+
+execute:
+  eval: true
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+
+always_allow_html: true
+engine: knitr
+bibliography: references/references.bib
+csl: references/apa.csl
