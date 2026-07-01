@@ -807,7 +807,10 @@ Zhang, G., Yao, T., Chen, W., Zheng, G., Shum, C. K., Yang, K., Peng, S., Tian, 
 
 ## Repository Navigation
 
-- `1.manuscript/` — manuscript drafts (DOCX); `Manuscript_2026-04-10.docx` is the current version this README mirrors.
-- `2.data/` — shapefiles (basin, sub-basins, AOI) and rasters (DEM derivatives).
-- `3.literature/` — reference PDFs.
-- `4.images/` — figures.
+- `01.manuscript/` — manuscript drafts (DOCX); `Manuscript_2026-04-10.docx` is the current version this README mirrors.
+- `02.inputs/` — source data: field photographs (`PNG/`), the shared setup script (`Scripts/_common.R`), and the local watershed shapefile (`SHP/chilwa_watershed_4326.*`).
+- `03.outputs/` — generated outputs: processing figures (`PNG/`), basin shapefiles (`SHP/`), and a TauDEM terrain-analysis stream (`DEM/`) that runs independently of the Quarto/GEE pipeline and is not yet reflected in it.
+- `archive/` — earlier rendered outputs and the original field and thesis source documents (thesis PDF, Wilson manuscripts, per-chapter DOCX drafts).
+- `working/` — the executable Quarto notebook (`mapping-wetland-inundation-lake-chilwa.qmd`) plus its `chapters/`/`sources/` pipeline; the code cells above are drawn from this notebook.
+- `references/` — citation files (`references.bib`, `apa.csl`). Note: Journal of Hydrology uses Elsevier's Harvard citation style, not APA; the CSL will need swapping before submission.
+- `_staging/` — draft copies awaiting review. Nothing here is implemented into the main tree until reviewed and approved.
