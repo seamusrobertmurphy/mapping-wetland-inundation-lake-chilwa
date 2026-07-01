@@ -1,0 +1,11 @@
+---
+title: "Discussion"
+---
+
+The integration of remote sensing and participatory methods revealed critical challenges and demonstrated solutions for wetland conservation research. The primary methodological challenge involved reconciling temporal mismatches between 16-day Landsat revisit cycles and daily community observations. This required seasonal aggregation methods that preserved both satellite data precision and local knowledge temporality. Thirty-metre Landsat pixels proved inadequate for capturing fishers' spatial knowledge of specific fishing grounds, necessitating sub-pixel analysis validated through community mapping.
+
+The integrated approach uncovered socio-ecological patterns invisible to technical analysis alone. Community mapping identified locations where formal fisheries regulations conflicted with traditional practices, enabling policy adjustments that improved conservation outcomes and compliance. Local observers consistently identified environmental shifts days or weeks before satellite detection, demonstrating the potential for collaborative monitoring networks.
+
+This study demonstrates that purely technical remote sensing approaches miss the social dimensions that determine conservation success. The socio-ecological systems framework shows transferability through standardised remote sensing protocols, replicable participatory methods, and documented integration workflows.
+
+Future research should extend temporal coverage using earlier Landsat sensors where data quality permits, integrate L-band SAR for improved vegetation penetration, develop coupled hydrological-social models for scenario planning, and test transferability across other African endorheic systems.
