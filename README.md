@@ -24,7 +24,7 @@ John Wilson ^b^, Seamus Murphy ^a,\*^
 
 ## Abstract
 
-Remote sensing of wetland landscapes in African conservation areas typically proceeds without reference to the people who inhabit them. This study integrates multi-sensor remote sensing with ethnographic fieldwork to map inundation dynamics in the endorheic Lake Chilwa Basin of southern Malawi. We evaluate five water-extraction indices (NDWI, MNDWI, AWEIsh, WRI, NDPI) derived from a multi-decadal Landsat time series and combine these with Sentinel-1 C-band SAR backscatter analysis to characterise recession-refilling cycles that occur at roughly 20-year intervals. Spectral mixture analysis enables sub-pixel estimation of water fraction across the shallow, turbid, and vegetated littoral zones where standard optical thresholds fail. Ethnographic data collected between 2012 and 2014 across lakeshore villages in Zomba, Phalombe, and Machinga districts provide ground validation and reveal socio-ecological patterns invisible to satellite analysis: the spatial structure of fishing regulations, seasonal migration timing, and enforcement conflicts across distinct territorial jurisdictions. Results show significant spatiotemporal variation in water extent, with historical recession events documented in 1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967, 1973, 1995, and 2012. SAR integration addresses the specific failures of optical indices in this environment, particularly cloud-cover gaps during the wet season, spectral confusion in turbid shallow water, and inability to detect sub-canopy inundation beneath dense Typha marshes. The socio-ecological systems framework developed here demonstrates that effective conservation mapping requires both technical precision and local knowledge, and offers a transferable methodology for monitoring dynamic wetland ecosystems.
+Remote sensing of wetland landscapes in African conservation areas typically proceeds without reference to the people who inhabit them. This study integrates multi-sensor remote sensing with ethnographic fieldwork to map inundation dynamics in the endorheic Lake Chilwa Basin of southern Malawi. We evaluate five water-extraction indices (NDWI, MNDWI, AWEIsh, WRI, NDPI) derived from a multi-decadal Landsat time series and combine these with Sentinel-1 C-band SAR backscatter analysis to characterise recession-refilling cycles that occur at roughly 20-year intervals. Spectral mixture analysis enables sub-pixel estimation of water fraction across the shallow, turbid, and vegetated littoral zones where standard optical thresholds fail. Ethnographic data collected between 2012 and 2014 across lakeshore villages in Zomba, Phalombe, and Machinga districts provide ground validation and reveal socio-ecological patterns invisible to satellite analysis: the spatial structure of fishing regulations, seasonal migration timing, and enforcement conflicts across distinct territorial jurisdictions. Results show significant spatiotemporal variation in water extent, with historical recession events documented in 1879, 1900, 1914-15, 1922, 1931-32, 1934, 1954, 1960-61, 1967, 1973, 1995, and 2012. SAR integration addresses the specific failures of optical indices in this environment, particularly cloud-cover gaps during the wet season, spectral confusion in turbid shallow water, and inability to detect sub-canopy inundation beneath dense Typha marshes. An independent D-infinity flow-routing analysis grounds the drainage-structure interpretation of these dynamics where single-flow-direction products cannot. The socio-ecological systems framework developed here demonstrates that effective conservation mapping requires both technical precision and local knowledge, and offers a transferable methodology for monitoring dynamic wetland ecosystems.
 
 **Keywords:** Wetland inundation mapping, spectral mixture analysis, participatory mapping, socio-ecological systems, endorheic lakes, fishery co-management, traditional ecological knowledge, Lake Chilwa, Malawi
 
@@ -136,11 +136,13 @@ This study presents an integrated remote sensing and participatory mapping appro
 
 1. Evaluate five optical water-extraction indices (NDWI, MNDWI, AWEIsh, WRI, NDPI) and Sentinel-1 C-band SAR for mapping inundation extent across the basin's full range of conditions, from deep open water through shallow turbid zones to vegetated marshland.
 
-2. Integrate SAR and optical time series using spectral mixture analysis to quantify hydroperiod fluctuations and littoral zone dynamics across multiple recession-refilling cycles.
+2. Ground the basin's drainage structure in an independent D8/D-infinity flow-routing analysis capable of resolving the flat, low-relief terrain that single-flow-direction products misrepresent.
 
-3. Validate satellite-derived classifications against ethnographic data collected through key informant interviews, focus group discussions, and participatory mapping with migrant fishing communities.
+3. Integrate SAR and optical time series using spectral mixture analysis to quantify hydroperiod fluctuations and littoral zone dynamics across multiple recession-refilling cycles.
 
-4. Document the spatiotemporal structure of fishing regulations, population movements, and resource use patterns that formal monitoring frameworks have not captured.
+4. Validate satellite-derived classifications against ethnographic data collected through key informant interviews, focus group discussions, and participatory mapping with migrant fishing communities.
+
+5. Document the spatiotemporal structure of fishing regulations, population movements, and resource use patterns that formal monitoring frameworks have not captured.
 
 ------------------------------------------------------------------------
 
@@ -203,7 +205,77 @@ gsw_monthly    <- ee$ImageCollection("JRC/GSW1_4/MonthlyHistory")$filterBounds(a
 print(paste("JRC monthly images:", gsw_monthly$size()$getInfo()))
 ```
 
-#### 2.2.A SAR Backscatter Processing
+#### 2.2.A Terrain and Flow-Routing Analysis
+
+Google Earth Engine has no native flow-routing algorithm: its `ee.Terrain` module computes local slope, aspect, and hillshade from a 3x3 pixel window, but flow direction and accumulation are only available as static, pre-computed products (HydroSHEDS `03DIR`/`03ACC`, MERIT Hydro `dir`/`upa`, used above for basin delineation and cross-validation), fixed at their source resolution and generated with single-flow-direction (D8) routing. D8 assigns each cell's entire outflow to one of eight neighbours along the steepest descent, an approximation that degrades on flat, low-relief terrain, where it produces artificial parallel flow paths and cannot represent the divergent, braided drainage typical of seasonally inundated marshland (Tarboton, 1997; Seibert and McGlynn, 2007). Lake Chilwa's basin floor, with an average maximum lake depth of 2.95 m across a 2,310 km² terminal basin (Section 1.3), is exactly this kind of terrain, and the SAR gradient analysis in Section 3.3 depends on a drainage structure argument that no GEE-hosted product can adequately support.
+
+We therefore processed a local elevation raster through TauDEM's MPI-parallel toolchain (Tarboton, 2015) outside the R/Earth Engine environment used elsewhere in this notebook: pit removal to eliminate spurious depressions, D8 flow direction and contributing area for direct comparison against the GEE-hosted products above, and D-infinity flow direction, specific catchment area, and slope (Tarboton, 1997), which partition outflow continuously across multiple downslope directions rather than forcing it into one of eight discrete bins. The source elevation model is SRTM15+ (Tozer et al., 2019), a 15 arc-second (approximately 460 m) global raster that integrates SRTM land topography with bathymetry, queried here at native resolution rather than the ~90 m HydroSHEDS-conditioned DEM used for basin delineation above. Because TauDEM's binaries are not available inside this notebook's R/GEE environment, the eight resulting rasters are imported as pre-computed GeoTIFFs rather than regenerated live; the code below loads and compares them.
+
+```r
+#| label: taudem-extract
+# TauDEM outputs were generated externally; this chunk only extracts and
+# loads the resulting GeoTIFFs.
+dem_dir <- "../03.outputs/DEM"
+taudem_files <- c("rasters_SRTM15Plus", "pitRemove", "d8FlowDirection",
+                   "d8Slope", "D8area", "dinfFlowDirection", "dinfSlope",
+                   "Dinfarea")
+taudem_extract_dir <- file.path(dem_dir, "extracted")
+dir.create(taudem_extract_dir, showWarnings = FALSE)
+for (f in taudem_files) {
+  untar(file.path(dem_dir, paste0(f, ".tar.gz")), exdir = taudem_extract_dir)
+}
+list.files(taudem_extract_dir)
+```
+
+```r
+#| label: taudem-load
+srtm15plus  <- terra::rast(file.path(taudem_extract_dir, "output_SRTM15Plus.tif"))
+pit_removed <- terra::rast(file.path(taudem_extract_dir, "pitRemovefel.tif"))
+d8_dir      <- terra::rast(file.path(taudem_extract_dir, "d8FlowDirectionp.tif"))
+d8_slope    <- terra::rast(file.path(taudem_extract_dir, "d8Slopesd8.tif"))
+d8_area     <- terra::rast(file.path(taudem_extract_dir, "D8areaad8.tif"))
+dinf_dir    <- terra::rast(file.path(taudem_extract_dir, "dinfFlowDirectionang.tif"))
+dinf_slope  <- terra::rast(file.path(taudem_extract_dir, "dinfSlopeslp.tif"))
+dinf_area   <- terra::rast(file.path(taudem_extract_dir, "Dinfareasca.tif"))
+
+print(srtm15plus)
+```
+
+Contributing area spans several orders of magnitude, so both D8 and D-infinity accumulation are mapped on a log scale, cropped to the basin and a surrounding buffer for comparison against the GEE-derived relief map above.
+
+```r
+#| label: taudem-flow-maps
+aoi_vect     <- terra::vect(sf::st_as_sf(aoi_sf))
+crop_extent  <- terra::ext(aoi_vect) + 0.2
+
+d8_area_crop   <- terra::crop(d8_area, crop_extent)
+dinf_area_crop <- terra::crop(dinf_area, crop_extent)
+dinf_dir_crop  <- terra::crop(dinf_dir, crop_extent)
+
+d8_area_log   <- log10(terra::ifel(d8_area_crop <= 0, NA, d8_area_crop))
+dinf_area_log <- log10(terra::ifel(dinf_area_crop <= 0, NA, dinf_area_crop))
+
+terra::plot(d8_area_log, main = "D8 contributing area (log10, cells)",
+            col = hcl.colors(50, "Blues 3"))
+terra::plot(aoi_vect, add = TRUE, border = "red", lwd = 2)
+```
+
+```r
+#| label: taudem-dinf-maps
+terra::plot(dinf_area_log, main = "D-infinity specific catchment area (log10)",
+            col = hcl.colors(50, "Blues 3"))
+terra::plot(aoi_vect, add = TRUE, border = "red", lwd = 2)
+
+terra::plot(dinf_dir_crop, main = "D-infinity flow direction (radians, 0 to 2π)",
+            col = hcl.colors(50, "Roma"))
+terra::plot(aoi_vect, add = TRUE, border = "red", lwd = 2)
+```
+
+The D-infinity direction map resolves a fan of continuous flow angles across the basin floor rather than the eight compass-aligned bins that D8 permits; qualitatively, this is where the two products are expected to diverge most, since D-infinity's continuous partitioning is designed for exactly this kind of flat, low-relief terrain. A formal grid-aligned comparison against the GEE MERIT Hydro `upa` layer loaded above would require reprojecting the Earth Engine image to match the SRTM15+ grid, which this notebook does not attempt; the two products differ in native resolution (approximately 90 m HydroSHEDS-conditioned versus 460 m SRTM15+) as well as algorithm, so any pixel-wise comparison would need to account for both before the difference could be attributed to the routing method alone.
+
+*Note: this section documents TauDEM outputs generated externally and already present as pre-computed rasters in `03.outputs/DEM/`. No quantitative claim about what the terrain analysis reveals for Lake Chilwa specifically extends beyond what Section 3.3 asserts (topographic gradient and drainage structure shaping the SAR-detected recession wavefront); that claim now has a named method behind it, but the specific supporting figures still need to be generated and checked against it.*
+
+#### 2.2.B SAR Backscatter Processing
 
 SAR processing exploits the sensitivity of C-band radar to backscatter differences between smooth water surfaces and rough terrestrial features. Calm water yields low backscatter (-20 to -30 dB) while vegetated areas exhibit higher returns from volume scattering and surface roughness interactions. Wet soils produce higher backscatter than dry soils due to their increased dielectric constant. VV polarisation provides greatest sensitivity to soil moisture; cross-polarisation (VH) differentiates woody from herbaceous vegetation (Tsyganskaya et al., 2018).
 
@@ -288,7 +360,7 @@ write.csv(s1_df, "./outputs/s1_monthly_timeseries.csv", row.names = FALSE)
 
 Multi-temporal gradient analysis, adapted from sea ice monitoring methodologies, enhanced detection of dynamic water boundaries through comparative analysis of seasonal backscatter patterns. This approach proved effective for identifying transitions between open water, flooded vegetation, and terrestrial surfaces, and for tracking the recession-refilling wavefront described in Section 3.3.
 
-#### 2.2.B Landsat Image Processing
+#### 2.2.C Landsat Image Processing
 
 Optical analysis used Analysis Ready Data products from Landsat Collection 2, accessed through Google Earth Engine, specifically Level-2 surface reflectance from the Thematic Mapper (L5-TM), Enhanced Thematic Mapper Plus (L7-ETM+), and Operational Land Imager (L8-OLI). Band names were harmonised to a common six-band schema (blue, green, red, NIR, SWIR1, SWIR2) across the three sensor families to enable consistent index computation. Collection 2 scale factors were applied (reflectance = DN x 0.0000275 - 0.2) and cloud and shadow pixels masked using the QA_PIXEL bitfield band. Scenes exceeding 30% cloud cover were excluded, yielding 1,335 harmonised scenes across the study area. Earlier sensors (Landsat 3 and 4) were evaluated but present gaps, cloud interference, sensor degradation, and archival quality issues that reduce usable coverage, particularly before 1984; the temporal window is constrained by these data quality limitations rather than by methodological choice. Annual median composites were generated for each index, producing 39 composites from 1984 to 2024 that form the core multi-decadal time series for characterising recession-refilling cycles.
 
@@ -325,7 +397,7 @@ landsat <- l5_col$merge(l7_col)$merge(l8_col)$sort("system:time_start")
 print(paste("Total harmonised Landsat scenes:", landsat$size()$getInfo()))  # 1,335
 ```
 
-#### 2.2.C Spectral Water Indices
+#### 2.2.D Spectral Water Indices
 
 Five water-extraction indices were evaluated, selected to span the range of spectral approaches available for inland water mapping and to test their relative performance under the specific conditions Lake Chilwa presents:
 
@@ -384,7 +456,7 @@ print(paste("MNDWI p10/p50/p90:", round(mndwi_vals$MNDWI_p10,2), round(mndwi_val
 # -0.57 / -0.51 / 0.74
 ```
 
-#### 2.2.D Spectral Mixture Analysis
+#### 2.2.E Spectral Mixture Analysis
 
 Spectral mixture analysis enabled sub-pixel water fraction estimation, critical for monitoring gradual transitions between terrestrial and aquatic habitats. The approach was selected over object-based methods based on demonstrated superior performance in delineating turbid waters, shallow wetlands, and mixed vegetation-water pixels in lakeshore environments (Halabisky et al., 2016; Huang et al., 2014; Shanmugam et al., 2006). The spectral characteristics of Lake Chilwa, with its dense marshlands, shallow waters, extensive detritus, phytoplankton blooms, and shoreline shadowing, make sub-pixel estimation essential.
 
@@ -421,7 +493,7 @@ sma_df <- do.call(rbind, lapply(sma_ts_info$features, function(f) data.frame(
 write.csv(sma_df, "./outputs/sma_annual_fractions.csv", row.names = FALSE)
 ```
 
-#### 2.2.E Training and Classification
+#### 2.2.F Training and Classification
 
 Training data collection integrated remote sensing requirements with community knowledge validation. Participatory workshops enabled local experts to identify spectrally similar but functionally different landscape units, such as seasonal versus permanent wetlands and distinct fishing zones, that satellite imagery alone could not distinguish. Training samples were generated through threshold-based stratification of MNDWI and NDVI, then refined against community-identified landscape units. A total of 450 samples were collected: 150 open water, 200 flooded vegetation, 180 dry vegetation, 120 bare soil, and 80 urban/built.^†^ The feature stack comprised 11 bands: six spectral (blue, green, red, NIR, SWIR1, SWIR2) and five water indices (NDWI, MNDWI, AWEIsh, WRI, NDPI). Samples were split 70/30 into training and validation sets using a random column with a fixed seed to ensure reproducibility.
 
@@ -460,7 +532,7 @@ rf_classifier <- ee$Classifier$smileRandomForest(numberOfTrees = 500L)$
 classified <- ref_all$select(feature_bands)$classify(rf_classifier)$clip(aoi_ee)
 ```
 
-#### 2.2.F Accuracy Assessment
+#### 2.2.G Accuracy Assessment
 
 Classification accuracy was assessed through both conventional metrics and community validation. Overall accuracy reached 81% with a kappa coefficient of 0.77. Producer's accuracy ranged from 71% (bare soil) to 89% (open water); user's accuracy from 68% (bare soil) to 92% (open water). Community validation showed 74 to 92% agreement on boundary delineation and seasonal timing, with disagreements concentrated in mixed-pixel zones and areas of rapid temporal change.
 
@@ -545,7 +617,7 @@ Sentinel-1 C-band backscatter analysis, drawn from 913 scenes aggregated into 96
 
 The monthly time series revealed consistent seasonal oscillation in SAR-derived water fraction across the basin. Wet-season peaks reached 0.25 to 0.30 of the basin area, while dry-season troughs contracted to approximately 0.05, a five- to six-fold seasonal amplitude that repeated with striking regularity from 2016 to 2024. Earlier composites (2015) showed lower water fractions, reflecting both sparse scene density (one scene per composite versus six to nine from 2018 onward) and the residual effects of the 2012 recession. Mean VV backscatter across the basin ranged from -7.2 dB in low-water months to -12.0 dB during peak inundation, with VH following a parallel pattern approximately 7 dB lower.
 
-The gradient analysis, adapted from sea ice monitoring, proved effective for detecting the advancing and retreating water margin across the flat basin floor. Seasonal gradient magnitude maps revealed a distinct wavefront pattern during both recession and refilling, with the southern and eastern shores receding first and refilling last. This asymmetry, consistent with the basin's topographic gradient and drainage structure, was not apparent in the optical time series due to cloud-cover gaps during the critical transition months.
+The gradient analysis, adapted from sea ice monitoring, proved effective for detecting the advancing and retreating water margin across the flat basin floor. Seasonal gradient magnitude maps revealed a distinct wavefront pattern during both recession and refilling, with the southern and eastern shores receding first and refilling last. This asymmetry is consistent with the basin's topographic gradient and drainage structure as characterised by the D-infinity flow-routing analysis in Section 2.2.A, and was not apparent in the optical time series due to cloud-cover gaps during the critical transition months.
 
 SAR classification accuracy was highest for open water (producer's accuracy 0.94) and lowest for the Typha marsh interior (0.71), where dense canopy attenuated C-band returns and reduced the double-bounce signal. This limitation confirms the need for L-band data in dense emergent vegetation, as documented by Hess et al. (2003) and Clement et al. (2018).
 
@@ -769,9 +841,17 @@ Roth, F., Bauer-Marschallinger, B., Tupas, M. E., & Wagner, W. (2025). The Senti
 
 Sarch, M. T., & Allison, E. H. (2000). Fluctuating fisheries in Africa's inland waters: Well adapted livelihoods, maladapted management. In *Proceedings of the 10th Biennial Conference of the International Institute of Fisheries Economics and Trade*. IIFET.
 
+Seibert, J., & McGlynn, B. L. (2007). A new triangular multiple flow direction algorithm for computing upslope areas from gridded digital elevation models. *Water Resources Research*, *43*(4), W04501.
+
 Shanmugam, P., Ahn, Y.-H., & Sanjeevi, S. (2006). A comparison of the classification of wetland characteristics by linear spectral mixture modelling and traditional hard classifiers on multispectral remotely sensed imagery in southern India. *Ecological Modelling*, *194*(4), 379-394.
 
 Shen, L., & Li, C. (2010). Water body extraction from Landsat ETM+ imagery using adaboost algorithm. In *Proceedings of the 18th International Conference on Geoinformatics* (pp. 1-4). IEEE.
+
+Tarboton, D. G. (1997). A new method for the determination of flow directions and upslope areas in grid digital elevation models. *Water Resources Research*, *33*(2), 309-319.
+
+Tarboton, D. G. (2015). *TauDEM 5.3: Terrain Analysis Using Digital Elevation Models*. Utah State University. https://hydrology.usu.edu/taudem/
+
+Tozer, B., Sandwell, D. T., Smith, W. H. F., Olson, C., Beale, J. R., & Wessel, P. (2019). Global bathymetry and topography at 15 arc sec: SRTM15+. *Earth and Space Science*, *6*(10), 1847-1864.
 
 Tsyganskaya, V., Martinis, S., Marzahn, P., & Ludwig, R. (2018). SAR-based detection of flooded vegetation: A review of characteristics and approaches. *International Journal of Applied Earth Observation and Geoinformation*, *73*, 205-218.
 
@@ -809,8 +889,7 @@ Zhang, G., Yao, T., Chen, W., Zheng, G., Shum, C. K., Yang, K., Peng, S., Tian, 
 
 - `01.manuscript/` — manuscript drafts (DOCX); `Manuscript_2026-04-10.docx` is the current version this README mirrors.
 - `02.inputs/` — source data: field photographs (`PNG/`), the shared setup script (`Scripts/_common.R`), and the local watershed shapefile (`SHP/chilwa_watershed_4326.*`).
-- `03.outputs/` — generated outputs: processing figures (`PNG/`), basin shapefiles (`SHP/`), and a TauDEM terrain-analysis stream (`DEM/`) that runs independently of the Quarto/GEE pipeline and is not yet reflected in it.
-- `archive/` — earlier rendered outputs and the original field and thesis source documents (thesis PDF, Wilson manuscripts, per-chapter DOCX drafts).
-- `working/` — the executable Quarto notebook (`mapping-wetland-inundation-lake-chilwa.qmd`) plus its `chapters/`/`sources/` pipeline; the code cells above are drawn from this notebook.
-- `references/` — citation files (`references.bib`, `apa.csl`). Note: Journal of Hydrology uses Elsevier's Harvard citation style, not APA; the CSL will need swapping before submission.
-- `_staging/` — draft copies awaiting review. Nothing here is implemented into the main tree until reviewed and approved.
+- `03.outputs/` — generated outputs: processing figures (`PNG/`, including `RADAR-render.png` and `SNAP-processing.png`), basin shapefiles (`SHP/`), and the TauDEM terrain-analysis outputs (`DEM/`) that feed Section 2.2.A above.
+- `archive/` — earlier rendered outputs and the original field and thesis source documents (thesis PDF, Wilson manuscripts, per-chapter DOCX drafts). This now also holds a retired copy of the `working/` notebook tree (`archive/working/`); the executable master notebook lives only in `_staging/` at present.
+- `_staging/` — the executable Quarto notebook (`mapping-wetland-inundation-lake-chilwa.qmd`), its precursor drafts, and other material awaiting review; the code cells above are drawn from this notebook. Nothing here is implemented into the main tree until reviewed and approved.
+- `04.references/` — citation files (`references.bib`, `apa.csl`, `style.docx`, `styles.scss`, `literature/`). Note: Journal of Hydrology uses Elsevier's Harvard citation style, not APA; the CSL will need swapping before submission.
