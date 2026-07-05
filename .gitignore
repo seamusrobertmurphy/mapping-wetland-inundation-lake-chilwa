@@ -5,15 +5,14 @@
 .Rprofile
 .Rproj
 
-/inputs
-/outputs
-/.quarto/
-/_staging/
-/2.data
+_staging/
+_site/
+_backups/
+
+INDEX.md
+SPEC.md
 
 .DS_Store
 *.tif
 
-.gitignore
-notes-script.R
-notes-setup.R
+
