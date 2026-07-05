@@ -5,17 +5,17 @@
 .Rprofile
 .Rproj
 
-/inputs
-/outputs
-/.quarto/
-/_staging/
-/2.data
-/.claude/
+_staging/
+_site/
+_backups/
+.claude/
+.claudeprism/
+
+CLAUDE.md
+INDEX.md
+SPEC.md
 
 .DS_Store
 *.tif
 
-CLAUDE.md
-.gitignore
-notes-script.R
-notes-setup.R
+
