@@ -62,5 +62,5 @@ execute:
 
 always_allow_html: true
 engine: knitr
-bibliography: references/references.bib
-csl: references/apa.csl
+bibliography: 04.references/references.bib
+csl: 04.references/apa.csl
