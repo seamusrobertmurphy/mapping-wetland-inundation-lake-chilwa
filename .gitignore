@@ -5,11 +5,20 @@
 .Rprofile
 .Rproj
 
+# Secrets: keep credentials out of git
+.Renviron
+.env
+
+# Project-local Python virtualenv (rebuilt on render)
+.venv/
+__pycache__/
+
 _staging/
 _site/
 _backups/
 .claude/
 .claudeprism/
+tasks/
 
 CLAUDE.md
 INDEX.md

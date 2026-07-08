@@ -1,0 +1,985 @@
+---
+title: "Land Change Estimation"
+subtitle: "Spatial & Modelling Check of Submitted Land Cover Change Estimates & Activity Data Methods"
+author: "Murphy, S"
+date: 12/08/2025
+execute:
+  echo: true
+format:
+  html:
+    reference-doc: ./References/style.docx
+    toc: true
+    toc-depth: 3
+    toc-title: ""
+    highlight-style: pygments
+    page-layout: article
+    df-print: tibble
+
+knitr:
+  opts_chunk:
+    prefer-html: true
+    dev: "png"
+    dpi: 300
+  opts_knit:
+    rmarkdown.pandoc.to: "docx"
+citeproc: true
+editor: visual
+engine: knitr
+embed-resources: true
+bibliography: ./References/references.bib
+csl: ./References/apa.csl
+editor_options: 
+  markdown: 
+    wrap: 60
+---
+
+### Environment Setup
+
+To install additional dependencies and drivers for accessing
+ESRI-formatted data submitted by client, ensure the new GDAL
+library (3.12) is enabled and linked to R's and python's
+spatial libraries and packages. This is a bit of a headache
+because `sf` and related packages come bundled as binaries
+that pre-install a legacy GDAL 3.8 (& GEOS), and the
+symlinks and dependency tests of those `sf` installations
+did not allow changing this to machine's global GDAL
+Installation steps were saved here in this
+[gist](https://gist.github.com/seamusrobertmurphy/a386ce3a022bf51c4795a402fb5c754b).
+
+Please note that `sf::sf_use_s2(use_s2 = TRUE)` is applied
+in setup chunk below, which means this workflow's
+computations are based in a spherical geometric plane, which
+is critical accuracy concern for larger areas like Bolivia
+extent. Earth engine platforms switch without explicitly
+indicating between pseudomercator (3857) and geographic
+projections (4326), which also implies but does not confirm
+different geometric ellipsoid planes are applied. Advisable
+to highlight this when discuss discrepancies with estimates
+derived in code.earth.engine.
+
+```{r}
+#| warning: false
+#| message: false
+#| echo: true
+#| comment: NA
+#install.packages(c("devtools", "easypackages"))
+easypackages::packages(
+  "bslib", 
+  "cols4all", "covr", "cowplot", 
+  "dendextend", "digest","DiagrammeR","dtwclust", "downlit", "devtools",
+  "e1071", "exactextractr","elevatr", 
+  "FNN", "future", "forestdata", "flextable",
+  "gdalcubes", "gdalUtilities", "geojsonsf", "geos", "geodata", "ggplot2", "ggstats", 
+  "ggspatial", "ggmap", "ggplotify", "ggpubr", "ggrepel", "giscoR", 
+  "hdf5r", "httr", "httr2", "htmltools",
+  "janitor", "jsonlite", 
+  "kableExtra", "kohonen", 
+  "leaflet.providers", "leafem", "libgeos","luz","lwgeom", "leaflet", "leafgl",
+  "mapedit", "mapview", "maptiles", "methods", "mc2d", 
+  "ncdf4", "nnet", 
+  "openxlsx", "parallel", "plotly", 
+  "proj4", "PROJ", 
+  "randomForest", "rasterVis", "raster", "Rcpp", "RcppArmadillo", 
+  "RcppCensSpatial","rayshader", "RcppEigen", "RcppParallel", "rasterVis",
+  "RColorBrewer", "reactable", "rgl", "rsconnect","RStoolbox", "rts", "reproj",
+  "s2", "sf", "scales", "sits","spdep", "stars", "stringr","supercells", 
+  "terra", "testthat", "tidyverse", "tidyterra","tools", 
+  "tmap", "tmaptools", "terrainr", "tibble",
+  "xgboost",
+  "webshot", "webshot2",
+  prompt = F)
+
+
+options(htmltools.dir.version = F, htmltools.preserve.raw = F)
+#devtools::install_github("ltorgo/performanceEstimation",ref="develop")
+knitr::opts_chunk$set(
+  echo = TRUE, 
+  message = FALSE, 
+  warning = FALSE,
+  error = FALSE, 
+  comment = NA, 
+  tidy.opts = list(width.cutoff = 60),
+  dev = "png",
+  dpi = 300
+  ) 
+
+# Configure webshot2
+knitr::opts_knit$set(rmarkdown.pandoc.to = "docx")
+# Configure geometric plane
+mapview::mapviewOptions(fgb = FALSE) 
+sf::sf_use_s2(use_s2 = TRUE) # spherical geometries for massive areas
+#sf::sf_use_s2(use_s2 = FALSE) # non-spherical geometries for smaller extents
+terra::terraOptions(memfrac=0.9, tempdir = "./temp")
+sf::sf_extSoftVersion()
+```
+
+```{css, echo=FALSE, class.source = 'foldable'}
+div.column {
+    display: inline-block;
+    vertical-align: top;
+    width: 50%;
+}
+
+#TOC::before {
+  content: "";
+  display: block;
+  height:200px;
+  width: 200px;
+  background-image: url('https://winrock.org/wp-content/uploads/2021/12/Winrock-logo-R.png');
+  background-size: contain;
+  background-position: 50% 50%;
+  padding-top: 80px !important;
+  background-repeat: no-repeat;
+}
+```
+
+## Objective
+
+This report serves to document methods used to validate
+Charagua's Activity Data methods, performance metrics, and
+land change estimates reported in ART-TREES carbon offset
+program's in Section 10.4 of submitted TREES Registration
+Document
+[(TRD)](https://drive.google.com/file/d/1UZ5yOzoruqN32X140BeFxLpW-c7JZ2RA/view?usp=drive_link)
+and supporting technical report of Bolivia's [National
+Forest Emissions Level
+Methodology](https://drive.google.com/file/d/1IIAjtEqeAgQJQT_WrhCcF-FjtODlv4dV/view?usp=drive_link).
+
+The assessment evaluates compliance of data submissions
+received 2025-11-03 and 2025-11-13 with the ART Standard
+(V2.0) and according to assessment guidelines outlined in
+[Audit
+Plan](https://winrockintl.sharepoint.com/:w:/s/Collab/Eco/IQDFBjrCTJ4MQYs4_3Oxg7kdAaahRCiqja3M27EC0Xnxn3Y?e=g5CIFK).
+
+<br>
+
+## Inputs
+
+To verify compliance and accuracy of these program
+submissions, we attempted to reproduce emissions estimates
+(TRD, Table 10.6.2) and specifically their upstream area
+estimates found in tabsheet called `Activity Data` in
+submitted
+[workbooks](https://drive.google.com/drive/folders/1ewn9V60x_dorn-sz8Ol9HmTXo0femglu?usp=drive_link),
+as shown screenshot below table.
+
+| Category | Name | Description | Source/Location |
+|----|----|----|----|
+|  | [ART-TREES_CHAR_v1.gdb](https://winrockintl.sharepoint.com/:f:/s/Collab/Eco/IgCtFRMHC-OcR7GnbXkuUBEzATvS8x8p5ucwz4QjfGv5J_c?e=hSEslZ) |  |  |
+|  | [/Bolivia/](https://winrockintl.sharepoint.com/:f:/s/Collab/Eco/IgDyrFrkpTkYR4VZD0Fp0FozATR4ZfY40-2gmg6VjuHaXLs?e=9siIdq) |  |  |
+| Program Document | [CHAR_TREES-Registration-Document_v2.pdf](https://drive.google.com/file/d/1UZ5yOzoruqN32X140BeFxLpW-c7JZ2RA/view?usp=drive_link) | TREES Registration Document (TRD) | Client Submission ([Received 2025-10-28](https://winrockintl.sharepoint.com/:f:/s/Collab/Eco/IgBw_APiqEiTRoRciFjq3u8-ATvoaYLFJWG2ER2xn0xKhlE?e=TQQ0Uk)) |
+| Program Workbook | [CHAR_MC 4 estimating ER from forests_base_sheet_v1.xlsx](https://docs.google.com/spreadsheets/d/1O_UMyhDA7_-KjT1I6LrqCG0xWBH0E58Q/edit?usp=sharing&ouid=111043860473625797405&rtpof=true&sd=true) | `Activity Data` Tabsheet | Client Submission ([Received 2025-11-22](https://drive.google.com/drive/folders/1ewn9V60x_dorn-sz8Ol9HmTXo0femglu?usp=drive_link)) |
+| Program Methodology | [BO_NREF_v3.0_20240108.pdf](https://winrockintl.sharepoint.com/:b:/s/Collab/Eco/IQBGXAQJFQvQTJDRpcTX5H_uAV08gI6bmJnYbkFyOyaV1ng?e=LF8Hcm) | Technical Report | Client Submission ([Received 2025-10-28](https://winrockintl.sharepoint.com/:f:/s/Collab/Eco/IgBw_APiqEiTRoRciFjq3u8-ATvoaYLFJWG2ER2xn0xKhlE?e=TQQ0Uk)) |
+| Program Methodology | [Especificaciones contabilidad ER Charagua....docx](https://docs.google.com/document/d/1oxl1BQpF4s-S1gX5BgloBBFZEG5IE4Co/edit?usp=share_link&ouid=111043860473625797405&rtpof=true&sd=true) | Technical Memo | Client Submission ([Received 2025-11-22](https://drive.google.com/drive/folders/1ewn9V60x_dorn-sz8Ol9HmTXo0femglu?usp=drive_link)) |
+| Dataset | [FAO Agro-Ecological Zones](https://www.fao.org/faostat/en/#data/GI/metadata) | Tier-1 Strata (Global) | FAO-GEZ (2012); [DOI](https://www.gaez.iiasa.ac.at/docs/GAEZ_Model_Documentation.pdf); [Repo](https://www.fao.org/faostat/en/#data/GI/metadata) |
+| Dataset Documentation | MapBiomass Methodology Report |  | RAISG [(2022)](https://amazonia.mapbiomas.org/wp-content/uploads/sites/10/2023/08/ATBD_General_MapBiomas_Amazonia_4.0.pdf#page=22) |
+
+<br>
+
+![](Assets/PNG/ActivityData-Estimates.png){fig-align="center"
+width="80%"}
+
+## Method
+
+### Import Project Data
+
+```{r}
+#| comment: NA
+#| error: false
+#| message: false
+#| warning: false
+#| eval: false
+
+# check OpenGDB drivers available for handling
+sf::st_drivers()["OpenFileGDB",]
+sf::sf_extSoftVersion()
+
+# unpack filegeodatabase and import client submissions
+winrock_path = "~/OneDrive - Winrock International Institute for Agricultural Development/20073 - DESNZ LEAF TA/Working Files/Technical Assistance/Consultants/Bolivia/"
+local_path = "/Volumes/TOSHIBA_EXT/Winrock/Bolivia/LULC/"
+gdb_path   = file.path(winrock_path, "Spatial Data", "GDB", "ART-TREES_CHAR_v1.gdb")
+
+# subds => positive integer or character to select sub-dataset (GDAL native)
+aoi_project	= sf::st_read(gdb_path, layer="Charagua")
+aoi_cropper = sf::st_transform(aoi_project, "EPSG:4326") # ee & ellipsoid ready
+crs_project = sf::st_crs(aoi_project)
+Deforestacion_bosque_intacto_2018 = terra::rast(gdb_path, subds=2) |> raster::raster()
+Deforestacion_bosque_intacto_2020 = terra::rast(gdb_path, subds=3) |> raster::raster()
+Deforestacion_bosque_intacto_2021 = terra::rast(gdb_path, subds=4) |> raster::raster()
+Deforestacion_bosque_intacto_2022 = terra::rast(gdb_path, subds=5) |> raster::raster()
+Deforestacion_bosque_intacto_2023 = terra::rast(gdb_path, subds=6) |> raster::raster()
+Deforestacion_bosque_intacto_2019 = terra::rast(gdb_path, subds=7) |> raster::raster()
+Deforestacion_bosque_quemado_2018 = terra::rast(gdb_path, subds=8) |> raster::raster()
+Deforestacion_bosque_quemado_2020 = terra::rast(gdb_path, subds=9) |> raster::raster()
+Deforestacion_bosque_quemado_2021 = terra::rast(gdb_path, subds=10) |> raster::raster()
+Deforestacion_bosque_quemado_2022 = terra::rast(gdb_path, subds=11) |> raster::raster()
+Deforestacion_bosque_quemado_2023 = terra::rast(gdb_path, subds=12) |> raster::raster()
+Deforestacion_bosque_quemado_2019 = terra::rast(gdb_path, subds=13) |> raster::raster()
+Degradacion_bosque_intacto_2018 = terra::rast(gdb_path, subds=14) |> raster::raster()
+Degradacion_bosque_intacto_2020 = terra::rast(gdb_path, subds=15) |> raster::raster()
+Degradacion_bosque_intacto_2021 = terra::rast(gdb_path, subds=16) |> raster::raster()
+Degradacion_bosque_intacto_2022 = terra::rast(gdb_path, subds=17) |> raster::raster()
+Degradacion_bosque_intacto_2023 = terra::rast(gdb_path, subds=18) |> raster::raster()
+Degradacion_bosque_intacto_2019 = terra::rast(gdb_path, subds=19) |> raster::raster()
+Degradacion_bosque_quemado_2018 = terra::rast(gdb_path, subds=20) |> raster::raster()
+Degradacion_bosque_quemado_2020 = terra::rast(gdb_path, subds=21) |> raster::raster()
+Degradacion_bosque_quemado_2021 = terra::rast(gdb_path, subds=22) |> raster::raster()
+Degradacion_bosque_quemado_2022 = terra::rast(gdb_path, subds=23) |> raster::raster()
+Degradacion_bosque_quemado_2023 = terra::rast(gdb_path, subds=24) |> raster::raster()
+Degradacion_bosque_quemado_2019 = terra::rast(gdb_path, subds=25) |> raster::raster()
+CHAR_AGB_ppx								= terra::rast(gdb_path, subds=26) |> raster::raster()
+CHAR_AGB_pha								= terra::rast(gdb_path, subds=27) |> raster::raster()
+GAEZ_pct_harvested_2010			= terra::rast(gdb_path, subds=28) |> raster::raster()
+CHAR_AGB_pha_ICESat2  			= terra::rast(gdb_path, subds=29) |> raster::raster()
+CHAR_AGB_pha_bosque_ICESat2 = terra::rast(gdb_path, subds=30) |> raster::raster()
+
+STACK_submissions = raster::brick(
+	Deforestacion_bosque_intacto_2018, 
+	Deforestacion_bosque_intacto_2019,
+	Deforestacion_bosque_intacto_2020,
+	Deforestacion_bosque_intacto_2021,
+	Deforestacion_bosque_intacto_2022,
+	Deforestacion_bosque_intacto_2023,
+	Deforestacion_bosque_intacto_2018,
+	Deforestacion_bosque_quemado_2019, 
+	Deforestacion_bosque_quemado_2020,
+	Deforestacion_bosque_quemado_2021,
+	Deforestacion_bosque_quemado_2022,
+	Deforestacion_bosque_quemado_2023,
+	Deforestacion_bosque_quemado_2018,
+	Degradacion_bosque_intacto_2018,
+	Degradacion_bosque_intacto_2019,
+	Degradacion_bosque_intacto_2020,
+	Degradacion_bosque_intacto_2021,
+	Degradacion_bosque_intacto_2022,
+	Degradacion_bosque_intacto_2023,
+	Degradacion_bosque_quemado_2018,
+	Degradacion_bosque_quemado_2019,
+	Degradacion_bosque_quemado_2020,
+	Degradacion_bosque_quemado_2021,
+	Degradacion_bosque_quemado_2022,
+	Degradacion_bosque_quemado_2023,
+	CHAR_AGB_ppx,
+	CHAR_AGB_pha,
+	GAEZ_pct_harvested_2010,
+	CHAR_AGB_pha_ICESat2,
+	CHAR_AGB_pha_bosque_ICESat2
+	)
+
+# derive country aoi and save to local copy 
+aoi_country = geodata::gadm(country="BOL", level=0, path="./Assets/SHP") |> sf::st_as_sf()
+aoi_state  = geodata::gadm(country="BOL", level=1, path="./Assets/SHP") |> sf::st_as_sf()
+
+# save outputs to local disk for memmory-efficient workflow below 
+raster::writeRaster(STACK_submissions, format = "GTiff", overwrite = T,
+	file.path(winrock_path, "Spatial Data", "TIF", "ART-TREES_CHAR_v1.tif"))
+
+st_write(aoi_country, file.path(winrock_path, "Spatial Data", "AOI", "aoi_country.shp"), delete_dsn = T)
+st_write(aoi_state, file.path(winrock_path, "Spatial Data", "AOI", "aoi_state.shp"), delete_dsn = T)
+st_write(aoi_project, file.path(winrock_path, "Spatial Data", "AOI", "aoi_project.shp"), delete_dsn = T)
+sf::st_layers(gdb_path) 
+
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| comment: NA
+#| error: false
+#| warning: false
+winrock_path = "~/OneDrive - Winrock International Institute for Agricultural Development/20073 - DESNZ LEAF TA/Working Files/Technical Assistance/Consultants/Bolivia/"
+local_path = "/Volumes/TOSHIBA_EXT/Winrock/Bolivia/LULC/"
+gdb_path   = file.path(winrock_path, "Spatial Data", "GDB", "ART-TREES_CHAR_v1.gdb")
+sf::st_layers(gdb_path) 
+
+```
+
+*Table X: Original naming of layers contained in submitted
+file geodatabase*
+
+```{r, fig.align='center'}
+#| comment: NA
+#| message: false
+#| warning: false
+#| error: false
+#| echo: false
+
+# import submission stack extracted above 
+STACK_submissions = raster::brick(
+	file.path(winrock_path, "Spatial Data", "TIF", "ART-TREES_CHAR_v1.tif")) |> terra::rast()
+#terra::hist(STACK_submissions, main = "Submitted Rasters") 
+#terra::density(STACK_submissions)
+terra::plot(STACK_submissions)
+
+
+#raster::nbands(raster::raster(STACK_submissions[[1]]))
+#global(STACK_submissions[[1]], "isNA")
+#unique(STACK_submissions[[1]])
+#print(STACK_submissions[[1]])
+#freq(STACK_submissions[[1]])
+
+names(STACK_submissions[[1]])  = "Deforestacion_bosque_intacto_2018"
+levels(STACK_submissions[[1]]) = data.frame(value = c(1,2,3,4,5,6,7), ipcc_label = c(
+		"Forest Land","Cropland", "Grasslands", "Wetlands", "Settlements", "Other Lands", "Burned Forest"))
+
+# derive country aoi and save to local copy 
+aoi_country = sf::st_read(file.path(winrock_path, "Spatial Data", "AOI", "aoi_country.shp"), quiet=T)
+aoi_state 	= sf::st_read(file.path(winrock_path, "Spatial Data", "AOI", "aoi_state.shp"), quiet=T)
+aoi_project = sf::st_read(file.path(winrock_path, "Spatial Data", "AOI", "aoi_project.shp"), quiet=T)
+aoi_cropper = sf::st_transform(aoi_project, "EPSG:4326") 
+
+tmap::tmap_mode("plot")
+tmap::tm_shape(STACK_submissions[[1]]) + 
+	tmap::tm_raster(col.scale = tm_scale_categorical(), title="", 
+     values = c("yellow", "red", "darkolivegreen", "pink", "green", "purple", "blue")) + 
+	tmap::tm_scalebar(position=c("LEFT", "BOTTOM"), text.size = .5) +
+	tmap::tm_compass(color.dark="gray60",text.color="gray60",position=c("RIGHT", "top")) +
+	tmap::tm_graticules(lines=T,labels.rot=c(0,90),lwd=0.2) +
+	tmap::tm_layout(legend.position=c("right", "bottom"), legend.bg.color = "white") +
+	tmap::tm_title("Original Layer: 'Deforestacion_bosque_intacto_2018'", size=1.2) + 
+	tmap::tm_shape(aoi_state) + tmap::tm_borders(col = "white") +
+	tmap::tm_shape(aoi_country) + tmap::tm_borders(col = "orange") +
+	tmap::tm_shape(aoi_project) + tmap::tm_borders(col = "yellow")
+```
+
+### Import Training Sample
+
+```{r, fig.align='center'}
+#| comment: NA
+#| message: false
+#| warning: false
+#| error: false
+#| eval: false
+#| echo: true
+
+samples_raw 	= read.csv(file.path(local_path, "Training-Samples", "glance_training.csv"))
+samples_clean = samples_raw |> 
+	dplyr::select(Lon, Lat, Start_Year, End_Year, Veg_Modifier,
+		Glance_Class_ID_level1, Glance_Class_ID_level2) |>
+  dplyr::rename(
+  	longitude = Lon, latitude = Lat, 
+  	level1 = Glance_Class_ID_level1, 
+  	level2 = Glance_Class_ID_level2) |>
+  dplyr::mutate(
+  	start_date = as.Date(paste(Start_Year, "01", "01", sep = "-")),
+    end_date = as.Date(paste(End_Year, "01", "01", sep = "-"))) |>
+	dplyr::mutate(veg_mod_clean = gsub('\\"', '', Veg_Modifier)) |>
+  dplyr::mutate(
+    has_wetland = grepl("Wetland|Mangrove|Riparian",veg_mod_clean,ignore.case=T),
+    has_cropland = grepl("Cropland", veg_mod_clean, ignore.case = T),
+    has_plantation = grepl("Plantation", veg_mod_clean, ignore.case = T)) |>
+	dplyr::select(
+		longitude, latitude, start_date, end_date, level1, level2, 
+		veg_mod_clean, has_wetland, has_cropland, has_plantation) |>
+  dplyr::mutate(ipcc_code = case_when(	
+      has_wetland ~ 4,									# Mangrove & Riparian		>> Wetland
+      level2 == 12 | has_cropland ~ 2,	# Agriculture 					>> Cropland
+      level1 == 5 | has_plantation ~ 1,	# Trees & Plantations		>> Forest Land 
+      level2 %in% c(10, 11, 13) ~ 3,		# Shrub, Moss, Grasses	>> Grassland
+      level1 == 3 | grepl("Greenhouse", veg_mod_clean, ignore.case = T) ~ 5, # Developed >> Settlements
+      level1 %in% c(1, 2, 4) ~ 6,				# Water, Ice, Barren		>> Other Land 
+      TRUE ~ 6)) |>											# Unclassified					>> Other Land
+  dplyr::mutate(ipcc_label = case_when(
+      ipcc_code == 1 ~ "Forest Land",
+      ipcc_code == 2 ~ "Cropland",
+      ipcc_code == 3 ~ "Grassland",
+      ipcc_code == 4 ~ "Wetland",
+      ipcc_code == 5 ~ "Settlement",
+      ipcc_code == 6 ~ "Other Land")) |>
+  dplyr::mutate(ipcc_label = as.factor(ipcc_label)) |>
+  dplyr::mutate(id = row_number()) |>
+  dplyr::select(longitude, latitude, start_date, end_date, ipcc_code, ipcc_label, id)
+
+samples_sf = sf::st_as_sf(samples_clean, crs = 4326, coords = c("longitude", "latitude"))
+samples_bolivia = sf::st_intersection(samples_sf, aoi_country)	# n = 49,564 / 1,874,995
+samples_bolivia	= sf::st_crop(samples_sf, st_bbox(aoi_country)) # trim artifacts
+samples_charagua = sf::st_intersection(samples_bolivia, aoi_cropper)	# n = 4,772 / 1,874,995
+samples_charagua = sf::st_crop(samples_sf, st_bbox(aoi_cropper)) # trim artifacts
+
+sf::st_write(samples_bolivia, file.path(local_path, "Training-Samples", "glance_training_bolivia.shp"), delete_dsn = T)
+sf::st_write(samples_charagua, file.path(local_path, "Training-Samples", "glance_training_charagua.shp"), delete_dsn = T)
+write.csv(samples_bolivia, file.path(local_path, "Training-Samples", "glance_training_bolivia.csv"), row.names = F)
+write.csv(samples_charagua, file.path(local_path, "Training-Samples", "glance_training_charagua.csv"), row.names = F)
+```
+
+```{r}
+#| comment: NA
+#| message: false
+#| warning: false
+#| error: false
+#| echo: false
+#| eval: true
+
+samples = sf::st_read(file.path(local_path, "Training-Samples", "glance_training_bolivia.shp"), quiet=T)
+samples_charagua = sf::st_read(file.path(local_path, "Training-Samples", "glance_training_charagua.shp"), quiet=T)
+
+samples <- samples |>
+  dplyr::mutate(id = row_number()) |>
+  dplyr::mutate(id = as.numeric(id)) |>
+  dplyr::mutate(ipcc_label = as.factor(ipcc_label))
+dplyr::count(samples, ipcc_label) |> flextable::flextable() |> flextable::autofit()
+#dplyr::count(samples_charagua, ipcc_label) |> flextable::flextable() |> flextable::autofit()
+
+tmap::tmap_mode("plot")
+tmap::tm_shape(samples) + tmap::tm_symbols(fill = "ipcc_label", size=0.3, lwd=0.3) +
+	tmap::tm_shape(aoi_country) + tmap::tm_borders(col = "orange") +
+  tmap::tm_shape(aoi_project) + tmap::tm_borders(col = "purple", lwd = 2) +
+	tmap::tm_scalebar(position=c("LEFT", "BOTTOM"), text.size = .5) +
+	tmap::tm_compass(color.dark="gray60",text.color="gray60",position=c("RIGHT", "TOP")) +
+	tmap::tm_graticules(lines=T,labels.rot=c(0,90),lwd=0.2) +
+	tmap::tm_title("IPCC-Aligned GLanCE Training Samples", size=1.2)
+  #tmap::tm_text("ipcc_label",just="right",col="white",size=0.8) +
+  #tmap::tm_basemap("Esri.WorldImagery")
+```
+
+### Import Data Cube
+
+```{r}
+#| eval: false
+#| echo: false
+
+library(rgee)
+ee_Initialize()
+
+# Define your AOI in EPSG:4326 for GEE compatibility
+aoi_ee <- sf_as_ee(aoi_cropper)  # Convert sf object to EE geometry
+
+# Import GEE assets (these replace your local file imports)
+landsat_2018 <- ee$Image('projects/murphys-deforisk/assets/LC08_001067_20180212')
+landsat_2019 <- ee$Image('projects/murphys-deforisk/assets/LC08_001067_20190114')
+
+# Clip to AOI (replaces terra::crop and mask operations)
+landsat_2018_clip <- landsat_2018$clip(aoi_ee)
+landsat_2019_clip <- landsat_2019$clip(aoi_ee)
+
+# Extract individual bands (replaces your separate band file imports)
+BLUE_2018 <- landsat_2018_clip$select('BLUE')
+GREEN_2018 <- landsat_2018_clip$select('GREEN')
+RED_2018 <- landsat_2018_clip$select('RED')
+NIR08_2018 <- landsat_2018_clip$select('NIR08')
+SWIR16_2018 <- landsat_2018_clip$select('SWIR16')
+SWIR22_2018 <- landsat_2018_clip$select('SWIR22')
+NDVI_2018 <- landsat_2018_clip$select('NDVI')
+
+BLUE_2019 <- landsat_2019_clip$select('BLUE')
+GREEN_2019 <- landsat_2019_clip$select('GREEN')
+RED_2019 <- landsat_2019_clip$select('RED')
+NIR08_2019 <- landsat_2019_clip$select('NIR08')
+SWIR16_2019 <- landsat_2019_clip$select('SWIR16')
+SWIR22_2019 <- landsat_2019_clip$select('SWIR22')
+NDVI_2019 <- landsat_2019_clip$select('NDVI')
+
+
+# capture from cloud for local processing:
+ee_as_rast(image = BLUE_2018, region = aoi_ee, scale = 30, via = "gcs") ->		BLUE_2018
+ee_as_rast(image = GREEN_2018, region = aoi_ee, scale = 30, via = "gcs") -> 	GREEN_2018
+ee_as_rast(image = RED_2018, region = aoi_ee, scale = 30, via = "gcs") -> 		RED_2018
+ee_as_rast(image = NIR08_2018, region = aoi_ee, scale = 30, via = "gcs") -> 	NIR08_2018
+ee_as_rast(image = SWIR16_2018, region = aoi_ee, scale = 30, via = "gcs") ->	SWIR16_2018
+ee_as_rast(image = SWIR22_2018, region = aoi_ee, scale = 30, via = "gcs") ->	SWIR22_2018
+ee_as_rast(image = NDVI_2018, region = aoi_ee, scale = 30, via = "gcs") ->		NDVI_2018
+
+ee_as_rast(image = BLUE_2019, region = aoi_ee, scale = 30, via = "gcs") ->		BLUE_2019
+ee_as_rast(image = GREEN_2019, region = aoi_ee, scale = 30, via = "gcs") -> 	GREEN_2019
+ee_as_rast(image = RED_2019, region = aoi_ee, scale = 30, via = "gcs") -> 		RED_2019
+ee_as_rast(image = NIR08_2019, region = aoi_ee, scale = 30, via = "gcs") -> 	NIR08_2019
+ee_as_rast(image = SWIR16_2019, region = aoi_ee, scale = 30, via = "gcs") ->	SWIR16_2019
+ee_as_rast(image = SWIR22_2019, region = aoi_ee, scale = 30, via = "gcs") ->	SWIR22_2019
+ee_as_rast(image = NDVI_2019, region = aoi_ee, scale = 30, via = "gcs") ->		NDVI_2019
+```
+
+```{r}
+#| eval: false
+#| echo: true
+
+# ----- 2018 ----- #
+'/
+files_2018 <- list.files(path = file.path(local_path, "Bolivia-2018"), pattern = "LC08_001067_BLUE_2018-02-12.*\\.tif$", full.names = T)
+raster_list_2018 <- lapply(files_2018, function(f) {terra::rast(f)})
+BLUE_2018 <- do.call(terra::mosaic, raster_list_2018)
+names(BLUE_2018) <- "BLUE_2018"
+terra::writeRaster(BLUE_2018, file.path(local_path, "Bolivia-2018", "BLUE_2018_BOL.tif"), overwrite = T)
+gc()
+
+files_2018 <- list.files(path = file.path(local_path, "Bolivia-2018"), pattern = "LC08_001067_GREEN_2018-02-12.*\\.tif$", full.names = T)
+raster_list_2018 <- lapply(files_2018, function(f) {terra::rast(f)})
+GREEN_2018 <- do.call(terra::mosaic, raster_list_2018)
+names(GREEN_2018) <- "GREEN_2018"
+terra::writeRaster(GREEN_2018, file.path(local_path, "Bolivia-2018", "GREEN_2018_BOL.tif"), overwrite = T)
+gc()
+
+files_2018 <- list.files(path = file.path(local_path, "Bolivia-2018"), pattern = "LC08_001067_NIR08_2018-02-12.*\\.tif$", full.names = T)
+raster_list_2018 <- lapply(files_2018, function(f) {terra::rast(f)})
+NIR08_2018 <- do.call(terra::mosaic, raster_list_2018)
+names(NIR08_2018) <- "NIR08_2018"
+terra::writeRaster(NIR08_2018, file.path(local_path, "Bolivia-2018", "NIR08_2018_BOL.tif"), overwrite = T)
+gc()
+
+files_2018 <- list.files(path = file.path(local_path, "Bolivia-2018"), pattern = "LC08_001067_RED_2018-02-12.*\\.tif$", full.names = T)
+raster_list_2018 <- lapply(files_2018, function(f) {terra::rast(f)})
+RED_2018 <- do.call(terra::mosaic, raster_list_2018)
+names(RED_2018) <- "RED_2018"
+terra::writeRaster(RED_2018, file.path(local_path, "Bolivia-2018", "RED_2018_BOL.tif"), overwrite = T)
+gc()
+
+files_2018 <- list.files(path = file.path(local_path, "Bolivia-2018"), pattern = "LC08_001067_SWIR16_2018-02-12.*\\.tif$", full.names = T)
+raster_list_2018 <- lapply(files_2018, function(f) {terra::rast(f)})
+SWIR16_2018 <- do.call(terra::mosaic, raster_list_2018)
+names(SWIR16_2018) <- "SWIR16_2018"
+terra::writeRaster(SWIR16_2018, file.path(local_path, "Bolivia-2018", "SWIR16_2018_BOL.tif"), overwrite = T)
+gc()
+
+files_2018 <- list.files(path = file.path(local_path, "Bolivia-2018"), pattern = "LC08_001067_SWIR22_2018-02-12.*\\.tif$", full.names = T)
+raster_list_2018 <- lapply(files_2018, function(f) {terra::rast(f)})
+SWIR22_2018 <- do.call(terra::mosaic, raster_list_2018)
+names(SWIR22_2018) <- "SWIR22_2018"
+terra::writeRaster(SWIR22_2018, file.path(local_path, "Bolivia-2018", "SWIR22_2018_BOL.tif"), overwrite = T)
+gc()
+
+files_2018 <- list.files(path = file.path(local_path, "Bolivia-2018"), pattern = "LC08_001067_NDVI_2018-02-12.*\\.tif$", full.names = T)
+raster_list_2018 <- lapply(files_2018, function(f) {terra::rast(f)})
+NDVI_2018 <- do.call(terra::mosaic, raster_list_2018)
+names(NDVI_2018) <- "NDVI_2018"
+terra::writeRaster(NDVI_2018, file.path(local_path, "Bolivia-2018", "NDVI_2018_BOL.tif"), overwrite = T)
+gc()
+
+# ----- 2019 ----- #
+ 
+files_2019 <- list.files(path = file.path(local_path, "Bolivia-2019"), pattern = "LC08_001067_BLUE_2019-01-14.*\\.tif$", full.names = T)
+raster_list_2019 <- lapply(files_2019, function(f) {terra::rast(f)})
+BLUE_2019 <- do.call(terra::mosaic, raster_list_2019)
+names(BLUE_2019) <- "BLUE_2019"
+terra::writeRaster(BLUE_2019, file.path(local_path, "Bolivia-2019", "BLUE_2019_BOL.tif"), overwrite = T)
+gc()
+
+files_2019 <- list.files(path = file.path(local_path, "Bolivia-2019"), pattern = "LC08_001067_GREEN_2019-01-14.*\\.tif$", full.names = T)
+raster_list_2019 <- lapply(files_2019, function(f) {terra::rast(f)})
+GREEN_2019 <- do.call(terra::mosaic, raster_list_2019)
+names(GREEN_2019) <- "GREEN_2019"
+terra::writeRaster(GREEN_2019, file.path(local_path, "Bolivia-2019", "GREEN_2019_BOL.tif"), overwrite = T)
+gc()
+
+files_2019 <- list.files(path = file.path(local_path, "Bolivia-2019"), pattern = "LC08_001067_NIR08_2019-01-14.*\\.tif$", full.names = T)
+raster_list_2019 <- lapply(files_2019, function(f) {terra::rast(f)})
+NIR08_2019 <- do.call(terra::mosaic, raster_list_2019)
+names(NIR08_2019) <- "NIR08_2019"
+terra::writeRaster(NIR08_2019, file.path(local_path, "Bolivia-2019", "NIR08_2019_BOL.tif"), overwrite = T)
+gc()
+
+files_2019 <- list.files(path = file.path(local_path, "Bolivia-2019"), pattern = "LC08_001067_RED_2019-01-14.*\\.tif$", full.names = T)
+raster_list_2019 <- lapply(files_2019, function(f) {terra::rast(f)})
+RED_2019 <- do.call(terra::mosaic, raster_list_2019)
+names(RED_2019) <- "RED_2019"
+terra::writeRaster(RED_2019, file.path(local_path, "Bolivia-2019", "RED_2019_BOL.tif"), overwrite = T)
+gc()
+
+files_2019 <- list.files(path = file.path(local_path, "Bolivia-2019"), pattern = "LC08_001067_SWIR16_2019-01-14.*\\.tif$", full.names = T)
+raster_list_2019 <- lapply(files_2019, function(f) {terra::rast(f)})
+SWIR16_2019 <- do.call(terra::mosaic, raster_list_2019)
+names(SWIR16_2019) <- "SWIR16_2019"
+terra::writeRaster(SWIR16_2019, file.path(local_path, "Bolivia-2019", "SWIR16_2019_BOL.tif"), overwrite = T)
+gc()
+ 
+files_2019 <- list.files(path = file.path(local_path, "Bolivia-2019"), pattern = "LC08_001067_SWIR22_2019-01-14.*\\.tif$", full.names = T)
+raster_list_2019 <- lapply(files_2019, function(f) {terra::rast(f)})
+SWIR22_2019 <- do.call(terra::mosaic, raster_list_2019)
+names(SWIR22_2019) <- "SWIR22_2019"
+terra::writeRaster(SWIR22_2019, file.path(local_path, "Bolivia-2019", "SWIR22_2019_BOL.tif"), overwrite = T)
+gc()
+ 
+files_2019 <- list.files(path = file.path(local_path, "Bolivia-2019"), pattern = "LC08_001067_NDVI_2019-01-14.*\\.tif$", full.names = T)
+raster_list_2019 <- lapply(files_2019, function(f) {terra::rast(f)})
+NDVI_2019 <- do.call(terra::mosaic, raster_list_2019)
+names(NDVI_2019) <- "NDVI_2019"
+terra::writeRaster(NDVI_2019, file.path(local_path, "Bolivia-2019", "NDVI_2019_BOL.tif"), overwrite = T)
+gc()
+
+
+```
+
+### Align & Stack Cube
+
+```{r}
+#| eval: false
+#| echo: true
+
+DEM=terra::rast(file.path(local_path, "../", "DEM", "SRTMGL1-1ARCSEC-Bolivia.tif"))
+names(DEM) = "Elevation" 
+
+BLUE_2018	= terra::rast(file.path(local_path, "Bolivia-2018", "BLUE_2018_BOL.tif"))
+GREEN_2018 = terra::rast(file.path(local_path, "Bolivia-2018", "GREEN_2018_BOL.tif"))
+NIR08_2018 = terra::rast(file.path(local_path, "Bolivia-2018", "NIR08_2018_BOL.tif"))
+RED_2018 = terra::rast(file.path(local_path, "Bolivia-2018", "RED_2018_BOL.tif"))
+SWIR16_2018 = terra::rast(file.path(local_path, "Bolivia-2018", "SWIR16_2018_BOL.tif"))
+SWIR22_2018 = terra::rast(file.path(local_path, "Bolivia-2018", "SWIR22_2018_BOL.tif"))
+NDVI_2018	= terra::rast(file.path(local_path, "Bolivia-2018", "NDVI_2018_BOL.tif"))
+
+BLUE_2018 = terra::resample(BLUE_2018, DEM) |> raster::raster() 
+GREEN_2018 = terra::resample(GREEN_2018, DEM) |> raster::raster() 
+NIR08_2018 = terra::resample(NIR08_2018, DEM) |> raster::raster() 
+RED_2018 = terra::resample(RED_2018, DEM) |> raster::raster() 
+SWIR16_2018 = terra::resample(SWIR16_2018, DEM) |> raster::raster() 
+SWIR22_2018 = terra::resample(SWIR22_2018, DEM) |> raster::raster() 
+NDVI_2018 = terra::resample(NDVI_2018, DEM) |> raster::raster() 
+DEM=terra::rast(file.path(local_path, "../", "DEM", "SRTMGL1-1ARCSEC-Bolivia.tif")) |> raster::raster() 
+
+STACK_2018 = raster::stack(BLUE_2018, GREEN_2018, NIR08_2018, RED_2018, SWIR16_2018, SWIR22_2018, NDVI_2018, DEM)
+raster::writeRaster(STACK_2018, format = "GTiff", overwrite = T, file.path(local_path, "STACK", "STACK_2018_BOL.tif"))
+
+	
+BLUE_2019	= terra::rast(file.path(local_path, "Bolivia-2019", "BLUE_2019_BOL.tif"))
+GREEN_2019 = terra::rast(file.path(local_path, "Bolivia-2019", "GREEN_2019_BOL.tif"))
+NIR08_2019 = terra::rast(file.path(local_path, "Bolivia-2019", "NIR08_2019_BOL.tif"))
+RED_2019 = terra::rast(file.path(local_path, "Bolivia-2019", "RED_2019_BOL.tif"))
+SWIR16_2019 = terra::rast(file.path(local_path, "Bolivia-2019", "SWIR16_2019_BOL.tif"))
+SWIR22_2019 = terra::rast(file.path(local_path, "Bolivia-2019", "SWIR22_2019_BOL.tif"))
+NDVI_2019	=	terra::rast(file.path(local_path, "Bolivia-2019", "NDVI_2019_BOL.tif"))
+DEM=terra::rast(file.path(local_path, "../", "DEM", "SRTMGL1-1ARCSEC-Bolivia.tif"))
+
+BLUE_2019 = terra::resample(BLUE_2019, DEM) |> raster::raster() 
+GREEN_2019 = terra::resample(GREEN_2019, DEM) |> raster::raster() 
+NIR08_2019 = terra::resample(NIR08_2019, DEM) |> raster::raster()
+RED_2019 = terra::resample(RED_2019, DEM) |> raster::raster()
+SWIR16_2019 = terra::resample(SWIR16_2019, DEM) |> raster::raster() 
+SWIR22_2019 = terra::resample(SWIR22_2019, DEM) |> raster::raster() 
+NDVI_2019 = terra::resample(NDVI_2019, DEM) |> raster::raster() 
+DEM = raster::raster(DEM) 
+
+STACK_2019 = raster::stack(BLUE_2019, GREEN_2019, NIR08_2019, RED_2019, SWIR16_2019, SWIR22_2019, NDVI_2019, DEM)
+raster::writeRaster(STACK_2019, format = "GTiff", overwrite = T, file.path(local_path, "STACK", "STACK_2019_BOL.tif"))
+
+```
+
+```{r}
+#| comment: NA
+#| message: false
+#| warning: false
+#| error: false
+#| echo: false
+#samples = sf::st_read(file.path(local_path, "Training-Samples", "glance_training_bolivia.shp"), quiet=T)
+STACK_2018 = raster::brick(file.path(local_path, "STACK", "STACK_2018_BOL.tif"))
+STACK_2019 = raster::brick(file.path(local_path, "STACK", "STACK_2019_BOL.tif"))
+
+names(STACK_2018[[1]]) = "BLUE_2018"
+names(STACK_2018[[2]]) = "GREEN_2018"
+names(STACK_2018[[3]]) = "NIR08_2018"
+names(STACK_2018[[4]]) = "RED_2018"
+names(STACK_2018[[5]]) = "SWIR16_2018"
+names(STACK_2018[[6]]) = "SWIR22_2018"
+names(STACK_2018[[7]]) = "NDVI_2018"
+names(STACK_2018[[8]]) = "DEM"	
+
+names(STACK_2019[[1]]) = "BLUE_2019"
+names(STACK_2019[[2]]) = "GREEN_2019"
+names(STACK_2019[[3]]) = "NIR08_2019"
+names(STACK_2019[[4]]) = "RED_2019"
+names(STACK_2019[[5]]) = "SWIR16_2019"
+names(STACK_2019[[6]]) = "SWIR22_2019"
+names(STACK_2019[[7]]) = "NDVI_2019"
+names(STACK_2019[[8]]) = "DEM"	
+
+```
+
+### Image Classification
+
+We trained a Random Forest model fitted with 500 decision
+trees. The dataset was partitioned using a 70:30 ratio which
+was which was trained using Monte Carlo resampling regime
+(k=100). Accuracy assessments were reported using a
+confusion matrix. Uncertainty metrics were then used to
+explore best subset of variables according to magnitude and
+performances of recursive modeling, which informed final
+model selection.
+
+```{r}
+#| eval: false
+# extract signatures - watch for data formats
+samples_signatures_2018 = raster::extract(STACK_2018, samples, df=T, sp=T) 
+samples_signatures_2018$geometry <- NULL # set geometry to NULL for faster model training
+samples_signatures_2018 <- as.data.frame(samples_signatures_2018)
+
+# additional interpolation of missing cloud pixels with class-median-normalization
+samples_signatures_2018 <- samples_signatures_2018 |> 
+  dplyr::group_by(ipcc_label) |>  dplyr::mutate(across(where(is.numeric), 
+    ~ ifelse(is.na(.), median(., na.rm = TRUE), .))) |> dplyr::ungroup()
+
+# assign model variables before processing steps below
+response  <- c("ipcc_label")
+predictors_2018 <- c("BLUE_2018", "GREEN_2018", "RED_2018", "NIR08_2018", "SWIR16_2018", "SWIR22_2018", "NDVI_2018", "DEM")
+
+# Strata-check function to ensure class proportions are maintained across train and test split
+stratified_partition <- function(data, group_col, train_ratio = 0.7) {
+  split_data <- lapply(split(data, data[[group_col]]), function(df) {
+    train_size <- max(1, floor(train_ratio * nrow(df)))
+    train_idx <- sample(seq_len(nrow(df)), size = train_size)
+    list(train = df[train_idx, ], test = df[-train_idx, ])})
+  train_data <- do.call(rbind, lapply(split_data, `[[`, "train"))
+  test_data <- do.call(rbind, lapply(split_data, `[[`, "test"))
+  list(train = train_data, test = test_data)
+  }
+
+partitioned_data_2018 <- stratified_partition(samples_signatures_2018, group_col="ipcc_label", train_ratio=0.8)
+trainData_2018 = partitioned_data_2018$train
+testData_2018  = partitioned_data_2018$test
+table(trainData_2018$ipcc_label)
+table(testData_2018$ipcc_label)
+
+# synthetic minotrity oversampling technique
+train_for_smote <- trainData_2018 |>
+  dplyr::select(all_of(c(predictors_2018, response))) |>
+  dplyr::mutate(ipcc_label = as.factor(ipcc_label))
+test_for_smote <- testData_2018 |>
+  dplyr::select(all_of(c(predictors_2018, response))) |>
+  dplyr::mutate(ipcc_label = as.factor(ipcc_label))
+
+trainData_2018 <- performanceEstimation::smote(
+  ipcc_label ~ ., data = train_for_smote,
+  perc.over = 30, perc.under = 30)
+
+testData_2018 <- performanceEstimation::smote(
+  ipcc_label ~ ., data = test_for_smote,
+  perc.over = 30, perc.under = 30)
+
+table(trainData_2018$ipcc_label)
+table(testData_2018$ipcc_label)
+
+# set training parameters
+cv_regime <- caret::trainControl(
+  method          = 'LGOCV',
+  number          = 100, #no. of simulation iterations
+  savePredictions = T,
+  verboseIter     = F
+  )
+
+# train classifier
+rf_model_2018 <- caret::train(
+  ipcc_label~.,
+  data = trainData_2018[, c(predictors_2018, "ipcc_label")], # drop ID var
+  trControl = cv_regime,
+  method    = "rf", 
+  metric    = 'Kappa', 
+  ntree     = 500,
+  tuneLength= 6,
+  importance= T
+  )
+
+```
+
+```{r}
+#| echo: false
+#| eval: false
+
+# Interactively draw new training samples
+mapview(STACK_2018[[7]]) + mapview(samples, zcol = "ipcc_label")
+new_samples <- mapedit::editMap(mapview(samples), editor = "leafpm")
+new_points <- new_samples$drawn
+new_points$ipcc_label <- "Cropland" # adjust to class sampled
+samples_updated <- rbind(samples, new_points)
+
+```
+
+```{r}
+#| eval: false
+
+# ---- 2019 ---- #
+
+# extract signatures - watch for data formats
+samples_signatures_2019 = raster::extract(STACK_2019, samples, df=T, sp=T) 
+samples_signatures_2019$geometry = NULL # set geometry to NULL for faster model training
+samples_signatures_2019 = as.data.frame(samples_signatures_2019)
+
+# additional interpolation of missing cloud pixels with class-median-normalization
+samples_signatures_2019 = samples_signatures_2019 |> 
+  dplyr::group_by(ipcc_label) |>  dplyr::mutate(across(where(is.numeric), 
+    ~ ifelse(is.na(.), median(., na.rm = TRUE), .))) |> dplyr::ungroup()
+
+# assign model variables before processing steps below
+response  <- c("ipcc_label")
+predictors_2019 <- c("BLUE_2019", "GREEN_2019", "RED_2019", "NIR08_2019", "SWIR16_2019", "SWIR22_2019", "NDVI_2019", "DEM")
+
+
+partitioned_data_2019 <- stratified_partition(samples_signatures_2019, group_col="ipcc_label", train_ratio=0.8)
+trainData_2019 = partitioned_data_2019$train
+testData_2019  = partitioned_data_2019$test
+table(trainData_2019$ipcc_label)
+table(testData_2019$ipcc_label)
+
+# synthetic minotrity oversampling technique
+train_for_smote <- trainData_2019 |>
+  dplyr::select(all_of(c(predictors_2019, response))) |>
+  dplyr::mutate(ipcc_label = as.factor(ipcc_label))
+test_for_smote <- testData_2019 |>
+  dplyr::select(all_of(c(predictors_2019, response))) |>
+  dplyr::mutate(ipcc_label = as.factor(ipcc_label))
+
+trainData_2019 <- performanceEstimation::smote(
+  ipcc_label ~ ., data = train_for_smote,
+  perc.over = 30, perc.under = 30)
+
+testData_2019 <- performanceEstimation::smote(
+  ipcc_label ~ ., data = test_for_smote,
+  perc.over = 30, perc.under = 30)
+
+table(trainData_2019$ipcc_label)
+table(testData_2019$ipcc_label)
+
+# set training parameters
+cv_regime <- caret::trainControl(
+  method          = 'LGOCV',
+  number          = 100, #no. of simulation iterations
+  savePredictions = T,
+  verboseIter     = F
+  )
+
+# train classifie
+rf_model_2019 <- caret::train(
+  ipcc_label~.,
+  data = trainData_2019[, c(predictors_2019, "ipcc_label")], # drop ID var
+  trControl = cv_regime, 
+  method    = "rf", 
+  metric    = 'Kappa', 
+  ntree     = 500,
+  tuneLength= 6,
+  importance= T
+  )
+```
+
+### Accuracy assessments[^1]
+
+Results suggested a moderate concordance between observed
+and predicted classes with optimal model performance during
+cross-validation at mtry of 3. Overall statistics reported
+Kappa Index of XX%, Accuracy of XX% (0.95CI XX%, XX%), and a
+smaller No Information Rate of XX (p\<0.01). In addition,
+key classes of `Forest` were predicted with robust
+Sensitivity (XX%) and Specificity (XX%).
+
+```{r}
+#| eval: false
+rf_test_2018 <- predict(rf_model_2018, testData_2018)
+print(rf_model_2018) # cv results
+caret::confusionMatrix(rf_test_2018,testData_2018$label) # blind test results
+```
+
+## Result
+
+### Land Change Estimates
+
+```{r}
+#| eval: false
+
+LULC_2018 = terra::rast(local_path, "Classified", "LULC_2018.tif") |> 
+  terra::project(crs_project) |> terra::crop(aoi_project, mask=T) |> terra::trim()
+
+code_dict = data.frame(id = c(1, 2, 3, 4, 5, 6),
+  ipcc_label = c("Forest Land", "Cropland", "Grasslands", "Wetlands", "Settlements", "Other Lands"))
+levels(LULC_2018) <- code_dict
+pixel_area_ha <- 0.088914  # 29.80124 x 29.80124 m² converted to hectares
+
+library(tidyverse)
+
+# 2018 areas
+lulc_2018 <- terra::freq(LULC_2018) %>%
+  mutate(
+    area_ha = count * pixel_area_ha,
+    year = "2018",
+    ipcc_class = case_when(
+      value == 1 ~ "Forest Land",
+      value == 2 ~ "Cropland",
+      value == 3 ~ "Grassland",
+      value == 4 ~ "Wetland",
+      value == 5 ~ "Settlement",
+      value == 6 ~ "Other Land"
+    )
+  ) %>%
+  select(year, ipcc_class, area_ha, count)
+
+# 2019 areas
+lulc_2019 <- terra::freq(LULC_2019) %>%
+  mutate(
+    area_ha = count * pixel_area_ha,
+    year = "2019",
+    ipcc_class = case_when(
+      value == 1 ~ "Forest Land",
+      value == 2 ~ "Cropland",
+      value == 3 ~ "Grassland",
+      value == 4 ~ "Wetland",
+      value == 5 ~ "Settlement",
+      value == 6 ~ "Other Land"
+    )
+  ) %>%
+  select(year, ipcc_class, area_ha, count)
+
+# Combine
+land_cover_summary <- bind_rows(lulc_2018, lulc_2019) %>%
+  group_by(year, ipcc_class) %>%
+  summarise(area_ha = sum(area_ha), .groups = "drop") %>%
+  mutate(percentage = (area_ha / sum(area_ha)) * 100)
+
+write.csv(land_cover_summary, 
+          file.path(local_path, "Estimates", "land_change_estimates.csv"), 
+          row.names = FALSE)
+
+land_cover_summary
+
+
+compute_land_cover_summary <- function(aoi_project, rasters, pixel_area) {
+  results <- list()
+    if (terra::nrow(aoi_project) == 0) {
+    stop("The provided SpatVector jurisdiction is empty.")
+  }
+  for (region in unique(aoi_project$name)) {
+    for (year in names(rasters)) {
+      cropped_raster <- terra::crop(
+        rasters[[year]],
+        aoi_project[aoi_project$name == region, ],
+        mask = TRUE
+      )
+      if (terra::ncell(cropped_raster) == 0) {
+        warning(paste("Cropped raster for", region, year, "is empty. Skipping."))
+        next
+      }
+      freq <- terra::freq(cropped_raster)
+      freq$area_ha <- freq$count * pixel_area
+      freq$percentage <- (freq$area_ha / sum(freq$area_ha)) * 100
+      freq$region <- region
+      freq$year <- year
+      results[[paste(region, year, sep = "_")]] <- freq
+    }
+  }
+  return(do.call(rbind, results))
+}
+
+# Organize rasters into a named list
+rasters <- list(
+  "2018" = LULC_2018,
+  "2019" = LULC_2019
+)
+
+# Compute land cover summary
+land_cover_summary <- compute_land_cover_summary(aoi_project, rasters, pixel_area_ha)
+write.csv(land_cover_summary, file.path(local_path, "Estimates", "land_change_estimates.csv", row.names = F)
+land_cover_summary
+```
+
+## Conclusions
+
+### Runtime Log
+
+```{r session_info, class.source = c("numCode", "r", "numberLines")}
+# Document the computational environment
+devtools::session_info()
+sf::st_drivers()
+sf::sf_extSoftVersion()
+
+# Autosave records in runtime log folder
+writeLines(capture.output(devtools::session_info()), 
+           paste0("./Runtime Log/runtime_log_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".txt"))
+```
+
+[^1]: Please note that model performance metrics differ
+    slightly with each runtime due to Monte Carlo resampling
+    and the number of randomForest decision trees. This is
+    to say that accuracy results in the chunk below may not
+    be precisely matching the in-text reporting here if a
+    new run has been implemented locally on your machine.
