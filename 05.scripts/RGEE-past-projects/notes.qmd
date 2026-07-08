@@ -1,0 +1,98 @@
+---
+title: "Notes"
+editor: visual
+---
+
+### Import data
+
+#### AOI Jurisdiction
+
+```{r, class.source = c("numCode", "r", "numberLines")}
+#| eval: false
+
+# AOI Jurisdictional Bdry 
+aoi_country = geodata::gadm(country="IRL", level=0, path="./01-burn-area/AOI") |> sf::st_as_sf()
+aoi_states  = geodata::gadm(country="IRL", level=1, path="./01-burn-area/AOI") |> sf::st_as_sf()
+st_write(aoi_country, "./01-burn-area/AOI/aoi_country.shp", delete_dsn = T)
+st_write(aoi_states, "./01-burn-area/AOI/aoi_states.shp", delete_dsn = T)
+crs_master = sf::st_crs(aoi_country)
+
+# Visualize
+tmap::tmap_mode("view")
+tmap::tm_shape(aoi_states) + tmap::tm_borders(col="MAP_COLORS", lwd=2) +
+	tmap::tm_shape(aoi_country) + tmap::tm_borders(col="white", lwd=1) +
+  tmap::tm_scalebar(position=c("RIGHT", "BOTTOM"), text.size = .5) +
+  tmap::tm_basemap("Esri.WorldImagery") 
+	#tmap::tm_basemap("OpenStreetMap") 
+  #tmap::tm_basemap("OpenTopoMap") 
+  
+```
+
+```{r}
+#| warning: false
+#| message: false
+#| error: false
+#| echo: false
+#| eval: true
+#| comment: NA
+
+aoi_country = sf::read_sf("./01-burn-area/AOI/aoi_country.shp", quiet=T)
+aoi_states  = sf::read_sf("./01-burn-area/AOI/aoi_states.shp",  quiet=T) 
+
+# Visualize
+tmap::tmap_mode("view")
+tmap::tm_shape(aoi_states) + tmap::tm_borders(col="MAP_COLORS", lwd=2) +
+	tmap::tm_shape(aoi_country) + tmap::tm_borders(col="white", lwd=1) +
+  tmap::tm_scalebar(position=c("RIGHT", "BOTTOM"), text.size = .5) +
+  tmap::tm_basemap("Esri.WorldImagery") 
+```
+
+```{r}
+#| eval: false
+#| label: gee-basic-access
+#| code-summary: "Basic GEE access to MCD64A1"
+
+library(rgee)
+library(sf)
+library(terra)
+
+# Initialize Google Earth Engine
+ee_Initialize(project="murphys-deforisk")
+
+# Define area of interest (example: Portugal)
+aoi <- ee$Geometry$Rectangle(c(-10.692, 51.392, -5.958, 55.458))
+
+# Load MCD64A1 collection
+mcd64 <- ee$ImageCollection("MODIS/061/MCD64A1")
+
+# Filter by location and time
+burned_area <- mcd64$
+  filterBounds(aoi)$
+  filterDate("2023-01-01", "2023-12-31")
+
+# Check collection size
+print(paste("Images in collection:", burned_area$size()$getInfo()))
+```
+
+```{r}
+#| label: gee-python-setup
+#| warning: false
+#| message: false
+
+library(reticulate)
+use_python("/opt/local/bin/python", required = TRUE)
+
+# Initialise Earth Engine
+ee <- import("ee")
+ee$Initialize(project = "murphys-deforisk")
+cat("GEE initialised\n")
+
+# Load Ireland boundaries from FAO GAUL (server-side)
+aoi_ee <- ee$FeatureCollection("FAO/GAUL/2015/level0")$
+  filter(ee$Filter$eq("ADM0_NAME", "Ireland"))
+states_ee <- ee$FeatureCollection("FAO/GAUL/2015/level1")$
+  filter(ee$Filter$eq("ADM0_NAME", "Ireland"))
+
+cat("Ireland AOI:", aoi_ee$size()$getInfo(), "feature(s)\n")
+cat("Irish counties:", states_ee$size()$getInfo(), "feature(s)\n")
+```

@@ -1,0 +1,362 @@
+[31m
+
+processing file: mapping-wetland-inundation-lake-chilwa.qmd
+[39m1/97                          
+2/97 [gee-setup-once]         
+3/97                          
+4/97 [environment-setup]      
+[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for Oxford/MAP/accessibility_to_cities_2015_v1_0! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/malariaatlasproject/assets/accessibility/accessibility_to_cities/2015_v1_0
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/Oxford_MAP_accessibility_to_cities_2015_v1_0
+
+  warnings.warn(warning, category=DeprecationWarning)
+/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for Oxford/MAP/accessibility_to_healthcare_2019! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/malariaatlasproject/assets/accessibility/accessibility_to_healthcare/2019
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/Oxford_MAP_accessibility_to_healthcare_2019
+
+  warnings.warn(warning, category=DeprecationWarning)
+/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for Oxford/MAP/friction_surface_2019! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/malariaatlasproject/assets/accessibility/friction_surface/2019_v5_1
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/Oxford_MAP_friction_surface_2019
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for UMD/hansen/global_forest_change_2024_v1_12! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by UMD/hansen/global_forest_change_2025_v1_13
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/UMD_hansen_global_forest_change_2024_v1_12
+
+  warnings.warn(warning, category=DeprecationWarning)
+/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for CAS/IGSNRR/PML/V2_v018! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/pml_evapotranspiration/PML/OUTPUT/PML_V22a
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/CAS_IGSNRR_PML_V2_v018
+
+  warnings.warn(warning, category=DeprecationWarning)
+/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for CSIC/SPEI/2_10! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by CSIC/SPEI/2_11
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/CSIC_SPEI_2_10
+
+  warnings.warn(warning, category=DeprecationWarning)
+/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for JRC/GFC2020/V2! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by JRC/GFC2020/V3
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/JRC_GFC2020_V2
+
+  warnings.warn(warning, category=DeprecationWarning)
+/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for JRC/GFC2020_subtypes/V0! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by JRC/GFC2020_subtypes/V1
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/JRC_GFC2020_subtypes_V0
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for NCEP_RE/sea_level_pressure! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/NCEP_RE_sea_level_pressure
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for NCEP_RE/surface_temp! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/NCEP_RE_surface_temp
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for NCEP_RE/surface_wv! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/NCEP_RE_surface_wv
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for NOAA/CFSV2/FOR6H! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by NOAA/CFSV2/FOR6H_HARMONIZED
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/NOAA_CFSV2_FOR6H
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for NOAA/VIIRS/001/VNP22Q2! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by NASA/VIIRS/002/VNP22Q2
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/NOAA_VIIRS_001_VNP22Q2
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for NOAA/VIIRS/001/VNP64A1! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by NASA/VIIRS/002/VNP64A1
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/NOAA_VIIRS_001_VNP64A1
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for OREGONSTATE/PRISM/AN81d! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by OREGONSTATE/PRISM/ANd
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/OREGONSTATE_PRISM_AN81d
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for OREGONSTATE/PRISM/AN81m! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by OREGONSTATE/PRISM/ANm
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/OREGONSTATE_PRISM_AN81m
+
+  warnings.warn(warning, category=DeprecationWarning)
+/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for OpenET/DISALEXI/CONUS/GRIDMET/MONTHLY/v2_0! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/openet/assets/disalexi/conus/gridmet/monthly/v2_0
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/OpenET_DISALEXI_CONUS_GRIDMET_MONTHLY_v2_0
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for OpenET/EEMETRIC/CONUS/GRIDMET/MONTHLY/v2_0! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/openet/assets/eemetric/conus/gridmet/monthly/v2_0
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/OpenET_EEMETRIC_CONUS_GRIDMET_MONTHLY_v2_0
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for OpenET/ENSEMBLE/CONUS/GRIDMET/MONTHLY/v2_0! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/openet/assets/ensemble/conus/gridmet/monthly/v2_0
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/OpenET_ENSEMBLE_CONUS_GRIDMET_MONTHLY_v2_0
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for OpenET/GEESEBAL/CONUS/GRIDMET/MONTHLY/v2_0! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/openet/assets/geesebal/conus/gridmet/monthly/v2_0
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/OpenET_GEESEBAL_CONUS_GRIDMET_MONTHLY_v2_0
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for OpenET/PTJPL/CONUS/GRIDMET/MONTHLY/v2_0! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/openet/assets/ptjpl/conus/gridmet/monthly/v2_0
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/OpenET_PTJPL_CONUS_GRIDMET_MONTHLY_v2_0
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for OpenET/SIMS/CONUS/GRIDMET/MONTHLY/v2_0! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/openet/assets/sims/conus/gridmet/monthly/v2_0
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/OpenET_SIMS_CONUS_GRIDMET_MONTHLY_v2_0
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for OpenET/SSEBOP/CONUS/GRIDMET/MONTHLY/v2_0! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/openet/assets/ssebop/conus/gridmet/monthly/v2_0
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/OpenET_SSEBOP_CONUS_GRIDMET_MONTHLY_v2_0
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for TOMS/MERGED! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by TOMS/MERGED_V4
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/TOMS_MERGED
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for USFS/GTAC/LCMS/v2024-10! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/gtac-data-publish/assets/LCMS/Product_Version/2025-11
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/USFS_GTAC_LCMS_v2024-10
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for USGS/NLCD_RELEASES/2023_REL/TCC/v2023-5! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by projects/gtac-data-publish/assets/TCC/Product_Version/2025-6
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/USGS_NLCD_RELEASES_2023_REL_TCC_v2023-5
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m[31m/Users/seamus/.virtualenvs/rgee/lib/python3.14/site-packages/ee/deprecation.py:215: DeprecationWarning: 
+
+Attention required for TIGER/2010/ZCTA5! You are using a deprecated asset.
+To make sure your code keeps working, please update it.
+This dataset has been superseded by TIGER/2020/ZCTA5
+
+Learn more: https://developers.google.com/earth-engine/datasets/catalog/TIGER_2010_ZCTA5
+
+  warnings.warn(warning, category=DeprecationWarning)
+[39m5/97                          
+6/97 [unnamed-chunk-1]        
+7/97                          
+8/97 [photo-metadata]         
+9/97                          
+10/97 [photo-metadata-summary] 
+11/97                          
+12/97 [ground-truth-assembly]  
+13/97                          
+14/97 [map-aoi]                
+15/97                          
+16/97 [import-aoi]             
+17/97                          
+18/97 [aoi-clip]               
+19/97                          
+20/97 [terrain-extract]        
+21/97                          
+22/97 [terrain-load]           
+23/97                          
+24/97 [terrain-flow-maps]      
+25/97                          
+26/97 [terrain-dinf-maps]      
+27/97                          
+28/97 [s1-query]               
+29/97                          
+30/97 [speckle-filter]         
+31/97                          
+32/97 [ratio-bands]            
+33/97                          
+34/97 [water-threshold]        
+35/97                          
+36/97 [monthly-composites]     
+37/97                          
+38/97 [time-series]            
+39/97                          
+40/97 [map-composites]         
+41/97                          
+42/97 [export]                 
+43/97                          
+44/97 [palsar-lband]           
+45/97                          
+46/97 [palsar-map]             
+47/97                          
+48/97 [landsat-query]          
+49/97                          
+50/97 [data-availability-audit]
+51/97                          
+52/97 [data-availability-plot] 
+53/97                          
+54/97 [spectral-indices]       
+55/97                          
+56/97 [annual-composites]      
+57/97                          
+58/97 [index-timeseries]       
+59/97                          
+60/97 [index-timeseries-plot]  
+61/97                          
+62/97 [otsu-threshold]         
+63/97                          
+64/97 [sma-endmembers]         
+65/97                          
+66/97 [sma-unmix]              
+67/97                          
+68/97 [sma-timeseries]         
+69/97                          
+70/97 [sma-plot]               
+71/97                          
+72/97 [feature-extract]        
+73/97                          
+74/97 [separability-tests]     
+75/97                          
+76/97 [pca-glmnet]             
+77/97                          
+78/97 [rf-training]            
+79/97                          
+80/97 [rf-classify]            
+81/97                          
+82/97 [accuracy-assessment]    
+83/97                          
+84/97 [confusion-matrix-table] 
+85/97                          
+86/97 [export-landsat]         
+87/97                          
+88/97 [combined-timeseries]    
+89/97                          
+90/97 [sma-results-plot]       
+91/97                          
+92/97 [index-correlation-table]
+93/97                          
+94/97 [results-accuracy-table] 
+95/97                          
+96/97 [results-accuracy-plot]  
+97/97                          
+[31moutput file: mapping-wetland-inundation-lake-chilwa.knit.md
+
+[39m[1mpandoc [22m
+  to: docx
+  output-file: mapping-wetland-inundation-lake-chilwa.docx
+  default-image-extension: png
+  reference-doc: ../04.references/style.docx
+  variables: {}
+  
+[1mmetadata[22m
+  title: Multisource remote sensing of wetland inundation dynamics through the recession cycles of Lake Chilwa
+  subtitle: Optical and radar time-series fused with participatory mapping of a socio-hydrological lake
+  author:
+    - name: Murphy, S.
+    - name: Wilson, J
+  date: today
+  always_allow_html: true
+  editor: visual
+  bibliography:
+    - ../04.references/references.bib
+  csl: ../04.references/apa.csl
+  latex_engine: xelatex
+  
+Output created: mapping-wetland-inundation-lake-chilwa.docx
+

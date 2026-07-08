@@ -1,0 +1,100 @@
+---
+title: "Google Earth Engine setup via rgee"
+subtitle: "Lake Chilwa Basin — run this first from RStudio"
+author: "Murphy, S."
+date: today
+format:
+  html:
+    toc: true
+    code-fold: false
+engine: knitr
+execute:
+  eval: false   # set to true once your credentials are configured
+---
+
+## What this is
+
+An R-first (rgee) setup for Earth Engine. rgee wraps the Python
+`earthengine-api` through reticulate, so you control everything from R with
+negligible speed overhead relative to raw reticulate. Run this once to confirm
+credentials and dataset access before any analysis notebook.
+
+## Credentials: read this first
+
+Earth Engine does **not** authenticate with a `GOOGLE_API_KEY`. It uses an
+OAuth user credential created by `ee_Authenticate()`, tied to a Google Cloud
+project that has the Earth Engine API enabled. Your `GOOGLE_API_KEY` in
+`.Renviron` is for other Google APIs and is ignored here. Because your usual EE
+credentials are not present, you will run `ee_Authenticate()` once below to
+create them.
+
+You also need a project ID. Add `EE_PROJECT=your-project-id` to `.Renviron`
+(the project must have the Earth Engine API enabled at
+console.cloud.google.com). Restart R after editing `.Renviron`.
+
+## One-time install
+
+```{r install}
+#| eval: false
+install.packages("rgee")
+# Build the repo-local .venv (identical to the manuscript's environment-setup
+# chunk), so earthengine-api lives inside the project and is called via the
+# reticulate <-> Quarto bridge on Render.
+venv_dir <- here::here(".venv")
+base_py  <- Sys.getenv("RETICULATE_PYTHON", unset = "/opt/local/bin/python")
+reticulate::virtualenv_create(venv_dir, python = base_py)
+reticulate::virtualenv_install(venv_dir, packages = c("earthengine-api", "numpy"))
+reticulate::use_virtualenv(venv_dir, required = TRUE)
+rgee::ee_check()             # verifies Python, earthengine-api, numpy in .venv
+```
+
+## Authenticate (once) and initialise
+
+```{r auth-init}
+library(rgee)
+# First run only: opens a browser, creates and stores the EE credential.
+# ee_Authenticate()
+
+# Initialise against your project. drive = TRUE also authorises Google Drive so
+# ee_*_to_drive() exports work; omit it if you will not export.
+ee_Initialize(project = Sys.getenv("EE_PROJECT"), drive = TRUE)
+ee_user_info()
+```
+
+## Smoke test: datasets over the AOI
+
+```{r smoke}
+library(sf)
+
+poi <- ee$Geometry$Point(c(35.55, -15.35))
+aoi <- ee$FeatureCollection("WWF/HydroSHEDS/v1/Basins/hybas_6")$
+  filterBounds(poi)$geometry()
+
+# rgee helper: bring an EE geometry back to R as sf (replaces custom ee_to_sf)
+aoi_sf <- ee_as_sf(aoi)
+print(st_area(aoi_sf))
+
+# Sentinel-1 GRD (C-band SAR)
+s1 <- ee$ImageCollection("COPERNICUS/S1_GRD")$
+  filterBounds(aoi)$
+  filter(ee$Filter$eq("instrumentMode", "IW"))$
+  filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VV"))$
+  filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VH"))$
+  filter(ee$Filter$eq("orbitProperties_pass", "DESCENDING"))
+cat("Sentinel-1 scenes:", s1$size()$getInfo(), "\n")
+
+# Landsat Collection 2 L2
+for (id in c("LANDSAT/LT05/C02/T1_L2","LANDSAT/LE07/C02/T1_L2","LANDSAT/LC08/C02/T1_L2"))
+  cat(id, ":", ee$ImageCollection(id)$filterBounds(aoi)$size()$getInfo(), "scenes\n")
+
+# rgee interactive map (replaces the ee_tile_url + tmap tile hack)
+gsw <- ee$Image("JRC/GSW1_4/GlobalSurfaceWater")$select("occurrence")
+Map$centerObject(aoi, zoom = 9)
+Map$addLayer(gsw$clip(aoi), list(min = 0, max = 100, palette = c("white","blue")),
+             "JRC surface-water occurrence")
+```
+
+If the scene counts print and the map renders, rgee is working and the
+manuscript's `environment-setup` chunk will initialise the same way. Next:
+`05.scripts/rgee-workflow-design.md` for the full R-first workflow and the
+speed guidance.

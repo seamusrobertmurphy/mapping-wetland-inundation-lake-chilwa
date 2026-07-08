@@ -1,0 +1,463 @@
+# Preface {.unnumbered}
+
+------------------------------------------------------------------------
+
+```{r}
+#| label: preface-setup
+#| warning: false
+#| message: false
+#| echo: false
+#| comment: NA
+
+easypackages::packages(
+  "bslib",
+  "cols4all", "covr", "cowplot",
+  "dendextend", "digest","DiagrammeR","dtwclust", "downlit",
+  "e1071", "exactextractr","elevatr",
+  "FNN", "future", "forestdata",
+  "gdalcubes", "gdalUtilities", "geojsonsf", "geos", "ggplot2", "ggstats",
+  "ggspatial", "ggmap", "ggplotify", "ggpubr", "ggrepel", "giscoR",
+  "hdf5r", "httr", "httr2", "htmltools",
+  "jsonlite",
+  "kohonen",
+  "leaflet.providers", "leafem", "libgeos","luz","lwgeom", "leaflet", "leafgl",
+  "mapedit", "mapview", "maptiles", "methods", "mgcv",
+  "ncdf4", "nnet",
+  "openxlsx", "parallel", "plotly",
+  "randomForest", "rasterVis", "raster", "Rcpp", "RcppArmadillo",
+  "RcppCensSpatial","rayshader", "RcppEigen", "RcppParallel",
+  "RColorBrewer", "reactable", "rgl", "rsconnect","RStoolbox", "rts",
+  "s2", "sf", "scales", "sits","spdep", "stars", "stringr","supercells",
+  "terra", "testthat", "tidyverse", "tidyterra","tools",
+  "tmap", "tmaptools", "terrainr",
+  "xgboost",
+  prompt = F)
+
+sf::sf_use_s2(use_s2 = F)
+
+knitr::opts_knit$set(root.dir = here::here())
+
+options(repos = c(CRAN = "https://cloud.r-project.org"),
+        htmltools.dir.version = FALSE,
+        htmltools.preserve.raw = FALSE)
+
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE,
+  error = FALSE, comment = NA,
+  tidy.opts = list(width.cutoff = 60))
+
+# Previously this chunk initialised rgee / reticulate against Google Earth
+# Engine and pulled AOI + land-cover as live ee objects, then every map below
+# drew its layers from ee_tile_url(). Tile URLs carry a session token that
+# expires within weeks, so rendered pages went blank for the reader.
+#
+# All GEE extraction now runs once in gee/export_to_asset.py and is mirrored
+# to data/rendered/*.tif by gee/download_cogs.R. This chunk loads those
+# committed COGs and vector boundaries, so rendering no longer depends on
+# any live GEE session.
+source(here::here("R", "palettes.R"))
+source(here::here("R", "local_rasters.R"))
+
+aoi_country_sf <- local_aoi("country")
+aoi_states_sf  <- local_aoi("states")
+
+lc_2020        <- local_raster("mcd12q1_igbp_2020")
+all_years_burn <- local_raster("mcd64a1_burn_2000_2025_max")
+burn_edges     <- local_burn_edges()
+```
+
+```{css, echo=FALSE, class.source = 'foldable'}
+div.column {
+    display: inline-block;
+    vertical-align: top;
+    width: 50%;
+}
+
+#TOC::before {
+  content: "";
+  display: block;
+  height:200px;
+  width: 200px;
+  background-image: url('https://raw.githubusercontent.com/seamusrobertmurphy/IPCC-wildfire-emissions/refs/heads/main/01-burn-area/AOI/aoi_burn_aa.png');
+  background-size: contain;
+  background-position: 50% 50%;
+  padding-top: 80px !important;
+  background-repeat: no-repeat;
+}
+```
+
+This eBook demonstrates the IPCC Tier 1 method for estimating greenhouse gas emissions from biomass burning, implementing Equation 2.27 from the 2019 IPCC Refinement [@ipccChapter2Generic2019] end-to-end: satellite-based burned area detection, land cover stratification into fire categories, assignment of default fuel consumption values, and application of emission factors to derive CH~4~, N~2~O, and CO~2~ estimates formatted for UNFCCC reporting. All workflows use Honduras as the example AOI. Paged links to source materials are provided in footnotes throughout.
+
+Under the Managed Land Proxy (MLP), all fires on managed land — including natural wildfires — count toward a country's reported LULUCF balance. The 2019 Refinement (Section 2.6) provides optional guidance for disaggregating natural disturbance spikes from background anthropogenic fire activity. This eBook implements both the standard Tier 1 calculation and the disaggregation framework, structured in four chapters:
+
+1.  [Burned Area](https://seamusrobertmurphy.quarto.pub/ipcc-fire-emissions/01-burn-area/): Extract and validate burned area from MODIS MCD64A1, apply uncertainty filters, aggregate temporally, and compare against alternative fire products.
+2.  [Fuel Stratification](https://seamusrobertmurphy.quarto.pub/ipcc-fire-emissions/02-fuel-stratification/): Classify burned pixels into fire categories using land cover, climate zones, and soil classification.
+3.  [Fuel Consumption](https://seamusrobertmurphy.quarto.pub/ipcc-fire-emissions/03-fuel-consumption/): Assign IPCC default fuel consumption factors (M~B~ × C~f~) by vegetation type and climate zone.
+4.  [Emission Factors](https://seamusrobertmurphy.quarto.pub/ipcc-fire-emissions/04-emission-factors/): Apply emission factors (G~ef~) via Equation 2.27, compute CH₄ and N₂O emissions, and format for UNFCCC CRF reporting.
+
+------------------------------------------------------------------------
+
+## Tier 1 Stratification Datasets[^index-1] {.unnumbered}
+
+-   [MODIS MCD64A1 C6.1](https://developers.google.com/earth-engine/datasets/catalog/MODIS_061_MCD64A1): Monthly burned area (500 m, 2000–present). GEE: `MODIS/061/MCD64A1`. Bands: `BurnDate`, `Uncertainty`, `QA`.
+-   [MODIS MCD12Q1 C6.1](https://developers.google.com/earth-engine/datasets/catalog/MODIS_061_MCD12Q1): IGBP annual land cover (500 m). GEE: `MODIS/061/MCD12Q1`. Band: `LC_Type1`.
+-   [MODIS MOD14A1 C6.1](https://developers.google.com/earth-engine/datasets/catalog/MODIS_061_MOD14A1): Daily thermal anomalies / active fires (1 km). GEE: `MODIS/061/MOD14A1`. Band: `FireMask`.
+-   [IPCC Global Climate Regions](https://philipaudebert.users.earthengine.app/view/ipcc-climate-zones): 12-zone classification derived per IPCC 2006 [& 2019](https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch03_Land%20Representation.pdf#page=47) guidelines, maintained by [ESDAC](https://esdac.jrc.ec.europa.eu/content/support-renewable-energy-directive#tabs-0-description=1) and individual [contributors](https://doi.org/10.5281/zenodo.7303807).
+-   [IPCC Global Soil Zones](https://doi.org/10.1016/j.catena.2024.108258): 13-class soil classification from HWSD v2.0 via WRB-to-IPCC taxotransfer [@batjes2009ipcc; @batjes2010ipcc] ([GEE Asset](https://code.earthengine.google.com/?asset=projects/murphys-deforisk/assets/ipcc_soils)).
+-   [FAO Agro-Ecological Zones](https://data.apps.fao.org/catalog/iso/2fb209d0-fd34-4e5e-a3d8-a13c241eb61b): Climate-vegetation framework for fuel consumption stratification ([V4](https://data.apps.fao.org/catalog/dataset/global-agro-ecological-zones-global-10km-gaez-v4), [V5](https://data.apps.fao.org/gaez/)).
+-   [FAO GAUL 2015](https://developers.google.com/earth-engine/datasets/catalog/FAO_GAUL_2015_level1): Administrative boundaries. GEE: `FAO/GAUL/2015/level0`, `FAO/GAUL/2015/level1`.
+
+## Validation Datasets {.unnumbered}
+
+-   [Landsat 8 C2 T1 L2](https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC08_C02_T1_L2): Surface reflectance (30 m). Used for dNBR validation.
+-   [Hansen Global Forest Change v1.12](https://developers.google.com/earth-engine/datasets/catalog/UMD_hansen_global_forest_change_2024_v1_12): Tree canopy cover 2000 (30 m).
+-   [ESA WorldCover 2020 v100](https://developers.google.com/earth-engine/datasets/catalog/ESA_WorldCover_v100_2020): Global land cover (10 m).
+-   [WorldClim V1 Bioclimatic Variables](https://developers.google.com/earth-engine/datasets/catalog/WORLDCLIM_V1_BIO): 1 km climatologies (`bio01`, `bio12`) for climate zone delineation.
+-   [USGS SRTM DEM](https://developers.google.com/earth-engine/datasets/catalog/USGS_SRTMGL1_003): 30 m elevation for lowland organic soil proxy.
+-   [FAOSTAT Emissions from Fires](https://www.fao.org/faostat/en/#data/GI): Country-level fire emissions (1990–2024) using IPCC Tier 1 defaults. IPCC-recommended for NGHGI QA/QC (FAO, [2025](https://files-faostat.fao.org/production/GI/GI_e.pdf)).
+
+------------------------------------------------------------------------
+
+## IPCC Tier 1 Fire Emissions
+
+Equation 2.27[^index-2] [@ipccChapter2Generic2019]:
+
+$$
+L_{fire} = A \times M_B \times C_f \times G_{ef} \times 10^{-3}
+$$
+
+Where:
+
+-   L~fire~ = greenhouse gas emissions from fire (tonnes of CH₄, N₂O, or CO₂)
+-   A = area burnt (ha)
+-   M~B~ = mass of fuel available for combustion (tonnes ha⁻¹)
+-   C~f~ = combustion factor (dimensionless, proportion of fuel consumed)
+-   G~ef~ = emission factor (g kg⁻¹ dry matter burnt)
+
+Each term is stratified by fire category. FAOSTAT reclassifies MODIS MCD12Q1 IGBP 17-class land cover into three categories, each with distinct gas reporting rules:
+
+Fire Category
+
+|   | IGBP Source | Non-CO₂ via Eq. 2.27 | CO₂ Treatment |
+|------------------|------------------|------------------|------------------|
+| Forest remaining Forest (classes 1–5) | Evergreen/Deciduous Needleleaf & Broadleaf, Mixed | CH₄, N₂O | CO₂ reported via stock-change (Eq. 2.7–2.14) — not synchronous with regrowth[^index-3] |
+| Forest converted to other land | Same classes, land-use change detected | CH₄, N₂O, CO₂ | All gases via Eq. 2.27; reported under new land-use category |
+| Savanna/Grassland (classes 6–10) | Shrublands, Woody Savannas, Savannas, Grasslands | CH₄, N₂O | CO₂ not reported — assumed synchronous with annual regrowth |
+| Organic Soil (HWSD overlay) | Histosols, independent of land cover | CO₂, CH₄ | Direct reporting (Wetlands Supplement) |
+
+For forest remaining forest, fire CO₂ is captured through live biomass stock-change accounting (Eq. 2.7–2.14) because emissions and regrowth are not synchronous (§2.4). At Tier 1, DOM CO₂ is assumed zero. For deforestation fires, all gases including CO₂ are reported via Equation 2.27, with care to avoid double-counting with Equation 2.23 (decay). Organic soil fires are validated for Southeast Asia only; FAOSTAT sets emissions to zero beyond Indonesia, Malaysia, and Brunei [@ipcc2013Supplement20062014]. Default parameters from Tables 2.4[^index-4] and 2.5[^index-5] are applied in Chapters 3 and 4.
+
+Organic soil fires are currently validated for Southeast Asia only; FAOSTAT sets emissions to zero beyond Indonesia, Malaysia, and Brunei [@ipcc2013Supplement20062014]. Default fuel consumption (Table 2.4[^index-6]) and emission factors (Table 2.5[^index-7]) are applied in Chapters 3 and 4 respectively.
+
+#### Managed Land Proxy
+
+Under the MLP, all emissions on managed lands, including natural wildfires, are attributed as anthropogenic. A severe wildfire year can inflate reported emissions without reflecting any change in land management.
+
+The 2019 Refinement (Section 2.6, [pp 2.67](https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch02_Generic%20Methods.pdf#page=67)) introduced an optional disaggregation approach to separate natural disturbance spikes from anthropogenic fluxes using a statistical threshold (commonly the 95th percentile). Three methodological debates remain active:
+
+1.  Threshold definition: 95th percentile is recommended but not mandated; alternatives include 90th percentile or rolling mean + 2 SD
+2.  Temporal window: IPCC implies 30+ years, but MODIS covers only 2001–present; Landsat extension introduces cross-sensor uncertainty
+3.  CO₂ reporting pathway: forest-remaining-forest reports CO₂ via stock-change (not Eq. 2.27); deforestation fires report all gases via Eq. 2.27 under the new land-use category
+
+Countries experiencing high inter-annual variability may disaggregate these fluxes while preserving MLP totals for official reporting [@ipccChapter2Generic2019, pp. 251].[^index-8]
+
+[![](https://raw.githubusercontent.com/seamusrobertmurphy/IPCC-wildfire-emissions/refs/heads/main/resources/ipcc-tier-selection-fire-emissions.png){fig-align="center" width="50%"}](https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch02_Generic%20Methods.pdf#page=51)
+
+------------------------------------------------------------------------
+
+## Stratification Layers
+
+The maps below visualize each stratification layer over the Honduras AOI used throughout this eBook.
+
+### Burned Area by Climate Zones
+
+MODIS MCD64A1 C6.1 provides monthly burned area at 500 m from 2001–present. FAOSTAT retains only pixels with uncertainty \< 20% and aggregates to annual country totals [@rossi2016faostat]. The IPCC Climate Zones layer (12 zones, 1985–2015 climatology with corrigenda) stratifies fuel consumption for savanna and organic soil fires.
+
+```{r}
+#| label: preface-burned-area-climate
+#| code-summary: "MCD64A1 burned area composite with IPCC Climate Zones"
+#| error: false
+#| message: false
+#| warning: false
+
+
+tmap::tmap_mode("view")
+tmap::tm_shape(aoi_states_sf) + tmap::tm_borders(col = "MAP_COLORS", lwd = 1) +
+  tmap::tm_shape(aoi_country_sf) + tmap::tm_borders(col = "white", lwd = 1.5) +
+  tm_local_categorical("ipcc_climate_zones_honduras", ipcc_climate_palette,
+                       title = "IPCC Climate Zones") +
+  tm_local_mask(all_years_burn, "red",
+                title = "Burn Area",
+                group = "Burn Areas (2000–2025)") +
+  tm_local_mask(burn_edges, "#FFFF00",
+                title = "Burn Edges",
+                group = "Burn Areas (2000–2025)") +
+  tmap::tm_add_legend(polygons = "fill",
+    fill   = ipcc_climate_palette$colors,
+    labels = ipcc_climate_palette$labels,
+    title  = "IPCC Climate Zones") +
+  tmap::tm_add_legend(polygons = "fill", fill = "red",
+    labels = "Burn Area", title = "MCD64A1 (2000–2025)") +
+  tmap::tm_scalebar(position = c("RIGHT", "BOTTOM"), text.size = 0.5) +
+  tmap::tm_basemap("Esri.WorldImagery")
+```
+
+### Fire Types by Landcover
+
+The IGBP 17-class land cover is reclassified into the three fire categories defined above. Toggle between the raw classification and the reclassified result.
+
+```{r}
+#| label: preface-igbp-map
+#| code-summary: "IGBP 17-class land cover and IPCC fire categories (2020)"
+#| error: false
+#| message: false
+#| warning: false
+
+
+tmap::tmap_mode("view")
+tmap::tm_shape(aoi_country_sf) + tmap::tm_borders(col = "white", lwd = 1.5) +
+  tm_local_categorical("mcd12q1_igbp_2020", igbp_palette,
+                       title = "IGBP 17-Class", group = "IGBP 17-Class") +
+  (tmap::tm_shape(local_fire_categories()) +
+     tmap::tm_raster(
+       col.scale  = tmap::tm_scale_categorical(
+         values = fire_categories_palette$colors,
+         labels = fire_categories_palette$labels,
+         value.na = NA),
+       col.legend = tmap::tm_legend(title = "IPCC Fire Categories (2020)"),
+       col_alpha  = 0.7,
+       group      = "IPCC Fire Categories")) +
+  tm_local_mask(all_years_burn, "red",
+                title = "Burn Area",
+                group = "Burn Areas (2000–2025)") +
+  tm_local_mask(burn_edges, "#FFFF00",
+                title = "Burn Edges",
+                group = "Burn Areas (2000–2025)") +
+  tmap::tm_add_legend(polygons = "fill", fill = "red",
+    labels = "Burn Area", title = "MCD64A1 (2000–2025)") +
+  tmap::tm_add_legend(polygons = "fill",
+    fill   = fire_categories_palette$colors,
+    labels = fire_categories_palette$labels,
+    title  = "IPCC Fire Categories (2020)") +
+  tmap::tm_scalebar(position = c("RIGHT", "BOTTOM"), text.size = 0.5) +
+  tmap::tm_basemap("Esri.WorldImagery")
+```
+
+### Forest Type by Climate Zones
+
+Tables 2.4 and 2.6 stratify fuel consumption (M~B~) and combustion factors (C~f~) by forest biome, primary tropical (moist/dry/open), secondary tropical (by age), boreal, eucalypt, and other temperate. Table 2.5 collapses emission factors to two rows: Tropical and Extra-tropical. FAOSTAT implements this as a four-way climate split on forest pixels (IGBP 1–5):
+
+| Stratum        | Climate Criteria        | M~B~ (t DM ha⁻¹) | G~ef~ row      |
+|----------------|-------------------------|------------------|----------------|
+| Tropical Moist | T \> 18°C, P \> 1500 mm | 119.6–163.6      | Tropical       |
+| Tropical Dry   | T \> 18°C, P ≤ 1500 mm  | 83.9             | Tropical       |
+| Temperate      | 0°C \< T ≤ 18°C         | 50.4             | Extra-tropical |
+| Boreal         | T ≤ 0°C                 | 41.0             | Extra-tropical |
+
+: Forest strata linking climate thresholds to Tables 2.4 and 2.5 {.striped .hover}
+
+```{r}
+#| label: preface-forest-strata-map
+#| code-summary: "Forest stratification: Tropical Moist / Dry / Temperate / Boreal"
+#| error: false
+#| message: false
+#| warning: false
+
+
+tmap::tmap_mode("view")
+tmap::tm_shape(aoi_country_sf) + tmap::tm_borders(col = "white", lwd = 1.5) +
+  (tmap::tm_shape(local_forest_strata()) +
+     tmap::tm_raster(
+       col.scale  = tmap::tm_scale_categorical(
+         values = forest_strata_palette$colors,
+         labels = forest_strata_palette$labels,
+         value.na = NA),
+       col.legend = tmap::tm_legend(title = "Forest Strata (Tables 2.4/2.5)"),
+       col_alpha  = 0.7,
+       group      = "Forest Climate Strata")) +
+  tm_local_mask(all_years_burn, "red",
+                title = "Burn Area",
+                group = "Burn Areas (2000-2025)") +
+  tm_local_mask(burn_edges, "#FFFF00",
+                title = "Burn Edges",
+                group = "Burn Areas (2000-2025)") +
+  tmap::tm_add_legend(type = "fill",
+    col    = forest_strata_palette$colors,
+    labels = forest_strata_palette$labels,
+    title  = "Forest Strata (Tables 2.4/2.5)") +
+  tmap::tm_add_legend(polygons = "fill", fill = "red",
+    labels = "Burn Area", title = "MCD64A1 (2020-2025)") +
+  tmap::tm_scalebar(position = c("RIGHT", "BOTTOM"), text.size = 0.5) +
+  tmap::tm_basemap("Esri.WorldImagery")
+```
+
+### IPCC Soil Zones
+
+The IPCC soil classification maps global soils into 13 classes derived from the HWSD via WRB-to-IPCC taxotransfer procedures [@batjes2009ipcc; @batjes2010ipcc]. For fire emissions, the critical class is ORG (Histosols), which triggers peat fire emission factors from the Wetlands Supplement [@ipcc2013Supplement20062014; @ipcc2013RevisedSupplementary2014].
+
+```{r}
+#| label: preface-ipcc-soils-map
+#| code-summary: "IPCC Soil Zones from HWSD v2.0 (WRB Fix)"
+#| error: false
+#| message: false
+#| warning: false
+sf::sf_use_s2(use_s2 = F)
+
+
+sf::sf_use_s2(use_s2 = F)
+
+tmap::tmap_mode("view")
+tmap::tm_shape(aoi_country_sf) + tmap::tm_borders(col = "white", lwd = 1.5) +
+  tm_local_categorical("ipcc_soils_honduras", ipcc_soils_palette,
+                       title = "IPCC Soil Groups") +
+  tm_local_mask(all_years_burn, "red",
+                title = "Burn Area",
+                group = "Burn Areas (2000–2025)") +
+  tm_local_mask(burn_edges, "#FFFF00",
+                title = "Burn Edges",
+                group = "Burn Areas (2020-2025)") +
+  tmap::tm_add_legend(type = "fill",
+    col    = ipcc_soils_palette$visible_colors,
+    labels = ipcc_soils_palette$visible_labels,
+    title  = "IPCC Soil Classes (HWSD v2.0)") +
+  tmap::tm_add_legend(polygons = "fill", fill = "red",
+    labels = "Burn Area", title = "MCD64A1 (2000–2025)") +
+  tmap::tm_scalebar(position = c("RIGHT", "BOTTOM"), text.size = 0.5) +
+  tmap::tm_basemap("Esri.WorldImagery")
+```
+
+------------------------------------------------------------------------
+
+## Uncertainty Overview
+
+Each term in Equation 2.27 introduces uncertainty that compounds across the chain. At Tier 1, cumulative uncertainty is typically ±30% for burned area (MCD64A1 may underestimate by 20–30% due to small fires, canopy obscuration, and cloud contamination), ±30–50% for fuel consumption defaults (reflecting variability in vegetation, fire intensity, and moisture), and ±20–60% for emission factors (influenced by flaming vs. smoldering balance). Land classification accuracy (\~75% for MCD12Q1) directly affects which fuel values are assigned — confusion between woody savannas and forests spans a 2.6–164 t ha⁻¹ range in Table 2.4. Organic soil fires carry the highest uncertainty due to limited validation outside Southeast Asia. Uncertainty reduction strategies and inter-annual variability analysis are addressed in Chapter 4.
+
+------------------------------------------------------------------------
+
+## Google Earth Engine Setup
+
+All spatial processing in this eBook uses [Google Earth Engine](https://earthengine.google.com/) (GEE) via the Python API, called from R through `reticulate`. GEE provides petabyte-scale imagery archives and planetary-scale computation, FAOSTAT uses the same platform for its pixel-level fire emission processing.
+
+Getting started:
+
+1.  Register at <https://earthengine.google.com/signup/>
+2.  Install the Python API: `pip install earthengine-api`
+3.  Authenticate: `earthengine authenticate`
+
+R/reticulate setup (used throughout this eBook):
+
+``` r
+reticulate::use_python("/opt/local/bin/python", required = TRUE)
+ee <- reticulate::import("ee")
+ee$Initialize(project = "your-project-id")
+```
+
+Core GEE assets used:[^index-9]
+
+``` javascript
+// Burned Area
+var burnedArea = ee.ImageCollection("MODIS/061/MCD64A1");
+// Land Cover
+var landCover  = ee.ImageCollection("MODIS/061/MCD12Q1");
+// Country Boundaries
+var countries  = ee.FeatureCollection("FAO/GAUL/2015/level0");
+// IPCC Soil Zones
+var ipccSoils  = ee.Image("projects/murphys-deforisk/assets/ipcc_soils");
+// IPCC Climate Zones
+var ipccClimate = ee.Image("users/philipaudebert/IPCC/Corrigenda/ipcc_climate_1985-2015_corrigenda_raster");
+```
+
+#### Local Environment Setup
+
+```{r}
+#| label: preface-setup-demo
+#| warning: false
+#| message: false
+#| echo: false
+#| comment: NA
+
+easypackages::packages(
+  "bslib",
+  "cols4all", "covr", "cowplot",
+  "dendextend", "digest","DiagrammeR","dtwclust", "downlit",
+  "e1071", "exactextractr","elevatr",
+  "FNN", "future", "forestdata",
+  "gdalcubes", "gdalUtilities", "geojsonsf", "geos", "ggplot2", "ggstats",
+  "ggspatial", "ggmap", "ggplotify", "ggpubr", "ggrepel", "giscoR",
+  "hdf5r", "httr", "httr2", "htmltools",
+  "jsonlite",
+  "kohonen",
+  "leaflet.providers", "leafem", "libgeos","luz","lwgeom", "leaflet", "leafgl",
+  "mapedit", "mapview", "maptiles", "methods", "mgcv",
+  "ncdf4", "nnet",
+  "openxlsx", "parallel", "plotly",
+  "randomForest", "rasterVis", "raster", "Rcpp", "RcppArmadillo",
+  "RcppCensSpatial","rayshader", "RcppEigen", "RcppParallel",
+  "RColorBrewer", "reactable", "rgl", "rsconnect","RStoolbox", "rts",
+  "s2", "sf", "scales", "sits","spdep", "stars", "stringr","supercells",
+  "terra", "testthat", "tidyverse", "tidyterra","tools",
+  "tmap", "tmaptools", "terrainr",
+  "xgboost",
+  prompt = F)
+
+# Disable obloid gemoetry
+sf::sf_use_s2(use_s2 = FALSE)
+
+# Assign working directory to current location
+knitr::opts_knit$set(root.dir = here::here())
+
+# Enable html formatting
+options(repos = c(CRAN = "https://cloud.r-project.org"),
+        htmltools.dir.version = FALSE,
+        htmltools.preserve.raw = FALSE)
+
+# Default code cell styling
+knitr::opts_chunk$set(
+	tidy.opts = list(width.cutoff = 60),
+  echo = TRUE, 
+  error = FALSE, 
+  message = FALSE, 
+  warning = FALSE,
+  comment = NA)
+
+
+# Point runtime to preferred python kernel
+reticulate::use_python("/opt/local/bin/python", required = T)
+
+# GEE initialisation and authentication
+ee <- reticulate::import("ee")
+ee$Initialize(project = "murphys-deforisk")
+
+# GEE in R & tmap helpers
+ee_tile_url <- function(ee_image, vis_params) {ee_image$getMapId(vis_params)$tile_fetcher$url_format}
+ee_to_sf <- function(fc) {geojsonsf::geojson_sf(jsonlite::toJSON(fc$getInfo(), auto_unbox = TRUE))}
+
+# Assign AOI to country of choice
+aoi_country_ee <- ee$FeatureCollection("FAO/GAUL/2015/level0")$
+  filter(ee$Filter$eq("ADM0_NAME", "Honduras"))
+aoi_states_ee  <- ee$FeatureCollection("FAO/GAUL/2015/level1")$
+  filter(ee$Filter$eq("ADM0_NAME", "Honduras"))
+aoi_country_sf <- ee_to_sf(aoi_country_ee)
+aoi_states_sf  <- ee_to_sf(aoi_states_ee)
+
+```
+
+------------------------------------------------------------------------
+
+[^index-1]: <https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch03_Land%20Representation.pdf#page=35>
+
+[^index-2]: <https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch02_Generic%20Methods.pdf#page=50>
+
+[^index-3]: <https://www.ipcc-nggip.iges.or.jp/public/2006gl/pdf/4_Volume4/V4_04_Ch4_Forest_Land.pdf#page=27>
+
+[^index-4]: <https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch02_Generic%20Methods.pdf#page=52>
+
+[^index-5]: <https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch02_Generic%20Methods.pdf#page=54>
+
+[^index-6]: <https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch02_Generic%20Methods.pdf#page=52>
+
+[^index-7]: <https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch02_Generic%20Methods.pdf#page=54>
+
+[^index-8]: <https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch02_Generic%20Methods.pdf#page=71>
+
+[^index-9]: Code provided in Python and R, with some cells in JavaScript for use natively in Earth Engine Code Editor.

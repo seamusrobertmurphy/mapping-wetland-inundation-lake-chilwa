@@ -1,0 +1,25 @@
+# .Renviron.example  —  copy to .Renviron (git-ignored) and edit.
+# RStudio reads .Renviron once at session start; restart R after any change.
+# NEVER commit .Renviron. It is listed in .gitignore.
+#
+# This mirrors the author's working .Renviron, with EE_PROJECT added.
+
+# --- Google Earth Engine (rgee) -------------------------------------------
+# Cloud project ID with the Earth Engine API enabled. REQUIRED for rgee.
+# (Authenticate separately, once, with rgee::ee_Authenticate(); a GOOGLE_API_KEY
+#  does NOT authenticate Earth Engine and is not used by rgee.)
+EE_PROJECT=your-earth-engine-project-id
+
+# Python interpreter holding earthengine-api + numpy; rgee/reticulate use this.
+RETICULATE_PYTHON="/opt/local/bin/python"
+
+# --- Terrain / spatial stack (unchanged from the author's setup) -----------
+TAUDEM_PATH="/usr/local/taudem/"
+PATH="/opt/local/bin:/usr/local/taudem:${PATH}"
+R_C_STACK_LIMIT=100000000
+R_LIBS_USER="/Users/seamus/Library/R/arm64/4.4/library"
+PROJ_LIB="/opt/local/lib/proj9/share/proj/proj.db"
+
+# --- Other Google APIs (NOT Earth Engine) ----------------------------------
+# Used by non-EE Google services only; ignored by rgee/Earth Engine.
+# GOOGLE_API_KEY=your-key-if-needed-elsewhere
