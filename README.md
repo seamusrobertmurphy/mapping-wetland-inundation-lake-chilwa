@@ -1,4 +1,4 @@
-# Multisource remote sensing of wetland inundation dynamics through the recession cycles of Lake Chilwa
+# Mapping long-term wetland inundation dynamics of the Lake Chilwa recession using multisource remote sensing data
 
 **Murphy, S.**<sup>a,\*</sup> · **Wilson, J.**<sup>b</sup>
 <sup>a</sup> Corresponding author: seamusrobertmurphy@gmail.com · <sup>b</sup> Community Natural Resource Management Consultant
@@ -6,6 +6,13 @@
 > This README mirrors the manuscript draft `01.manuscript/Manuscript_2026-07-08.docx`. The executable source is the Quarto notebook `01.manuscript/mapping-wetland-inundation-lake-chilwa.qmd`.
 
 ---
+
+
+![Figure 1](03.outputs/readme-figures/image1.png)
+
+**Figure 1.** Study area: the self-derived Lake Chilwa basin (red boundary) on a topographic base, with a Malawi locator inset. Coordinates in EPSG:4326.
+
+*Figures throughout are current pipeline outputs stored under `03.outputs/`, regenerated on each notebook run.*
 
 ## Abstract
 
@@ -45,6 +52,11 @@ The pattern across all five indices is consistent: each occupies a spectral nich
 
 ### 1.2 SAR-Optical Complementarity
 
+![Figure 2](03.outputs/PNG/RADAR-render.png)
+
+**Figure 2.** Sentinel-1 C-band SAR render of the basin. Smooth open water returns dark against brighter land and vegetation.
+
+
 Synthetic aperture radar addresses the specific failures of optical indices in inland wetlands. SAR operates at microwave frequencies, independent of cloud cover and solar illumination, two properties that make it indispensable for monitoring tropical wetlands where persistent cloud obscures optical sensors for months during the critical wet season (Mahdavi et al., 2018).
 
 Smooth open water produces near-specular reflection, returning very little backscatter to the sensor. C-band SAR typically records open water at -20 to -30 dB, well below surrounding land surfaces, enabling detection through simple thresholding (Martinis et al., 2015). Where vegetation stands in water, the signal follows a double-bounce pathway, reflecting from the water surface and then from vertical plant structures. This produces backscatter paradoxically higher than from the same vegetation when dry, because the smooth water surface enhances the coherent specular return (Hess et al., 1995; Tsyganskaya et al., 2018). The contrast between double-bounce returns from flooded vegetation and volume scattering from dry canopies is the physical basis for detecting sub-canopy inundation.
@@ -58,6 +70,11 @@ SAR interferometry offers additional capability. InSAR measures phase difference
 Fusing SAR and optical data exploits their complementarity. Pixel-level stacking, decision-level fusion, and machine learning classifiers trained on combined feature spaces consistently outperform single-source models, with reported accuracies of 85 to 95 percent for wetland classes (Amani et al., 2019; Whyte et al., 2018). Xu et al. (2025) mapped surface water dynamics across East Africa at 10 m resolution by integrating Sentinel-1 and Sentinel-2 time series. Lubala et al. (2023) fused Sentinel-1, Sentinel-2, and ALOS PALSAR to map small inland wetlands in the Democratic Republic of Congo. These studies confirm that multi-sensor integration captures dynamics that either sensor family misses alone.
 
 ### 1.3 Study Area
+
+![Figure 3](03.outputs/readme-figures/image8.png)
+
+**Figure 3.** A preview of the result: classified surface-water extent, open water and flooded vegetation within the basin boundary.
+
 
 Lake Chilwa Basin is one of Africa’s most productive endorheic ecosystems. Located in southern Malawi, this shallow terminal basin spans approximately 2,310 km², of which open water forms a fluctuating share, on the order of a third in a wet year and far less during recession, the remainder comprising Typha swamp and seasonally inundated marshland (Kalk, 1979). The lake was designated a Ramsar Wetland of International Importance in 1997, in recognition of its outstanding waterfowl populations and ecological significance (Wilson, 2007). The three surrounding districts, Zomba, Phalombe, and Machinga, support population densities of 162 persons km⁻² around the lake itself and considerably higher in the southern basin (Wilson, 2010), with 70 to 81% of households living below the poverty line and farming plots averaging 0.35 ha (Wilson, 2010). The fishery contributes on average 20% of Malawi’s annual catch and in peak years has reached 43% (Chiotha, 1996; Njaya et al., 2011).
 
@@ -128,6 +145,16 @@ Locator map: site area at 1:4,000,000 scale
 
 #### 2.2.A Terrain and Flow-Routing Analysis
 
+![Figure 4](03.outputs/readme-figures/image2.png)
+
+**Figure 4.** D-infinity specific catchment area on a log10 scale, computed on the least-cost depression-breached SRTM surface.
+
+
+![Figure 5](03.outputs/readme-figures/image3.png)
+
+**Figure 5.** D-infinity flow direction in radians. Continuous partitioning holds across the flat terminal basin, where single-flow-direction routing fails.
+
+
 The basin boundary and drainage network are derived from the terrain, not inherited from a public product. Google Earth Engine has no native flow-routing tool, so the delineation is performed locally in R. On Lake Chilwa’s flat endorheic floor, an average maximum depth of 2.95 m across a 2,310 km² terminal basin (Section 1.3), the decisive step is hydrological conditioning of the elevation model: without it, closed depressions and flat cells sever the flow paths on which the drainage-structure argument of Section 3.3 depends.
 
 We conditioned the elevation model by least-cost depression breaching alone (Lindsay, 2016), carving minimal-descent paths through spurious barriers rather than filling depressions, which on a near-flat basin floor would erase the very gradients the routing depends on. Flow was then routed by the D-infinity method (Tarboton, 1997), whose continuous angular partitioning represents dispersal across low-relief terrain more faithfully than the eight discrete directions of D8; where fuller flow dispersion is wanted, a multiple-flow-direction variant (Freeman, 1991; Quinn, 1991) is the defensible alternative. Routing was computed twice for algorithmic consensus: once in WhiteboxTools (`wbt_d_inf_pointer`, `wbt_d_inf_flow_accumulation`) and once in the flowdem package (`dirs` and `accum`, mode `dinf`). From the D-infinity flow accumulation we extracted the stream network (`wbt_extract_streams`), ordered it by the Strahler scheme (`wbt_strahler_stream_order`), and delineated the basin and its sub-catchments, the polygons that serve as the analysis boundary (`03.outputs/SHP/``chilwa_basin.shp`, `chilwa_subasins.shp`). The full workflow, including the depression-breaching and DEM-resolution comparisons, is documented in `05.scripts/watershed-``algorithms.qmd` and its published mirror.
@@ -189,6 +216,11 @@ Contributing area spans several orders of magnitude, so the D-infinity accumulat
 The D-infinity direction map resolves a fan of continuous flow angles across the basin floor, the behaviour continuous partitioning is designed for on flat, low-relief terrain, where a discrete single-direction scheme would force flow into eight compass-aligned bins and sever the gentle gradients that carry water across the terminal floor.
 
 #### 2.2.B SAR Backscatter Processing
+
+![Figure 6](03.outputs/PNG/SNAP-processing.png)
+
+**Figure 6.** Sentinel-1 C-band pre-processing chain.
+
 
 SAR processing exploits the sensitivity of C-band radar to backscatter differences between smooth water surfaces and rough terrestrial features. Calm water yields low backscatter (-20 to -30 dB) while vegetated areas exhibit higher returns from volume scattering and surface roughness interactions. Wet soils produce higher backscatter than dry soils due to their increased dielectric constant. VV polarisation provides greatest sensitivity to soil moisture; cross-polarisation (VH) differentiates woody from herbaceous vegetation (Tsyganskaya et al., 2018).
 
@@ -429,6 +461,11 @@ C-band cannot penetrate the dense Typha canopy that defines the marsh interior, 
 
 #### 2.2.C Landsat Image Processing
 
+![Figure 7](03.outputs/readme-figures/image6.png)
+
+**Figure 7.** Scene availability over the basin, 1984 to 2024: total acquisitions against those with cloud cover below 30 percent. Dashed lines mark the 1995 and 2012 recessions.
+
+
 Optical analysis used Analysis Ready Data products from Landsat Collection 2, accessed through Google Earth Engine, specifically Level-2 surface reflectance from the Thematic Mapper (L5-TM), Enhanced Thematic Mapper Plus (L7-ETM+), and Operational Land Imager (L8-OLI). Band names were harmonised to a common six-band schema (blue, green, red, NIR, SWIR1, SWIR2) across the three sensor families to enable consistent index computation. Because Collection 2 Level-2 products are already atmospherically corrected (LEDAPS for the Thematic Mapper and Enhanced Thematic Mapper Plus, LaSRC for the Operational Land Imager) and terrain-registered (L1TP), quality control centres not on re-deriving these corrections but on removing what they leave behind. Collection 2 scale factors were applied (reflectance = DN x 0.0000275 - 0.2), and dilated-cloud, cirrus, cloud, and cloud-shadow pixels were masked from the QA\_PIXEL bitfield together with radiometrically saturated pixels flagged in QA\_RADSAT. Scenes exceeding 30% cloud cover were excluded. Earlier sensors (Landsat 3 and 4) were evaluated but present gaps, cloud interference, sensor degradation, and archival quality issues that reduce usable coverage, particularly before 1984; the temporal window is constrained by these data quality limitations rather than by methodological choice. Annual median composites were generated for each index, forming the core multi-decadal time series for characterising recession-refilling cycles.
 
     l5_bands <- list(from = c("SR_B1","SR_B2","SR_B3","SR_B4","SR_B5","SR_B7"),
@@ -568,6 +605,11 @@ To address threshold instability caused by dissolved salts, algal blooms, and va
     [1] "MNDWI p90: 0.7384"
 
 #### 2.2.E Spectral Mixture Analysis
+
+![Figure 8](03.outputs/readme-figures/image4.png)
+
+**Figure 8.** False-colour composite of the basin. Open water resolves as the cyan core; vegetation and exposed soil form the surround.
+
 
 Spectral mixture analysis enabled sub-pixel water fraction estimation, critical for monitoring gradual transitions between terrestrial and aquatic habitats. The approach was selected over object-based methods based on demonstrated superior performance in delineating turbid waters, shallow wetlands, and mixed vegetation-water pixels in lakeshore environments (Halabisky et al., 2016; Huang et al., 2014; Shanmugam et al., 2006). The spectral characteristics of Lake Chilwa, with its dense marshlands, shallow waters, extensive detritus, phytoplankton blooms, and shoreline shadowing, make sub-pixel estimation essential.
 
@@ -728,6 +770,11 @@ The inundation and migration records were coupled at annual resolution across th
 
 ### 3.1 Water Extent Dynamics
 
+![Figure 9](03.outputs/readme-figures/image9.png)
+
+**Figure 9.** Sub-pixel open-water and flooded-vegetation fractions from spectral mixture analysis, 1984 to 2024.
+
+
 The multi-decadal Landsat time series, comprising annual median composites from harmonised scenes spanning 1984 to 2024, revealed two complete recession-refilling cycles within the observation period. Maximum wet-season open water reached roughly a fifth of the 2,310 km² complex, about 490 km², in January to March, contracting to under 110 km² at the dry-season minimum in August to October and during recession, figures derived from the spectral mixture analysis reported below. The inter-annual coefficient of variation of the annual water series was 0.42.
 
 *Figure 1: Multi-decadal water extent dynamics in the Lake Chilwa Basin. (a) Annual median MNDWI from Landsat composites (1984 to 2024). (b) Monthly SAR-derived water fraction from Sentinel-1 composites (2015 to 2024). Dashed vertical lines indicate the 1995 and 2012 recession events.*
@@ -741,6 +788,11 @@ The 1995 recession reduced lake surface area to less than 10% of peak extent by 
 Seasonal patterns were consistent across non-recession years. Water extent peaked in February to March, declined through the dry season, and reached minimum extent in September to October. The rate of recession varied with preceding wet-season rainfall totals, with drier years producing earlier and more extensive drawdown of the littoral margins.
 
 ### 3.2 Spectral Index Performance
+
+![Figure 10](03.outputs/readme-figures/image7.png)
+
+**Figure 10.** Basin-mean spectral water indices, 1984 to 2024: AWEIsh, MNDWI, NDPI, NDWI, and WRI.
+
 
 The five optical indices performed as the literature predicted, with clear differentiation across Lake Chilwa’s distinct hydrological zones. Basin-wide annual median MNDWI values ranged from approximately -0.25 to -0.50, with pronounced dips during the 1995 and 2012 recessions visible in the time series.
 
@@ -767,6 +819,11 @@ The separability screen of Section 2.2.F formalised these redundancies before cl
 
 ### 3.3 SAR Integration
 
+![Figure 11](03.outputs/readme-figures/image10.png)
+
+**Figure 11.** Optical and radar water signals through time: Landsat MNDWI annual median across the full record, and SAR-derived water fraction by month within the radar epoch.
+
+
 Sentinel-1 C-band backscatter analysis provided continuous inundation mapping through the wet season, when cloud cover rendered 60 to 75% of optical acquisitions unusable. Multi-temporal composite images from wet and dry season pairs produced clear discrimination between open water (mean backscatter -22.4 dB VV), flooded vegetation (-12.8 dB VV, elevated by double-bounce returns), and dry land (-8.3 dB VV).
 
 The monthly time series revealed consistent seasonal oscillation in SAR-derived water fraction across the basin. Wet-season peaks reached 0.25 to 0.30 of the basin area, while dry-season troughs contracted to approximately 0.05, a five- to six-fold seasonal amplitude that repeated with striking regularity from 2016 to 2024. Earlier composites (2015) showed lower water fractions, reflecting both sparse scene density and the residual effects of the 2012 recession. Mean VV backscatter across the basin ranged from -7.2 dB in low-water months to -12.0 dB during peak inundation, with VH following a parallel pattern approximately 7 dB lower.
@@ -776,6 +833,11 @@ The gradient analysis, adapted from sea ice monitoring, proved effective for det
 SAR classification accuracy was highest for open water (producer’s accuracy 0.94) and lowest for the Typha marsh interior (0.71), where dense canopy attenuated C-band returns and reduced the double-bounce signal. This limitation confirms the need for L-band data in dense emergent vegetation, as documented by Hess et al. (2003) and Clement et al. (2018).
 
 ### 3.4 Land-Cover Classification and Accuracy
+
+![Figure 12](03.outputs/readme-figures/image5.png)
+
+**Figure 12.** Random-forest land-cover classification across the basin.
+
 
 The four-class random-forest classifier (open water, flooded vegetation, dry vegetation, bare soil), trained on the separability-selected feature stack of Section 2.2.F and applied to the 2020 reference composite, resolved the littoral mosaic that no single index captured (Section 2.2.G). Overall accuracy was 81% with a kappa coefficient of 0.77. Accuracy was highest for open water, which both the SWIR-based optical indices and low SAR backscatter identify unambiguously, and lowest for bare soil and flooded vegetation, where exposed lakebed grades into sparse cover and where dense Typha attenuates the C-band double-bounce signal. Community validation of boundary placement and seasonal timing agreed with the classification in 74 to 92% of checked locations, the disagreements concentrated in mixed-pixel zones and areas of rapid shoreline change.
 
@@ -843,6 +905,11 @@ This framing does not dissolve the difficulties, and honesty about them is part 
 
 ### 4.6 Toward a Coupled Socio-Hydrological Model
 
+![Figure 13](04.images/socio-hydrological-causal-loop.png)
+
+**Figure 13.** Proposed causal-loop structure of the Lake Chilwa water-society feedback, specified as future work in Section 4.6.
+
+
 The mapping and ethnography reported here establish the coupling; the next step is to model it. Socio-hydrology offers two complementary vehicles. A system-dynamics representation would cast lake level, fishing effort, and migration as a small set of coupled relations, in the manner of the compact human-water models that reproduce emergent behaviour from a handful of proxy variables (Blair and Buytaert, 2016; Albertini et al., 2020). An agent-based representation would instead model heterogeneous fishers deciding when and where to move, recovering the anticipatory lag as an emergent property of individual decision rules rather than imposing it, and yielding spatially explicit output that joins directly to the inundation maps (Blair and Buytaert, 2016). The precedent for coupling such a behavioural model to a physical hydrological model and reading consequences off ecological indicators is well established (Wu et al., 2015).
 
 *FIG XX*
@@ -871,76 +938,6 @@ Moreover, the fishery is governed by what Wilson, Russell, and Dobson (2008) cal
 
 The socio-hydrological framework developed here is transferable. Its components, multi-sensor remote sensing, spectral mixture analysis, multi-temporal SAR, and ethnographic validation, are individually well established. Their integration for endorheic wetland monitoring is not. Lake Chilwa demonstrates that this integration produces findings inaccessible to either approach alone, and that the social dimensions of wetland dynamics are as consequential as the biophysical ones for conservation outcomes. By mapping the inundation history and the fisher response as a single coupled process, the study establishes the empirical basis for a socio-hydrological model of the Lake Chilwa water-society feedback, and sets that model as the next step toward a decision-relevant understanding of the basin (Srinivasan et al., 2017; Xia et al., 2022).
 
-
-## Figures
-
-The images below are the current rendered outputs of the analysis pipeline, extracted from the manuscript draft and stored under `03.outputs/`. They are regenerated whenever the notebook is re-run, so treat them as the state of the draft rather than final artwork.
-
-### Study area and terrain
-
-![Study area](03.outputs/readme-figures/image1.png)
-
-**Figure 1.** The self-derived Lake Chilwa basin, shown as the red boundary on a topographic base with a Malawi locator inset. Coordinates in EPSG:4326.
-
-![D-infinity specific catchment area](03.outputs/readme-figures/image2.png)
-
-**Figure 2.** D-infinity specific catchment area on a log10 scale, computed on the least-cost depression-breached SRTM surface.
-
-![D-infinity flow direction](03.outputs/readme-figures/image3.png)
-
-**Figure 3.** D-infinity flow direction in radians. Continuous partitioning holds across the flat terminal basin, where single-flow-direction routing fails.
-
-### Data record
-
-![Sensor availability](03.outputs/readme-figures/image6.png)
-
-**Figure 4.** Scene availability over the basin, 1984 to 2024: total acquisitions against those with cloud cover below 30 percent. Dashed lines mark the 1995 and 2012 recessions.
-
-![Spectral water indices](03.outputs/readme-figures/image7.png)
-
-**Figure 5.** Basin-mean spectral water indices, 1984 to 2024: AWEIsh, MNDWI, NDPI, NDWI, and WRI.
-
-![Optical and radar water signal](03.outputs/readme-figures/image10.png)
-
-**Figure 6.** Optical and radar water signals through time: Landsat MNDWI annual median across the full record, and SAR-derived water fraction by month within the radar epoch.
-
-### SAR processing
-
-![Sentinel-1 processing chain](03.outputs/PNG/SNAP-processing.png)
-
-**Figure 7.** Sentinel-1 C-band pre-processing chain.
-
-![SAR backscatter render](03.outputs/PNG/RADAR-render.png)
-
-**Figure 8.** SAR backscatter render of the basin.
-
-### Spectral mixture analysis
-
-![Sub-pixel cover fractions](03.outputs/readme-figures/image9.png)
-
-**Figure 9.** Sub-pixel open-water and flooded-vegetation fractions from spectral mixture analysis, 1984 to 2024.
-
-![False-colour composite](03.outputs/readme-figures/image4.png)
-
-**Figure 10.** False-colour composite of the basin. Open water resolves as the cyan core; vegetation and exposed soil form the surround.
-
-### Classification
-
-![Land-cover classification](03.outputs/readme-figures/image5.png)
-
-**Figure 11.** Random-forest land-cover classification across the basin.
-
-![Classified surface-water extent](03.outputs/readme-figures/image8.png)
-
-**Figure 12.** Classified surface-water extent: open water and flooded vegetation within the basin boundary.
-
-### Socio-hydrology
-
-![Causal loop](04.images/socio-hydrological-causal-loop.png)
-
-**Figure 13.** Proposed causal-loop structure of the Lake Chilwa water-society feedback, specified as future work in Section 4.6.
-
----
 
 ## References
 
