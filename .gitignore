@@ -26,5 +26,5 @@ SPEC.md
 
 .DS_Store
 *.tif
-
+._*
 
