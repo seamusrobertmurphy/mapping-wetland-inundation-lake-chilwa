@@ -20,8 +20,12 @@ tasks/
 
 INDEX.md
 SPEC.md
+_quarto_book.yml.disabled
 
 .DS_Store
 *.tif
 ._*
 
+.quarto/
+
+.gitignore
