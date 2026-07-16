@@ -29,6 +29,7 @@ _quarto_book.yml.disabled
 *.tif
 ._*
 
+/.quarto/
 .quarto/
 
 .gitignore
