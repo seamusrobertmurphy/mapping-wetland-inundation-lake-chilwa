@@ -90,6 +90,11 @@ s1 = pd.read_csv(os.path.join(OUT, "s1_monthly_timeseries.csv"))
 pal = pd.read_csv(os.path.join(OUT, "palsar_lband_annual.csv"))
 sen = pd.read_csv(os.path.join(OUT, "sensor_availability_by_year.csv"))
 sen = sen[sen["year"] <= 2024].copy()
+# The audit reports each sensor twice, once unscreened and once cloud-screened,
+# and Sentinel-1 only unscreened. Take the unscreened rows so the panel measures
+# acquisition availability on one basis and no scene is counted twice.
+if "screen" in sen.columns:
+    sen = sen[sen["screen"] == "all"].copy()
 
 print("\n================ SUMMARY NUMBERS ================")
 
