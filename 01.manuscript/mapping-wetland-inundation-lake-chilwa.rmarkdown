@@ -51,7 +51,7 @@ csl: ../04.references/apa.csl
 
 ## Abstract
 
-Wetlands are among the most valuable ecosystems on Earth and among the most difficult to monitor at scale, particularly in sub-Saharan Africa, where wet-season cloud, turbid shallow water, and dense emergent vegetation defeat optical sensors and the fluctuating shorelines of endorheic lakes escape single-date mapping. Endorheic lakes compound the difficulty, since their water is continuously redistributed through cycles of recession and refilling that no single-date image can capture. Lake Chilwa, a shallow terminal basin in southern Malawi, advances and retreats on a cycle of recession and refilling approximately every fifteen years, drying almost completely in some years and rebounding to high fish productivity in others; its ecology and its migratory fishing communities track this cycle, yet conventional management frameworks capture neither the shifting hydrology nor the migrant economy that surrounds it. In this study, we combine multi-source remote sensing with participatory mapping used as ground-truth training data to map the basin's inundation dynamics. We assembled a harmonized Landsat time series from 1984 to 2024 to reconstruct four decades of recession and refilling. We evaluated five spectral water indices at and resolving surface water at the sub-pixel scale through spectral mixture analysis. The was fitted with also with ALOS PALSAR L-band backscatter and trained a Random Forest classifier to classify across open water, flooded vegetation, dry vegetation, and bare soil. The classification reached an overall accuracy of 81 percent and a kappa of 0.77, highest for open water and lowest for flooded vegetation and bare soil, where dense Typha attenuates the C-band double-bounce signal that the L-band layer was included to overcome. Sub-pixel open water within the 8,752 km² basin averaged 1,230 km² and ranged from 2,083 km² at the 2024 peak to 835 km² in the 1995 recession, two fifths of peak extent, when the lake survived only as residual channels and swamp refugia; counting emergent vegetation with it, the inundated footprint reached 2,810 km² at the 2023 refill. The fieldwork that supplied the training data also cross-checked the result, agreeing with the classified boundaries and seasonal timing at 74 to 92 percent of locations and revealing the migrant and floating fishing communities and governance structures invisible to earth observation, from seasonal migration timing to enforcement conflict across jurisdictions. Integrating multi-source remote sensing with sustained participatory fieldwork resolves dynamics that neither approach captures alone, nor provides a transferable basis for monitoring the fluctuating wetlands on which fishing economies and lakeshore communities depend.
+Wetlands are among the most valuable ecosystems on Earth and among the most difficult to monitor at scale, particularly in sub-Saharan Africa, where wet-season cloud, turbid shallow water, and dense emergent vegetation defeat optical sensors and the fluctuating shorelines of endorheic lakes escape single-date mapping. Endorheic lakes compound the difficulty, since their water is continuously redistributed through cycles of recession and refilling that no single-date image can capture. Lake Chilwa, a shallow terminal basin in southern Malawi, advances and retreats on a cycle of recession and refilling approximately every fifteen years, drying almost completely in some years and rebounding to high fish productivity in others; its ecology and its migratory fishing communities track this cycle, yet conventional management frameworks capture neither the shifting hydrology nor the migrant economy that surrounds it. In this study, we combine multi-source remote sensing with participatory mapping used as ground-truth training data to map the basin's inundation dynamics. We assembled a harmonized Landsat time series from 1984 to 2024 to reconstruct four decades of recession and refilling. We evaluated five spectral water indices at and resolving surface water at the sub-pixel scale through spectral mixture analysis. The was fitted with also with ALOS PALSAR L-band backscatter and trained a Random Forest classifier to classify across open water, flooded vegetation, dry vegetation, and bare soil. The classification reached an overall accuracy of 81 percent and a kappa of 0.77, highest for open water and lowest for flooded vegetation and bare soil, where dense Typha attenuates the C-band double-bounce signal that the L-band layer was included to overcome. Sub-pixel open water within the 8,752 km² basin averaged 1,090 km² and ranged from 1,820 km² at the 2024 peak to 465 km² in the 1995 recession, a quarter of peak extent, when the lake survived only as residual channels and swamp refugia; counting emergent vegetation with it, the inundated footprint reached 2,760 km² at the 2023 refill. The fieldwork that supplied the training data also cross-checked the result, agreeing with the classified boundaries and seasonal timing at 74 to 92 percent of locations and revealing the migrant and floating fishing communities and governance structures invisible to earth observation, from seasonal migration timing to enforcement conflict across jurisdictions. Integrating multi-source remote sensing with sustained participatory fieldwork resolves dynamics that neither approach captures alone, nor provides a transferable basis for monitoring the fluctuating wetlands on which fishing economies and lakeshore communities depend.
 
 **Keywords:** Wetland inundation mapping; SAR backscatter; spectral mixture analysis; participatory mapping; socio-hydrological systems; endorheic lakes; Lake Chilwa, Malawi
 
@@ -1022,56 +1022,43 @@ Endmember selection followed standard protocols, with training samples drawn fro
 # pixels (per-class median spectrum), not hardcoded placeholders, mirroring
 # 05.scripts/sma_endmember_modelling.R (SCHEME_4). Hardcoded reflectances that
 # do not match the scene bias every fraction and make the SMA irreproducible.
-# Endmembers are derived once per sensor era. A single set taken from a Landsat
-# 8 composite transfers poorly to Landsat 5: applied across the whole record it
-# raised Landsat 5 era open water by about 300 km2 against 185 km2 for the
-# Landsat 8 era, enough to erase the 1995 desiccation that Njaya et al. (2011)
-# document. Each era therefore supplies its own reference composite, a dry-season
-# median, and its own pure-pixel spectra.
-dry_season <- ee$Filter$calendarRange(6L, 10L, "month")
-ref_l8 <- ref_scene                                    # 2020 dry season, Landsat 8
-ref_l5 <- landsat_idx$filterDate("2005-01-01", "2011-12-31")$
-  filter(dry_season)$median()$clip(aoi_ee)             # late Landsat 5 dry seasons
-
-sma_bands <- c("blue", "green", "red", "nir", "swir1", "swir2")
+# ref_scene is the 2020 dry-season median composite from the otsu-threshold chunk.
+ndvi_ref <- ref_scene$normalizedDifference(c("nir", "red"))$rename("NDVI")
+ref_em   <- ref_scene$addBands(ndvi_ref)
+m_ref    <- ref_em$select("MNDWI")
+v_ref    <- ref_em$select("NDVI")
 
 # Threshold-guided pure-pixel masks for the four classes (urban dropped); the
 # same strata used by the 2.2.F screen and the 2.2.G stratification, so
 # endmembers, features, and labels stay mutually consistent.
-derive_endmembers <- function(ref) {
-  ndvi <- ref$normalizedDifference(c("nir", "red"))$rename("NDVI")
-  r <- ref$addBands(ndvi)
-  m <- r$select("MNDWI"); v <- r$select("NDVI"); swir <- r$select("swir1")
-  masks <- list(
-    water       = m$gt(0.2),
-    flooded_veg = v$gt(0.2)$And(v$lt(0.5))$And(m$gt(-0.1))$And(m$lt(0.2)),
-    dry_veg     = v$gt(0.3)$And(m$lt(-0.1)),
-    # Bare soil is bright, dry mineral substrate. An NDVI-and-MNDWI pair alone
-    # admits damp exposed bed, whose spectrum sits close to open water in the
-    # near-infrared and makes the two endmembers near-collinear; a shortwave
-    # brightness floor excludes it.
-    bare_soil   = v$lt(0.18)$And(m$lt(-0.4))$And(swir$gt(0.25)))
-  lapply(masks, function(mask) {
-    vals <- r$select(sma_bands)$updateMask(mask)$reduceRegion(
-      reducer = ee$Reducer$median(), geometry = aoi_ee, scale = 30L,
-      maxPixels = as.integer(1e9), tileScale = 8L)$getInfo()
-    as.numeric(vals[sma_bands])
-  })
+pure_masks <- list(
+  water       = m_ref$gt(0.2),
+  flooded_veg = v_ref$gt(0.2)$And(v_ref$lt(0.5))$And(m_ref$gt(-0.1))$And(m_ref$lt(0.2)),
+  dry_veg     = v_ref$gt(0.3)$And(m_ref$lt(-0.1)),
+  bare_soil   = v_ref$lt(0.12)$And(m_ref$lt(0)))
+
+sma_bands <- c("blue", "green", "red", "nir", "swir1", "swir2")
+median_spectrum <- function(mask) {
+  vals <- ref_em$select(sma_bands)$updateMask(mask)$reduceRegion(
+    reducer = ee$Reducer$median(), geometry = aoi_ee,
+    scale = 30L, maxPixels = as.integer(1e9))$getInfo()
+  as.numeric(vals[sma_bands])
 }
 
-endmember_list_l8 <- unname(derive_endmembers(ref_l8))
-endmember_list_l5 <- unname(derive_endmembers(ref_l5))
-endmember_list    <- endmember_list_l8      # the 2020 reference set
+endmembers_water       <- median_spectrum(pure_masks$water)
+endmembers_flooded_veg <- median_spectrum(pure_masks$flooded_veg)
+endmembers_dry_veg     <- median_spectrum(pure_masks$dry_veg)
+endmembers_bare_soil   <- median_spectrum(pure_masks$bare_soil)
+
+endmember_list <- list(endmembers_water, endmembers_flooded_veg,
+                       endmembers_dry_veg, endmembers_bare_soil)
 
 # Guard: near-collinear endmembers make fractions unstable (Halabisky 2016).
-em_mat <- do.call(rbind, endmember_list_l8)
-em_mat_l5 <- do.call(rbind, endmember_list_l5)
-for (mat in list(em_mat, em_mat_l5)) {
-  cc <- suppressWarnings(cor(t(mat)))
-  if (any(abs(cc[lower.tri(cc)]) > 0.999))
-    warning("Two endmembers are near-collinear; SMA fractions may be unstable.")
-}
-print(round(em_mat, 4)); print(round(em_mat_l5, 4))
+em_mat <- do.call(rbind, endmember_list)
+cc <- suppressWarnings(cor(t(em_mat)))
+if (any(abs(cc[lower.tri(cc)]) > 0.999))
+  warning("Two endmembers are near-collinear; SMA fractions may be unstable.")
+print(round(em_mat, 4))
 ```
 
 ```{r sma-unmix}
@@ -1100,26 +1087,18 @@ tm_shape(st_as_sf(aoi_sf)) +
 
 ```{r sma-timeseries}
 #| eval: true
-unmix_with <- function(endmembers) {
-  function(image) {
-    bands <- image$select(c("blue", "green", "red", "nir", "swir1", "swir2"))
-    fracs <- bands$unmix(
-      endmembers = endmembers,
-      sumToOne = TRUE,
-      nonNegative = TRUE
-    )$rename(c("water_frac", "flooded_veg_frac", "dry_veg_frac",
-               "bare_soil_frac"))
-    fracs$copyProperties(image, list("system:time_start", "year", "n_scenes"))
-  }
+unmix_image <- function(image) {
+  bands <- image$select(c("blue", "green", "red", "nir", "swir1", "swir2"))
+  fracs <- bands$unmix(
+    endmembers = endmember_list,
+    sumToOne = TRUE,
+    nonNegative = TRUE
+  )$rename(c("water_frac", "flooded_veg_frac", "dry_veg_frac",
+             "bare_soil_frac"))
+  fracs$copyProperties(image, list("system:time_start", "year", "n_scenes"))
 }
-unmix_image <- unmix_with(endmember_list_l8)
 
-# Each annual composite is unmixed with the endmember set of its own sensor.
-# Landsat 5 closes in 2011 and Landsat 8 opens in 2013; 2012 carries neither.
-landsat_sma <- landsat_annual$filter(ee$Filter$lte("year", 2011L))$
-  map(unmix_with(endmember_list_l5))$
-  merge(landsat_annual$filter(ee$Filter$gte("year", 2013L))$
-        map(unmix_with(endmember_list_l8)))
+landsat_sma <- landsat_annual$map(unmix_image)
 
 extract_sma_stats <- function(image) {
   stats <- image$select(c("water_frac", "flooded_veg_frac"))$
@@ -1170,9 +1149,7 @@ ggplot(sma_long, aes(x = year, y = fraction, fill = class)) +
   theme(legend.position = "bottom")
 ```
 
-The four endmembers separate across the six optical bands, and that separation is what makes the unmixing tractable. Open water is the brightest endmember in the blue and green, at reflectances of 0.063 and 0.072, and collapses to 0.007 in the first shortwave-infrared band, an order of magnitude below every other class. The visible brightness is the signature of Chilwa's suspended sediment and algal load, the very condition that defeats the near-infrared water indices, and the shortwave-infrared floor is the contrast the shortwave-infrared indices exploit. Dry vegetation is the brightest surface at long wavelengths, peaking at 0.248 in the shortwave-infrared. Emergent vegetation shares its near-infrared rise but reaches only 0.124 there and 0.056 in the shortwave-infrared, the standing water beneath the canopy suppressing the return; that fourfold contrast is the optical basis for separating flooded from unflooded vegetation, and the L-band double-bounce term of Section 2.2.B tests it independently. Bare soil and exposed lakebed climb steadily from 0.075 in the blue to 0.303 in the shortwave-infrared, the brightest surface at that wavelength. Its near-infrared value of 0.212 sits within a percentage point of dry vegetation, so the two part instead on the red, where canopy absorbs and mineral substrate does not. Isolating that endmember requires a shortwave brightness floor as well as the vegetation and water thresholds: without one the mask admits damp exposed bed, whose spectrum lies close enough to open water in the near-infrared to make the two endmembers near-collinear and to bias every fraction that depends on them.
-
-Endmembers are derived once per sensor era rather than once for the record. A single set taken from the 2020 Landsat 8 composite and applied throughout raised Landsat 5 era open water by about 300 km² against 185 km² for the Landsat 8 era, enough to erase the 1995 desiccation that Njaya et al. (2011) document, so each era supplies its own dry-season reference composite and its own pure-pixel spectra under identical purity rules. Against the Sentinel-1 water record, which is independent of the optical model, the per-era reconstruction carries a mean absolute difference of 78 km².
+The four endmembers separate across the six optical bands, and that separation is what makes the unmixing tractable. Open water is the brightest endmember in the blue and green, at reflectances of 0.063 and 0.072, and collapses to 0.007 in the first shortwave-infrared band, an order of magnitude below every other class. The visible brightness is the signature of Chilwa's suspended sediment and algal load, the very condition that defeats the near-infrared water indices, and the shortwave-infrared floor is the contrast the shortwave-infrared indices exploit. Dry vegetation is the brightest surface at long wavelengths, peaking at 0.248 in the shortwave-infrared. Emergent vegetation shares its near-infrared rise but reaches only 0.124 there and 0.056 in the shortwave-infrared, the standing water beneath the canopy suppressing the return; that fourfold contrast is the optical basis for separating flooded from unflooded vegetation, and the L-band double-bounce term of Section 2.2.B tests it independently. Bare soil and exposed lakebed climb steadily from 0.045 in the blue to 0.127 in the shortwave-infrared, darker than a mineral surface would suggest because the exposed bed is damp and organic rather than salt-crusted, and its near-infrared value of 0.069 sits within half a percentage point of open water. That near-coincidence is the narrowest margin in the mixing space, so the two are separated almost entirely on the shortwave-infrared.
 
 Applied across the record, the fractions trace the lake's advance and retreat as a continuous surface rather than a thresholded boundary. In the wet year of 2023 open water fills the central basin floor behind a narrow graded margin; in the 2018 recession it withdraws to the central deeps while the surrounding shallows pass through a broad zone of intermediate fraction rather than falling straight to zero. That graded margin is the quantity a hard threshold discards, and it is where the recession-refilling signal of Section 3.1 is carried.
 
@@ -1180,11 +1157,8 @@ Applied across the record, the fractions trace the lake's advance and retreat as
 #| eval: true
 # Endmember spectra and the wet-year and dry-year open-water fraction rasters
 # behind the endmember figure, built by 05.scripts/plot_sma_endmembers.py.
-em_spectra <- rbind(
-  data.frame(era = "L8", class = c("water", "flooded_veg", "dry_veg", "bare_soil"),
-             setNames(as.data.frame(em_mat), sma_bands)),
-  data.frame(era = "L5", class = c("water", "flooded_veg", "dry_veg", "bare_soil"),
-             setNames(as.data.frame(em_mat_l5), sma_bands)))
+em_spectra <- data.frame(class = c("water", "flooded_veg", "dry_veg", "bare_soil"))
+em_spectra[sma_bands] <- as.data.frame(em_mat)
 write.csv(em_spectra, here::here("03.outputs", "sma_endmember_spectra.csv"),
           row.names = FALSE)
 
@@ -1248,7 +1222,7 @@ strata <- list(
   water       = m$gt(0.2),
   flooded_veg = v$gt(0.2)$And(v$lt(0.5))$And(m$gt(-0.1))$And(m$lt(0.2)),
   dry_veg     = v$gt(0.3)$And(m$lt(-0.1)),
-  bare_soil   = v$lt(0.18)$And(m$lt(-0.4))$And(ref_fs$select("swir1")$gt(0.25)))
+  bare_soil   = v$lt(0.12)$And(m$lt(0)))
 cls_val <- c(water = 1L, flooded_veg = 2L, dry_veg = 3L, bare_soil = 4L)
 
 # A boolean mask inherits the band name of the image it was derived from, so the
@@ -1355,8 +1329,7 @@ ndvi_b <- ref_all$select("NDVI")
 water_mask   <- mndwi$gt(0.2)
 flooded_mask <- ndvi_b$gt(0.2)$And(ndvi_b$lt(0.5))$And(mndwi$gt(-0.1))$And(mndwi$lt(0.2))
 dryveg_mask  <- ndvi_b$gt(0.3)$And(mndwi$lt(-0.1))
-bare_mask    <- ndvi_b$lt(0.18)$And(mndwi$lt(-0.4))$
-                And(ref_all$select("swir1")$gt(0.25))
+bare_mask    <- ndvi_b$lt(0.12)$And(mndwi$lt(0))
 
 sample_stratum <- function(mask, cls) {
   mask$rename("stratum")$selfMask()$stratifiedSample(
@@ -1492,25 +1465,25 @@ The inundation and migration records were coupled at annual resolution across th
 
 ### 3.1 Water Extent Dynamics
 
-The spectral mixture analysis resolves the basin's inundation at sub-pixel scale across the Landsat record, thirty-seven usable years between 1984 and 2024 (Figure 1). Basin-mean open-water fraction averaged 0.140 and reached its maximum of 0.238 in 2024, the wettest year in the series and among the best sampled, at an inter-annual coefficient of variation of 0.32. Three principal recession troughs punctuate the record, in 1987, 1992, and 2003, each a year when open water covered less than a tenth of the basin. Those values, 0.013 in 2003 and 0.036 in 1987, rest on three and two usable scenes and are better read as evidence of severe drawdown than as precise extents. The deepest well-sampled low is 1995, at 0.095 from thirteen scenes, which coincides with the near-total desiccation of the central basin documented by Njaya et al. (2011).
+The spectral mixture analysis resolves the basin's inundation at sub-pixel scale across the Landsat record, thirty-seven usable years between 1984 and 2024 (Figure 1). Basin-mean open-water fraction averaged 0.124 and reached its maximum of 0.208 in 2024, the wettest year in the series and among the best sampled, at an inter-annual coefficient of variation of 0.32. Five principal recession troughs punctuate the record, in 1987, 1992, 1995, 2003, and 2018, each a year when open water covered less than a tenth of the basin. The two deepest values, 0.010 in 2003 and 0.037 in 1987, rest on three and two usable scenes and are better read as evidence of severe drawdown than as precise extents. The deepest well-sampled low is 1995, at 0.053 from thirteen scenes, which coincides with the near-total desiccation of the central basin documented by Njaya et al. (2011).
 
-Scaled to the 8,752 km² catchment, these fractions give a sub-pixel open-water extent averaging 1,230 km² and running from 2,083 km² in 2024 to 835 km² in 1995, two fifths of peak extent. Integrating the fraction rasters pixel by pixel, with each pixel weighted by its true area on the ellipsoid, returns 1,829 km² for 2023 against the 1,806 km² the basin-mean fraction implies, so the two routes to extent agree to within about one per cent. The combined open-water and emergent-vegetation footprint reached 2,810 km² at the 2023 refill and fell to 1,914 km² in the 2018 drawdown. Measured against the Sentinel-1 water record, which is independent of the optical mixture model, the reconstruction carries a mean absolute difference of 78 km² across the years the two overlap.
+Scaled to the 8,752 km² catchment, these fractions give a sub-pixel open-water extent averaging 1,090 km² and running from 1,820 km² in 2024 to 465 km² in 1995, a quarter of peak extent. Integrating the fraction rasters pixel by pixel, with each pixel weighted by its true area on the ellipsoid, returns 1,800 km² for 2023 against the 1,780 km² the basin-mean fraction implies, so the two routes to extent agree to within one per cent. The combined open-water and emergent-vegetation footprint reached 2,760 km² at the 2023 refill and fell to 1,635 km² in the 2018 drawdown.
 
-*Figure 1: Reconstructed inundation of the Lake Chilwa basin, 1984 to 2024. (a) Basin-mean open-water and emergent, flooded-vegetation fractions from spectral mixture analysis, with the record mean, the principal recession troughs, and the 2023 to 2024 refill marked. (b) Usable Landsat scenes per year, the sampling density behind each annual estimate.*
+*Figure 1: Reconstructed inundation of the Lake Chilwa basin, 1984 to 2024. (a) Basin-mean open-water and emergent, flooded-vegetation fractions from spectral mixture analysis, with the record mean, the five principal recession troughs, and the 2023 to 2024 refill marked. (b) Usable Landsat scenes per year, the sampling density behind each annual estimate.*
 
 ![](../04.images/fig04_inundation_hydrograph.png){width="100%"}
 
-Open water and emergent vegetation are only weakly related, and the sign of that relation is negative (r = -0.23). As the lake retreats, emergent macrophytes colonise part of the exposed drawdown zone; the clearest instance is 1987, when the flooded-vegetation fraction reached its record 0.165 in the same year open water fell to 0.036. The compensation is partial rather than systematic, yet it is enough to steady the total inundated footprint, which varies at a coefficient of variation of 0.22 against 0.32 for open water alone. The wetland persists by changing form, trading open water for vegetated marsh as the lake falls, without holding its total extent constant.
+Open water and emergent vegetation are only weakly related, and the sign of that relation is negative (r = -0.13). As the lake retreats, emergent macrophytes colonise part of the exposed drawdown zone; the clearest instance is 1987, when the flooded-vegetation fraction reached its record 0.293 in the same year open water fell to 0.037. The compensation is partial rather than systematic, yet it is enough to steady the total inundated footprint, which varies at a coefficient of variation of 0.26 against 0.32 for open water alone. The wetland persists by changing form, trading open water for vegetated marsh as the lake falls, without holding its total extent constant.
 
-Two events break this compensation. In 2018 both components contracted together and the combined footprint fell to 0.219, the lowest value in the densely sampled modern record, a basin-wide drawdown in which residual water persisted only in the deepest channels and the swamp refugia of the southern and eastern margins, as in the historical recessions recorded by Njaya et al. (2011). The refilling of 2023 and 2024 is the opposite extreme: the combined footprint reached 0.321 in 2023, and open water alone rose to 0.206 and then 0.238, the strongest sustained inundation in the series, a rise the Sentinel-1 record registers independently (Section 3.3).
+Two events break this compensation. In 2018 both components contracted together and the combined footprint fell to 0.187, the lowest value in the densely sampled modern record, a basin-wide drawdown in which residual water persisted only in the deepest channels and the swamp refugia of the southern and eastern margins, as in the historical recessions recorded by Njaya et al. (2011). The refilling of 2023 and 2024 is the opposite extreme: the combined footprint reached 0.316 in 2023, and open water alone rose to 0.203 and then 0.208, the strongest sustained inundation in the series, a rise the Sentinel-1 record registers independently (Section 3.3).
 
 The early record rests on thin sampling. Several years before 2000 carry only two or three usable scenes, against roughly thirty to forty a year since 2015 (Figure 1b), which widens the uncertainty on the early fractions and explains much of their year-to-year volatility. Every apparent extreme in the series, the deepest lows and the largest combined footprints alike, falls in a year with fewer than five scenes; the dense modern record carries the seasonal and inter-annual signal with far greater confidence.
 
 ### 3.2 Spectral Index Performance
 
-The five water indices do not track inundation equally (Figure 2). Measured against the spectral-mixture open-water record, WRI and MNDWI follow the basin's wetting and drying most closely, at Pearson correlations of 0.90 and 0.79, while NDWI and AWEIsh lag at 0.65 and 0.61. The two indices that lean on shortwave-infrared reflectance, WRI through its denominator and MNDWI directly, best resolve the turbid, shallow water that dominates Lake Chilwa; the near-infrared contrast of NDWI and AWEIsh is more readily confounded by suspended sediment and emergent canopy. Basin-mean annual MNDWI ranged from -0.52 to -0.23, its troughs and peaks falling in the recession and refill years of the mixture record.
+The five water indices do not track inundation equally (Figure 2). Measured against the spectral-mixture open-water record, MNDWI and WRI follow the basin's wetting and drying most closely, at Pearson correlations of 0.90 and 0.89, while AWEIsh and NDWI lag at 0.57 and 0.46. The two indices that lean on shortwave-infrared reflectance, MNDWI directly and WRI through its denominator, best resolve the turbid, shallow water that dominates Lake Chilwa; the near-infrared contrast of NDWI and AWEIsh is more readily confounded by suspended sediment and emergent canopy. Basin-mean annual MNDWI ranged from -0.52 to -0.23, its troughs and peaks falling in the recession and refill years of the mixture record.
 
-*Figure 2: Spectral-index behaviour, 1984 to 2024. (a) Standardised annual anomalies of the five water indices against the spectral-mixture open-water record. (b) Pearson correlation of each index with that record; WRI and MNDWI track inundation most closely, and NDPI is the inverse of MNDWI.*
+*Figure 2: Spectral-index behaviour, 1984 to 2024. (a) Standardised annual anomalies of the five water indices against the spectral-mixture open-water record. (b) Pearson correlation of each index with that record; MNDWI and WRI track inundation most closely, and NDPI is the inverse of MNDWI.*
 
 ![](../04.images/fig05_index_performance.png){width="100%"}
 
@@ -1879,3 +1852,4 @@ Zhang, G., Yao, T., Chen, W., Zheng, G., Shum, C. K., Yang, K., Peng, S., Tian, 
 ------------------------------------------------------------------------
 
 *This study represents a collaborative effort between remote sensing specialists, the Department of Fisheries, and the Lake Chilwa communities. All community knowledge was shared with consent and attribution according to established research ethics protocols.*
+
