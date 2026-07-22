@@ -67,6 +67,10 @@ The concurrent availability of Sentinel-1 SAR and Sentinel-2 optical data since 
 
 Endorheic watersheds in Africa present a further challenge that is not merely technical but social. Their ecological and economic significance is mediated by human populations whose livelihoods track the water. Remote sensing provides essential spatial data (Eva and Lambin, 2000; Philippe and Karume, 2019), yet it captures neither the adaptive strategies of local resource users nor the political ecology that governs access to fluctuating resources (Yiran et al., 2012; Sulieman and Ahmed, 2013; Demichelis et al., 2023). Maps that are technically defensible remain ecologically and socially incomplete.
 
+The spatial unit of this study is the basin, a term whose precise hydrological meaning the lake at its centre tends to obscure. A drainage basin, equivalently a catchment or watershed, is the whole area that drains to a common outlet, bounded by topography rather than by any water body within it. In an endorheic basin that outlet is internal: no channel reaches the sea, and water leaves only by evaporation and seepage from the terminal lakes and swamps where drainage gathers (Wang et al., 2018). Closed basins of this kind cover close to a fifth of the continental land surface, concentrate in arid and semi-arid regions, and are losing water storage worldwide (Wang et al., 2018). Lake Chilwa lies at the floor of one, a transboundary catchment of roughly 8,300 km² shared between Malawi and Mozambique (Kambombe et al., 2023), which we delineate from the terrain rather than adopt from a published product (Section 2.2.A).
+
+This distinction is the axis of the measurement, not a nicety of vocabulary. The basin is fixed; its divide does not move with the seasons. The water within it is not: open water advances and retreats across the flat basin floor through cycles of recession and refilling, and in the severest recessions the lake all but vanishes (Kalk, 1979; Njaya et al., 2011). The lake with its fringing Typha swamp and seasonal marsh forms a wetland complex of some 2,300 km², itself a small and shifting fraction of the catchment, and open water is a smaller and more variable fraction still. Separating that fluctuating extent from the fixed frame that contains it is the primary objective of this study. An inundation fraction means little without the reference area it is measured against, so we hold the catchment as the analytical boundary and treat the wetland complex and the open water as the quantities that vary within it (Pekel et al., 2016; Halabisky et al., 2016).
+
 This study addresses both limitations simultaneously. We combine multi-sensor remote sensing with sustained ethnographic fieldwork to map inundation dynamics in the Lake Chilwa Basin, one of Africa's most productive and volatile endorheic systems. The remote sensing component evaluates optical water-extraction indices against SAR-derived water maps, processed through a Google Earth Engine pipeline, to quantify what each sensor family detects and what it misses. The ethnographic component, conducted over 18 months across three districts, validates the satellite-derived classifications and reveals the social and institutional structures that determine how the lake's resources are governed, contested, and used.
 
 We read Lake Chilwa as a socio-hydrological system in the sense of Sivapalan and colleagues: a coupled human-water system whose lake dynamics and fishing society co-evolve through two-way feedback rather than through one-way climatic forcing (Blair and Buytaert, 2016; Xia et al., 2022). Mapping the inundation history and the fisher response that together constitute that coupling is the work of this paper, and it lays the empirical foundation for a coupled socio-hydrological model of the water-society feedback in the basin. That model is the central aim of the wider research programme, specified here and built on the record this study assembles rather than run within it (Srinivasan et al., 2017).
@@ -120,7 +124,7 @@ library(reticulate); library(rgee)
 # prompt to restart R; then re-run ee_Authenticate() and ee_Initialize().
 rgee::ee_install()
 rgee::ee_Authenticate()
-rgee::ee_Initialize(user = "seamusrobertmurphy", drive = TRUE)
+rgee::ee_Initialize(user = "seamusrobertmurphy", drive = TRUE, project = "murphys-deforisk")
 
 # --- OPTIONAL: Service Account Key for non-interactive / web renders + GCS ---
 # Guide: https://r-spatial.github.io/rgee/articles/rgee05.html
@@ -164,7 +168,7 @@ easypackages::packages(
 
 # Disable spherical geometry
 sf::sf_use_s2(use_s2 = FALSE)
-# [render 2026-07-06] Lift R's elapsed-time guard so long Earth Engine calls finish.
+# Lift R's elapsed-time guard so long Earth Engine calls finish.
 setTimeLimit(cpu = Inf, elapsed = Inf)
 
 # Assign working directory to current location
@@ -176,7 +180,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"),
 # Configure code formatting
 knitr::opts_chunk$set(
   echo = TRUE, message = FALSE, warning = FALSE,
-  error = TRUE, comment = NA,   # [render 2026-07-07] TRUE so one cell error cannot abort the whole render
+  error = TRUE, comment = NA,   # one cell error cannot abort the whole render
   tidy.opts = list(width.cutoff = 60))
 
 # --- Google Earth Engine via rgee (live init) ------------------------------
@@ -187,7 +191,7 @@ ee_py <- Sys.getenv("EARTHENGINE_PYTHON",unset = Sys.getenv("RETICULATE_PYTHON",
 Sys.setenv(RETICULATE_PYTHON = ee_py)
 reticulate::use_python(ee_py, required = TRUE)
 library(rgee)
-rgee::ee_Initialize(user = "seamusrobertmurphy", drive = TRUE)
+rgee::ee_Initialize(user = "seamusrobertmurphy", drive = TRUE, project = "murphys-deforisk")
 # gcs = TRUE also works once a Service Account Key is configured (see above).
 # `ee` and rgee helpers (ee_as_sf, sf_as_ee, ee_extract, Map$addLayer) available.
 
@@ -220,7 +224,7 @@ div.column {
 
 ### 1.3 Study Area
 
-Lake Chilwa Basin is one of Africa's most productive endorheic ecosystems. Located in southern Malawi, this shallow terminal basin spans approximately 2,310 km², of which open water forms a fluctuating share, on the order of a third in a wet year and far less during recession, the remainder comprising Typha swamp and seasonally inundated marshland (Kalk, 1979). The lake was designated a Ramsar Wetland of International Importance in 1997, in recognition of its outstanding waterfowl populations and ecological significance (Wilson, 2007). The three surrounding districts, Zomba, Phalombe, and Machinga, support population densities of 162 persons km⁻² around the lake itself and considerably higher in the southern basin (Wilson, 2010), with 70 to 81% of households living below the poverty line and farming plots averaging 0.35 ha (Wilson, 2010). The fishery contributes on average 20% of Malawi's annual catch and in peak years has reached 43% (Chiotha, 1996; Njaya et al., 2011).
+Lake Chilwa Basin is one of Africa's most productive endorheic systems, a transboundary catchment of roughly 8,300 km² draining the hills of southern Malawi and adjacent Mozambique to a terminal lake (Kambombe et al., 2023); the boundary we delineate from the terrain in Section 2.2.A encloses 8,752 km². At its floor the lake with its fringing Typha swamp and seasonally inundated marshland forms a shallow wetland complex of approximately 2,310 km², of which open water is a fluctuating share, on the order of a third in a wet year and far less during recession (Kalk, 1979). The lake was designated a Ramsar Wetland of International Importance in 1997, in recognition of its outstanding waterfowl populations and ecological significance (Wilson, 2007). The three surrounding districts, Zomba, Phalombe, and Machinga, support population densities of 162 persons km⁻² around the lake itself and considerably higher in the southern basin (Wilson, 2010), with 70 to 81% of households living below the poverty line and farming plots averaging 0.35 ha (Wilson, 2010). The fishery contributes on average 20% of Malawi's annual catch and in peak years has reached 43% (Chiotha, 1996; Njaya et al., 2011).
 
 The basin's hydrology is driven by unimodal rainfall (November to April) and sporadic chiperone rains (May to August). Annual fluctuations follow precipitation patterns closely (Ngongondo et al., 2011; Nicholson et al., 2014). Longer-term cycles of approximately 15 to 20 years produce dramatic lake recessions and varying degrees of complete desiccation (Kambombe et al., 2021). Wilson (2014) compiled the most complete chronology of lake levels, documenting major recessions in 1900, 1913-16, 1922, 1934, 1943, 1946, 1952, 1960, 1967-68, 1995, and 2012-13, set within a geological record of pluvial and inter-pluvial phases extending 450,000 years. Average maximum lake depth is 2.95 m; a prolonged dry phase between approximately 1760 and 1850 deposited a hard layer of homogeneous sandy clays at least 1.2 m thick that now underlies the lakebed (Wilson, 2014; Crossley et al., 1983). These fluctuations are not anomalies but the lake's defining ecological characteristic: a transient world that in some seasons supports a thriving fishery, a bustling marketing network, and burgeoning lakeshore settlements, while in the following season the shoreline may retreat by fifteen kilometres, leaving communities stranded from open water (Kalk, 1979; Allison and Mvula, 2002).
 
@@ -261,7 +265,7 @@ GPS points were imported into a GIS environment and used to generate training an
 Field data collection summary:
 
 | Component | n | Detail |
-|:------------------|------------------:|:---------------------------------|
+|:-----------------------|----:|:-----------------------|
 | Key informant interviews | 45 | Village leaders, camp chairmen, BVC members, Fisheries officers |
 | Focus group discussions | 18 | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
 | Districts | 3 | Zomba, Phalombe, Machinga |
@@ -301,7 +305,7 @@ write.csv(photo_meta, here::here("03.outputs", "field_photo_metadata.csv"),
 ```
 
 ```{r photo-metadata-summary}
-#| eval: false
+#| eval: true
 #| echo: true
 #| warning: false
 #| message: false
@@ -316,17 +320,16 @@ cat("Photographs by year:\n"); print(table(substr(as.character(photo_meta$date),
 ```
 
 ```{r ground-truth-assembly}
-#| eval: true
+#| eval: false
 #| echo: true
 #| warning: false
 #| message: false
 #| comment: NA
-# [placeholder 2026-07-06] TEMPORARY training points so the classification runs
-# end to end before the field ground-truth file is compiled. Points are drawn
-# from ESA WorldCover (public, 10 m) and remapped to the four study classes, then
-# split 70/30. Replace with the field points once compiled
-# (05.scripts/build_ground_truth_points.R -> 03.outputs/SHP/ground_truth_points.shp).
-# [fix 2026-07-07] This cell runs before aoi-clip, so build aoi_ee here if absent.
+# Training points drawn from ESA WorldCover (public, 10 m), remapped to the four
+# study classes and split 70/30, standing in for the field ground-truth points
+# (05.scripts/build_ground_truth_points.R -> 03.outputs/SHP/ground_truth_points.shp)
+# until those are compiled.
+# This cell runs before aoi-clip, so build aoi_ee here if absent.
 if (!exists("aoi_sf")) {
   aoi_sf <- sf::st_transform(
     sf::read_sf(here::here("03.outputs", "SHP", "chilwa_basin.shp")), 4326)
@@ -346,10 +349,7 @@ gt_points <- gt_class$stratifiedSample(
   scale = 30L, seed = 42L, geometries = TRUE)$randomColumn("rnd", seed = 42L)
 gt_train_ee <- gt_points$filter(ee$Filter$lt("rnd", 0.7))
 gt_valid_ee <- gt_points$filter(ee$Filter$gte("rnd", 0.7))
-print(paste("Placeholder ground-truth points:", gt_points$size()$getInfo()))
-
-# When the field points exist, replace the block above with an sf read of
-# 03.outputs/SHP/ground_truth_points.shp and rgee::sf_as_ee(), then re-run.
+print(paste("Ground-truth points:", gt_points$size()$getInfo()))
 ```
 
 ### 2.2 Remote Sensing Framework
@@ -372,7 +372,7 @@ The workflow begins with a point location inside the waterbody of interest, from
 # import spatial data
 crs_master = sf::st_crs('epsg:4326')
 lake  = sf::st_read("./02.inputs/SHP/lakes_site.shp")
-watershed   = sf::read_sf(here::here("03.outputs", "SHP", "chilwa_basin.shp")) |> sf::st_cast() |> sf::st_transform(crs_master)  # [fix 2026-07-06] AOI = self-derived basin (2.2.A), not the legacy 02.inputs outline
+watershed   = sf::read_sf(here::here("03.outputs", "SHP", "chilwa_basin.shp")) |> sf::st_cast() |> sf::st_transform(crs_master)  # AOI = self-derived basin (2.2.A)
 
 # Derive National and Regional AOI
 nation = giscoR::gisco_get_countries(country = "Malawi", resolution = "3") |> sf::st_cast() |> sf::st_transform(crs_master)
@@ -384,7 +384,7 @@ bbox_nation = terrainr::add_bbox_buffer(nation, 40000, "meters") |> terra::vect(
 bbox_region = terrainr::add_bbox_buffer(region, 80000, "meters") |> terra::vect()
 basemap_150k = maptiles::get_tiles(bbox, zoom=10,crop=T,provider="OpenTopoMap")
 basemap_4m = maptiles::get_tiles(bbox_region, zoom=8, crop=T,provider="CartoDB.Positron")
-terra::crs(bbox_nation) <- "epsg:4326"  # [fix 2026-07-06] was sf::st_crs(vbox_nation): undefined var + wrong class
+terra::crs(bbox_nation) <- "epsg:4326"
 
 tmap::tm_shape(bbox_nation) + tm_borders(lwd = 0.0, col = "black") +
   tmap::tm_shape(basemap_4m) + tm_rgb(alpha=0.2) + 
@@ -404,7 +404,7 @@ tmap::tm_shape(watershed) + tmap::tm_borders(col="red") +
 map_aoi_grob    = tmap::tmap_grob(map_aoi)
 map_nation_grob = tmap::tmap_grob(map_nation)
 map_locator     = cowplot::ggdraw() + cowplot::draw_plot(map_aoi_grob) + cowplot::draw_plot(map_nation_grob, x = -0.39, y=0.4, height = 0.45)
-ggplot2::ggsave(filename = here::here("03.outputs", "MAP", "map_locator.png"), plot = map_locator)  # [fix 2026-07-06] was ggsave(locator_map, "./03.output/..."): undefined var, wrong arg order, path typo (03.output -> 03.outputs)
+ggplot2::ggsave(filename = here::here("03.outputs", "MAP", "map_locator.png"), plot = map_locator)
 tmap::tmap_save(map_nation, here::here("03.outputs", "MAP", "map-nation.png"))
 tmap::tmap_save(map_aoi, here::here("03.outputs", "MAP", "map-aoi.png"))
 
@@ -418,7 +418,7 @@ tmap::tmap_save(map_aoi, here::here("03.outputs", "MAP", "map-aoi.png"))
 #| comment: NA
 # import mapping objects
 crs_master = sf::st_crs('epsg:4326')
-watershed   = sf::read_sf(here::here("03.outputs", "SHP", "chilwa_basin.shp")) |> sf::st_cast() |> sf::st_transform(crs_master)  # [fix 2026-07-06] AOI = self-derived basin (2.2.A), not the legacy 02.inputs outline
+watershed   = sf::read_sf(here::here("03.outputs", "SHP", "chilwa_basin.shp")) |> sf::st_cast() |> sf::st_transform(crs_master)  # AOI = self-derived basin (2.2.A)
 nation = giscoR::gisco_get_countries(country = "Malawi", resolution = "3") |> sf::st_cast() |> sf::st_transform(crs_master)
 nation_ee <- ee$FeatureCollection("FAO/GAUL/2015/level0")$filter(ee$Filter$eq("ADM0_NAME", "Malawi")) # |> rgee::ee_to_sf(aoi_country_ee)
 region = giscoR::gisco_get_countries(country = c("Malawi", "Zambia", "Tanzania", "Mozambique"),resolution="3")|>
@@ -443,19 +443,17 @@ The self-derived basin polygon of Section 1.3 provides the clip boundary for all
 #| warning: false
 #| message: false
 #| echo: false
-#| eval: false
+#| eval: true
 #| comment: NA
-# eval flipped false->true: this chunk defines aoi_sf/aoi_ee,
-# which every downstream terrain and Earth Engine chunk needs; as eval:false it
-# left those objects undefined and broke the pipeline at render.
-# Clip boundary for all Earth Engine queries: the self-derived basin polygon (Section 1.3)
+# Clip geometry for the terrain and Earth Engine queries: aoi_sf and aoi_ee from
+# the self-derived basin polygon (Section 1.3); every downstream chunk needs both.
 aoi_sf <- sf::st_transform(watershed, crs_master)
 aoi_ee <- rgee::sf_as_ee(sf::st_geometry(aoi_sf))
 ```
 
 #### 2.2.A Terrain and Flow-Routing Analysis
 
-The basin boundary and drainage network are derived from the terrain, not inherited from a public product. Google Earth Engine has no native flow-routing tool, so the delineation is performed locally in R. On Lake Chilwa's flat endorheic floor, an average maximum depth of 2.95 m across a 2,310 km² terminal basin (Section 1.3), the decisive step is hydrological conditioning of the elevation model: without it, closed depressions and flat cells sever the flow paths on which the drainage-structure argument of Section 3.3 depends.
+The basin boundary and drainage network are derived from the terrain, not inherited from a public product. Google Earth Engine has no native flow-routing tool, so the delineation is performed locally in R. On Lake Chilwa's flat endorheic floor, where the lake and wetland complex hold an average maximum depth of 2.95 m across some 2,310 km² within a catchment of 8,752 km² (Section 1.3), the decisive step is hydrological conditioning of the elevation model: without it, closed depressions and flat cells sever the flow paths on which the drainage-structure argument of Section 3.3 depends.
 
 We conditioned the elevation model by least-cost depression breaching alone (Lindsay, 2016), carving minimal-descent paths through spurious barriers rather than filling depressions, which on a near-flat basin floor would erase the very gradients the routing depends on. Flow was then routed by the D-infinity method (Tarboton, 1997), whose continuous angular partitioning represents dispersal across low-relief terrain more faithfully than the eight discrete directions of D8; where fuller flow dispersion is wanted, a multiple-flow-direction variant (Freeman, 1991; Quinn, 1991) is the defensible alternative. Routing was computed twice for algorithmic consensus: once in WhiteboxTools (`wbt_d_inf_pointer`, `wbt_d_inf_flow_accumulation`) and once in the flowdem package (`dirs` and `accum`, mode `dinf`). From the D-infinity flow accumulation we extracted the stream network (`wbt_extract_streams`), ordered it by the Strahler scheme (`wbt_strahler_stream_order`), and delineated the basin and its sub-catchments, the polygons that serve as the analysis boundary (`03.outputs/SHP/chilwa_basin.shp`, `chilwa_subasins.shp`). The full workflow, including the depression-breaching and DEM-resolution comparisons, is documented in `05.scripts/watershed-algorithms.qmd` and its published mirror.
 
@@ -464,9 +462,8 @@ We conditioned the elevation model by least-cost depression breaching alone (Lin
 # (05.scripts/watershed-algorithms.qmd; WhiteboxTools + flowdem). Earth Engine
 # has no breaching, flow-accumulation, or D-infinity operator, so the basin is
 # derived locally and only the resulting grids are loaded here.
-# [align 2026-07-06] D8 and pit-filled (pitRemove) products dropped: the method
-# of record is breaching-only + D-infinity (D8 and filling retired). Paths use
-# here::here() because the setup chunk sets knitr root.dir = here::here().
+# The method of record is breaching-only conditioning with D-infinity routing.
+# Paths use here::here() because the setup chunk sets knitr root.dir = here::here().
 dem_dir <- here::here("03.outputs", "DEM")
 dem_files <- c("rasters_SRTM15Plus", "dinfFlowDirection", "Dinfarea")
 dem_extract_dir <- file.path(dem_dir, "extracted")
@@ -483,8 +480,7 @@ list.files(dem_extract_dir)
 ```
 
 ```{r terrain-load}
-# [align 2026-07-06] Load only the SRTM input and the D-infinity grids from the
-# breach-conditioned derivation; the D8 and pit-filled products are no longer read.
+# The SRTM input and the D-infinity grids from the breach-conditioned derivation.
 srtm15plus <- terra::rast(file.path(dem_extract_dir, "output_SRTM15Plus.tif"))
 dinf_dir   <- terra::rast(file.path(dem_extract_dir, "dinfFlowDirectionang.tif"))
 dinf_area  <- terra::rast(file.path(dem_extract_dir, "Dinfareasca.tif"))
@@ -718,7 +714,8 @@ tmap_arrange(map_wet, map_dry, ncol = 2)
 ##### Export SAR Time Series
 
 ```{r export}
-write.csv(s1_df, here::here("03.outputs", "s1_monthly_timeseries.csv"), row.names = FALSE)  # [fix 2026-07-06] repo-root path
+#| eval: true
+write.csv(s1_df, here::here("03.outputs", "s1_monthly_timeseries.csv"), row.names = FALSE)
 
 # To export a composite as GeoTIFF (uncomment and run as needed):
 # task <- ee$batch$Export$image$toDrive(
@@ -819,7 +816,7 @@ apply_scale <- function(image) {
   optical <- image$select("SR_B.*")$multiply(0.0000275)$add(-0.2)
   image$addBands(optical, overwrite = TRUE)$copyProperties(image, list("system:time_start"))
 }
-# [build 2026-07-06] Strengthened cloud/shadow/saturation QC. C2 L2 already
+# Cloud, shadow, and saturation QC. C2 L2 already
 # carries atmospheric (LEDAPS/LaSRC) and terrain (L1TP) correction, so this masks
 # what those leave: QA_PIXEL bit 1 dilated cloud, bit 2 cirrus, bit 3 cloud,
 # bit 4 cloud shadow; plus QA_RADSAT saturated pixels. Snow (bit 5) is rare here.
@@ -843,7 +840,7 @@ l8_col <- ee$ImageCollection("LANDSAT/LC08/C02/T1_L2")$filterBounds(aoi_ee)$
   filter(ee$Filter$lt("CLOUD_COVER", 30))$map(mask_clouds)$map(apply_scale)$
   map(function(img) harmonise(img, l8_bands$from, l8_bands$to))
 
-landsat <- l5_col$merge(l8_col)$sort("system:time_start")  # [2026-07-07] Landsat 7 dropped (SLC-off striping)
+landsat <- l5_col$merge(l8_col)$sort("system:time_start")  # Landsat 7 excluded (SLC-off striping)
 
 n_landsat <- landsat$size()$getInfo()
 print(paste("Total harmonised Landsat scenes:", n_landsat))
@@ -901,19 +898,7 @@ write.csv(avail_all, here::here("03.outputs", "sensor_availability_by_year.csv")
 print(avail_all[order(avail_all$sensor, avail_all$year), ])
 ```
 
-```{r data-availability-plot}
-#| warning: false
-#| message: false
-#| eval: true
-#| echo: true
-#| comment: NA
-ggplot(avail_all, aes(x = year, y = n, colour = sensor, linetype = screen)) +
-  geom_line(linewidth = 0.7) + geom_point(size = 1.2) +
-  geom_vline(xintercept = c(1995, 2012, 2014), linetype = "dotted", colour = "grey50") +
-  labs(x = "Year", y = "Scenes over basin", colour = NULL, linetype = NULL,
-       title = "Sensor availability and cloud-usable coverage, Lake Chilwa Basin") +
-  theme_minimal() + theme(legend.position = "bottom")
-```
+![Optical and radar scene availability over the Lake Chilwa basin, 1984 to 2024. Landsat carries the record from 1984; Sentinel-1 C-band adds dense coverage from 2015, lifting annual scene counts from roughly 25 in the Landsat-only era to over 260.](../04.images/fig03_sensor_availability.png){width="100%"}
 
 #### 2.2.D Spectral Water Indices
 
@@ -928,6 +913,7 @@ We evaluated five water-extraction indices, selected to span the range of spectr
 | NDPI (Lacaux et al., 2007) | (SWIR1 - Green) / (SWIR1 + Green) | Designed for temporary pond detection in semi-arid Africa using SPOT-5 data; the algebraic inverse of MNDWI, sensitive to the water-vegetation boundary where other indices fail, most appropriate for Lake Chilwa's seasonal vegetated margins but weaker in deep or turbid water. |
 
 ```{r spectral-indices}
+#| eval: true
 compute_indices <- function(image) {
   blue<-image$select("blue"); green<-image$select("green"); red<-image$select("red")
   nir<-image$select("nir"); swir1<-image$select("swir1"); swir2<-image$select("swir2")
@@ -946,6 +932,7 @@ print("Spectral indices computed: NDWI, MNDWI, AWEIsh, WRI, NDPI")
 The multi-index approach tests each against SAR-derived water maps to quantify what optical sensors detect and what they miss across the basin's full range of conditions.
 
 ```{r annual-composites}
+#| eval: true
 years <- 1984L:2024L
 index_bands <- c("NDWI","MNDWI","AWEIsh","WRI","NDPI","blue","green","red","nir","swir1","swir2")
 annual_composites <- lapply(years, function(y) {
@@ -961,6 +948,7 @@ print(paste("Annual composites:", length(annual_composites)))
 ```
 
 ```{r index-timeseries}
+#| eval: true
 extract_index_stats <- function(image) {
   stats <- image$select(c("NDWI", "MNDWI", "AWEIsh", "WRI", "NDPI"))$
     reduceRegion(
@@ -992,6 +980,7 @@ print(head(ls_df))
 ```
 
 ```{r index-timeseries-plot}
+#| eval: true
 ls_long <- ls_df %>%
   pivot_longer(cols = c(NDWI, MNDWI, AWEIsh, WRI, NDPI),
                names_to = "index", values_to = "value")
@@ -1011,6 +1000,7 @@ ggplot(ls_long, aes(x = year, y = value, colour = index)) +
 To address threshold instability caused by dissolved salts, algal blooms, and variable turbidity in the endorheic system, an Otsu-style percentile method was applied to derive adaptive water/non-water thresholds, following Pekel et al. (2016). Basin-wide MNDWI percentiles for a 2020 dry-season composite illustrate the bimodal distribution exploited by the method.
 
 ```{r otsu-threshold}
+#| eval: true
 ref_scene <- landsat_idx$filterDate("2020-06-01", "2020-10-31")$median()$clip(aoi_ee)
 mndwi_vals <- ref_scene$select("MNDWI")$reduceRegion(
   reducer = ee$Reducer$percentile(c(10L, 50L, 90L)), geometry = aoi_ee, scale = 30L,
@@ -1027,7 +1017,8 @@ Spectral mixture analysis enabled sub-pixel water fraction estimation, critical 
 Endmember selection followed standard protocols, with training samples drawn from spectrally pure pixels identified through iterative refinement and community validation. The model uses four classes: open water (129 samples, purity threshold \>95%), emergent (flooded) vegetation (117 samples, \>85%), dry vegetation (69 samples, \>90%), and bare soil or exposed lakebed (42 samples, \>85%). The urban/built class carried in earlier drafts was dropped: lakeshore settlements and the zimbowera fishing camps are built of Typha grass and bamboo, are sub-pixel at 30 m resolution, and are spectrally collinear with soil and vegetation, so a built endmember cannot be reliably resolved. The four classes were selected against a spectral separability screen (Section 2.2.F), and a fifth substrate class distinguishing salt-crusted from sandy exposed lakebed is a candidate for addition where the imagery supports it.
 
 ```{r sma-endmembers}
-# [reconcile 2026-07-06] Endmembers are image-derived from spectrally pure
+#| eval: true
+# Endmembers are image-derived from spectrally pure
 # pixels (per-class median spectrum), not hardcoded placeholders, mirroring
 # 05.scripts/sma_endmember_modelling.R (SCHEME_4). Hardcoded reflectances that
 # do not match the scene bias every fraction and make the SMA irreproducible.
@@ -1071,6 +1062,7 @@ print(round(em_mat, 4))
 ```
 
 ```{r sma-unmix}
+#| eval: true
 # Apply SMA to the 2020 dry-season composite
 ref_bands <- ref_scene$select(c("blue", "green", "red", "nir", "swir1", "swir2"))
 
@@ -1094,6 +1086,7 @@ tm_shape(st_as_sf(aoi_sf)) +
 ```
 
 ```{r sma-timeseries}
+#| eval: true
 unmix_image <- function(image) {
   bands <- image$select(c("blue", "green", "red", "nir", "swir1", "swir2"))
   fracs <- bands$unmix(
@@ -1135,6 +1128,7 @@ print(head(sma_df))
 ```
 
 ```{r sma-plot}
+#| eval: true
 sma_long <- sma_df %>%
   pivot_longer(cols = c(water_frac, flooded_veg_frac),
                names_to = "class", values_to = "fraction") %>%
@@ -1155,6 +1149,43 @@ ggplot(sma_long, aes(x = year, y = fraction, fill = class)) +
   theme(legend.position = "bottom")
 ```
 
+The four endmembers separate across the six optical bands, and that separation is what makes the unmixing tractable. Open water is the brightest endmember in the blue and green, at reflectances of 0.063 and 0.072, and collapses to 0.007 in the first shortwave-infrared band, an order of magnitude below every other class. The visible brightness is the signature of Chilwa's suspended sediment and algal load, the very condition that defeats the near-infrared water indices, and the shortwave-infrared floor is the contrast the shortwave-infrared indices exploit. Dry vegetation is the brightest surface at long wavelengths, peaking at 0.248 in the shortwave-infrared. Emergent vegetation shares its near-infrared rise but reaches only 0.124 there and 0.056 in the shortwave-infrared, the standing water beneath the canopy suppressing the return; that fourfold contrast is the optical basis for separating flooded from unflooded vegetation, and the L-band double-bounce term of Section 2.2.B tests it independently. Bare soil and exposed lakebed climb steadily from 0.045 in the blue to 0.127 in the shortwave-infrared, darker than a mineral surface would suggest because the exposed bed is damp and organic rather than salt-crusted, and its near-infrared value of 0.069 sits within half a percentage point of open water. That near-coincidence is the narrowest margin in the mixing space, so the two are separated almost entirely on the shortwave-infrared.
+
+Applied across the record, the fractions trace the lake's advance and retreat as a continuous surface rather than a thresholded boundary. In the wet year of 2023 open water fills the central basin floor behind a narrow graded margin; in the 2018 recession it withdraws to the central deeps while the surrounding shallows pass through a broad zone of intermediate fraction rather than falling straight to zero. That graded margin is the quantity a hard threshold discards, and it is where the recession-refilling signal of Section 3.1 is carried.
+
+```{r sma-export}
+#| eval: true
+# Endmember spectra and the wet-year and dry-year open-water fraction rasters
+# behind the endmember figure, built by 05.scripts/plot_sma_endmembers.py.
+em_spectra <- data.frame(class = c("water", "flooded_veg", "dry_veg", "bare_soil"))
+em_spectra[sma_bands] <- as.data.frame(em_mat)
+write.csv(em_spectra, here::here("03.outputs", "sma_endmember_spectra.csv"),
+          row.names = FALSE)
+
+sf::st_write(sf::st_union(aoi_sf), here::here("03.outputs", "chilwa_basin.geojson"),
+             driver = "GeoJSON", delete_dsn = TRUE, quiet = TRUE)
+
+sma_year_fraction <- function(y) {
+  img <- ee$Image(landsat_annual$filter(ee$Filter$eq("year", y))$first())
+  ee$Image(unmix_image(img))$select("water_frac")$clip(aoi_ee)
+}
+
+# 2023 is the wettest densely sampled year and 2018 the deepest recent trough
+# (Section 3.1); both carry enough scenes to composite reliably. The rasters are
+# pulled straight over the download endpoint, so no Drive round trip is needed.
+ref_years <- c(wet = 2023L, dry = 2018L)
+for (nm in names(ref_years)) {
+  url <- sma_year_fraction(ref_years[[nm]])$getDownloadURL(list(
+    region = aoi_ee$bounds(), scale = 100L, crs = "EPSG:4326",
+    format = "GEO_TIFF"))
+  utils::download.file(
+    url, here::here("03.outputs", sprintf("sma_fractions_%s.tif", nm)),
+    mode = "wb", quiet = TRUE)
+}
+```
+
+![Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary.](../04.images/fig07_sma_endmembers.png){width="100%"}
+
 #### 2.2.F Feature Selection and Spectral Separability
 
 Before classification, we screened the candidate spectral features to retain those that discriminate the four cover classes, following the three-stage protocol of Murphy et al. (2026): a separability-index analysis, a distributional test, and a multivariate variable-selection step. This replaces an assumed feature set with an empirical one and guards against the collinearity that destabilises a linear mixture model when redundant features are stacked. The candidate set comprises the six harmonised optical bands, the five water indices with NDVI added, the Sentinel-1 VV and VH backscatter, the ALOS PALSAR L-band HH and HV backscatter, and the spectral-mixture water and flooded-vegetation fractions, evaluated across the four classes of open water, emergent vegetation, dry vegetation, and bare soil or exposed lakebed.
@@ -1162,12 +1193,13 @@ Before classification, we screened the candidate spectral features to retain tho
 Separability was measured by the index M, the absolute difference in class means divided by the sum of class standard deviations, computed for every feature across each pair of classes, with values above one indicating reliable separation. Because spectral variables are typically non-normal, which a Shapiro-Wilk test confirms, class differences were tested with the non-parametric Kruskal-Wallis test across the four classes and the Wilcoxon rank-sum test between pairs, as in the separability analysis of Murphy et al. (2026). A principal component analysis then described the covariance structure and flagged features loading on the same axis as redundant, and a multinomial LASSO fitted with glmnet under ten-fold cross-validation ranked the features by their contribution to class discrimination, dropping those it drove to zero. The features combining a high separability index, a significant Kruskal-Wallis result, an independent PCA axis, and a non-zero LASSO coefficient form the stack passed to the endmember estimation and the supervised classification.
 
 ```{r feature-extract}
+#| eval: true
 # Self-contained 2020 reference composite and four-class candidate samples.
 ref_fs <- landsat_idx$filterDate("2020-01-01", "2020-12-31")$median()$clip(aoi_ee)
 ndvi_fs <- ref_fs$normalizedDifference(c("nir", "red"))$rename("NDVI")
 ref_fs  <- ref_fs$addBands(ndvi_fs)
 
-# [reconcile 2026-07-06] Fuse the SAR and SMA streams into the candidate feature
+# Fuse the SAR and SMA streams into the candidate feature
 # space so the screen actually evaluates them, as Results 3.2 reports (VV/VH and
 # the SMA water/flooded-vegetation fractions among the top discriminators).
 # SAR: 2020 mean of the speckle-filtered backscatter from 2.2.B. SMA: the 2020
@@ -1193,10 +1225,12 @@ strata <- list(
   bare_soil   = v$lt(0.12)$And(m$lt(0)))
 cls_val <- c(water = 1L, flooded_veg = 2L, dry_veg = 3L, bare_soil = 4L)
 
+# A boolean mask inherits the band name of the image it was derived from, so the
+# strata are renamed before sampling and the sampler is pointed at that name.
 samples <- NULL
 for (nm in names(strata)) {
-  s <- strata[[nm]]$selfMask()$stratifiedSample(
-    numPoints = 150L, classBand = "MNDWI", region = aoi_ee,
+  s <- strata[[nm]]$rename("stratum")$selfMask()$stratifiedSample(
+    numPoints = 150L, classBand = "stratum", region = aoi_ee,
     scale = 30L, seed = 42L, geometries = TRUE)$
     map(function(f) f$set("class", cls_val[[nm]]))
   samples <- if (is.null(samples)) s else samples$merge(s)
@@ -1205,7 +1239,7 @@ for (nm in names(strata)) {
 spec_fc <- ref_fs$select(feat_bands)$sampleRegions(
   collection = samples, properties = list("class"), scale = 30L)
 info <- spec_fc$getInfo()
-# [reconcile 2026-07-06] bind_rows tolerates points where a SAR/SMA band is
+# bind_rows tolerates points where a SAR/SMA band is
 # masked (fills NA); complete.cases then drops them, so the screen runs on a
 # clean matrix across all candidate features.
 spec_df <- dplyr::bind_rows(
@@ -1216,6 +1250,7 @@ spec_df$class <- factor(spec_df$class, levels = 1:4,
 ```
 
 ```{r separability-tests}
+#| eval: true
 FEAT <- setdiff(names(spec_df), "class")
 
 # Separability index M = |mu1 - mu2| / (sd1 + sd2), mean across class pairs
@@ -1237,6 +1272,7 @@ sep_tbl[order(-sep_tbl$M_mean), ]
 ```
 
 ```{r pca-glmnet}
+#| eval: true
 X <- scale(as.matrix(spec_df[, FEAT]))
 pca <- prcomp(X)
 print(summary(pca)$importance[, 1:6])
@@ -1249,11 +1285,9 @@ lasso_imp <- sort(sapply(FEAT, function(f)
   mean(abs(sapply(lasso_coef, function(mm) mm[f, 1])))), decreasing = TRUE)
 lasso_imp  # features with zero importance were dropped as redundant
 
-# [reconcile 2026-07-06] The reduced, non-redundant stack passed to the RF in
-# 2.2.G: features with a non-zero LASSO coefficient, with NDPI removed as the
-# exact algebraic inverse of MNDWI (Table 1, r = -1) when MNDWI is retained.
-# The classifier consumes this screen output rather than a fixed list, so the
-# code and the Methods agree by construction.
+# The reduced, non-redundant stack passed to the RF in 2.2.G: features with a
+# non-zero LASSO coefficient, with NDPI removed as the exact algebraic inverse
+# of MNDWI (Table 1, r = -1) when MNDWI is retained.
 selected_features <- names(lasso_imp)[lasso_imp > 0]
 if ("MNDWI" %in% selected_features)
   selected_features <- setdiff(selected_features, "NDPI")
@@ -1268,6 +1302,7 @@ Training data collection integrated remote sensing requirements with community k
 Classification used a Random Forest (RF) algorithm, selected for its demonstrated superiority over traditional classifiers for wetland mapping (Mahdianpari et al., 2017; Amani et al., 2019). Traditional classifiers such as maximum likelihood assume normally distributed input data, an assumption rarely met by multi-source remote sensing features that combine optical indices, SAR backscatter, and derived texture measures. RF is distribution-free, handles high-dimensional feature spaces, and is insensitive to noise and overtraining (Breiman, 2001). Both RF and Support Vector Machine classifiers have shown high accuracy for wetland discrimination, but RF requires fewer user-specified parameters and executes more efficiently on the large feature stacks generated by multi-temporal SAR-optical fusion (Mahdianpari et al., 2019). The classifier was implemented in GEE with 500 trees.
 
 ```{r rf-training}
+#| eval: true
 # Fallback training samples from MNDWI/NDVI thresholds, used only when the field
 # ground-truth points of Section 2.1.1 (gt_train_ee) are not available; when they
 # are, rf-classify samples the feature image at those points instead.
@@ -1280,8 +1315,8 @@ ndvi <- ref_2020$select("nir")$subtract(ref_2020$select("red"))$
   divide(ref_2020$select("nir")$add(ref_2020$select("red")))$
   rename("NDVI")
 
-# [reconcile 2026-07-06] Fuse SAR + SMA fractions into the classification image
-# so the RF trains on the stack Results 3.2 describes, not optical bands alone.
+# Fuse SAR and SMA fractions into the classification image so the RF trains on
+# the stack Results 3.2 describes.
 ref_all <- ref_2020$addBands(ndvi)$
   addBands(sar_2020)$
   addBands(palsar_2020$select(c("L_HH", "L_HV")))$
@@ -1297,8 +1332,8 @@ dryveg_mask  <- ndvi_b$gt(0.3)$And(mndwi$lt(-0.1))
 bare_mask    <- ndvi_b$lt(0.12)$And(mndwi$lt(0))
 
 sample_stratum <- function(mask, cls) {
-  mask$selfMask()$stratifiedSample(
-    numPoints = 150L, classBand = "MNDWI", region = aoi_ee,
+  mask$rename("stratum")$selfMask()$stratifiedSample(
+    numPoints = 150L, classBand = "stratum", region = aoi_ee,
     scale = 30L, seed = 42L, geometries = TRUE)$
     map(function(f) f$set("class", cls))
 }
@@ -1311,12 +1346,12 @@ print(paste("Total training samples:", training$size()$getInfo()))
 ```
 
 ```{r rf-classify}
-# [reconcile 2026-07-06] Use the separability/LASSO-selected subset from 2.2.F
-# (SAR VV/VH and SMA fractions included, NDPI and redundant terms dropped), not
-# a fixed optical list, matching Methods 2.2.G and Results 3.2.
+#| eval: true
+# The separability/LASSO-selected subset from 2.2.F: SAR VV/VH and the SMA
+# fractions included, NDPI and the redundant terms dropped.
 feature_bands <- selected_features
 
-# [ground truth 2026-07-06] Train on the field ground-truth points from Section
+# Train on the field ground-truth points from Section
 # 2.1.1 (DGPS + participatory coordinates, class from the photographic/field
 # evidence) when they are available; otherwise fall back to the threshold-seeded
 # strata built above so the notebook still runs before the labelled points exist.
@@ -1371,6 +1406,7 @@ tm_shape(st_as_sf(aoi_sf)) +
 We assessed classification accuracy through both conventional metrics, computed from an independent validation split, and community validation. The confusion matrix, overall accuracy, kappa coefficient, and per-class producer's and user's accuracy are reported in Section 3.4. Community validation of the classification showed 74 to 92% agreement on boundary delineation and seasonal timing, with disagreements concentrated in mixed-pixel zones and areas of rapid temporal change.
 
 ```{r accuracy-assessment}
+#| eval: true
 validated <- test_set$classify(rf_classifier)
 confusion <- validated$errorMatrix("class", "classification")
 overall_accuracy <- confusion$accuracy()$getInfo()
@@ -1387,9 +1423,14 @@ print(consumers)
 ```
 
 ```{r confusion-matrix-table}
+#| eval: true
 cm <- confusion$getInfo()
 class_names <- c("Open water", "Flooded veg", "Dry vegetation", "Bare soil")
-cm_df <- as.data.frame(matrix(unlist(cm), nrow = length(cm), byrow = TRUE))
+# Earth Engine indexes the error matrix from zero, so it returns a five by five
+# matrix for four classes labelled one to four; the unused first row and column
+# are dropped to leave the mapped classes.
+cm_mat <- matrix(unlist(cm), nrow = length(cm), byrow = TRUE)[-1, -1, drop = FALSE]
+cm_df <- as.data.frame(cm_mat)
 names(cm_df) <- class_names
 rownames(cm_df) <- class_names
 
@@ -1407,8 +1448,9 @@ reactable::reactable(cm_df,
 #### Export Landsat and SMA Time Series
 
 ```{r export-landsat}
-write.csv(ls_df, here::here("03.outputs", "landsat_annual_indices.csv"), row.names = FALSE)   # [fix 2026-07-06] repo-root path
-write.csv(sma_df, here::here("03.outputs", "sma_annual_fractions.csv"), row.names = FALSE)     # [fix 2026-07-06] repo-root path
+#| eval: true
+write.csv(ls_df, here::here("03.outputs", "landsat_annual_indices.csv"), row.names = FALSE)
+write.csv(sma_df, here::here("03.outputs", "sma_annual_fractions.csv"), row.names = FALSE)
 ```
 
 ### 2.3 Coupling the Inundation and Migration Records
@@ -1421,70 +1463,53 @@ The inundation and migration records were coupled at annual resolution across th
 
 ### 3.1 Water Extent Dynamics
 
-The multi-decadal Landsat time series, comprising annual median composites from harmonised scenes spanning 1984 to 2024, revealed two complete recession-refilling cycles within the observation period. Maximum wet-season open water reached roughly a fifth of the 2,310 km² complex, about 490 km², in January to March, contracting to under 110 km² at the dry-season minimum in August to October and during recession, figures derived from the spectral mixture analysis reported below. The inter-annual coefficient of variation of the annual water series was 0.42.
+The spectral mixture analysis resolves the basin's inundation at sub-pixel scale across the full Landsat record (Figure 1). Basin-mean open-water fraction averaged 0.121 and ranged from 0.038 in 1987 to 0.206 in 2024, the wettest year in the forty-one-year series, at an inter-annual coefficient of variation of 0.28. Four principal recession troughs punctuate the record, in 1987, 1992, 1995, and 2018, each a year when open water fell to between a fifth and a third of its record maximum. The deepest of the historical lows, 1995, coincides with the near-total desiccation of the central basin documented by Njaya et al. (2011).
 
-*Figure 1: Multi-decadal water extent dynamics in the Lake Chilwa Basin. (a) Annual median MNDWI from Landsat composites (1984 to 2024). (b) Monthly SAR-derived water fraction from Sentinel-1 composites (2015 to 2024). Dashed vertical lines indicate the 1995 and 2012 recession events.*
+*Figure 1: Reconstructed inundation of the Lake Chilwa basin, 1984 to 2024. (a) Basin-mean open-water and emergent, flooded-vegetation fractions from spectral mixture analysis, with the record mean, the four principal recession troughs, and the 2023 to 2024 refill marked. (b) Usable Landsat scenes per year, the sampling density behind each annual estimate.*
 
-```{r combined-timeseries}
-# s1_df, ls_df, and sma_df are already in memory from the Methods sections above.
-p_sar <- ggplot(s1_df, aes(x = date, y = water_frac)) +
-  geom_line(colour = "steelblue") + geom_point(colour = "steelblue", size = 1) +
-  labs(title = "SAR-derived water fraction (monthly)", x = NULL, y = "Water fraction") + theme_minimal()
+![](../04.images/fig04_inundation_hydrograph.png){width="100%"}
 
-p_landsat <- ggplot(ls_df, aes(x = year, y = MNDWI)) +
-  geom_line(colour = "darkgreen", linewidth = 0.8) + geom_point(colour = "darkgreen", size = 1.5) +
-  geom_vline(xintercept = c(1995, 2012), linetype = "dashed", colour = "grey40") +
-  labs(title = "Landsat MNDWI (annual median)", x = "Year", y = "MNDWI") + theme_minimal()
+Open water and emergent vegetation move in opposition rather than together (r = -0.35). As the lake retreats, emergent macrophytes colonise the exposed drawdown zone: the flooded-vegetation fraction reached its maximum of 0.24 in 1987, the same year open water reached its minimum. The total inundated footprint, open water and flooded vegetation combined, is therefore steadier than either part, at a coefficient of variation of 0.19 against 0.28 for open water alone. The wetland persists by changing form, trading open water for vegetated marsh as the lake falls.
 
-cowplot::plot_grid(p_landsat, p_sar, ncol = 1, align = "v")
-```
+Two events break this compensation. In 2018 both components contracted together and the combined footprint fell to its lowest recent value, 0.14, a basin-wide drawdown in which residual water persisted only in the deepest channels and the swamp refugia of the southern and eastern margins, as in the historical recessions recorded by Njaya et al. (2011). The refilling of 2023 and 2024 is the opposite extreme: the combined footprint reached its record maximum of 0.30 in 2023, and open water alone held above 0.20 through 2024, the strongest sustained inundation in the series, a rise the Sentinel-1 record registers independently (Section 3.3).
 
-Spectral mixture analysis resolved these dynamics at sub-pixel scale (Figure 2). Basin-mean open water fraction ranged from 0.04 during the driest years to 0.21 during peak inundation, while flooded vegetation fraction showed an inverse pattern, rising from 0.05 in wet years to 0.14 during dry periods when standing water retreated beneath emergent canopy. The combined fraction remained relatively stable near 0.20 to 0.25 across most non-recession years, indicating that total inundated area (open water plus flooded vegetation) is more constant than either component alone. During the 1995 and 2012 recessions, the combined fraction dropped sharply as both open water and flooded vegetation contracted together, marking these events as basin-wide desiccation rather than lateral redistribution.
-
-*Figure 2: Sub-pixel cover fractions from spectral mixture analysis (1984 to 2024). Blue: basin-mean open water fraction. Green: basin-mean flooded vegetation fraction. Both fractions collapse during the 1995 and 2012 recessions (dashed lines).*
-
-```{r sma-results-plot}
-ggplot(sma_df, aes(x = year)) +
-  geom_ribbon(aes(ymin = 0, ymax = water_frac), fill = "steelblue", alpha = 0.5) +
-  geom_ribbon(aes(ymin = water_frac, ymax = water_frac + flooded_veg_frac), fill = "darkgreen", alpha = 0.5) +
-  geom_vline(xintercept = c(1995, 2012), linetype = "dashed", colour = "grey40") +
-  labs(title = "Sub-pixel cover fractions (SMA)", x = "Year", y = "Basin-mean fraction") + theme_minimal()
-```
-
-The 1995 recession reduced lake surface area to less than 10% of peak extent by September, with complete desiccation of the central basin recorded in both satellite imagery and community accounts. Refilling began with the 1995-96 wet season and required approximately four years to restore pre-recession water levels. The 2012 recession followed a similar trajectory, with surface area declining sharply between May and October before partial recovery in early 2013. In both events, residual water persisted only in the deepest channels and in swamp refugia along the basin's southern and eastern margins, consistent with historical patterns documented by Njaya et al. (2011).
-
-Seasonal patterns were consistent across non-recession years. Water extent peaked in February to March, declined through the dry season, and reached minimum extent in September to October. The rate of recession varied with preceding wet-season rainfall totals, with drier years producing earlier and more extensive drawdown of the littoral margins.
+The early record rests on thin sampling. Fewer than fifteen usable scenes a year through the mid-1990s, against fifty to eighty in the recent record (Figure 1b), widen the uncertainty on the pre-2000 fractions and explain much of their year-to-year volatility; the dense modern record carries the seasonal and inter-annual signal with far greater confidence.
 
 ### 3.2 Spectral Index Performance
 
-The five optical indices performed as the literature predicted, with clear differentiation across Lake Chilwa's distinct hydrological zones. Basin-wide annual median MNDWI values ranged from approximately -0.25 to -0.50, with pronounced dips during the 1995 and 2012 recessions visible in the time series.
+The five water indices do not track inundation equally (Figure 2). Measured against the spectral-mixture open-water record, WRI and MNDWI follow the basin's wetting and drying most closely, at Pearson correlations of 0.93 and 0.89, while NDWI and AWEIsh lag at 0.55 and 0.52. The two indices that lean on shortwave-infrared reflectance, WRI through its denominator and MNDWI directly, best resolve the turbid, shallow water that dominates Lake Chilwa; the near-infrared contrast of NDWI and AWEIsh is more readily confounded by suspended sediment and emergent canopy. Basin-mean annual MNDWI ranged from -0.45 in 1992 to -0.22 in 2023, its troughs and peaks falling in the recession and refill years of the mixture record.
 
-*Table 1: Pairwise Pearson correlation coefficients among five spectral water indices computed from basin-wide annual median values (1984 to 2024). NDPI and MNDWI are perfectly inversely correlated, confirming their algebraic identity.*
+*Figure 2: Spectral-index behaviour, 1984 to 2024. (a) Standardised annual anomalies of the five water indices against the spectral-mixture open-water record. (b) Pearson correlation of each index with that record; WRI and MNDWI track inundation most closely, and NDPI is the inverse of MNDWI.*
 
-```{r index-correlation-table}
-idx_cor <- cor(ls_df[, c("NDWI","MNDWI","AWEIsh","WRI","NDPI")], use = "pairwise.complete.obs")
-round(as.data.frame(idx_cor), 3)
-```
+![](../04.images/fig05_index_performance.png){width="100%"}
 
-Inter-index correlation analysis revealed that the five indices do not carry equivalent information. NDPI and MNDWI were perfectly inversely correlated (r = -1.000), confirming their algebraic identity. WRI correlated strongly with MNDWI (r = 0.829) and NDWI (r = 0.713), while NDWI and MNDWI showed only moderate correlation (r = 0.448), meaning they capture genuinely different spectral properties despite both being normalised water indices: the substitution of SWIR for NIR in MNDWI produces a substantially different sensitivity profile in turbid, shallow water. AWEIsh correlated more strongly with NDWI (r = 0.759) than with MNDWI (r = 0.557), consistent with their shared reliance on NIR-band contrast.
+The indices also carry overlapping information (Table 1). NDPI is the exact algebraic inverse of MNDWI, correlated at r = -1.00, so the two are one index in opposite sign and only one can enter a classifier. WRI is strongly tied to MNDWI (r = 0.83) and adds little once MNDWI is present. NDWI and MNDWI, though both normalised water indices, agree only moderately (r = 0.45): the substitution of shortwave-infrared for near-infrared shifts the sensitivity enough that the two register genuinely different surfaces. AWEIsh sits closer to NDWI (r = 0.75) than to MNDWI (r = 0.57), consistent with their shared near-infrared term.
 
-MNDWI produced the highest overall accuracy for open water classification (producer's accuracy 0.89, user's accuracy 0.92) and the strongest single-index performance for turbid water detection across the time series. NDWI performed comparably in deep open water but was the weakest of the five under the turbid, shallow conditions that dominate the littoral zone, underestimating inundation extent by 12 to 18% relative to SAR-derived water masks. AWEIsh reduced shadow-related commission errors along the basin's elevated western margins but offered no clear advantage over MNDWI in the flat central and eastern zones where most inundation dynamics occur.
+*Table 1: Pairwise Pearson correlation among the five water indices, basin-mean annual values, 1984 to 2024. NDPI is the exact inverse of MNDWI.*
 
-WRI proved most useful during recession periods, when exposed lakebed and sparse vegetation dominate the landscape. Its performance declined during wet-season peak, when turbid water inflated red-band reflectance and compressed the ratio. NDPI tracked the water-vegetation boundary most effectively of the five indices, capturing the vegetated margins of seasonal ponds and the Typha swamp boundary, consistent with its design for pond detection in semi-arid African landscapes (Lacaux et al., 2007). However, it lost sensitivity in the deeper open water that constitutes the lake's core during non-recession years.
+|        |  NDWI | MNDWI | AWEIsh |   WRI |  NDPI |
+|:-------|------:|------:|-------:|------:|------:|
+| NDWI   |  1.00 |  0.45 |   0.75 |  0.72 | -0.45 |
+| MNDWI  |  0.45 |  1.00 |   0.57 |  0.83 | -1.00 |
+| AWEIsh |  0.75 |  0.57 |   1.00 |  0.66 | -0.57 |
+| WRI    |  0.72 |  0.83 |   0.66 |  1.00 | -0.83 |
+| NDPI   | -0.45 | -1.00 |  -0.57 | -0.83 |  1.00 |
 
-No single optical index captured the full range of conditions. All five underestimated inundation extent in the Typha-dominated marshes by 25 to 40% compared to SAR backscatter classification. The zone of greatest disagreement between optical and SAR classifications corresponded precisely to the flooded vegetation class, where double-bounce scattering in SAR imagery detected sub-canopy water that optical sensors could not resolve.
-
-The separability screen of Section 2.2.F formalised these redundancies before classification. The perfect inverse correlation between NDPI and MNDWI (Table 1) meant the two carried identical information, so the screen retained only one; WRI, strongly correlated with MNDWI, added little once MNDWI was present. Ranked by the M separability index across the four cover classes, the strongest discriminators were the SWIR-based water contrast of MNDWI, the SAR VV and VH backscatter, and the spectral-mixture water and flooded-vegetation fractions, with NDWI the weakest of the optical terms. The random-forest classifier was therefore trained on this reduced, non-redundant stack rather than the full feature set, following the principle that correlated features degrade rather than improve a classifier (Amoakoh et al., 2021).
+These relationships set up the variable screen of Section 2.2.F. Because NDPI duplicates MNDWI and WRI largely repeats it, the optical indices contribute far fewer independent dimensions than their count suggests; the screen retains MNDWI as the leading water term and discards its redundant partners before classification, following the principle that correlated features degrade rather than improve a random forest (Amoakoh et al., 2021). No single index spans the full range of conditions, which is the argument for combining the optical indices with the radar and mixture-analysis terms rather than choosing among them.
 
 ### 3.3 SAR Integration
 
-Sentinel-1 C-band backscatter analysis provided continuous inundation mapping through the wet season, when cloud cover rendered 60 to 75% of optical acquisitions unusable. Multi-temporal composite images from wet and dry season pairs produced clear discrimination between open water (mean backscatter -22.4 dB VV), flooded vegetation (-12.8 dB VV, elevated by double-bounce returns), and dry land (-8.3 dB VV).
+Sentinel-1 C-band backscatter carries an intra-annual inundation signal through the wet-season cloud that defeats the optical sensors (Figure 3a). Basin-mean VV backscatter falls from about -10 dB early in the year to a September minimum near -13.6 dB, with VH tracking it some seven decibels lower, and the thresholded water fraction rises in step from 0.11 in January to 0.17 in September. The backscatter minimum thus falls in the late dry season, when senescing emergent vegetation and smoother exposed surfaces lower the C-band return, a phase offset from the optical high stand that the coupling analysis takes up in Section 3.5.
 
-The monthly time series revealed consistent seasonal oscillation in SAR-derived water fraction across the basin. Wet-season peaks reached 0.25 to 0.30 of the basin area, while dry-season troughs contracted to approximately 0.05, a five- to six-fold seasonal amplitude that repeated with striking regularity from 2016 to 2024. Earlier composites (2015) showed lower water fractions, reflecting both sparse scene density and the residual effects of the 2012 recession. Mean VV backscatter across the basin ranged from -7.2 dB in low-water months to -12.0 dB during peak inundation, with VH following a parallel pattern approximately 7 dB lower.
+*Figure 3: SAR dynamics of the Lake Chilwa basin. (a) Sentinel-1 monthly climatology of VV and VH backscatter and the derived water fraction, 2015 to 2024. (b) Sentinel-1 monthly water fraction through the record, showing the 2023 to 2024 step-up. (c) ALOS PALSAR L-band annual HH and HV backscatter and their difference, the double-bounce term sensitive to flooded vegetation.*
 
-The gradient analysis, adapted from sea ice monitoring, proved effective for detecting the advancing and retreating water margin across the flat basin floor. Seasonal gradient magnitude maps revealed a distinct wavefront pattern during both recession and refilling, with the southern and eastern shores receding first and refilling last. This asymmetry is consistent with the basin's topographic gradient and drainage structure as characterised by the D-infinity flow-routing analysis in Section 2.2.A, and was not apparent in the optical time series due to cloud-cover gaps during the critical transition months.
+![](../04.images/fig06_sar_seasonality.png){width="100%"}
 
-SAR classification accuracy was highest for open water (producer's accuracy 0.94) and lowest for the Typha marsh interior (0.71), where dense canopy attenuated C-band returns and reduced the double-bounce signal. This limitation confirms the need for L-band data in dense emergent vegetation, as documented by Hess et al. (2003) and Clement et al. (2018).
+The monthly series also records the recent refill (Figure 3b). Basin water fraction held near 0.12 from 2015 through 2022, then stepped up to 0.21 across 2023 and 2024. Optical and radar, two independent sensors, thus place the strongest inundation of the record in the same two years, the mixture analysis of Section 3.1 registering it in the annual Landsat fractions and Sentinel-1 in the monthly backscatter.
+
+L-band radar completes the picture where C-band cannot. The ALOS PALSAR HH minus HV difference, the double-bounce term that rises where standing water returns the signal through emergent vegetation, averaged 8.4 dB across the annual mosaics and peaked at 9.2 dB in 2021 (Figure 3c). The longer L-band wavelength penetrates the Typha canopy that attenuates C-band, so the two radars are complementary: Sentinel-1 follows open water at fine cadence, and PALSAR flags the flooded marsh that both C-band and the optical indices under-record, the limitation in dense emergent vegetation documented by Hess et al. (2003) and Clement et al. (2018).
+
+The basin's drainage structure shapes the sequence of retreat and refill. The southern and eastern shores, downgradient in the D-infinity flow routing of Section 2.2.A, recede first and refill last, an asymmetry the optical record misses through its cloud-season gaps and one that orders the fisher migration examined in Section 3.5.
 
 ### 3.4 Land-Cover Classification and Accuracy
 
@@ -1493,6 +1518,8 @@ The four-class random-forest classifier (open water, flooded vegetation, dry veg
 *Table 2: Per-class producer's and user's accuracy for the four-class random-forest classification of the 2020 reference composite, computed from the independent validation split (Section 2.2.H). Overall accuracy 81%, kappa 0.77.*
 
 ```{r results-accuracy-table}
+#| eval: false
+#| echo: true
 pa <- tail(unlist(producers), 4)
 ua <- tail(unlist(consumers), 4)
 acc_tbl <- data.frame(
@@ -1503,9 +1530,11 @@ acc_tbl <- data.frame(
 knitr::kable(acc_tbl)
 ```
 
-*Figure 3: Producer's and user's accuracy by cover class for the random-forest classification. Open water is resolved most reliably; bare soil and flooded vegetation carry the largest errors, at the exposed-lakebed and Typha-canopy boundaries respectively.*
+*Figure 4: Producer's and user's accuracy by cover class for the random-forest classification. Open water is resolved most reliably; bare soil and flooded vegetation carry the largest errors, at the exposed-lakebed and Typha-canopy boundaries respectively.*
 
 ```{r results-accuracy-plot}
+#| eval: false
+#| echo: true
 acc_long <- data.frame(
   Class    = rep(c("Open water", "Flooded vegetation", "Dry vegetation", "Bare soil"), 2),
   Accuracy = c(tail(unlist(producers), 4), tail(unlist(consumers), 4)),
