@@ -176,7 +176,12 @@ def build(out_dir=OUT, img_dir=IMG,
             + "\nRun the sma-export chunk under a live Earth Engine session, "
               "then rerun this script.")
 
-    spec = pd.read_csv(spectra_csv).set_index("class")
+    spec = pd.read_csv(spectra_csv)
+    # Endmembers are derived per sensor era; the figure shows the Landsat 8 set
+    # from the 2020 reference composite that the classification also uses.
+    if "era" in spec.columns:
+        spec = spec[spec["era"] == "L8"]
+    spec = spec.set_index("class")
     geoms = _geoms(os.path.join(out_dir, "chilwa_basin.geojson"))
     wet, wet_ext = _read_fraction(wet_tif, geoms)
     dry, dry_ext = _read_fraction(dry_tif, geoms)
