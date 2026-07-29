@@ -152,7 +152,7 @@ easypackages::packages(
   "ggspatial", "ggmap", "ggplotify", "ggpubr", "ggrepel", "giscoR",
   "hdf5r", "here", "httr", "httr2", "htmltools",
   "jsonlite",
-  "kohonen",
+  "kable", "kableExtrra", "kohonen",
   "leaflet.providers", "leafem", "libgeos","luz","lwgeom", "leaflet", "leafgl",
   "mapedit", "mapview", "maptiles", "methods", "mgcv",
   "ncdf4", "nnet",
@@ -264,21 +264,21 @@ GPS points were imported into a GIS environment and used to generate training an
 
 Field data collection summary:
 
-+-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Component                                                 | n           | Description                                                                                                                                                   |
-+:==========================================================+============:+:==============================================================================================================================================================+
-| Key informant interviews                                  | 45          | Village leaders, camp chairmen, BVC members, Fisheries officers                                                                                               |
-+-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Focus group discussions                                   | 18          | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders                                                                                    |
-+-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Districts                                                 | 3           | Zomba, Phalombe, Machinga                                                                                                                                     |
-+-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Georeferenced sites                                       | 23          | Fishing camps, landing sites, processing areas                                                                                                                |
-+-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Beach Village Committees                                  | 53          | ~~Update Definition~~[^1]                                                                                                                                     |
-+-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Fisheries Associations                                    | 6           | ~~Update Definition~~                                                                                                                                         |
-+-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
++--------------------------+----+----------------------------------------------------------------------------+
+| Component                | n  | Description                                                                |
++:=========================+===:+:===========================================================================+
+| Key informant interviews | 45 | Village leaders, camp chairmen, BVC members, Fisheries officers            |
++--------------------------+----+----------------------------------------------------------------------------+
+| Focus group discussions  | 18 | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
++--------------------------+----+----------------------------------------------------------------------------+
+| Districts                | 3  | Zomba, Phalombe, Machinga                                                  |
++--------------------------+----+----------------------------------------------------------------------------+
+| Georeferenced sites      | 23 | Fishing camps, landing sites, processing areas                             |
++--------------------------+----+----------------------------------------------------------------------------+
+| Beach Village Committees | 53 | [~~Update Definition~~]{.smallcaps}                                        |
++--------------------------+----+----------------------------------------------------------------------------+
+| Fisheries Associations   | 6  | [~~Update Definition~~]{.smallcaps}                                        |
++--------------------------+----+----------------------------------------------------------------------------+
 
 #### 2.1.1 Photographic Evidence and Participatory Ground Truth
 
@@ -323,7 +323,28 @@ photo_meta <- read.csv(here::here("03.outputs", "field_photo_metadata.csv"),
 cat("Field photographs:", nrow(photo_meta), "\n")
 cat("With acquisition timestamp:", sum(nzchar(as.character(photo_meta$datetime))), "\n")
 cat("With extractable GPS coordinates:", sum(photo_meta$has_gps, na.rm = TRUE), "\n")
-cat("Photographs by year:\n"); print(table(substr(as.character(photo_meta$date), 1, 4)))
+yrs <- substr(as.character(photo_meta$date), 1, 4)
+yr  <- table(yrs[nzchar(yrs)])
+cat("Photographs by year:\n"); print(yr)
+
+dt  <- as.character(photo_meta$datetime)
+has <- c(nrow(photo_meta),
+         sum(!is.na(dt) & nzchar(dt)),
+         sum(photo_meta$has_gps, na.rm = TRUE))
+
+kable(data.frame(
+  Attribute = c("Field photographs",
+                "With acquisition timestamp",
+                "With extractable GPS coordinates"),
+  n         = has,
+  `% of total` = sprintf("%.1f%%", 100 * has / nrow(photo_meta)),
+  check.names = FALSE), align = "lrr")
+
+kable(data.frame(
+  Year        = names(yr),
+  Photographs = as.integer(yr),
+  `% of total` = sprintf("%.1f%%", 100 * as.integer(yr) / sum(yr)),
+  check.names = FALSE), align = "lrr")
 ```
 
 ```{r ground-truth-assembly}
@@ -364,6 +385,24 @@ print(paste("Ground-truth points:", gt_points$size()$getInfo()))
 The remote sensing workflow integrates multi-temporal SAR backscatter analysis with optical spectral indices to map surface water extent variability. The clip boundary for all raster and vector queries is the self-derived basin polygon of Section 1.3, delineated by flow routing over a conditioned elevation model (Section 2.2.A), not a public basin product. The temporal window extends as far back as Landsat data quality permits, driven by the need to capture multiple recession events that recur at approximately 15 to 20-year intervals.
 
 The workflow runs within Google Earth Engine, which hosts the full multi-sensor archive and applies radiometric calibration and terrain correction on demand, so no scene is downloaded or processed locally (Gorelick et al., 2017). Three data streams are developed in parallel and then combined. The radar stream (Section 2.2.B) builds a monthly Sentinel-1 C-band backscatter and water-mask series from the Ground Range Detected archive, and adds an ALOS PALSAR L-band layer that reaches beneath the Typha canopy where C-band cannot. The Landsat stream (Sections 2.2.C to 2.2.E) harmonises the Thematic Mapper, Enhanced Thematic Mapper Plus, and Operational Land Imager records into a single Collection 2 series, computes the five water indices, and resolves sub-pixel cover through spectral mixture analysis. An independent terrain stream (Section 2.2.A) routes flow across the basin floor to ground the drainage-structure interpretation. The modelling operations that carry these series into the analysis, the feature selection, supervised classification, and accuracy assessment of Sections 2.2.F to 2.2.H, produce the inundation record that, joined to the participatory data, forms the empirical basis for the coupled socio-hydrological model set out in Section 4.6. Collection identifiers, filters, and parameters are given in full in the code that accompanies each subsection, so the series can be regenerated end to end
+
+The three streams do not share a common window, and the gaps between them constrain what can be compared (Table 1). Landsat yields 37 annual composites across 1984 to 2024 but none for 2012, when Landsat 5 had ceased imaging and Landsat 8 had not yet launched, leaving only scan-line-corrector-off Landsat 7 scenes that the cloud screen rejected. Sentinel-1 begins in 2015. The L-band record divides at the loss of ALOS-1 in May 2011 and the launch of ALOS-2 in May 2014, so no PALSAR mosaic covers 2011 to 2014. The field evidence falls almost wholly in 2012, inside the recession the study targets but outside the optical record, so the participatory data rather than the photographs carry the validation for the recession years.
+
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| Data stream                        | Coverage                           | Gaps                                                                       |
++====================================+====================================+============================================================================+
+| Landsat 5, 7, and 8, harmonised    | 1984 to 2024, 37 annual composites | 1985, 1988, 2002, and 2012 absent                                          |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| Sentinel-1 C-band                  | 2015 to 2024, monthly composites   | 2016 absent; 2014 scenes too few to composite                              |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| ALOS PALSAR L-band                 | 2007 to 2010, 2015 to 2024         | 2011 to 2014 absent between the two missions                               |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| Field photographs                  | 2011 to 2014, 244 frames           | 219 fall in February to June 2012; 21 carry unusable camera-clock defaults |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| Participatory and interview record | September 2012 to March 2014       | Continuous                                                                 |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+
+*Table 1: Temporal coverage of each data stream, with the gaps that constrain cross-sensor comparison. The absence of Landsat in 2012 and of L-band between 2011 and 2014 leaves the 2012 recession observable only through the adjacent years and the participatory record.*
 
 #### Import AOI Data
 
@@ -454,6 +493,8 @@ The self-derived basin polygon of Section 1.3 provides the clip boundary for all
 #| comment: NA
 # Clip geometry for the terrain and Earth Engine queries: aoi_sf and aoi_ee from
 # the self-derived basin polygon (Section 1.3); every downstream chunk needs both.
+crs_master = sf::st_crs('epsg:4326')
+watershed   = sf::read_sf(here::here("03.outputs", "SHP", "chilwa_basin.shp")) |> sf::st_cast() |> sf::st_transform(crs_master)  # AOI = self-derived basin (2.2.A)
 aoi_sf <- sf::st_transform(watershed, crs_master)
 aoi_ee <- rgee::sf_as_ee(sf::st_geometry(aoi_sf))
 ```
@@ -1334,7 +1375,7 @@ lasso_imp  # features with zero importance were dropped as redundant
 
 # The reduced, non-redundant stack passed to the RF in 2.2.G: features with a
 # non-zero LASSO coefficient, with NDPI removed as the exact algebraic inverse
-# of MNDWI (Table 1, r = -1) when MNDWI is retained.
+# of MNDWI (Table 2, r = -1) when MNDWI is retained.
 selected_features <- names(lasso_imp)[lasso_imp > 0]
 if ("MNDWI" %in% selected_features)
   selected_features <- setdiff(selected_features, "NDPI")
@@ -1535,9 +1576,9 @@ The five water indices do not track inundation equally (Figure 2). Measured agai
 
 *Figure 2: Spectral-index behaviour, 1984 to 2024. (a) Standardised annual anomalies of the five water indices against the spectral-mixture open-water record. (b) Pearson correlation of each index with that record; WRI and MNDWI track inundation most closely, and NDPI is the inverse of MNDWI.*
 
-The indices also carry overlapping information (Table 1). NDPI is the exact algebraic inverse of MNDWI, correlated at r = -1.00, so the two are one index in opposite sign and only one can enter a classifier. WRI is strongly tied to MNDWI (r = 0.76) and adds little once MNDWI is present. NDWI and MNDWI, though both normalised water indices, agree only weakly (r = 0.31): the substitution of shortwave-infrared for near-infrared shifts the sensitivity enough that the two register genuinely different surfaces. AWEIsh sits closer to NDWI (r = 0.75) than to MNDWI (r = 0.54), consistent with their shared near-infrared term.
+The indices also carry overlapping information (Table 2). NDPI is the exact algebraic inverse of MNDWI, correlated at r = -1.00, so the two are one index in opposite sign and only one can enter a classifier. WRI is strongly tied to MNDWI (r = 0.76) and adds little once MNDWI is present. NDWI and MNDWI, though both normalised water indices, agree only weakly (r = 0.31): the substitution of shortwave-infrared for near-infrared shifts the sensitivity enough that the two register genuinely different surfaces. AWEIsh sits closer to NDWI (r = 0.75) than to MNDWI (r = 0.54), consistent with their shared near-infrared term.
 
-*Table 1: Pairwise Pearson correlation among the five water indices, basin-mean annual values, 1984 to 2024. NDPI is the exact inverse of MNDWI.*
+*Table 2: Pairwise Pearson correlation among the five water indices, basin-mean annual values, 1984 to 2024. NDPI is the exact inverse of MNDWI.*
 
 |        |  NDWI | MNDWI | AWEIsh |   WRI |  NDPI |
 |:-------|------:|------:|-------:|------:|------:|
@@ -1567,7 +1608,7 @@ The basin's drainage structure shapes the sequence of retreat and refill. The so
 
 The four-class random-forest classifier (open water, flooded vegetation, dry vegetation, bare soil), trained on the separability-selected feature stack of Section 2.2.F and applied to the 2020 reference composite, resolved the littoral mosaic that no single index captured (Section 2.2.G). Overall accuracy was 81% with a kappa coefficient of 0.77. Accuracy was highest for open water, which both the SWIR-based optical indices and low SAR backscatter identify unambiguously, and lowest for bare soil and flooded vegetation, where exposed lakebed grades into sparse cover and where dense Typha attenuates the C-band double-bounce signal. Community validation of boundary placement and seasonal timing agreed with the classification in 74 to 92% of checked locations, the disagreements concentrated in mixed-pixel zones and areas of rapid shoreline change.
 
-*Table 2: Per-class producer's and user's accuracy for the four-class random-forest classification of the 2020 reference composite, computed from the independent validation split (Section 2.2.H). Overall accuracy 81%, kappa 0.77.*
+*Table 3: Per-class producer's and user's accuracy for the four-class random-forest classification of the 2020 reference composite, computed from the independent validation split (Section 2.2.H). Overall accuracy 81%, kappa 0.77.*
 
 ```{r results-accuracy-table}
 #| eval: false
@@ -1900,5 +1941,3 @@ Zhang, G., Yao, T., Chen, W., Zheng, G., Shum, C. K., Yang, K., Peng, S., Tian, 
 ------------------------------------------------------------------------
 
 *This study represents a collaborative effort between remote sensing specialists, the Department of Fisheries, and the Lake Chilwa communities. All community knowledge was shared with consent and attribution according to established research ethics protocols.*
-
-[^1]: Note to self, missing updates 20260729
