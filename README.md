@@ -2,7 +2,7 @@
 
 Murphy, S.<sup>a,\*</sup>, Wilson, J.<sup>b</sup>, Banks, L.<sup>c</sup>
 
-<sup>a</sup> Corresponding author: [seamusrobertmurphy\@gmail.com](mailto:seamusrobertmurphy@gmail.com){.email} <sup>b</sup> [johnwilson26313\@gmail.com](mailto:johnwilson26313@gmail.com){.email} <sup>c</sup> [laurenkbnks\@gmail.com](mailto:laurenkbnks@gmail.com){.email}
+<sup>a</sup> Corresponding author: seamusrobertmurphy\@gmail.com <sup>b</sup> johnwilson26313\@gmail.com <sup>c</sup> laurenkbnks\@gmail.com
 
 > This README mirrors the manuscript draft `01.manuscript/Manuscript_2026-07-29.docx`. The executable source is the Quarto notebook `01.manuscript/mapping-wetland-inundation-lake-chilwa.qmd`.
 
@@ -116,21 +116,21 @@ In-situ reference data were collected during the ethnographic fieldwork between 
 
 GPS points were imported into a GIS environment and used to generate training and validation polygons through visual interpretation of high-resolution Google Earth imagery cross-referenced with field photographs and community annotations. Polygons were sorted by size and alternately assigned to training (approximately 50%) and testing (approximately 50%) groups to ensure independent validation samples with balanced representation of small and large features, following the protocol of Mahdianpari et al. (2019). Community validation during iterative feedback workshops identified spectrally ambiguous landscape units, such as seasonal versus permanent wetlands and distinct fishing zones, that required field verification to classify correctly.
 
-+--------------------------+----+----------------------------------------------------------------------------+
-| Sample                   | n  | Detail                                                                     |
-+==========================+====+============================================================================+
-| Key informant interviews | 45 | Village leaders, camp chairmen, BVC members, Fisheries officers            |
-+--------------------------+----+----------------------------------------------------------------------------+
-| Focus group discussions  | 18 | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
-+--------------------------+----+----------------------------------------------------------------------------+
-| Districts                | 3  | Zomba, Phalombe, Machinga                                                  |
-+--------------------------+----+----------------------------------------------------------------------------+
-| Georeferenced sites      | 23 | Fishing camps, landing sites, processing areas                             |
-+--------------------------+----+----------------------------------------------------------------------------+
-| Beach Village Committees | 53 | Aligned to Group Village Headmen                                           |
-+--------------------------+----+----------------------------------------------------------------------------+
-| Fisheries Associations   | 6  | Aligned to Traditional Authorities                                         |
-+--------------------------+----+----------------------------------------------------------------------------+
++--------------------------+-----------+----------------------------------------------------------------------------+
+| Sample                   | n         | Detail                                                                     |
++==========================+===========+============================================================================+
+| Key informant interviews | 45        | Village leaders, camp chairmen, BVC members, Fisheries officers            |
++--------------------------+-----------+----------------------------------------------------------------------------+
+| Focus group discussions  | 18        | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
++--------------------------+-----------+----------------------------------------------------------------------------+
+| Districts                | 3         | Zomba, Phalombe, Machinga                                                  |
++--------------------------+-----------+----------------------------------------------------------------------------+
+| Georeferenced sites      | 23        | Fishing camps, landing sites, processing areas                             |
++--------------------------+-----------+----------------------------------------------------------------------------+
+| Beach Village Committees | 53        | Aligned to Group Village Headmen                                           |
++--------------------------+-----------+----------------------------------------------------------------------------+
+| Fisheries Associations   | 6         | Aligned to Traditional Authorities                                         |
++--------------------------+-----------+----------------------------------------------------------------------------+
 
 #### 2.1.1 Photographic Evidence and Participatory Ground Truth
 
@@ -896,7 +896,7 @@ ggplot(sma_long, aes(x = year, y = fraction, fill = class)) +
   theme(legend.position = "bottom")
 ```
 
-![Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary.](03.outputs/PNG/fig07_sma_endmembers.png){alt="Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary."}
+![Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary.](03.outputs/PNG/fig07_sma_endmembers.png)
 
 #### 2.2.F Feature Selection and Spectral Separability
 
