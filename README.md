@@ -84,7 +84,7 @@ During recession, the lake’s three main commercial species, *Barbus paludinosu
 
 This boom-and-bust ecology sustains a complex mobile population. The basin’s settlement history stretches back millennia, from Akafula hunter-gatherers through the 16th-century Maravi (Mang’anja) chieftancies, the mid-19th-century Yao migration from Mozambique, and the 20th-century Lomwe influx from Portuguese East Africa (Wilson, 2010). Today, permanent lakeshore communities of Yao, Nyanja, and Lomwe matrilineal descent groups farm the seasonally exposed lakebed and fish inshore waters. Seasonal migrants travel from as far as Machinga district to the north, spending weeks to months on zimbowera, floating platforms of piled Typha grass that serve as fishing camps in the lake interior (Murphy, 2014). These zimbowera neighbourhoods, such as Andere, Chambwalu, and Lingoni, support shifting populations of 300 to 1,000 fishers and sustain their own tea rooms, trading posts, and social governance structures. During the wet season, when fishing grounds are most productive but most inaccessible from the mainland, zimbowera cooperatives form along lines of village membership, kinship, and occupational specialisation. Seine-net crews of up to 80 fishers operate from large camps under single owners, while smaller gill-net cooperatives of three to four family members share boats, equipment, and risks on remote islands (Murphy, 2014). The fishery’s principal port is Kachulu, on the western shore in Zomba district, which serves as the hub for a regional marketing network extending by bicycle and truck to Zomba, Blantyre, Liwonde, Phalombe, and Mulanje.
 
-The area of interest for all remote sensing analysis is the study’s own basin polygon (`03.outputs/SHP/``chilwa_basin.shp`), delineated by routing flow over a hydrologically conditioned digital elevation model rather than adopted from a public basin product. This replaces the hand-digitised outline of earlier drafts: the boundary is re-derivable from the elevation model itself by the flow-routing set out in Section 2.2.A, where a relief map of the basin also appears.
+The area of interest for all remote sensing analysis is the study’s own basin polygon (`03.outputs/SHP/chilwa_basin.shp`), delineated by routing flow over a hydrologically conditioned digital elevation model rather than adopted from a public basin product. This replaces the hand-digitised outline of earlier drafts: the boundary is re-derivable from the elevation model itself by the flow-routing set out in Section 2.2.A, where a relief map of the basin also appears.
 
 ### 1.4 Participatory Mapping as a Complementary Data Source
 
@@ -157,61 +157,74 @@ Locator map: site area at 1:4,000,000 scale
 
 The basin boundary and drainage network are derived from the terrain, not inherited from a public product. Google Earth Engine has no native flow-routing tool, so the delineation is performed locally in R. On Lake Chilwa’s flat endorheic floor, an average maximum depth of 2.95 m across a 2,310 km² terminal basin (Section 1.3), the decisive step is hydrological conditioning of the elevation model: without it, closed depressions and flat cells sever the flow paths on which the drainage-structure argument of Section 3.3 depends.
 
-We conditioned the elevation model by least-cost depression breaching alone (Lindsay, 2016), carving minimal-descent paths through spurious barriers rather than filling depressions, which on a near-flat basin floor would erase the very gradients the routing depends on. Flow was then routed by the D-infinity method (Tarboton, 1997), whose continuous angular partitioning represents dispersal across low-relief terrain more faithfully than the eight discrete directions of D8; where fuller flow dispersion is wanted, a multiple-flow-direction variant (Freeman, 1991; Quinn, 1991) is the defensible alternative. Routing was computed twice for algorithmic consensus: once in WhiteboxTools (`wbt_d_inf_pointer`, `wbt_d_inf_flow_accumulation`) and once in the flowdem package (`dirs` and `accum`, mode `dinf`). From the D-infinity flow accumulation we extracted the stream network (`wbt_extract_streams`), ordered it by the Strahler scheme (`wbt_strahler_stream_order`), and delineated the basin and its sub-catchments, the polygons that serve as the analysis boundary (`03.outputs/SHP/``chilwa_basin.shp`, `chilwa_subasins.shp`). The full workflow, including the depression-breaching and DEM-resolution comparisons, is documented in `05.scripts/watershed-``algorithms.qmd` and its published mirror.
+We conditioned the elevation model by least-cost depression breaching alone (Lindsay, 2016), carving minimal-descent paths through spurious barriers rather than filling depressions, which on a near-flat basin floor would erase the very gradients the routing depends on. Flow was then routed by the D-infinity method (Tarboton, 1997), whose continuous angular partitioning represents dispersal across low-relief terrain more faithfully than the eight discrete directions of D8; where fuller flow dispersion is wanted, a multiple-flow-direction variant (Freeman, 1991; Quinn, 1991) is the defensible alternative. Routing was computed twice for algorithmic consensus: once in WhiteboxTools (`wbt_d_inf_pointer`, `wbt_d_inf_flow_accumulation`) and once in the flowdem package (`dirs` and `accum`, mode `dinf`). From the D-infinity flow accumulation we extracted the stream network (`wbt_extract_streams`), ordered it by the Strahler scheme (`wbt_strahler_stream_order`), and delineated the basin and its sub-catchments, the polygons that serve as the analysis boundary (`03.outputs/SHP/chilwa_basin.shp`, `chilwa_subasins.shp`). The full workflow, including the depression-breaching and DEM-resolution comparisons, is documented in `05.scripts/watershed-algorithms.qmd` and its published mirror.
 
-    # Terrain grids from the local least-cost-breaching + D-infinity derivation
-    # (05.scripts/watershed-algorithms.qmd; WhiteboxTools + flowdem). Earth Engine
-    # has no breaching, flow-accumulation, or D-infinity operator, so the basin is
-    # derived locally and only the resulting grids are loaded here.
-    # [align 2026-07-06] D8 and pit-filled (pitRemove) products dropped: the method
-    # of record is breaching-only + D-infinity (D8 and filling retired). Paths use
-    # here::here() because the setup chunk sets knitr root.dir = here::here().
-    dem_dir <- here::here("03.outputs", "DEM")
-    dem_files <- c("rasters_SRTM15Plus", "dinfFlowDirection", "Dinfarea")
-    dem_extract_dir <- file.path(dem_dir, "extracted")
-    dir.create(dem_extract_dir, recursive = TRUE, showWarnings = FALSE)
-    for (f in dem_files) {
-      archive <- file.path(dem_dir, paste0(f, ".tar.gz"))
-      if (file.exists(archive)) {
-        untar(archive, exdir = dem_extract_dir)
-      } else {
-        warning("Missing DEM archive, skipped: ", archive)
-      }
-    }
-    list.files(dem_extract_dir)
-    [1] "Dinfareasca.tif"          "dinfFlowDirectionang.tif"
-    [3] "output_SRTM15Plus.tif"   
-    # [align 2026-07-06] Load only the SRTM input and the D-infinity grids from the
-    # breach-conditioned derivation; the D8 and pit-filled products are no longer read.
-    srtm15plus <- terra::rast(file.path(dem_extract_dir, "output_SRTM15Plus.tif"))
-    dinf_dir   <- terra::rast(file.path(dem_extract_dir, "dinfFlowDirectionang.tif"))
-    dinf_area  <- terra::rast(file.path(dem_extract_dir, "Dinfareasca.tif"))
-    
-    print(srtm15plus)
-    class       : SpatRaster 
-    size        : 316, 451, 1  (nrow, ncol, nlyr)
-    resolution  : 0.004166667, 0.004166667  (x, y)
-    extent      : 34.68333, 36.5625, -16.05, -14.73333  (xmin, xmax, ymin, ymax)
-    coord. ref. : lon/lat WGS 84 (EPSG:4326) 
-    source      : output_SRTM15Plus.tif 
-    name        : output_SRTM15Plus 
+```r
+# Terrain grids from the local least-cost-breaching + D-infinity derivation
+# (05.scripts/watershed-algorithms.qmd; WhiteboxTools + flowdem). Earth Engine
+# has no breaching, flow-accumulation, or D-infinity operator, so the basin is
+# derived locally and only the resulting grids are loaded here.
+# [align 2026-07-06] D8 and pit-filled (pitRemove) products dropped: the method
+# of record is breaching-only + D-infinity (D8 and filling retired). Paths use
+# here::here() because the setup chunk sets knitr root.dir = here::here().
+dem_dir <- here::here("03.outputs", "DEM")
+dem_files <- c("rasters_SRTM15Plus", "dinfFlowDirection", "Dinfarea")
+dem_extract_dir <- file.path(dem_dir, "extracted")
+dir.create(dem_extract_dir, recursive = TRUE, showWarnings = FALSE)
+for (f in dem_files) {
+  archive <- file.path(dem_dir, paste0(f, ".tar.gz"))
+  if (file.exists(archive)) {
+    untar(archive, exdir = dem_extract_dir)
+  } else {
+    warning("Missing DEM archive, skipped: ", archive)
+  }
+}
+list.files(dem_extract_dir)
+```
+
+```
+[1] "Dinfareasca.tif"          "dinfFlowDirectionang.tif"
+[3] "output_SRTM15Plus.tif"   
+```
+
+```r
+# [align 2026-07-06] Load only the SRTM input and the D-infinity grids from the
+# breach-conditioned derivation; the D8 and pit-filled products are no longer read.
+srtm15plus <- terra::rast(file.path(dem_extract_dir, "output_SRTM15Plus.tif"))
+dinf_dir   <- terra::rast(file.path(dem_extract_dir, "dinfFlowDirectionang.tif"))
+dinf_area  <- terra::rast(file.path(dem_extract_dir, "Dinfareasca.tif"))
+
+print(srtm15plus)
+```
+
+```
+class       : SpatRaster 
+size        : 316, 451, 1  (nrow, ncol, nlyr)
+resolution  : 0.004166667, 0.004166667  (x, y)
+extent      : 34.68333, 36.5625, -16.05, -14.73333  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source      : output_SRTM15Plus.tif 
+name        : output_SRTM15Plus 
+```
 
 Contributing area spans several orders of magnitude, so the D-infinity accumulation is mapped on a log scale, cropped to the basin and a surrounding buffer for comparison against the GEE-derived relief map above.
 
-    aoi_vect     <- terra::vect(sf::st_as_sf(aoi_sf))
-    crop_extent  <- terra::ext(aoi_vect) + 0.2
-    
-    dinf_area_crop <- terra::crop(dinf_area, crop_extent)
-    dinf_dir_crop  <- terra::crop(dinf_dir, crop_extent)
-    
-    dinf_area_log <- log10(terra::ifel(dinf_area_crop <= 0, NA, dinf_area_crop))
-    terra::plot(dinf_area_log, main = "D-infinity specific catchment area (log10)",
-                col = hcl.colors(50, "Blues 3"))
-    terra::plot(aoi_vect, add = TRUE, border = "red", lwd = 2)
+```r
+aoi_vect     <- terra::vect(sf::st_as_sf(aoi_sf))
+crop_extent  <- terra::ext(aoi_vect) + 0.2
 
-    terra::plot(dinf_dir_crop, main = "D-infinity flow direction (radians, 0 to 2π)",
-                col = hcl.colors(50, "Roma"))
-    terra::plot(aoi_vect, add = TRUE, border = "red", lwd = 2)
+dinf_area_crop <- terra::crop(dinf_area, crop_extent)
+dinf_dir_crop  <- terra::crop(dinf_dir, crop_extent)
+
+dinf_area_log <- log10(terra::ifel(dinf_area_crop <= 0, NA, dinf_area_crop))
+terra::plot(dinf_area_log, main = "D-infinity specific catchment area (log10)",
+            col = hcl.colors(50, "Blues 3"))
+terra::plot(aoi_vect, add = TRUE, border = "red", lwd = 2)
+
+terra::plot(dinf_dir_crop, main = "D-infinity flow direction (radians, 0 to 2π)",
+            col = hcl.colors(50, "Roma"))
+terra::plot(aoi_vect, add = TRUE, border = "red", lwd = 2)
+```
 
 The D-infinity direction map resolves a fan of continuous flow angles across the basin floor, the behaviour continuous partitioning is designed for on flat, low-relief terrain, where a discrete single-direction scheme would force flow into eight compass-aligned bins and sever the gentle gradients that carry water across the terminal floor.
 
@@ -226,156 +239,207 @@ SAR processing exploits the sensitivity of C-band radar to backscatter differenc
 
 Sentinel-1 data were processed through a Google Earth Engine pipeline. GEE hosts the Copernicus Sentinel-1 Ground Range Detected archive already carried through the standard ESA preprocessing chain: precise orbit-file application, thermal and border noise removal, radiometric calibration to sigma-naught backscatter, and range-Doppler terrain correction (Gorelick et al., 2017). To this we add the corrections that make C-band defensible over the basin’s low-relief, vegetated margins: multi-temporal speckle suppression and angular-based radiometric slope correction, which normalises backscatter for local incidence angle and terrain (Vollrath et al., 2020). We filter the archive to Interferometric Wide Swath mode, VV and VH polarisations, and descending orbit, holding a single relative orbit where possible to keep the acquisition geometry constant across the time series. Dense multi-temporal stacking of this kind characterises wetland extent and vegetation more reliably than single dates (Slagter et al., 2020), and unsupervised modelling of the resulting Sentinel-1 time series can isolate change without labelled data (Di Martino et al., 2023).
 
-    s1 <- ee$ImageCollection("COPERNICUS/S1_GRD")$
-      filterBounds(aoi_ee)$
-      filter(ee$Filter$eq("instrumentMode", "IW"))$
-      filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VV"))$
-      filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VH"))$
-      filter(ee$Filter$eq("orbitProperties_pass", "DESCENDING"))$
-      select(c("VV", "VH", "angle"))
-    
-    n_scenes <- s1$size()$getInfo()
-    print(paste("Total Sentinel-1 scenes:", n_scenes))
-    [1] "Total Sentinel-1 scenes: 945"
-    # Date range
-    dates <- s1$reduceColumns(
-      ee$Reducer$minMax(), list("system:time_start"))$getInfo()
-    print(paste("First scene:", as.Date(as.POSIXct(dates[[1]] / 1000, origin = "1970-01-01"))))
-    [1] "First scene: 1970-01-11"
-    print(paste("Last scene:", as.Date(as.POSIXct(dates[[2]] / 1000, origin = "1970-01-01"))))
-    [1] "Last scene: 1969-12-16"
+```r
+s1 <- ee$ImageCollection("COPERNICUS/S1_GRD")$
+  filterBounds(aoi_ee)$
+  filter(ee$Filter$eq("instrumentMode", "IW"))$
+  filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VV"))$
+  filter(ee$Filter$listContains("transmitterReceiverPolarisation", "VH"))$
+  filter(ee$Filter$eq("orbitProperties_pass", "DESCENDING"))$
+  select(c("VV", "VH", "angle"))
+
+n_scenes <- s1$size()$getInfo()
+print(paste("Total Sentinel-1 scenes:", n_scenes))
+```
+
+```
+[1] "Total Sentinel-1 scenes: 945"
+```
+
+```r
+# Date range
+dates <- s1$reduceColumns(
+  ee$Reducer$minMax(), list("system:time_start"))$getInfo()
+print(paste("First scene:", as.Date(as.POSIXct(dates[[1]] / 1000, origin = "1970-01-01"))))
+```
+
+```
+[1] "First scene: 1970-01-11"
+```
+
+```r
+print(paste("Last scene:", as.Date(as.POSIXct(dates[[2]] / 1000, origin = "1970-01-01"))))
+```
+
+```
+[1] "Last scene: 1969-12-16"
+```
 
 ##### Speckle Filtering
 
 GEE does not apply speckle filtering by default. We implement a focal mean approximation. For refined Lee Sigma filtering, export to SNAP. The focal approach is sufficient for time series compositing where multi-temporal averaging further suppresses speckle.
 
-    apply_speckle_filter <- function(image) {
-      # Focal mean with 7x7 kernel (approximates boxcar filter)
-      vv_filtered <- image$select("VV")$focal_mean(radius = 3.5, kernelType = "square", units = "pixels")$rename("VV_filtered")
-      vh_filtered <- image$select("VH")$focal_mean(radius = 3.5, kernelType = "square", units = "pixels")$rename("VH_filtered")
-      image$addBands(vv_filtered)$addBands(vh_filtered)$copyProperties(image, list("system:time_start"))}
-    
-    s1_filtered <- s1$map(apply_speckle_filter)
+```r
+apply_speckle_filter <- function(image) {
+  # Focal mean with 7x7 kernel (approximates boxcar filter)
+  vv_filtered <- image$select("VV")$focal_mean(radius = 3.5, kernelType = "square", units = "pixels")$rename("VV_filtered")
+  vh_filtered <- image$select("VH")$focal_mean(radius = 3.5, kernelType = "square", units = "pixels")$rename("VH_filtered")
+  image$addBands(vv_filtered)$addBands(vh_filtered)$copyProperties(image, list("system:time_start"))}
+
+s1_filtered <- s1$map(apply_speckle_filter)
+```
 
 ##### Backscatter Ratio Bands
 
 VV/VH ratio and band difference help distinguish open water from flooded vegetation. Open water shows low VV and low VH. Flooded vegetation shows moderate VV but elevated VH due to double-bounce scattering.
 
-    # Ratio (in dB domain, ratio = difference)
-    add_ratio_bands <- function(image) {
-      vv <- image$select("VV_filtered")
-      vh <- image$select("VH_filtered")
-      ratio <- vv$subtract(vh)$rename("VV_VH_ratio")
-      nd <- vv$subtract(vh)$divide(vv$add(vh))$rename("VV_VH_nd")
-      image$addBands(ratio)$addBands(nd)$copyProperties(image, list("system:time_start"))}
-    
-    s1_processed <- s1_filtered$map(add_ratio_bands)
+```r
+# Ratio (in dB domain, ratio = difference)
+add_ratio_bands <- function(image) {
+  vv <- image$select("VV_filtered")
+  vh <- image$select("VH_filtered")
+  ratio <- vv$subtract(vh)$rename("VV_VH_ratio")
+  nd <- vv$subtract(vh)$divide(vv$add(vh))$rename("VV_VH_nd")
+  image$addBands(ratio)$addBands(nd)$copyProperties(image, list("system:time_start"))}
+
+s1_processed <- s1_filtered$map(add_ratio_bands)
+```
 
 ##### Water Detection Thresholding
 
 Calm water surfaces yield low backscatter in both VV and VH channels, typically below -15 dB for VV. We use a percentile-based adaptive threshold: compute the VV distribution within the AOI on a reference scene and take the value that separates the lowest backscatter mode (water) from land. A fixed fallback of -15 dB is available if needed.
 
-    # Reference scene for threshold calibration
-    sample_image <- ee$Image(s1_processed$first())$select("VV_filtered")
-    
-    # Compute percentile-based threshold within AOI
-    # The 15th percentile of VV typically captures the water/land break
-    # in scenes with substantial water coverage like Chilwa
-    percentiles <- sample_image$reduceRegion(
-      reducer = ee$Reducer$percentile(c(15L, 50L)),
-      geometry = aoi_ee,
-      scale = 30L,
-      maxPixels = as.integer(1e9)
-    )$getInfo()
-    
-    threshold_vv <- percentiles$VV_filtered_p15
-    print(paste("Adaptive VV threshold (p15):", round(threshold_vv, 2), "dB"))
-    [1] "Adaptive VV threshold (p15): -7.73 dB"
-    print(paste("Median VV:", round(percentiles$VV_filtered_p50, 2), "dB"))
-    [1] "Median VV: -6.25 dB"
-    # Use adaptive threshold; fall back to -15 dB if percentile is unreasonable
-    if (is.null(threshold_vv) || threshold_vv > -10 || threshold_vv < -25) {
-      threshold_vv <- -15
-      print("Using fixed threshold: -15 dB")
-    }
-    [1] "Using fixed threshold: -15 dB"
-    classify_water <- function(image) {
-      water <- image$select("VV_filtered")$lt(threshold_vv)$rename("water")
-      image$addBands(water)$
-        copyProperties(image, list("system:time_start"))
-    }
-    
-    s1_water <- s1_processed$map(classify_water)
+```r
+# Reference scene for threshold calibration
+sample_image <- ee$Image(s1_processed$first())$select("VV_filtered")
+
+# Compute percentile-based threshold within AOI
+# The 15th percentile of VV typically captures the water/land break
+# in scenes with substantial water coverage like Chilwa
+percentiles <- sample_image$reduceRegion(
+  reducer = ee$Reducer$percentile(c(15L, 50L)),
+  geometry = aoi_ee,
+  scale = 30L,
+  maxPixels = as.integer(1e9)
+)$getInfo()
+
+threshold_vv <- percentiles$VV_filtered_p15
+print(paste("Adaptive VV threshold (p15):", round(threshold_vv, 2), "dB"))
+```
+
+```
+[1] "Adaptive VV threshold (p15): -7.73 dB"
+```
+
+```r
+print(paste("Median VV:", round(percentiles$VV_filtered_p50, 2), "dB"))
+```
+
+```
+[1] "Median VV: -6.25 dB"
+```
+
+```r
+# Use adaptive threshold; fall back to -15 dB if percentile is unreasonable
+if (is.null(threshold_vv) || threshold_vv > -10 || threshold_vv < -25) {
+  threshold_vv <- -15
+  print("Using fixed threshold: -15 dB")
+}
+```
+
+```
+[1] "Using fixed threshold: -15 dB"
+```
+
+```r
+classify_water <- function(image) {
+  water <- image$select("VV_filtered")$lt(threshold_vv)$rename("water")
+  image$addBands(water)$
+    copyProperties(image, list("system:time_start"))
+}
+
+s1_water <- s1_processed$map(classify_water)
+```
 
 ##### Monthly Composites
 
 Aggregate to monthly composites to reduce data volume and suppress residual speckle through temporal averaging.
 
-    # Build year-month pairs in the cloud before writing locally
-    year_month_pairs <- expand.grid(year = 2015L:2024L, month = 1L:12L)
-    composite_list <- lapply(seq_len(nrow(year_month_pairs)), function(i) {
-      y <- as.integer(year_month_pairs$year[i])
-      m <- as.integer(year_month_pairs$month[i])
-      start <- ee$Date$fromYMD(y, m, 1L)
-      end   <- start$advance(1L, "month")
-      monthly <- s1_water$filterDate(start, end)
-      n <- monthly$size()$getInfo()
-      if (n == 0L) return(NULL)
-      monthly$mean()$
-        set("system:time_start", start$millis())$
-        set("year", y)$
-        set("month", m)$
-        set("n_scenes", n)})
-    
-    # Drop empty months
-    composite_list <- Filter(Negate(is.null), composite_list)
-    s1_monthly <- ee$ImageCollection$fromImages(composite_list)
-    print(paste("Monthly composites:", length(composite_list)))
-    [1] "Monthly composites: 96"
+```r
+# Build year-month pairs in the cloud before writing locally
+year_month_pairs <- expand.grid(year = 2015L:2024L, month = 1L:12L)
+composite_list <- lapply(seq_len(nrow(year_month_pairs)), function(i) {
+  y <- as.integer(year_month_pairs$year[i])
+  m <- as.integer(year_month_pairs$month[i])
+  start <- ee$Date$fromYMD(y, m, 1L)
+  end   <- start$advance(1L, "month")
+  monthly <- s1_water$filterDate(start, end)
+  n <- monthly$size()$getInfo()
+  if (n == 0L) return(NULL)
+  monthly$mean()$
+    set("system:time_start", start$millis())$
+    set("year", y)$
+    set("month", m)$
+    set("n_scenes", n)})
+
+# Drop empty months
+composite_list <- Filter(Negate(is.null), composite_list)
+s1_monthly <- ee$ImageCollection$fromImages(composite_list)
+print(paste("Monthly composites:", length(composite_list)))
+```
+
+```
+[1] "Monthly composites: 96"
+```
 
 ##### Time Series Extraction
 
 Extract mean backscatter and water fraction within the AOI for each monthly composite to build the SAR time series.
 
-    extract_stats <- function(image) {
-      stats <- image$select(c("VV_filtered", "VH_filtered", "water"))$
-        reduceRegion(
-          reducer = ee$Reducer$mean(),
-          geometry = aoi_ee,
-          scale = 200L,
-          maxPixels = as.integer(1e9)
-        )
-      ee$Feature(NULL, stats)$
-        set("date", image$date()$format("YYYY-MM-dd"))$
-        set("year", image$get("year"))$
-        set("month", image$get("month"))$
-        set("n_scenes", image$get("n_scenes"))
-    }
-    
-    s1_ts <- s1_monthly$map(extract_stats)
-    s1_ts_info <- s1_ts$getInfo()
-    
-    # Convert to data frame
-    s1_df <- do.call(rbind, lapply(s1_ts_info$features, function(f) {
-      data.frame(
-        date        = f$properties$date,
-        year        = f$properties$year,
-        month       = f$properties$month,
-        n_scenes    = f$properties$n_scenes,
-        VV_mean     = f$properties$VV_filtered,
-        VH_mean     = f$properties$VH_filtered,
-        water_frac  = f$properties$water,
-        stringsAsFactors = FALSE)}))
-    
-    s1_df$date <- as.Date(s1_df$date)
-    print(head(s1_df))
-            date year month n_scenes    VV_mean   VH_mean water_frac
-    1 2015-01-01 2015     1        1  -7.720720 -16.89148 0.08818942
-    2 2018-01-01 2018     1        6 -11.337888 -17.80544 0.07638291
-    3 2019-01-01 2019     1        8  -9.886588 -16.84823 0.08718556
-    4 2020-01-01 2020     1        6  -9.644696 -16.49919 0.10225097
-    5 2021-01-01 2021     1        9  -9.871159 -16.53633 0.10447506
-    6 2022-01-01 2022     1        7 -10.503922 -17.67320 0.10302122
+```r
+extract_stats <- function(image) {
+  stats <- image$select(c("VV_filtered", "VH_filtered", "water"))$
+    reduceRegion(
+      reducer = ee$Reducer$mean(),
+      geometry = aoi_ee,
+      scale = 200L,
+      maxPixels = as.integer(1e9)
+    )
+  ee$Feature(NULL, stats)$
+    set("date", image$date()$format("YYYY-MM-dd"))$
+    set("year", image$get("year"))$
+    set("month", image$get("month"))$
+    set("n_scenes", image$get("n_scenes"))
+}
+
+s1_ts <- s1_monthly$map(extract_stats)
+s1_ts_info <- s1_ts$getInfo()
+
+# Convert to data frame
+s1_df <- do.call(rbind, lapply(s1_ts_info$features, function(f) {
+  data.frame(
+    date        = f$properties$date,
+    year        = f$properties$year,
+    month       = f$properties$month,
+    n_scenes    = f$properties$n_scenes,
+    VV_mean     = f$properties$VV_filtered,
+    VH_mean     = f$properties$VH_filtered,
+    water_frac  = f$properties$water,
+    stringsAsFactors = FALSE)}))
+
+s1_df$date <- as.Date(s1_df$date)
+print(head(s1_df))
+```
+
+```
+        date year month n_scenes    VV_mean   VH_mean water_frac
+1 2015-01-01 2015     1        1  -7.720720 -16.89148 0.08818942
+2 2018-01-01 2018     1        6 -11.337888 -17.80544 0.07638291
+3 2019-01-01 2019     1        8  -9.886588 -16.84823 0.08718556
+4 2020-01-01 2020     1        6  -9.644696 -16.49919 0.10225097
+5 2021-01-01 2021     1        9  -9.871159 -16.53633 0.10447506
+6 2022-01-01 2022     1        7 -10.503922 -17.67320 0.10302122
+```
 
 Multi-temporal gradient analysis, adapted from sea ice monitoring methodologies, enhanced detection of dynamic water boundaries through comparative analysis of seasonal backscatter patterns. This approach proved effective for identifying transitions between open water, flooded vegetation, and terrestrial surfaces, and for tracking the recession-refilling wavefront described in Section 3.3.
 
@@ -385,79 +449,87 @@ GEE Sentinel-1 GRD products arrive with radiometric calibration (sigma0) and Ran
 
 C-band cannot penetrate the dense Typha canopy that defines the marsh interior, the one blind spot the optical and Sentinel-1 stacks share. L-band, at roughly 23 cm wavelength against C-band’s 5.6 cm, reaches through emergent vegetation and returns the double-bounce signal of standing water beneath it. We add the ALOS and ALOS-2 PALSAR L-band yearly mosaic (Shimada et al., 2014), the only historical spaceborne radar in the archive for this basin, available for 2007 to 2010 and 2015 to 2020. The mosaic is terrain-corrected and orthorectified; we convert the stored digital numbers to gamma-naught backscatter by the standard calibration, gamma0 (dB) = 10 log10(DN²) − 83.0, and derive the HH and HV channels and their difference. Flooded vegetation raises HH through double-bounce while open water stays low in both channels and dry canopy scatters into HV, so the HH-minus-HV contrast isolates sub-canopy inundation that neither optical indices nor C-band resolve. The L-band HH and HV channels enter the 2020 feature stack alongside the optical and C-band features, and the per-year basin series probes how the sub-canopy signal tracks the recession cycle across the years the mosaic spans.
 
-    # ALOS/ALOS-2 PALSAR L-band yearly mosaic. DN -> gamma0 dB (Shimada et al. 2014):
-    # gamma0 = 10*log10(DN^2) - 83.0. HH double-bounce marks flooded vegetation.
-    palsar_cal <- function(img) {
-      hh <- img$select("HH"); hv <- img$select("HV")
-      hh_db <- hh$updateMask(hh$gt(0))$pow(2)$log10()$multiply(10)$subtract(83)$rename("L_HH")
-      hv_db <- hv$updateMask(hv$gt(0))$pow(2)$log10()$multiply(10)$subtract(83)$rename("L_HV")
-      diff  <- hh_db$subtract(hv_db)$rename("L_HH_HV")
-      img$addBands(hh_db)$addBands(hv_db)$addBands(diff)$
-        copyProperties(img, list("system:time_start"))
-    }
-    
-    # 2015-2020 epoch mosaic carries the 2020 layer used in the feature stack;
-    # the older 2007-2010 mosaic extends the historical L-band record.
-    palsar_epoch <- ee$ImageCollection("JAXA/ALOS/PALSAR/YEARLY/SAR_EPOCH")$
-      filterBounds(aoi_ee)$map(palsar_cal)
-    palsar_early <- ee$ImageCollection("JAXA/ALOS/PALSAR/YEARLY/SAR")$
-      filterBounds(aoi_ee)$map(palsar_cal)
-    palsar <- palsar_epoch$merge(palsar_early)
-    
-    # 2020 L-band layer for the 2020 feature stack (Sections 2.2.F and 2.2.G).
-    palsar_2020 <- palsar_epoch$
-      filter(ee$Filter$calendarRange(2020L, 2020L, "year"))$
-      first()$select(c("L_HH", "L_HV", "L_HH_HV"))$clip(aoi_ee)
-    
-    # Per-year basin-mean L-band backscatter across the years the mosaic spans.
-    lband_stats <- function(img) {
-      s <- img$select(c("L_HH", "L_HV", "L_HH_HV"))$reduceRegion(
-        reducer = ee$Reducer$mean(), geometry = aoi_ee, scale = 30L,
-        maxPixels = as.integer(1e9))
-      ee$Feature(NULL, s)$set("year", ee$Date(img$get("system:time_start"))$get("year"))
-    }
-    lband_info <- palsar$map(lband_stats)$getInfo()
-    lband_df <- do.call(rbind, lapply(lband_info$features, function(f)
-      data.frame(year = f$properties$year, L_HH = f$properties$L_HH,
-                 L_HV = f$properties$L_HV, L_HH_HV = f$properties$L_HH_HV)))
-    lband_df <- lband_df[order(lband_df$year), ]
-    write.csv(lband_df, here::here("03.outputs", "palsar_lband_annual.csv"), row.names = FALSE)
-    print(lband_df)
-    NA    year      L_HH      L_HV  L_HH_HV
-    NA 1  2007 -12.73216 -20.54924 7.817085
-    NA 15 2007 -12.42554 -20.27474 7.849200
-    NA 2  2008 -13.01060 -20.81124 7.800638
-    NA 16 2008 -12.79285 -20.55024 7.757391
-    NA 3  2009 -13.42851 -21.45257 8.024060
-    NA 17 2009 -13.13245 -21.11011 7.977663
-    NA 4  2010 -12.89489 -20.86124 7.966351
-    NA 18 2010 -12.54676 -20.51267 7.965912
-    NA 5  2015 -13.68003 -22.63273 8.952702
-    NA 19 2015 -13.18250 -22.32017 9.137679
-    NA 6  2016 -14.34193 -22.86310 8.521167
-    NA 20 2016 -13.16938 -21.89083 8.721447
-    NA 7  2017 -12.80826 -21.62615 8.817890
-    NA 21 2017 -13.26448 -21.69542 8.430946
-    NA 8  2018 -12.86062 -21.10501 8.244389
-    NA 22 2018 -12.42776 -20.21998 7.792216
-    NA 9  2019 -13.40124 -21.64335 8.242106
-    NA 23 2019 -13.51811 -21.70684 8.188728
-    NA 10 2020 -13.42914 -22.13153 8.702399
-    NA 24 2020 -13.56427 -22.22474 8.660468
-    NA 11 2021 -14.18453 -23.42314 9.238612
-    NA 12 2022 -14.06640 -22.96948 8.903081
-    NA 13 2023 -15.01046 -23.73586 8.725396
-    NA 14 2024 -14.76964 -23.49871 8.729071
-    # 2020 HH-HV double-bounce indicator: high where vegetation stands in water.
-    vis_lband <- list(bands = list("L_HH_HV"), min = -2, max = 8,
-                      palette = c("#2166ac", "#f7f7f7", "#b2182b"))
-    lband_url <- ee_tile_url(palsar_2020, vis_lband)
-    tmap_mode("view")
-    tm_shape(st_as_sf(aoi_sf)) +
-      tm_borders(col = "red", lwd = 2) +
-      tm_basemap("Esri.WorldImagery") +
-      tm_tiles(lband_url, group = "PALSAR HH-HV (2020)") +
-      tm_scalebar(position = c("right", "bottom"))
+```r
+# ALOS/ALOS-2 PALSAR L-band yearly mosaic. DN -> gamma0 dB (Shimada et al. 2014):
+# gamma0 = 10*log10(DN^2) - 83.0. HH double-bounce marks flooded vegetation.
+palsar_cal <- function(img) {
+  hh <- img$select("HH"); hv <- img$select("HV")
+  hh_db <- hh$updateMask(hh$gt(0))$pow(2)$log10()$multiply(10)$subtract(83)$rename("L_HH")
+  hv_db <- hv$updateMask(hv$gt(0))$pow(2)$log10()$multiply(10)$subtract(83)$rename("L_HV")
+  diff  <- hh_db$subtract(hv_db)$rename("L_HH_HV")
+  img$addBands(hh_db)$addBands(hv_db)$addBands(diff)$
+    copyProperties(img, list("system:time_start"))
+}
+
+# 2015-2020 epoch mosaic carries the 2020 layer used in the feature stack;
+# the older 2007-2010 mosaic extends the historical L-band record.
+palsar_epoch <- ee$ImageCollection("JAXA/ALOS/PALSAR/YEARLY/SAR_EPOCH")$
+  filterBounds(aoi_ee)$map(palsar_cal)
+palsar_early <- ee$ImageCollection("JAXA/ALOS/PALSAR/YEARLY/SAR")$
+  filterBounds(aoi_ee)$map(palsar_cal)
+palsar <- palsar_epoch$merge(palsar_early)
+
+# 2020 L-band layer for the 2020 feature stack (Sections 2.2.F and 2.2.G).
+palsar_2020 <- palsar_epoch$
+  filter(ee$Filter$calendarRange(2020L, 2020L, "year"))$
+  first()$select(c("L_HH", "L_HV", "L_HH_HV"))$clip(aoi_ee)
+
+# Per-year basin-mean L-band backscatter across the years the mosaic spans.
+lband_stats <- function(img) {
+  s <- img$select(c("L_HH", "L_HV", "L_HH_HV"))$reduceRegion(
+    reducer = ee$Reducer$mean(), geometry = aoi_ee, scale = 30L,
+    maxPixels = as.integer(1e9))
+  ee$Feature(NULL, s)$set("year", ee$Date(img$get("system:time_start"))$get("year"))
+}
+lband_info <- palsar$map(lband_stats)$getInfo()
+lband_df <- do.call(rbind, lapply(lband_info$features, function(f)
+  data.frame(year = f$properties$year, L_HH = f$properties$L_HH,
+             L_HV = f$properties$L_HV, L_HH_HV = f$properties$L_HH_HV)))
+lband_df <- lband_df[order(lband_df$year), ]
+write.csv(lband_df, here::here("03.outputs", "palsar_lband_annual.csv"), row.names = FALSE)
+print(lband_df)
+```
+
+```
+NA    year      L_HH      L_HV  L_HH_HV
+NA 1  2007 -12.73216 -20.54924 7.817085
+NA 15 2007 -12.42554 -20.27474 7.849200
+NA 2  2008 -13.01060 -20.81124 7.800638
+NA 16 2008 -12.79285 -20.55024 7.757391
+NA 3  2009 -13.42851 -21.45257 8.024060
+NA 17 2009 -13.13245 -21.11011 7.977663
+NA 4  2010 -12.89489 -20.86124 7.966351
+NA 18 2010 -12.54676 -20.51267 7.965912
+NA 5  2015 -13.68003 -22.63273 8.952702
+NA 19 2015 -13.18250 -22.32017 9.137679
+NA 6  2016 -14.34193 -22.86310 8.521167
+NA 20 2016 -13.16938 -21.89083 8.721447
+NA 7  2017 -12.80826 -21.62615 8.817890
+NA 21 2017 -13.26448 -21.69542 8.430946
+NA 8  2018 -12.86062 -21.10501 8.244389
+NA 22 2018 -12.42776 -20.21998 7.792216
+NA 9  2019 -13.40124 -21.64335 8.242106
+NA 23 2019 -13.51811 -21.70684 8.188728
+NA 10 2020 -13.42914 -22.13153 8.702399
+NA 24 2020 -13.56427 -22.22474 8.660468
+NA 11 2021 -14.18453 -23.42314 9.238612
+NA 12 2022 -14.06640 -22.96948 8.903081
+NA 13 2023 -15.01046 -23.73586 8.725396
+NA 14 2024 -14.76964 -23.49871 8.729071
+```
+
+```r
+# 2020 HH-HV double-bounce indicator: high where vegetation stands in water.
+vis_lband <- list(bands = list("L_HH_HV"), min = -2, max = 8,
+                  palette = c("#2166ac", "#f7f7f7", "#b2182b"))
+lband_url <- ee_tile_url(palsar_2020, vis_lband)
+tmap_mode("view")
+tm_shape(st_as_sf(aoi_sf)) +
+  tm_borders(col = "red", lwd = 2) +
+  tm_basemap("Esri.WorldImagery") +
+  tm_tiles(lband_url, group = "PALSAR HH-HV (2020)") +
+  tm_scalebar(position = c("right", "bottom"))
+```
 
 #### 2.2.C Landsat Image Processing
 
@@ -468,51 +540,68 @@ C-band cannot penetrate the dense Typha canopy that defines the marsh interior, 
 
 Optical analysis used Analysis Ready Data products from Landsat Collection 2, accessed through Google Earth Engine, specifically Level-2 surface reflectance from the Thematic Mapper (L5-TM), Enhanced Thematic Mapper Plus (L7-ETM+), and Operational Land Imager (L8-OLI). Band names were harmonised to a common six-band schema (blue, green, red, NIR, SWIR1, SWIR2) across the three sensor families to enable consistent index computation. Because Collection 2 Level-2 products are already atmospherically corrected (LEDAPS for the Thematic Mapper and Enhanced Thematic Mapper Plus, LaSRC for the Operational Land Imager) and terrain-registered (L1TP), quality control centres not on re-deriving these corrections but on removing what they leave behind. Collection 2 scale factors were applied (reflectance = DN x 0.0000275 - 0.2), and dilated-cloud, cirrus, cloud, and cloud-shadow pixels were masked from the QA\_PIXEL bitfield together with radiometrically saturated pixels flagged in QA\_RADSAT. Scenes exceeding 30% cloud cover were excluded. Earlier sensors (Landsat 3 and 4) were evaluated but present gaps, cloud interference, sensor degradation, and archival quality issues that reduce usable coverage, particularly before 1984; the temporal window is constrained by these data quality limitations rather than by methodological choice. Annual median composites were generated for each index, forming the core multi-decadal time series for characterising recession-refilling cycles.
 
-    l5_bands <- list(from = c("SR_B1","SR_B2","SR_B3","SR_B4","SR_B5","SR_B7"),
-                      to   = c("blue","green","red","nir","swir1","swir2"))
-    l7_bands <- l5_bands
-    l8_bands <- list(from = c("SR_B2","SR_B3","SR_B4","SR_B5","SR_B6","SR_B7"),
-                      to   = c("blue","green","red","nir","swir1","swir2"))
-    
-    apply_scale <- function(image) {
-      optical <- image$select("SR_B.*")$multiply(0.0000275)$add(-0.2)
-      image$addBands(optical, overwrite = TRUE)$copyProperties(image, list("system:time_start"))
-    }
-    # [build 2026-07-06] Strengthened cloud/shadow/saturation QC. C2 L2 already
-    # carries atmospheric (LEDAPS/LaSRC) and terrain (L1TP) correction, so this masks
-    # what those leave: QA_PIXEL bit 1 dilated cloud, bit 2 cirrus, bit 3 cloud,
-    # bit 4 cloud shadow; plus QA_RADSAT saturated pixels. Snow (bit 5) is rare here.
-    mask_clouds <- function(image) {
-      qa  <- image$select("QA_PIXEL")
-      sat <- image$select("QA_RADSAT")
-      cloud_bits <- bitwShiftL(1L, 1L) + bitwShiftL(1L, 2L) +
-                    bitwShiftL(1L, 3L) + bitwShiftL(1L, 4L)
-      clean <- qa$bitwiseAnd(cloud_bits)$eq(0L)$And(sat$eq(0L))
-      image$updateMask(clean)$copyProperties(image, list("system:time_start"))
-    }
-    harmonise <- function(image, from, to) image$select(from, to)$copyProperties(image, list("system:time_start"))
-    
-    l5_col <- ee$ImageCollection("LANDSAT/LT05/C02/T1_L2")$filterBounds(aoi_ee)$
-      filter(ee$Filter$lt("CLOUD_COVER", 30))$map(mask_clouds)$map(apply_scale)$
-      map(function(img) harmonise(img, l5_bands$from, l5_bands$to))
-    l7_col <- ee$ImageCollection("LANDSAT/LE07/C02/T1_L2")$filterBounds(aoi_ee)$
-      filter(ee$Filter$lt("CLOUD_COVER", 30))$map(mask_clouds)$map(apply_scale)$
-      map(function(img) harmonise(img, l7_bands$from, l7_bands$to))
-    l8_col <- ee$ImageCollection("LANDSAT/LC08/C02/T1_L2")$filterBounds(aoi_ee)$
-      filter(ee$Filter$lt("CLOUD_COVER", 30))$map(mask_clouds)$map(apply_scale)$
-      map(function(img) harmonise(img, l8_bands$from, l8_bands$to))
-    
-    landsat <- l5_col$merge(l7_col)$merge(l8_col)$sort("system:time_start")
-    
-    n_landsat <- landsat$size()$getInfo()
-    print(paste("Total harmonised Landsat scenes:", n_landsat))
-    [1] "Total harmonised Landsat scenes: 1346"
-    ls_dates <- landsat$reduceColumns(
-      ee$Reducer$minMax(), list("system:time_start"))$getInfo()
-    print(paste("First scene:", as.Date(as.POSIXct(ls_dates$min / 1000, origin = "1970-01-01"))))
-    [1] "First scene: 1970-01-25"
-    print(paste("Last scene:", as.Date(as.POSIXct(ls_dates$max / 1000, origin = "1970-01-01"))))
-    [1] "Last scene: 1969-12-20"
+```r
+l5_bands <- list(from = c("SR_B1","SR_B2","SR_B3","SR_B4","SR_B5","SR_B7"),
+                  to   = c("blue","green","red","nir","swir1","swir2"))
+l7_bands <- l5_bands
+l8_bands <- list(from = c("SR_B2","SR_B3","SR_B4","SR_B5","SR_B6","SR_B7"),
+                  to   = c("blue","green","red","nir","swir1","swir2"))
+
+apply_scale <- function(image) {
+  optical <- image$select("SR_B.*")$multiply(0.0000275)$add(-0.2)
+  image$addBands(optical, overwrite = TRUE)$copyProperties(image, list("system:time_start"))
+}
+# [build 2026-07-06] Strengthened cloud/shadow/saturation QC. C2 L2 already
+# carries atmospheric (LEDAPS/LaSRC) and terrain (L1TP) correction, so this masks
+# what those leave: QA_PIXEL bit 1 dilated cloud, bit 2 cirrus, bit 3 cloud,
+# bit 4 cloud shadow; plus QA_RADSAT saturated pixels. Snow (bit 5) is rare here.
+mask_clouds <- function(image) {
+  qa  <- image$select("QA_PIXEL")
+  sat <- image$select("QA_RADSAT")
+  cloud_bits <- bitwShiftL(1L, 1L) + bitwShiftL(1L, 2L) +
+                bitwShiftL(1L, 3L) + bitwShiftL(1L, 4L)
+  clean <- qa$bitwiseAnd(cloud_bits)$eq(0L)$And(sat$eq(0L))
+  image$updateMask(clean)$copyProperties(image, list("system:time_start"))
+}
+harmonise <- function(image, from, to) image$select(from, to)$copyProperties(image, list("system:time_start"))
+
+l5_col <- ee$ImageCollection("LANDSAT/LT05/C02/T1_L2")$filterBounds(aoi_ee)$
+  filter(ee$Filter$lt("CLOUD_COVER", 30))$map(mask_clouds)$map(apply_scale)$
+  map(function(img) harmonise(img, l5_bands$from, l5_bands$to))
+l7_col <- ee$ImageCollection("LANDSAT/LE07/C02/T1_L2")$filterBounds(aoi_ee)$
+  filter(ee$Filter$lt("CLOUD_COVER", 30))$map(mask_clouds)$map(apply_scale)$
+  map(function(img) harmonise(img, l7_bands$from, l7_bands$to))
+l8_col <- ee$ImageCollection("LANDSAT/LC08/C02/T1_L2")$filterBounds(aoi_ee)$
+  filter(ee$Filter$lt("CLOUD_COVER", 30))$map(mask_clouds)$map(apply_scale)$
+  map(function(img) harmonise(img, l8_bands$from, l8_bands$to))
+
+landsat <- l5_col$merge(l7_col)$merge(l8_col)$sort("system:time_start")
+
+n_landsat <- landsat$size()$getInfo()
+print(paste("Total harmonised Landsat scenes:", n_landsat))
+```
+
+```
+[1] "Total harmonised Landsat scenes: 1346"
+```
+
+```r
+ls_dates <- landsat$reduceColumns(
+  ee$Reducer$minMax(), list("system:time_start"))$getInfo()
+print(paste("First scene:", as.Date(as.POSIXct(ls_dates$min / 1000, origin = "1970-01-01"))))
+```
+
+```
+[1] "First scene: 1970-01-25"
+```
+
+```r
+print(paste("Last scene:", as.Date(as.POSIXct(ls_dates$max / 1000, origin = "1970-01-01"))))
+```
+
+```
+[1] "Last scene: 1969-12-20"
+```
 
 #### 2.2.D Spectral Water Indices
 
@@ -528,81 +617,112 @@ We evaluated five water-extraction indices, selected to span the range of spectr
 
 The multi-index approach tests each against SAR-derived water maps to quantify what optical sensors detect and what they miss across the basin’s full range of conditions.
 
-    years <- 1984L:2024L
-    index_bands <- c("NDWI","MNDWI","AWEIsh","WRI","NDPI","blue","green","red","nir","swir1","swir2")
-    annual_composites <- lapply(years, function(y) {
-      start <- ee$Date$fromYMD(y, 1L, 1L); end <- ee$Date$fromYMD(y, 12L, 31L)
-      annual <- landsat_idx$filterDate(start, end)$select(index_bands)
-      n <- annual$size()$getInfo()
-      if (n == 0L) return(NULL)
-      annual$median()$set("system:time_start", start$millis())$set("year", y)$set("n_scenes", n)
-    })
-    annual_composites <- Filter(Negate(is.null), annual_composites)
-    landsat_annual <- ee$ImageCollection$fromImages(annual_composites)
-    print(paste("Annual composites:", length(annual_composites)))
-    [1] "Annual composites: 39"
-    extract_index_stats <- function(image) {
-      stats <- image$select(c("NDWI", "MNDWI", "AWEIsh", "WRI", "NDPI"))$
-        reduceRegion(
-          reducer = ee$Reducer$mean(),
-          geometry = aoi_ee,
-          scale = 200L,
-          maxPixels = as.integer(1e9)
-        )
-      ee$Feature(NULL, stats)$
-        set("year", image$get("year"))$
-        set("n_scenes", image$get("n_scenes"))
-    }
-    
-    ls_ts_info <- landsat_annual$map(extract_index_stats)$getInfo()
-    
-    ls_df <- do.call(rbind, lapply(ls_ts_info$features, function(f) {
-      data.frame(
-        year     = f$properties$year,
-        n_scenes = f$properties$n_scenes,
-        NDWI     = f$properties$NDWI,
-        MNDWI    = f$properties$MNDWI,
-        AWEIsh   = f$properties$AWEIsh,
-        WRI      = f$properties$WRI,
-        NDPI     = f$properties$NDPI,
-        stringsAsFactors = FALSE)
-    }))
-    
-    print(head(ls_df))
-      year n_scenes       NDWI      MNDWI     AWEIsh       WRI      NDPI
-    1 1984        2 -0.2948529 -0.3486844 -0.3444822 0.5986843 0.3486844
-    2 1986        5 -0.4408136 -0.2982329 -0.3984272 0.5701771 0.2982329
-    3 1987        2 -0.5758820 -0.3819334 -0.4825397 0.3532797 0.3819334
-    4 1989        8 -0.3709450 -0.3155186 -0.3424501 0.6506581 0.3155186
-    5 1990       13 -0.3727139 -0.2794435 -0.3440107 0.7109362 0.2794435
-    6 1991       10 -0.3329792 -0.2564152 -0.3097378 0.7014307 0.2564152
-    ls_long <- ls_df %>%
-      pivot_longer(cols = c(NDWI, MNDWI, AWEIsh, WRI, NDPI),
-                   names_to = "index", values_to = "value")
-    
-    ggplot(ls_long, aes(x = year, y = value, colour = index)) +
-      geom_line(linewidth = 0.8) +
-      geom_point(size = 1.5) +
-      geom_vline(xintercept = c(1995, 2012), linetype = "dashed",
-                 colour = "grey40", linewidth = 0.5) +
-      labs(title = "Lake Chilwa: Spectral Water Indices (1984-2024)",
-           x = "Year", y = "Index value (basin mean)",
-           colour = "Index") +
-      theme_minimal() +
-      theme(legend.position = "bottom")
+```r
+years <- 1984L:2024L
+index_bands <- c("NDWI","MNDWI","AWEIsh","WRI","NDPI","blue","green","red","nir","swir1","swir2")
+annual_composites <- lapply(years, function(y) {
+  start <- ee$Date$fromYMD(y, 1L, 1L); end <- ee$Date$fromYMD(y, 12L, 31L)
+  annual <- landsat_idx$filterDate(start, end)$select(index_bands)
+  n <- annual$size()$getInfo()
+  if (n == 0L) return(NULL)
+  annual$median()$set("system:time_start", start$millis())$set("year", y)$set("n_scenes", n)
+})
+annual_composites <- Filter(Negate(is.null), annual_composites)
+landsat_annual <- ee$ImageCollection$fromImages(annual_composites)
+print(paste("Annual composites:", length(annual_composites)))
+```
+
+```
+[1] "Annual composites: 39"
+```
+
+```r
+extract_index_stats <- function(image) {
+  stats <- image$select(c("NDWI", "MNDWI", "AWEIsh", "WRI", "NDPI"))$
+    reduceRegion(
+      reducer = ee$Reducer$mean(),
+      geometry = aoi_ee,
+      scale = 200L,
+      maxPixels = as.integer(1e9)
+    )
+  ee$Feature(NULL, stats)$
+    set("year", image$get("year"))$
+    set("n_scenes", image$get("n_scenes"))
+}
+
+ls_ts_info <- landsat_annual$map(extract_index_stats)$getInfo()
+
+ls_df <- do.call(rbind, lapply(ls_ts_info$features, function(f) {
+  data.frame(
+    year     = f$properties$year,
+    n_scenes = f$properties$n_scenes,
+    NDWI     = f$properties$NDWI,
+    MNDWI    = f$properties$MNDWI,
+    AWEIsh   = f$properties$AWEIsh,
+    WRI      = f$properties$WRI,
+    NDPI     = f$properties$NDPI,
+    stringsAsFactors = FALSE)
+}))
+
+print(head(ls_df))
+```
+
+```
+  year n_scenes       NDWI      MNDWI     AWEIsh       WRI      NDPI
+1 1984        2 -0.2948529 -0.3486844 -0.3444822 0.5986843 0.3486844
+2 1986        5 -0.4408136 -0.2982329 -0.3984272 0.5701771 0.2982329
+3 1987        2 -0.5758820 -0.3819334 -0.4825397 0.3532797 0.3819334
+4 1989        8 -0.3709450 -0.3155186 -0.3424501 0.6506581 0.3155186
+5 1990       13 -0.3727139 -0.2794435 -0.3440107 0.7109362 0.2794435
+6 1991       10 -0.3329792 -0.2564152 -0.3097378 0.7014307 0.2564152
+```
+
+```r
+ls_long <- ls_df %>%
+  pivot_longer(cols = c(NDWI, MNDWI, AWEIsh, WRI, NDPI),
+               names_to = "index", values_to = "value")
+
+ggplot(ls_long, aes(x = year, y = value, colour = index)) +
+  geom_line(linewidth = 0.8) +
+  geom_point(size = 1.5) +
+  geom_vline(xintercept = c(1995, 2012), linetype = "dashed",
+             colour = "grey40", linewidth = 0.5) +
+  labs(title = "Lake Chilwa: Spectral Water Indices (1984-2024)",
+       x = "Year", y = "Index value (basin mean)",
+       colour = "Index") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
 
 To address threshold instability caused by dissolved salts, algal blooms, and variable turbidity in the endorheic system, an Otsu-style percentile method was applied to derive adaptive water/non-water thresholds, following Pekel et al. (2016). Basin-wide MNDWI percentiles for a 2020 dry-season composite illustrate the bimodal distribution exploited by the method.
 
-    ref_scene <- landsat_idx$filterDate("2020-06-01", "2020-10-31")$median()$clip(aoi_ee)
-    mndwi_vals <- ref_scene$select("MNDWI")$reduceRegion(
-      reducer = ee$Reducer$percentile(c(10L, 50L, 90L)), geometry = aoi_ee, scale = 30L,
-      maxPixels = as.integer(1e9))$getInfo()
-    print(paste("MNDWI p10:", round(mndwi_vals$MNDWI_p10, 4)))
-    [1] "MNDWI p10: -0.5662"
-    print(paste("MNDWI p50:", round(mndwi_vals$MNDWI_p50, 4)))
-    [1] "MNDWI p50: -0.5118"
-    print(paste("MNDWI p90:", round(mndwi_vals$MNDWI_p90, 4)))
-    [1] "MNDWI p90: 0.7384"
+```r
+ref_scene <- landsat_idx$filterDate("2020-06-01", "2020-10-31")$median()$clip(aoi_ee)
+mndwi_vals <- ref_scene$select("MNDWI")$reduceRegion(
+  reducer = ee$Reducer$percentile(c(10L, 50L, 90L)), geometry = aoi_ee, scale = 30L,
+  maxPixels = as.integer(1e9))$getInfo()
+print(paste("MNDWI p10:", round(mndwi_vals$MNDWI_p10, 4)))
+```
+
+```
+[1] "MNDWI p10: -0.5662"
+```
+
+```r
+print(paste("MNDWI p50:", round(mndwi_vals$MNDWI_p50, 4)))
+```
+
+```
+[1] "MNDWI p50: -0.5118"
+```
+
+```r
+print(paste("MNDWI p90:", round(mndwi_vals$MNDWI_p90, 4)))
+```
+
+```
+[1] "MNDWI p90: 0.7384"
+```
 
 #### 2.2.E Spectral Mixture Analysis
 
@@ -615,136 +735,150 @@ Spectral mixture analysis enabled sub-pixel water fraction estimation, critical 
 
 Endmember selection followed standard protocols, with training samples drawn from spectrally pure pixels identified through iterative refinement and community validation. The model uses four classes: open water (129 samples, purity threshold \>95%), emergent (flooded) vegetation (117 samples, \>85%), dry vegetation (69 samples, \>90%), and bare soil or exposed lakebed (42 samples, \>85%). The urban/built class carried in earlier drafts was dropped: lakeshore settlements and the zimbowera fishing camps are built of Typha grass and bamboo, are sub-pixel at 30 m resolution, and are spectrally collinear with soil and vegetation, so a built endmember cannot be reliably resolved. The four classes were selected against a spectral separability screen (Section 2.2.F), and a fifth substrate class distinguishing salt-crusted from sandy exposed lakebed is a candidate for addition where the imagery supports it.
 
-    # [reconcile 2026-07-06] Endmembers are image-derived from spectrally pure
-    # pixels (per-class median spectrum), not hardcoded placeholders, mirroring
-    # 05.scripts/sma_endmember_modelling.R (SCHEME_4). Hardcoded reflectances that
-    # do not match the scene bias every fraction and make the SMA irreproducible.
-    # ref_scene is the 2020 dry-season median composite from the otsu-threshold chunk.
-    ndvi_ref <- ref_scene$normalizedDifference(c("nir", "red"))$rename("NDVI")
-    ref_em   <- ref_scene$addBands(ndvi_ref)
-    m_ref    <- ref_em$select("MNDWI")
-    v_ref    <- ref_em$select("NDVI")
-    
-    # Threshold-guided pure-pixel masks for the four classes (urban dropped); the
-    # same strata used by the 2.2.F screen and the 2.2.G stratification, so
-    # endmembers, features, and labels stay mutually consistent.
-    pure_masks <- list(
-      water       = m_ref$gt(0.2),
-      flooded_veg = v_ref$gt(0.2)$And(v_ref$lt(0.5))$And(m_ref$gt(-0.1))$And(m_ref$lt(0.2)),
-      dry_veg     = v_ref$gt(0.3)$And(m_ref$lt(-0.1)),
-      bare_soil   = v_ref$lt(0.12)$And(m_ref$lt(0)))
-    
-    sma_bands <- c("blue", "green", "red", "nir", "swir1", "swir2")
-    median_spectrum <- function(mask) {
-      vals <- ref_em$select(sma_bands)$updateMask(mask)$reduceRegion(
-        reducer = ee$Reducer$median(), geometry = aoi_ee,
-        scale = 30L, maxPixels = as.integer(1e9))$getInfo()
-      as.numeric(vals[sma_bands])
-    }
-    
-    endmembers_water       <- median_spectrum(pure_masks$water)
-    endmembers_flooded_veg <- median_spectrum(pure_masks$flooded_veg)
-    endmembers_dry_veg     <- median_spectrum(pure_masks$dry_veg)
-    endmembers_bare_soil   <- median_spectrum(pure_masks$bare_soil)
-    
-    endmember_list <- list(endmembers_water, endmembers_flooded_veg,
-                           endmembers_dry_veg, endmembers_bare_soil)
-    
-    # Guard: near-collinear endmembers make fractions unstable (Halabisky 2016).
-    em_mat <- do.call(rbind, endmember_list)
-    cc <- suppressWarnings(cor(t(em_mat)))
-    if (any(abs(cc[lower.tri(cc)]) > 0.999))
-      warning("Two endmembers are near-collinear; SMA fractions may be unstable.")
-    print(round(em_mat, 4))
-           [,1]   [,2]   [,3]   [,4]   [,5]   [,6]
-    [1,] 0.0686 0.0777 0.0815 0.0689 0.0081 0.0060
-    [2,] 0.0520 0.0657 0.0652 0.1284 0.0588 0.0329
-    [3,] 0.0491 0.0708 0.0865 0.1982 0.2295 0.1611
-    [4,] 0.0503 0.0620 0.0712 0.0889 0.1386 0.1387
-    # Apply SMA to the 2020 dry-season composite
-    ref_bands <- ref_scene$select(c("blue", "green", "red", "nir", "swir1", "swir2"))
-    
-    fractions <- ref_bands$unmix(
-      endmembers = endmember_list,
-      sumToOne = TRUE,
-      nonNegative = TRUE
-    )$rename(c("water_frac", "flooded_veg_frac", "dry_veg_frac",
-               "bare_soil_frac"))
-    
-    vis_frac <- list(bands = list("water_frac"), min = 0, max = 1,
-                     palette = c("white", "cyan", "blue", "darkblue"))
-    frac_url <- ee_tile_url(fractions$clip(aoi_ee), vis_frac)
-    
-    tmap_mode("view")
-    tm_shape(st_as_sf(aoi_sf)) +
-      tm_borders(col = "red", lwd = 2) +
-      tm_basemap("Esri.WorldImagery") +
-      tm_tiles(frac_url, group = "SMA water fraction") +
-      tm_scalebar(position = c("right", "bottom"))
+```r
+# [reconcile 2026-07-06] Endmembers are image-derived from spectrally pure
+# pixels (per-class median spectrum), not hardcoded placeholders, mirroring
+# 05.scripts/sma_endmember_modelling.R (SCHEME_4). Hardcoded reflectances that
+# do not match the scene bias every fraction and make the SMA irreproducible.
+# ref_scene is the 2020 dry-season median composite from the otsu-threshold chunk.
+ndvi_ref <- ref_scene$normalizedDifference(c("nir", "red"))$rename("NDVI")
+ref_em   <- ref_scene$addBands(ndvi_ref)
+m_ref    <- ref_em$select("MNDWI")
+v_ref    <- ref_em$select("NDVI")
 
-    unmix_image <- function(image) {
-      bands <- image$select(c("blue", "green", "red", "nir", "swir1", "swir2"))
-      fracs <- bands$unmix(
-        endmembers = endmember_list,
-        sumToOne = TRUE,
-        nonNegative = TRUE
-      )$rename(c("water_frac", "flooded_veg_frac", "dry_veg_frac",
-                 "bare_soil_frac"))
-      fracs$copyProperties(image, list("system:time_start", "year", "n_scenes"))
-    }
-    
-    landsat_sma <- landsat_annual$map(unmix_image)
-    
-    extract_sma_stats <- function(image) {
-      stats <- image$select(c("water_frac", "flooded_veg_frac"))$
-        reduceRegion(
-          reducer = ee$Reducer$mean(),
-          geometry = aoi_ee,
-          scale = 200L,
-          maxPixels = as.integer(1e9)
-        )
-      ee$Feature(NULL, stats)$
-        set("year", image$get("year"))$
-        set("n_scenes", image$get("n_scenes"))
-    }
-    
-    sma_ts_info <- landsat_sma$map(extract_sma_stats)$getInfo()
-    
-    sma_df <- do.call(rbind, lapply(sma_ts_info$features, function(f) {
-      data.frame(
-        year             = f$properties$year,
-        n_scenes         = f$properties$n_scenes,
-        water_frac       = f$properties$water_frac,
-        flooded_veg_frac = f$properties$flooded_veg_frac,
-        stringsAsFactors = FALSE)
-    }))
-    
-    print(head(sma_df))
-      year n_scenes water_frac flooded_veg_frac
-    1 1984        2 0.10452673       0.03204538
-    2 1986        5 0.12658318       0.14961885
-    3 1987        2 0.03755875       0.23941615
-    4 1989        8 0.14316377       0.12607553
-    5 1990       13 0.14949378       0.14776108
-    6 1991       10 0.16475132       0.12887153
-    sma_long <- sma_df %>%
-      pivot_longer(cols = c(water_frac, flooded_veg_frac),
-                   names_to = "class", values_to = "fraction") %>%
-      mutate(class = recode(class,
-        water_frac = "Open water",
-        flooded_veg_frac = "Flooded vegetation"))
-    
-    ggplot(sma_long, aes(x = year, y = fraction, fill = class)) +
-      geom_area(alpha = 0.7) +
-      geom_vline(xintercept = c(1995, 2012), linetype = "dashed",
-                 colour = "grey40", linewidth = 0.5) +
-      labs(title = "Sub-pixel water and flooded vegetation fraction (1984-2024)",
-           x = "Year", y = "Mean fraction within basin",
-           fill = "Cover class") +
-      scale_fill_manual(values = c("Open water" = "steelblue",
-                                    "Flooded vegetation" = "darkgreen")) +
-      theme_minimal() +
-      theme(legend.position = "bottom")
+# Threshold-guided pure-pixel masks for the four classes (urban dropped); the
+# same strata used by the 2.2.F screen and the 2.2.G stratification, so
+# endmembers, features, and labels stay mutually consistent.
+pure_masks <- list(
+  water       = m_ref$gt(0.2),
+  flooded_veg = v_ref$gt(0.2)$And(v_ref$lt(0.5))$And(m_ref$gt(-0.1))$And(m_ref$lt(0.2)),
+  dry_veg     = v_ref$gt(0.3)$And(m_ref$lt(-0.1)),
+  bare_soil   = v_ref$lt(0.12)$And(m_ref$lt(0)))
+
+sma_bands <- c("blue", "green", "red", "nir", "swir1", "swir2")
+median_spectrum <- function(mask) {
+  vals <- ref_em$select(sma_bands)$updateMask(mask)$reduceRegion(
+    reducer = ee$Reducer$median(), geometry = aoi_ee,
+    scale = 30L, maxPixels = as.integer(1e9))$getInfo()
+  as.numeric(vals[sma_bands])
+}
+
+endmembers_water       <- median_spectrum(pure_masks$water)
+endmembers_flooded_veg <- median_spectrum(pure_masks$flooded_veg)
+endmembers_dry_veg     <- median_spectrum(pure_masks$dry_veg)
+endmembers_bare_soil   <- median_spectrum(pure_masks$bare_soil)
+
+endmember_list <- list(endmembers_water, endmembers_flooded_veg,
+                       endmembers_dry_veg, endmembers_bare_soil)
+
+# Guard: near-collinear endmembers make fractions unstable (Halabisky 2016).
+em_mat <- do.call(rbind, endmember_list)
+cc <- suppressWarnings(cor(t(em_mat)))
+if (any(abs(cc[lower.tri(cc)]) > 0.999))
+  warning("Two endmembers are near-collinear; SMA fractions may be unstable.")
+print(round(em_mat, 4))
+```
+
+```
+       [,1]   [,2]   [,3]   [,4]   [,5]   [,6]
+[1,] 0.0686 0.0777 0.0815 0.0689 0.0081 0.0060
+[2,] 0.0520 0.0657 0.0652 0.1284 0.0588 0.0329
+[3,] 0.0491 0.0708 0.0865 0.1982 0.2295 0.1611
+[4,] 0.0503 0.0620 0.0712 0.0889 0.1386 0.1387
+```
+
+```r
+# Apply SMA to the 2020 dry-season composite
+ref_bands <- ref_scene$select(c("blue", "green", "red", "nir", "swir1", "swir2"))
+
+fractions <- ref_bands$unmix(
+  endmembers = endmember_list,
+  sumToOne = TRUE,
+  nonNegative = TRUE
+)$rename(c("water_frac", "flooded_veg_frac", "dry_veg_frac",
+           "bare_soil_frac"))
+
+vis_frac <- list(bands = list("water_frac"), min = 0, max = 1,
+                 palette = c("white", "cyan", "blue", "darkblue"))
+frac_url <- ee_tile_url(fractions$clip(aoi_ee), vis_frac)
+
+tmap_mode("view")
+tm_shape(st_as_sf(aoi_sf)) +
+  tm_borders(col = "red", lwd = 2) +
+  tm_basemap("Esri.WorldImagery") +
+  tm_tiles(frac_url, group = "SMA water fraction") +
+  tm_scalebar(position = c("right", "bottom"))
+
+unmix_image <- function(image) {
+  bands <- image$select(c("blue", "green", "red", "nir", "swir1", "swir2"))
+  fracs <- bands$unmix(
+    endmembers = endmember_list,
+    sumToOne = TRUE,
+    nonNegative = TRUE
+  )$rename(c("water_frac", "flooded_veg_frac", "dry_veg_frac",
+             "bare_soil_frac"))
+  fracs$copyProperties(image, list("system:time_start", "year", "n_scenes"))
+}
+
+landsat_sma <- landsat_annual$map(unmix_image)
+
+extract_sma_stats <- function(image) {
+  stats <- image$select(c("water_frac", "flooded_veg_frac"))$
+    reduceRegion(
+      reducer = ee$Reducer$mean(),
+      geometry = aoi_ee,
+      scale = 200L,
+      maxPixels = as.integer(1e9)
+    )
+  ee$Feature(NULL, stats)$
+    set("year", image$get("year"))$
+    set("n_scenes", image$get("n_scenes"))
+}
+
+sma_ts_info <- landsat_sma$map(extract_sma_stats)$getInfo()
+
+sma_df <- do.call(rbind, lapply(sma_ts_info$features, function(f) {
+  data.frame(
+    year             = f$properties$year,
+    n_scenes         = f$properties$n_scenes,
+    water_frac       = f$properties$water_frac,
+    flooded_veg_frac = f$properties$flooded_veg_frac,
+    stringsAsFactors = FALSE)
+}))
+
+print(head(sma_df))
+```
+
+```
+  year n_scenes water_frac flooded_veg_frac
+1 1984        2 0.10452673       0.03204538
+2 1986        5 0.12658318       0.14961885
+3 1987        2 0.03755875       0.23941615
+4 1989        8 0.14316377       0.12607553
+5 1990       13 0.14949378       0.14776108
+6 1991       10 0.16475132       0.12887153
+```
+
+```r
+sma_long <- sma_df %>%
+  pivot_longer(cols = c(water_frac, flooded_veg_frac),
+               names_to = "class", values_to = "fraction") %>%
+  mutate(class = recode(class,
+    water_frac = "Open water",
+    flooded_veg_frac = "Flooded vegetation"))
+
+ggplot(sma_long, aes(x = year, y = fraction, fill = class)) +
+  geom_area(alpha = 0.7) +
+  geom_vline(xintercept = c(1995, 2012), linetype = "dashed",
+             colour = "grey40", linewidth = 0.5) +
+  labs(title = "Sub-pixel water and flooded vegetation fraction (1984-2024)",
+       x = "Year", y = "Mean fraction within basin",
+       fill = "Cover class") +
+  scale_fill_manual(values = c("Open water" = "steelblue",
+                                "Flooded vegetation" = "darkgreen")) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
 
 #### 2.2.F Feature Selection and Spectral Separability
 
@@ -798,14 +932,19 @@ The five optical indices performed as the literature predicted, with clear diffe
 
 *Table 1: Pairwise Pearson correlation coefficients among five spectral water indices computed from basin-wide annual median values (1984 to 2024). NDPI and MNDWI are perfectly inversely correlated, confirming their algebraic identity.*
 
-    idx_cor <- cor(ls_df[, c("NDWI","MNDWI","AWEIsh","WRI","NDPI")], use = "pairwise.complete.obs")
-    round(as.data.frame(idx_cor), 3)
-             NDWI  MNDWI AWEIsh    WRI   NDPI
-    NDWI    1.000  0.452  0.753  0.716 -0.452
-    MNDWI   0.452  1.000  0.568  0.831 -1.000
-    AWEIsh  0.753  0.568  1.000  0.659 -0.568
-    WRI     0.716  0.831  0.659  1.000 -0.831
-    NDPI   -0.452 -1.000 -0.568 -0.831  1.000
+```r
+idx_cor <- cor(ls_df[, c("NDWI","MNDWI","AWEIsh","WRI","NDPI")], use = "pairwise.complete.obs")
+round(as.data.frame(idx_cor), 3)
+```
+
+```
+         NDWI  MNDWI AWEIsh    WRI   NDPI
+NDWI    1.000  0.452  0.753  0.716 -0.452
+MNDWI   0.452  1.000  0.568  0.831 -1.000
+AWEIsh  0.753  0.568  1.000  0.659 -0.568
+WRI     0.716  0.831  0.659  1.000 -0.831
+NDPI   -0.452 -1.000 -0.568 -0.831  1.000
+```
 
 Inter-index correlation analysis revealed that the five indices do not carry equivalent information. NDPI and MNDWI were perfectly inversely correlated (r = -1.000), confirming their algebraic identity. WRI correlated strongly with MNDWI (r = 0.829) and NDWI (r = 0.713), while NDWI and MNDWI showed only moderate correlation (r = 0.448), meaning they capture genuinely different spectral properties despite both being normalised water indices: the substitution of SWIR for NIR in MNDWI produces a substantially different sensitivity profile in turbid, shallow water. AWEIsh correlated more strongly with NDWI (r = 0.759) than with MNDWI (r = 0.557), consistent with their shared reliance on NIR-band contrast.
 
