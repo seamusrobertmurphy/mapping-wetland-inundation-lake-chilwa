@@ -1,8 +1,10 @@
 # Mapping long-term wetland inundation dynamics of the Lake Chilwa recession using multisource remote sensing data
 
-**Murphy, S.**<sup>a,\*</sup> · **Wilson, J.**<sup>b</sup> · **Banks, L.**<sup>c</sup>
+**Murphy, S.**<sup>a,\*</sup>, **Wilson, J.**<sup>b</sup>, **Banks, L.**<sup>c</sup>
 
-<sup>a</sup> Corresponding author: seamusrobertmurphy@gmail.com · <sup>b</sup> johnwilson26313@gmail.com · <sup>c</sup> laurenkbnks@gmail.com
+ - <sup>a</sup> Corresponding author: seamusrobertmurphy@gmail.com 
+ - <sup>b</sup> johnwilson26313@gmail.com 
+ - <sup>c</sup> laurenkbnks@gmail.com
 
 > This README mirrors the manuscript draft `01.manuscript/Manuscript_2026-07-29.docx`. The executable source is the Quarto notebook `01.manuscript/mapping-wetland-inundation-lake-chilwa.qmd`.
 
