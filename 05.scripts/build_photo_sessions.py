@@ -61,11 +61,18 @@ def exif(path):
             return d + m / 60 + s / 3600
         lat = dms(gps["GPSLatitude"]) * (-1 if gps.get("GPSLatitudeRef") == "S" else 1)
         lon = dms(gps["GPSLongitude"]) * (-1 if gps.get("GPSLongitudeRef") == "W" else 1)
+    # DateTimeOriginal is the capture time and lives in the Exif sub-IFD, not in
+    # IFD0. IFD0 carries DateTime, which is the last-modified stamp and which a
+    # bulk file copy rewrites. Reading IFD0 alone put 143 of the 244 frames at
+    # the moment they were copied to disk rather than the moment they were
+    # taken, so the sub-IFD is tried first and DateTime is only a last resort.
+    sub = {ExifTags.TAGS.get(k, k): v for k, v in ex.get_ifd(0x8769).items()}
     stamp = None
-    for key in ("DateTimeOriginal", "DateTime"):
-        if tags.get(key):
+    for src, key in ((sub, "DateTimeOriginal"), (sub, "DateTimeDigitized"),
+                     (tags, "DateTimeOriginal"), (tags, "DateTime")):
+        if src.get(key):
             try:
-                stamp = dt.datetime.strptime(str(tags[key]), "%Y:%m:%d %H:%M:%S")
+                stamp = dt.datetime.strptime(str(src[key]), "%Y:%m:%d %H:%M:%S")
                 break
             except ValueError:
                 pass

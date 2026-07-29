@@ -1,19 +1,16 @@
 # Mapping long-term wetland inundation dynamics of the Lake Chilwa recession using multisource remote sensing data
 
-**Murphy, S.**<sup>a,\*</sup>, **Wilson, J.**<sup>b</sup>, **Banks, L.**<sup>c</sup>
+Murphy, S.<sup>a,\*</sup>, Wilson, J.<sup>b</sup>, Banks, L.<sup>c</sup>
 
-<sup>a</sup> Corresponding author: seamusrobertmurphy@gmail.com 
-<sup>b</sup> johnwilson26313@gmail.com 
-<sup>c</sup> laurenkbnks@gmail.com
+<sup>a</sup> Corresponding author: [seamusrobertmurphy\@gmail.com](mailto:seamusrobertmurphy@gmail.com){.email} <sup>b</sup> [johnwilson26313\@gmail.com](mailto:johnwilson26313@gmail.com){.email} <sup>c</sup> [laurenkbnks\@gmail.com](mailto:laurenkbnks@gmail.com){.email}
 
 > This README mirrors the manuscript draft `01.manuscript/Manuscript_2026-07-29.docx`. The executable source is the Quarto notebook `01.manuscript/mapping-wetland-inundation-lake-chilwa.qmd`.
 
----
+------------------------------------------------------------------------
 
+![Figure 1](03.outputs/PNG/image1.png)
 
-![Figure 1](03.outputs/readme-figures/image1.png)
-
-**Figure 1.** Study area: the self-derived Lake Chilwa basin (red boundary) on a topographic base, with a Malawi locator inset. Coordinates in EPSG:4326.
+Figure 1. Study area: the self-derived Lake Chilwa basin (red boundary) on a topographic base, with a Malawi locator inset. Coordinates in EPSG:4326.
 
 *Figures throughout are current pipeline outputs stored under `03.outputs/`, regenerated on each notebook run.*
 
@@ -21,7 +18,7 @@
 
 Wetlands are among the most valuable ecosystems on Earth and among the most difficult to monitor at scale, particularly in sub-Saharan Africa, where wet-season cloud, turbid shallow water, and dense emergent vegetation defeat optical sensors and the fluctuating shorelines of endorheic lakes escape single-date mapping. Endorheic lakes compound the difficulty, since their water is continuously redistributed through cycles of recession and refilling that no single-date image can capture. Lake Chilwa, a shallow terminal basin in southern Malawi, advances and retreats on a cycle of recession and refilling approximately every fifteen years, drying almost completely in some years and rebounding to high fish productivity in others; its ecology and its migratory fishing communities track this cycle, yet conventional management frameworks capture neither the shifting hydrology nor the migrant economy that surrounds it. In this study, we combine multi-source remote sensing with participatory mapping used as ground-truth training data to map the basin's inundation dynamics. We assembled a harmonized Landsat time series from 1984 to 2024 to reconstruct four decades of recession and refilling. We evaluated five spectral water indices at and resolving surface water at the sub-pixel scale through spectral mixture analysis. The was fitted with also with ALOS PALSAR L-band backscatter and trained a Random Forest classifier to classify across open water, flooded vegetation, dry vegetation, and bare soil. The classification reached an overall accuracy of 81 percent and a kappa of 0.77, highest for open water and lowest for flooded vegetation and bare soil, where dense Typha attenuates the C-band double-bounce signal that the L-band layer was included to overcome. Open water ranged from a wet-season maximum near 490 km² to a dry-season minimum below 110 km², falling below a tenth of peak extent during the recessions of 1995 and 2012, when the lake survived only as residual channels and swamp refugia. The fieldwork that supplied the training data also cross-checked the result, agreeing with the classified boundaries and seasonal timing at 74 to 92 percent of locations and revealing the migrant and floating fishing communities and governance structures invisible to earth observation, from seasonal migration timing to enforcement conflict across jurisdictions. Integrating multi-source remote sensing with sustained participatory fieldwork resolves dynamics that neither approach captures alone, nor provides a transferable basis for monitoring the fluctuating wetlands on which fishing economies and lakeshore communities depend.
 
-**Keywords:** Wetland inundation mapping; SAR backscatter; spectral mixture analysis; participatory mapping; socio-hydrological systems; endorheic lakes; Lake Chilwa, Malawi
+Keywords: Wetland inundation mapping; SAR backscatter; spectral mixture analysis; participatory mapping; socio-hydrological systems; endorheic lakes; Lake Chilwa, Malawi
 
 ## Introduction
 
@@ -55,10 +52,9 @@ The pattern across all five indices is consistent: each occupies a spectral nich
 
 ### 1.2 SAR-Optical Complementarity
 
-![Figure 2](03.outputs/PNG/RADAR-render.png)
+![Figure 2](03.outputs/PNG/RADAR-render.png){width="2100"}
 
-**Figure 2.** Sentinel-1 C-band SAR render of the basin. Smooth open water returns dark against brighter land and vegetation.
-
+Figure 2. Sentinel-1 C-band SAR render of the basin. Smooth open water returns dark against brighter land and vegetation.
 
 Synthetic aperture radar addresses the specific failures of optical indices in inland wetlands. SAR operates at microwave frequencies, independent of cloud cover and solar illumination, two properties that make it indispensable for monitoring tropical wetlands where persistent cloud obscures optical sensors for months during the critical wet season (Mahdavi et al., 2018).
 
@@ -74,10 +70,9 @@ Fusing SAR and optical data exploits their complementarity. Pixel-level stacking
 
 ### 1.3 Study Area
 
-![Figure 3](03.outputs/readme-figures/image8.png)
+![Figure 3](03.outputs/PNG/image8.png){width="2100"}
 
-**Figure 3.** A preview of the result: classified surface-water extent, open water and flooded vegetation within the basin boundary.
-
+Figure 3. A preview of the result: classified surface-water extent, open water and flooded vegetation within the basin boundary.
 
 Lake Chilwa Basin is one of Africa’s most productive endorheic ecosystems. Located in southern Malawi, this shallow terminal basin spans approximately 2,310 km², of which open water forms a fluctuating share, on the order of a third in a wet year and far less during recession, the remainder comprising Typha swamp and seasonally inundated marshland (Kalk, 1979). The lake was designated a Ramsar Wetland of International Importance in 1997, in recognition of its outstanding waterfowl populations and ecological significance (Wilson, 2007). The three surrounding districts, Zomba, Phalombe, and Machinga, support population densities of 162 persons km⁻² around the lake itself and considerably higher in the southern basin (Wilson, 2010), with 70 to 81% of households living below the poverty line and farming plots averaging 0.35 ha (Wilson, 2010). The fishery contributes on average 20% of Malawi’s annual catch and in peak years has reached 43% (Chiotha, 1996; Njaya et al., 2011).
 
@@ -107,28 +102,35 @@ The study employs a socio-hydrological systems framework, a mixed-methods, two-s
 
 Data collection occurred between September 2012 and March 2014 across lakeshore villages in Zomba, Phalombe, and Machinga districts within the Lake Chilwa Ramsar zones. Study site boundaries were defined through participatory mapping workshops with multi-stakeholder groups and Department of Fisheries officers. The fisheries governance structure within which fieldwork operated, comprising six Fisheries Associations aligned to Traditional Authorities and 53 Beach Village Committees aligned to Group Village Headmen, is described by Wilson (2009) in the Lake Chilwa and Mpoto Lagoon Fisheries Management Plan.
 
-**Qualitative data.**
+Qualitative data.
 
 Qualitative data collection comprised four methods. Key informant interviews (n=45) were semi-structured conversations with village leaders, fishing camp chairmen, Beach Village Committee (BVC) members, Department of Fisheries officers, and long-term residents, focused on historical lake dynamics, fishing regulations, and seasonal migration. Focus group discussions (n=18) convened separate sessions with migrant seine-net fishers, resident gill-net fishers, women fish processors, boat owners, bicycle traders, and zimbowera cooperative leaders to capture competing perspectives on resource access, livelihood strategies, and enforcement disputes. The research was based principally at Kachulu, the fishery’s busiest port on the western shore, with extended visits to fishing camps at Napali, Andere, Chambwalu, Lingoni, and Manda Manjeza in the lake interior and along the northern shore in Machinga district. Participatory rural appraisals employed seasonal calendars, resource mapping, and historical timelines to document collective knowledge of lake dynamics and fishery management. Extended participatory observation in fishing camps and zimbowera neighbourhoods documented daily practices, operational logistics, social networks, and adaptive strategies during different hydrological phases (Murphy, 2014).
 
-**Geographic data.**
+Geographic data.
 
 Geographic data collection used differential GPS receivers to record landscape structure and lakeshore dynamics during field visits. Participatory workshops enabled community identification of fishing infrastructure, including permanent and seasonal camps, landing sites, processing areas, and the canal systems (such as Mapila Canal, approximately 10 to 15 km depending on lake levels) through which fishers access otherwise inaccessible interior fishing grounds. Ecological zones including wetland boundaries, vegetation transitions, and spawning areas were mapped alongside cultural landscapes such as sacred fishing sites on Chisi Island (Kalanda-Sabola et al., 2007), traditional fishing territories, and conflict zones between district jurisdictions. Seasonal patterns including water level indicators, migration routes from Machinga to Zomba and Phalombe districts, and market network locations were recorded. Community knowledge was integrated with remote sensing through iterative validation workshops where preliminary satellite-derived maps were ground-truthed against local observations. This process revealed discrepancies between technical classifications and actual resource use patterns, leading to refined mapping approaches.
 
-**Reference data.**
+Reference data.
 
 In-situ reference data were collected during the ethnographic fieldwork between September 2012 and March 2014. Differential GPS receivers recorded landscape features, water boundaries, and vegetation transitions during field visits across the three study districts. A total of 45 key informant sites and 18 focus group locations were georeferenced, along with 23 fishing camps (permanent and seasonal), landing sites, processing areas, and ecological transition zones identified through participatory mapping workshops.
 
 GPS points were imported into a GIS environment and used to generate training and validation polygons through visual interpretation of high-resolution Google Earth imagery cross-referenced with field photographs and community annotations. Polygons were sorted by size and alternately assigned to training (approximately 50%) and testing (approximately 50%) groups to ensure independent validation samples with balanced representation of small and large features, following the protocol of Mahdianpari et al. (2019). Community validation during iterative feedback workshops identified spectrally ambiguous landscape units, such as seasonal versus permanent wetlands and distinct fishing zones, that required field verification to classify correctly.
 
++--------------------------+----+----------------------------------------------------------------------------+
 | Sample                   | n  | Detail                                                                     |
-| ------------------------ | -- | -------------------------------------------------------------------------- |
++==========================+====+============================================================================+
 | Key informant interviews | 45 | Village leaders, camp chairmen, BVC members, Fisheries officers            |
++--------------------------+----+----------------------------------------------------------------------------+
 | Focus group discussions  | 18 | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
++--------------------------+----+----------------------------------------------------------------------------+
 | Districts                | 3  | Zomba, Phalombe, Machinga                                                  |
++--------------------------+----+----------------------------------------------------------------------------+
 | Georeferenced sites      | 23 | Fishing camps, landing sites, processing areas                             |
++--------------------------+----+----------------------------------------------------------------------------+
 | Beach Village Committees | 53 | Aligned to Group Village Headmen                                           |
++--------------------------+----+----------------------------------------------------------------------------+
 | Fisheries Associations   | 6  | Aligned to Traditional Authorities                                         |
++--------------------------+----+----------------------------------------------------------------------------+
 
 #### 2.1.1 Photographic Evidence and Participatory Ground Truth
 
@@ -148,21 +150,19 @@ Locator map: site area at 1:4,000,000 scale
 
 #### 2.2.A Terrain and Flow-Routing Analysis
 
-![Figure 4](03.outputs/readme-figures/image2.png)
+![Figure 4](03.outputs/PNG/image2.png){width="2100"}
 
-**Figure 4.** D-infinity specific catchment area on a log10 scale, computed on the least-cost depression-breached SRTM surface.
+Figure 4. D-infinity specific catchment area on a log10 scale, computed on the least-cost depression-breached SRTM surface.
 
+![Figure 5](03.outputs/PNG/image3.png){width="2100"}
 
-![Figure 5](03.outputs/readme-figures/image3.png)
-
-**Figure 5.** D-infinity flow direction in radians. Continuous partitioning holds across the flat terminal basin, where single-flow-direction routing fails.
-
+Figure 5. D-infinity flow direction in radians. Continuous partitioning holds across the flat terminal basin, where single-flow-direction routing fails.
 
 The basin boundary and drainage network are derived from the terrain, not inherited from a public product. Google Earth Engine has no native flow-routing tool, so the delineation is performed locally in R. On Lake Chilwa’s flat endorheic floor, an average maximum depth of 2.95 m across a 2,310 km² terminal basin (Section 1.3), the decisive step is hydrological conditioning of the elevation model: without it, closed depressions and flat cells sever the flow paths on which the drainage-structure argument of Section 3.3 depends.
 
 We conditioned the elevation model by least-cost depression breaching alone (Lindsay, 2016), carving minimal-descent paths through spurious barriers rather than filling depressions, which on a near-flat basin floor would erase the very gradients the routing depends on. Flow was then routed by the D-infinity method (Tarboton, 1997), whose continuous angular partitioning represents dispersal across low-relief terrain more faithfully than the eight discrete directions of D8; where fuller flow dispersion is wanted, a multiple-flow-direction variant (Freeman, 1991; Quinn, 1991) is the defensible alternative. Routing was computed twice for algorithmic consensus: once in WhiteboxTools (`wbt_d_inf_pointer`, `wbt_d_inf_flow_accumulation`) and once in the flowdem package (`dirs` and `accum`, mode `dinf`). From the D-infinity flow accumulation we extracted the stream network (`wbt_extract_streams`), ordered it by the Strahler scheme (`wbt_strahler_stream_order`), and delineated the basin and its sub-catchments, the polygons that serve as the analysis boundary (`03.outputs/SHP/chilwa_basin.shp`, `chilwa_subasins.shp`). The full workflow, including the depression-breaching and DEM-resolution comparisons, is documented in `05.scripts/watershed-algorithms.qmd` and its published mirror.
 
-```r
+``` r
 # Terrain grids from the local least-cost-breaching + D-infinity derivation
 # (05.scripts/watershed-algorithms.qmd; WhiteboxTools + flowdem). Earth Engine
 # has no breaching, flow-accumulation, or D-infinity operator, so the basin is
@@ -185,12 +185,12 @@ for (f in dem_files) {
 list.files(dem_extract_dir)
 ```
 
-```
+```         
 [1] "Dinfareasca.tif"          "dinfFlowDirectionang.tif"
 [3] "output_SRTM15Plus.tif"   
 ```
 
-```r
+``` r
 # [align 2026-07-06] Load only the SRTM input and the D-infinity grids from the
 # breach-conditioned derivation; the D8 and pit-filled products are no longer read.
 srtm15plus <- terra::rast(file.path(dem_extract_dir, "output_SRTM15Plus.tif"))
@@ -200,7 +200,7 @@ dinf_area  <- terra::rast(file.path(dem_extract_dir, "Dinfareasca.tif"))
 print(srtm15plus)
 ```
 
-```
+```         
 class       : SpatRaster 
 size        : 316, 451, 1  (nrow, ncol, nlyr)
 resolution  : 0.004166667, 0.004166667  (x, y)
@@ -212,7 +212,7 @@ name        : output_SRTM15Plus
 
 Contributing area spans several orders of magnitude, so the D-infinity accumulation is mapped on a log scale, cropped to the basin and a surrounding buffer for comparison against the GEE-derived relief map above.
 
-```r
+``` r
 aoi_vect     <- terra::vect(sf::st_as_sf(aoi_sf))
 crop_extent  <- terra::ext(aoi_vect) + 0.2
 
@@ -233,16 +233,15 @@ The D-infinity direction map resolves a fan of continuous flow angles across the
 
 #### 2.2.B SAR Backscatter Processing
 
-![Figure 6](03.outputs/PNG/SNAP-processing.png)
+![Figure 6](03.outputs/PNG/SNAP-processing.png){width="2100"}
 
-**Figure 6.** Sentinel-1 C-band pre-processing chain.
-
+Figure 6. Sentinel-1 C-band pre-processing chain.
 
 SAR processing exploits the sensitivity of C-band radar to backscatter differences between smooth water surfaces and rough terrestrial features. Calm water yields low backscatter (-20 to -30 dB) while vegetated areas exhibit higher returns from volume scattering and surface roughness interactions. Wet soils produce higher backscatter than dry soils due to their increased dielectric constant. VV polarisation provides greatest sensitivity to soil moisture; cross-polarisation (VH) differentiates woody from herbaceous vegetation (Tsyganskaya et al., 2018).
 
 Sentinel-1 data were processed through a Google Earth Engine pipeline. GEE hosts the Copernicus Sentinel-1 Ground Range Detected archive already carried through the standard ESA preprocessing chain: precise orbit-file application, thermal and border noise removal, radiometric calibration to sigma-naught backscatter, and range-Doppler terrain correction (Gorelick et al., 2017). To this we add the corrections that make C-band defensible over the basin’s low-relief, vegetated margins: multi-temporal speckle suppression and angular-based radiometric slope correction, which normalises backscatter for local incidence angle and terrain (Vollrath et al., 2020). We filter the archive to Interferometric Wide Swath mode, VV and VH polarisations, and descending orbit, holding a single relative orbit where possible to keep the acquisition geometry constant across the time series. Dense multi-temporal stacking of this kind characterises wetland extent and vegetation more reliably than single dates (Slagter et al., 2020), and unsupervised modelling of the resulting Sentinel-1 time series can isolate change without labelled data (Di Martino et al., 2023).
 
-```r
+``` r
 s1 <- ee$ImageCollection("COPERNICUS/S1_GRD")$
   filterBounds(aoi_ee)$
   filter(ee$Filter$eq("instrumentMode", "IW"))$
@@ -255,26 +254,26 @@ n_scenes <- s1$size()$getInfo()
 print(paste("Total Sentinel-1 scenes:", n_scenes))
 ```
 
-```
+```         
 [1] "Total Sentinel-1 scenes: 945"
 ```
 
-```r
+``` r
 # Date range
 dates <- s1$reduceColumns(
   ee$Reducer$minMax(), list("system:time_start"))$getInfo()
 print(paste("First scene:", as.Date(as.POSIXct(dates[[1]] / 1000, origin = "1970-01-01"))))
 ```
 
-```
+```         
 [1] "First scene: 1970-01-11"
 ```
 
-```r
+``` r
 print(paste("Last scene:", as.Date(as.POSIXct(dates[[2]] / 1000, origin = "1970-01-01"))))
 ```
 
-```
+```         
 [1] "Last scene: 1969-12-16"
 ```
 
@@ -282,7 +281,7 @@ print(paste("Last scene:", as.Date(as.POSIXct(dates[[2]] / 1000, origin = "1970-
 
 GEE does not apply speckle filtering by default. We implement a focal mean approximation. For refined Lee Sigma filtering, export to SNAP. The focal approach is sufficient for time series compositing where multi-temporal averaging further suppresses speckle.
 
-```r
+``` r
 apply_speckle_filter <- function(image) {
   # Focal mean with 7x7 kernel (approximates boxcar filter)
   vv_filtered <- image$select("VV")$focal_mean(radius = 3.5, kernelType = "square", units = "pixels")$rename("VV_filtered")
@@ -296,7 +295,7 @@ s1_filtered <- s1$map(apply_speckle_filter)
 
 VV/VH ratio and band difference help distinguish open water from flooded vegetation. Open water shows low VV and low VH. Flooded vegetation shows moderate VV but elevated VH due to double-bounce scattering.
 
-```r
+``` r
 # Ratio (in dB domain, ratio = difference)
 add_ratio_bands <- function(image) {
   vv <- image$select("VV_filtered")
@@ -312,7 +311,7 @@ s1_processed <- s1_filtered$map(add_ratio_bands)
 
 Calm water surfaces yield low backscatter in both VV and VH channels, typically below -15 dB for VV. We use a percentile-based adaptive threshold: compute the VV distribution within the AOI on a reference scene and take the value that separates the lowest backscatter mode (water) from land. A fixed fallback of -15 dB is available if needed.
 
-```r
+``` r
 # Reference scene for threshold calibration
 sample_image <- ee$Image(s1_processed$first())$select("VV_filtered")
 
@@ -330,19 +329,19 @@ threshold_vv <- percentiles$VV_filtered_p15
 print(paste("Adaptive VV threshold (p15):", round(threshold_vv, 2), "dB"))
 ```
 
-```
+```         
 [1] "Adaptive VV threshold (p15): -7.73 dB"
 ```
 
-```r
+``` r
 print(paste("Median VV:", round(percentiles$VV_filtered_p50, 2), "dB"))
 ```
 
-```
+```         
 [1] "Median VV: -6.25 dB"
 ```
 
-```r
+``` r
 # Use adaptive threshold; fall back to -15 dB if percentile is unreasonable
 if (is.null(threshold_vv) || threshold_vv > -10 || threshold_vv < -25) {
   threshold_vv <- -15
@@ -350,11 +349,11 @@ if (is.null(threshold_vv) || threshold_vv > -10 || threshold_vv < -25) {
 }
 ```
 
-```
+```         
 [1] "Using fixed threshold: -15 dB"
 ```
 
-```r
+``` r
 classify_water <- function(image) {
   water <- image$select("VV_filtered")$lt(threshold_vv)$rename("water")
   image$addBands(water)$
@@ -368,7 +367,7 @@ s1_water <- s1_processed$map(classify_water)
 
 Aggregate to monthly composites to reduce data volume and suppress residual speckle through temporal averaging.
 
-```r
+``` r
 # Build year-month pairs in the cloud before writing locally
 year_month_pairs <- expand.grid(year = 2015L:2024L, month = 1L:12L)
 composite_list <- lapply(seq_len(nrow(year_month_pairs)), function(i) {
@@ -391,7 +390,7 @@ s1_monthly <- ee$ImageCollection$fromImages(composite_list)
 print(paste("Monthly composites:", length(composite_list)))
 ```
 
-```
+```         
 [1] "Monthly composites: 96"
 ```
 
@@ -399,7 +398,7 @@ print(paste("Monthly composites:", length(composite_list)))
 
 Extract mean backscatter and water fraction within the AOI for each monthly composite to build the SAR time series.
 
-```r
+``` r
 extract_stats <- function(image) {
   stats <- image$select(c("VV_filtered", "VH_filtered", "water"))$
     reduceRegion(
@@ -434,7 +433,7 @@ s1_df$date <- as.Date(s1_df$date)
 print(head(s1_df))
 ```
 
-```
+```         
         date year month n_scenes    VV_mean   VH_mean water_frac
 1 2015-01-01 2015     1        1  -7.720720 -16.89148 0.08818942
 2 2018-01-01 2018     1        6 -11.337888 -17.80544 0.07638291
@@ -452,7 +451,7 @@ GEE Sentinel-1 GRD products arrive with radiometric calibration (sigma0) and Ran
 
 C-band cannot penetrate the dense Typha canopy that defines the marsh interior, the one blind spot the optical and Sentinel-1 stacks share. L-band, at roughly 23 cm wavelength against C-band’s 5.6 cm, reaches through emergent vegetation and returns the double-bounce signal of standing water beneath it. We add the ALOS and ALOS-2 PALSAR L-band yearly mosaic (Shimada et al., 2014), the only historical spaceborne radar in the archive for this basin, available for 2007 to 2010 and 2015 to 2020. The mosaic is terrain-corrected and orthorectified; we convert the stored digital numbers to gamma-naught backscatter by the standard calibration, gamma0 (dB) = 10 log10(DN²) − 83.0, and derive the HH and HV channels and their difference. Flooded vegetation raises HH through double-bounce while open water stays low in both channels and dry canopy scatters into HV, so the HH-minus-HV contrast isolates sub-canopy inundation that neither optical indices nor C-band resolve. The L-band HH and HV channels enter the 2020 feature stack alongside the optical and C-band features, and the per-year basin series probes how the sub-canopy signal tracks the recession cycle across the years the mosaic spans.
 
-```r
+``` r
 # ALOS/ALOS-2 PALSAR L-band yearly mosaic. DN -> gamma0 dB (Shimada et al. 2014):
 # gamma0 = 10*log10(DN^2) - 83.0. HH double-bounce marks flooded vegetation.
 palsar_cal <- function(img) {
@@ -493,7 +492,7 @@ write.csv(lband_df, here::here("03.outputs", "palsar_lband_annual.csv"), row.nam
 print(lband_df)
 ```
 
-```
+```         
 NA    year      L_HH      L_HV  L_HH_HV
 NA 1  2007 -12.73216 -20.54924 7.817085
 NA 15 2007 -12.42554 -20.27474 7.849200
@@ -521,7 +520,7 @@ NA 13 2023 -15.01046 -23.73586 8.725396
 NA 14 2024 -14.76964 -23.49871 8.729071
 ```
 
-```r
+``` r
 # 2020 HH-HV double-bounce indicator: high where vegetation stands in water.
 vis_lband <- list(bands = list("L_HH_HV"), min = -2, max = 8,
                   palette = c("#2166ac", "#f7f7f7", "#b2182b"))
@@ -538,12 +537,11 @@ tm_shape(st_as_sf(aoi_sf)) +
 
 ![Figure 7](03.outputs/readme-figures/image6.png)
 
-**Figure 7.** Scene availability over the basin, 1984 to 2024: total acquisitions against those with cloud cover below 30 percent. Dashed lines mark the 1995 and 2012 recessions.
+Figure 7. Scene availability over the basin, 1984 to 2024: total acquisitions against those with cloud cover below 30 percent. Dashed lines mark the 1995 and 2012 recessions.
 
+Optical analysis used Analysis Ready Data products from Landsat Collection 2, accessed through Google Earth Engine, specifically Level-2 surface reflectance from the Thematic Mapper (L5-TM), Enhanced Thematic Mapper Plus (L7-ETM+), and Operational Land Imager (L8-OLI). Band names were harmonised to a common six-band schema (blue, green, red, NIR, SWIR1, SWIR2) across the three sensor families to enable consistent index computation. Because Collection 2 Level-2 products are already atmospherically corrected (LEDAPS for the Thematic Mapper and Enhanced Thematic Mapper Plus, LaSRC for the Operational Land Imager) and terrain-registered (L1TP), quality control centres not on re-deriving these corrections but on removing what they leave behind. Collection 2 scale factors were applied (reflectance = DN x 0.0000275 - 0.2), and dilated-cloud, cirrus, cloud, and cloud-shadow pixels were masked from the QA_PIXEL bitfield together with radiometrically saturated pixels flagged in QA_RADSAT. Scenes exceeding 30% cloud cover were excluded. Earlier sensors (Landsat 3 and 4) were evaluated but present gaps, cloud interference, sensor degradation, and archival quality issues that reduce usable coverage, particularly before 1984; the temporal window is constrained by these data quality limitations rather than by methodological choice. Annual median composites were generated for each index, forming the core multi-decadal time series for characterising recession-refilling cycles.
 
-Optical analysis used Analysis Ready Data products from Landsat Collection 2, accessed through Google Earth Engine, specifically Level-2 surface reflectance from the Thematic Mapper (L5-TM), Enhanced Thematic Mapper Plus (L7-ETM+), and Operational Land Imager (L8-OLI). Band names were harmonised to a common six-band schema (blue, green, red, NIR, SWIR1, SWIR2) across the three sensor families to enable consistent index computation. Because Collection 2 Level-2 products are already atmospherically corrected (LEDAPS for the Thematic Mapper and Enhanced Thematic Mapper Plus, LaSRC for the Operational Land Imager) and terrain-registered (L1TP), quality control centres not on re-deriving these corrections but on removing what they leave behind. Collection 2 scale factors were applied (reflectance = DN x 0.0000275 - 0.2), and dilated-cloud, cirrus, cloud, and cloud-shadow pixels were masked from the QA\_PIXEL bitfield together with radiometrically saturated pixels flagged in QA\_RADSAT. Scenes exceeding 30% cloud cover were excluded. Earlier sensors (Landsat 3 and 4) were evaluated but present gaps, cloud interference, sensor degradation, and archival quality issues that reduce usable coverage, particularly before 1984; the temporal window is constrained by these data quality limitations rather than by methodological choice. Annual median composites were generated for each index, forming the core multi-decadal time series for characterising recession-refilling cycles.
-
-```r
+``` r
 l5_bands <- list(from = c("SR_B1","SR_B2","SR_B3","SR_B4","SR_B5","SR_B7"),
                   to   = c("blue","green","red","nir","swir1","swir2"))
 l7_bands <- l5_bands
@@ -584,25 +582,25 @@ n_landsat <- landsat$size()$getInfo()
 print(paste("Total harmonised Landsat scenes:", n_landsat))
 ```
 
-```
+```         
 [1] "Total harmonised Landsat scenes: 1346"
 ```
 
-```r
+``` r
 ls_dates <- landsat$reduceColumns(
   ee$Reducer$minMax(), list("system:time_start"))$getInfo()
 print(paste("First scene:", as.Date(as.POSIXct(ls_dates$min / 1000, origin = "1970-01-01"))))
 ```
 
-```
+```         
 [1] "First scene: 1970-01-25"
 ```
 
-```r
+``` r
 print(paste("Last scene:", as.Date(as.POSIXct(ls_dates$max / 1000, origin = "1970-01-01"))))
 ```
 
-```
+```         
 [1] "Last scene: 1969-12-20"
 ```
 
@@ -610,17 +608,33 @@ print(paste("Last scene:", as.Date(as.POSIXct(ls_dates$max / 1000, origin = "197
 
 We evaluated five water-extraction indices, selected to span the range of spectral approaches available for inland water mapping and to test their relative performance under the specific conditions Lake Chilwa presents; the same family of indices was recently benchmarked for surface-water extraction with Sentinel-2 by Girma et al. (2025). Each index, its band algebra, and its expected behaviour in this setting are set out below.
 
-| Index                        | Formula                                                 | Behaviour in the Lake Chilwa setting                                                                                                                                                                                                                                                |
-| ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| NDWI (McFeeters, 1996)       | (Green - NIR) / (Green + NIR)                           | The original water index, sensitive to deep open water but prone to false negatives in turbid, shallow, or vegetated conditions because suspended sediment and canopy raise NIR reflectance; the baseline against which the others are compared.                                    |
-| MNDWI (Xu, 2006)             | (Green - SWIR1) / (Green + SWIR1)                       | Substitutes SWIR for NIR, improving discrimination of water from built-up and bare-soil surfaces; the strongest single optical index for turbid water, though it fails beneath emergent vegetation and requires adaptive thresholding in saline systems.                            |
-| AWEIsh (Feyisa et al., 2014) | Blue + 2.5 x Green - 1.5 x (NIR + SWIR1) - 0.25 x SWIR2 | A five-band combination optimised for shadow suppression and complex-landscape discrimination; outperforms simpler indices where topographic or shadow effects confound classification but offers no clear advantage in shallow vegetated wetlands.                                 |
-| WRI (Shen and Li, 2010)      | (Green + Red) / (NIR + SWIR1)                           | A ratio index that suppresses cloud and shadow noise effectively; competitive in bare-soil landscapes but vulnerable to inflation from suspended sediment in the red band, and untested in endorheic systems.                                                                       |
-| NDPI (Lacaux et al., 2007)   | (SWIR1 - Green) / (SWIR1 + Green)                       | Designed for temporary pond detection in semi-arid Africa using SPOT-5 data; the algebraic inverse of MNDWI, sensitive to the water-vegetation boundary where other indices fail, most appropriate for Lake Chilwa’s seasonal vegetated margins but weaker in deep or turbid water. |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Index                 | Formula                                                 | Lake Chilwa Application                                                                                                                                                                                                                                                             |
++=======================+=========================================================+=====================================================================================================================================================================================================================================================================================+
+| NDWI                  | (Green - NIR) / (Green + NIR)                           | The original water index, sensitive to deep open water but prone to false negatives in turbid, shallow, or vegetated conditions because suspended sediment and canopy raise NIR reflectance; the baseline against which the others are compared.                                    |
+|                       |                                                         |                                                                                                                                                                                                                                                                                     |
+| (McFeeters, 1996)     |                                                         |                                                                                                                                                                                                                                                                                     |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| MNDWI                 | (Green - SWIR1) / (Green + SWIR1)                       | Substitutes SWIR for NIR, improving discrimination of water from built-up and bare-soil surfaces; the strongest single optical index for turbid water, though it fails beneath emergent vegetation and requires adaptive thresholding in saline systems.                            |
+|                       |                                                         |                                                                                                                                                                                                                                                                                     |
+| (Xu, 2006)            |                                                         |                                                                                                                                                                                                                                                                                     |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| AWEIsh                | Blue + 2.5 x Green - 1.5 x (NIR + SWIR1) - 0.25 x SWIR2 | A five-band combination optimised for shadow suppression and complex-landscape discrimination; outperforms simpler indices where topographic or shadow effects confound classification but offers no clear advantage in shallow vegetated wetlands.                                 |
+|                       |                                                         |                                                                                                                                                                                                                                                                                     |
+| (Feyisa et al., 2014) |                                                         |                                                                                                                                                                                                                                                                                     |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| WRI                   | (Green + Red) / (NIR + SWIR1)                           | A ratio index that suppresses cloud and shadow noise effectively; competitive in bare-soil landscapes but vulnerable to inflation from suspended sediment in the red band, and untested in endorheic systems.                                                                       |
+|                       |                                                         |                                                                                                                                                                                                                                                                                     |
+| (Shen and Li, 2010)   |                                                         |                                                                                                                                                                                                                                                                                     |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| NDPI                  | (SWIR1 - Green) / (SWIR1 + Green)                       | Designed for temporary pond detection in semi-arid Africa using SPOT-5 data; the algebraic inverse of MNDWI, sensitive to the water-vegetation boundary where other indices fail, most appropriate for Lake Chilwa’s seasonal vegetated margins but weaker in deep or turbid water. |
+|                       |                                                         |                                                                                                                                                                                                                                                                                     |
+| (Lacaux et al., 2007) |                                                         |                                                                                                                                                                                                                                                                                     |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 The multi-index approach tests each against SAR-derived water maps to quantify what optical sensors detect and what they miss across the basin’s full range of conditions.
 
-```r
+``` r
 years <- 1984L:2024L
 index_bands <- c("NDWI","MNDWI","AWEIsh","WRI","NDPI","blue","green","red","nir","swir1","swir2")
 annual_composites <- lapply(years, function(y) {
@@ -635,11 +649,11 @@ landsat_annual <- ee$ImageCollection$fromImages(annual_composites)
 print(paste("Annual composites:", length(annual_composites)))
 ```
 
-```
+```         
 [1] "Annual composites: 39"
 ```
 
-```r
+``` r
 extract_index_stats <- function(image) {
   stats <- image$select(c("NDWI", "MNDWI", "AWEIsh", "WRI", "NDPI"))$
     reduceRegion(
@@ -670,7 +684,7 @@ ls_df <- do.call(rbind, lapply(ls_ts_info$features, function(f) {
 print(head(ls_df))
 ```
 
-```
+```         
   year n_scenes       NDWI      MNDWI     AWEIsh       WRI      NDPI
 1 1984        2 -0.2948529 -0.3486844 -0.3444822 0.5986843 0.3486844
 2 1986        5 -0.4408136 -0.2982329 -0.3984272 0.5701771 0.2982329
@@ -680,7 +694,7 @@ print(head(ls_df))
 6 1991       10 -0.3329792 -0.2564152 -0.3097378 0.7014307 0.2564152
 ```
 
-```r
+``` r
 ls_long <- ls_df %>%
   pivot_longer(cols = c(NDWI, MNDWI, AWEIsh, WRI, NDPI),
                names_to = "index", values_to = "value")
@@ -699,7 +713,7 @@ ggplot(ls_long, aes(x = year, y = value, colour = index)) +
 
 To address threshold instability caused by dissolved salts, algal blooms, and variable turbidity in the endorheic system, an Otsu-style percentile method was applied to derive adaptive water/non-water thresholds, following Pekel et al. (2016). Basin-wide MNDWI percentiles for a 2020 dry-season composite illustrate the bimodal distribution exploited by the method.
 
-```r
+``` r
 ref_scene <- landsat_idx$filterDate("2020-06-01", "2020-10-31")$median()$clip(aoi_ee)
 mndwi_vals <- ref_scene$select("MNDWI")$reduceRegion(
   reducer = ee$Reducer$percentile(c(10L, 50L, 90L)), geometry = aoi_ee, scale = 30L,
@@ -707,38 +721,37 @@ mndwi_vals <- ref_scene$select("MNDWI")$reduceRegion(
 print(paste("MNDWI p10:", round(mndwi_vals$MNDWI_p10, 4)))
 ```
 
-```
+```         
 [1] "MNDWI p10: -0.5662"
 ```
 
-```r
+``` r
 print(paste("MNDWI p50:", round(mndwi_vals$MNDWI_p50, 4)))
 ```
 
-```
+```         
 [1] "MNDWI p50: -0.5118"
 ```
 
-```r
+``` r
 print(paste("MNDWI p90:", round(mndwi_vals$MNDWI_p90, 4)))
 ```
 
-```
+```         
 [1] "MNDWI p90: 0.7384"
 ```
 
 #### 2.2.E Spectral Mixture Analysis
 
-![Figure 8](03.outputs/readme-figures/image4.png)
+![Figure 8](03.outputs/PNG/image4.png){width="2100"}
 
-**Figure 8.** False-colour composite of the basin. Open water resolves as the cyan core; vegetation and exposed soil form the surround.
-
+Figure 8. False-colour composite of the basin. Open water resolves as the cyan core; vegetation and exposed soil form the surround.
 
 Spectral mixture analysis enabled sub-pixel water fraction estimation, critical for monitoring gradual transitions between terrestrial and aquatic habitats. The approach was selected over object-based methods based on demonstrated superior performance in delineating turbid waters, shallow wetlands, and mixed vegetation-water pixels in lakeshore environments (Halabisky et al., 2016; Huang et al., 2014; Shanmugam et al., 2006). The spectral characteristics of Lake Chilwa, with its dense marshlands, shallow waters, extensive detritus, phytoplankton blooms, and shoreline shadowing, make sub-pixel estimation essential.
 
 Endmember selection followed standard protocols, with training samples drawn from spectrally pure pixels identified through iterative refinement and community validation. The model uses four classes: open water (129 samples, purity threshold \>95%), emergent (flooded) vegetation (117 samples, \>85%), dry vegetation (69 samples, \>90%), and bare soil or exposed lakebed (42 samples, \>85%). The urban/built class carried in earlier drafts was dropped: lakeshore settlements and the zimbowera fishing camps are built of Typha grass and bamboo, are sub-pixel at 30 m resolution, and are spectrally collinear with soil and vegetation, so a built endmember cannot be reliably resolved. The four classes were selected against a spectral separability screen (Section 2.2.F), and a fifth substrate class distinguishing salt-crusted from sandy exposed lakebed is a candidate for addition where the imagery supports it.
 
-```r
+``` r
 # [reconcile 2026-07-06] Endmembers are image-derived from spectrally pure
 # pixels (per-class median spectrum), not hardcoded placeholders, mirroring
 # 05.scripts/sma_endmember_modelling.R (SCHEME_4). Hardcoded reflectances that
@@ -782,7 +795,7 @@ if (any(abs(cc[lower.tri(cc)]) > 0.999))
 print(round(em_mat, 4))
 ```
 
-```
+```         
        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]
 [1,] 0.0686 0.0777 0.0815 0.0689 0.0081 0.0060
 [2,] 0.0520 0.0657 0.0652 0.1284 0.0588 0.0329
@@ -790,7 +803,7 @@ print(round(em_mat, 4))
 [4,] 0.0503 0.0620 0.0712 0.0889 0.1386 0.1387
 ```
 
-```r
+``` r
 # Apply SMA to the 2020 dry-season composite
 ref_bands <- ref_scene$select(c("blue", "green", "red", "nir", "swir1", "swir2"))
 
@@ -852,7 +865,7 @@ sma_df <- do.call(rbind, lapply(sma_ts_info$features, function(f) {
 print(head(sma_df))
 ```
 
-```
+```         
   year n_scenes water_frac flooded_veg_frac
 1 1984        2 0.10452673       0.03204538
 2 1986        5 0.12658318       0.14961885
@@ -862,7 +875,7 @@ print(head(sma_df))
 6 1991       10 0.16475132       0.12887153
 ```
 
-```r
+``` r
 sma_long <- sma_df %>%
   pivot_longer(cols = c(water_frac, flooded_veg_frac),
                names_to = "class", values_to = "fraction") %>%
@@ -882,6 +895,8 @@ ggplot(sma_long, aes(x = year, y = fraction, fill = class)) +
   theme_minimal() +
   theme(legend.position = "bottom")
 ```
+
+![Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary.](03.outputs/PNG/fig07_sma_endmembers.png){alt="Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary."}
 
 #### 2.2.F Feature Selection and Spectral Separability
 
@@ -907,10 +922,9 @@ The inundation and migration records were coupled at annual resolution across th
 
 ### 3.1 Water Extent Dynamics
 
-![Figure 9](03.outputs/readme-figures/image9.png)
+![Figure 9](03.outputs/PNG/image9.png){width="2100"}
 
-**Figure 9.** Sub-pixel open-water and flooded-vegetation fractions from spectral mixture analysis, 1984 to 2024.
-
+Figure 9. Sub-pixel open-water and flooded-vegetation fractions from spectral mixture analysis, 1984 to 2024.
 
 The multi-decadal Landsat time series, comprising annual median composites from harmonised scenes spanning 1984 to 2024, revealed two complete recession-refilling cycles within the observation period. Maximum wet-season open water reached roughly a fifth of the 2,310 km² complex, about 490 km², in January to March, contracting to under 110 km² at the dry-season minimum in August to October and during recession, figures derived from the spectral mixture analysis reported below. The inter-annual coefficient of variation of the annual water series was 0.42.
 
@@ -918,7 +932,9 @@ The multi-decadal Landsat time series, comprising annual median composites from 
 
 Spectral mixture analysis resolved these dynamics at sub-pixel scale (Figure 2). Basin-mean open water fraction ranged from 0.04 during the driest years to 0.21 during peak inundation, while flooded vegetation fraction showed an inverse pattern, rising from 0.05 in wet years to 0.14 during dry periods when standing water retreated beneath emergent canopy. The combined fraction remained relatively stable near 0.20 to 0.25 across most non-recession years, indicating that total inundated area (open water plus flooded vegetation) is more constant than either component alone. During the 1995 and 2012 recessions, the combined fraction dropped sharply as both open water and flooded vegetation contracted together, marking these events as basin-wide desiccation rather than lateral redistribution.
 
-*Figure 2: Sub-pixel cover fractions from spectral mixture analysis (1984 to 2024). Blue: basin-mean open water fraction. Green: basin-mean flooded vegetation fraction. Both fractions collapse during the 1995 and 2012 recessions (dashed lines).*
+![](03.outputs/PNG/fig05_index_performance.png){fig-align="center"}
+
+*Figure X: Spectral-index behaviour, 1984 to 2024. (a) Standardised annual anomalies of the five water indices against the spectral-mixture open-water record. (b) Pearson correlation of each index with that record; WRI and MNDWI track inundation most closely, and NDPI is the inverse of MNDWI.*
 
 The 1995 recession reduced lake surface area to less than 10% of peak extent by September, with complete desiccation of the central basin recorded in both satellite imagery and community accounts. Refilling began with the 1995-96 wet season and required approximately four years to restore pre-recession water levels. The 2012 recession followed a similar trajectory, with surface area declining sharply between May and October before partial recovery in early 2013. In both events, residual water persisted only in the deepest channels and in swamp refugia along the basin’s southern and eastern margins, consistent with historical patterns documented by Njaya et al. (2011).
 
@@ -926,21 +942,20 @@ Seasonal patterns were consistent across non-recession years. Water extent peake
 
 ### 3.2 Spectral Index Performance
 
-![Figure 10](03.outputs/readme-figures/image7.png)
+![Figure 10](03.outputs/PNG/image7.png){width="2100"}
 
-**Figure 10.** Basin-mean spectral water indices, 1984 to 2024: AWEIsh, MNDWI, NDPI, NDWI, and WRI.
-
+Figure 10. Basin-mean spectral water indices, 1984 to 2024: AWEIsh, MNDWI, NDPI, NDWI, and WRI.
 
 The five optical indices performed as the literature predicted, with clear differentiation across Lake Chilwa’s distinct hydrological zones. Basin-wide annual median MNDWI values ranged from approximately -0.25 to -0.50, with pronounced dips during the 1995 and 2012 recessions visible in the time series.
 
 *Table 1: Pairwise Pearson correlation coefficients among five spectral water indices computed from basin-wide annual median values (1984 to 2024). NDPI and MNDWI are perfectly inversely correlated, confirming their algebraic identity.*
 
-```r
+``` r
 idx_cor <- cor(ls_df[, c("NDWI","MNDWI","AWEIsh","WRI","NDPI")], use = "pairwise.complete.obs")
 round(as.data.frame(idx_cor), 3)
 ```
 
-```
+```         
          NDWI  MNDWI AWEIsh    WRI   NDPI
 NDWI    1.000  0.452  0.753  0.716 -0.452
 MNDWI   0.452  1.000  0.568  0.831 -1.000
@@ -961,10 +976,9 @@ The separability screen of Section 2.2.F formalised these redundancies before cl
 
 ### 3.3 SAR Integration
 
-![Figure 11](03.outputs/readme-figures/image10.png)
+![Figure 11](03.outputs/PNG/image10.png){width="2100"}
 
-**Figure 11.** Optical and radar water signals through time: Landsat MNDWI annual median across the full record, and SAR-derived water fraction by month within the radar epoch.
-
+Figure 11. Optical and radar water signals through time: Landsat MNDWI annual median across the full record, and SAR-derived water fraction by month within the radar epoch.
 
 Sentinel-1 C-band backscatter analysis provided continuous inundation mapping through the wet season, when cloud cover rendered 60 to 75% of optical acquisitions unusable. Multi-temporal composite images from wet and dry season pairs produced clear discrimination between open water (mean backscatter -22.4 dB VV), flooded vegetation (-12.8 dB VV, elevated by double-bounce returns), and dry land (-8.3 dB VV).
 
@@ -976,10 +990,9 @@ SAR classification accuracy was highest for open water (producer’s accuracy 0.
 
 ### 3.4 Land-Cover Classification and Accuracy
 
-![Figure 12](03.outputs/readme-figures/image5.png)
+![Figure 12](03.outputs/PNG/image5.png){width="2100"}
 
-**Figure 12.** Random-forest land-cover classification across the basin.
-
+Figure 12. Random-forest land-cover classification across the basin.
 
 The four-class random-forest classifier (open water, flooded vegetation, dry vegetation, bare soil), trained on the separability-selected feature stack of Section 2.2.F and applied to the 2020 reference composite, resolved the littoral mosaic that no single index captured (Section 2.2.G). Overall accuracy was 81% with a kappa coefficient of 0.77. Accuracy was highest for open water, which both the SWIR-based optical indices and low SAR backscatter identify unambiguously, and lowest for bare soil and flooded vegetation, where exposed lakebed grades into sparse cover and where dense Typha attenuates the C-band double-bounce signal. Community validation of boundary placement and seasonal timing agreed with the classification in 74 to 92% of checked locations, the disagreements concentrated in mixed-pixel zones and areas of rapid shoreline change.
 
@@ -1049,8 +1062,7 @@ This framing does not dissolve the difficulties, and honesty about them is part 
 
 ![Figure 13](04.images/socio-hydrological-causal-loop.png)
 
-**Figure 13.** Proposed causal-loop structure of the Lake Chilwa water-society feedback, specified as future work in Section 4.6.
-
+Figure 13. Proposed causal-loop structure of the Lake Chilwa water-society feedback, specified as future work in Section 4.6.
 
 The mapping and ethnography reported here establish the coupling; the next step is to model it. Socio-hydrology offers two complementary vehicles. A system-dynamics representation would cast lake level, fishing effort, and migration as a small set of coupled relations, in the manner of the compact human-water models that reproduce emergent behaviour from a handful of proxy variables (Blair and Buytaert, 2016; Albertini et al., 2020). An agent-based representation would instead model heterogeneous fishers deciding when and where to move, recovering the anticipatory lag as an emergent property of individual decision rules rather than imposing it, and yielding spatially explicit output that joins directly to the inundation maps (Blair and Buytaert, 2016). The precedent for coupling such a behavioural model to a physical hydrological model and reading consequences off ecological indicators is well established (Wu et al., 2015).
 
@@ -1080,128 +1092,127 @@ Moreover, the fishery is governed by what Wilson, Russell, and Dobson (2008) cal
 
 The socio-hydrological framework developed here is transferable. Its components, multi-sensor remote sensing, spectral mixture analysis, multi-temporal SAR, and ethnographic validation, are individually well established. Their integration for endorheic wetland monitoring is not. Lake Chilwa demonstrates that this integration produces findings inaccessible to either approach alone, and that the social dimensions of wetland dynamics are as consequential as the biophysical ones for conservation outcomes. By mapping the inundation history and the fisher response as a single coupled process, the study establishes the empirical basis for a socio-hydrological model of the Lake Chilwa water-society feedback, and sets that model as the next step toward a decision-relevant understanding of the basin (Srinivasan et al., 2017; Xia et al., 2022).
 
-
 ## References
 
-Acharya, T. D., Subedi, A., & Lee, D. H. (2018). Evaluation of water indices for surface water mapping using Sentinel-2 imagery. *Sensors, 18*(8), 2580.  
-Albertini, C., Mazzoleni, M., Totaro, V., Iacobellis, V., & Di Baldassarre, G. (2020). Socio-hydrological modelling: The influence of reservoir management and societal responses on flood impacts. *Water, 12*(5), 1384.  
-Allison, E. H., & Mvula, P. M. (2002). Fishing livelihoods and fisheries management in Malawi (LADDER Working Paper No. 23). Overseas Development Institute.  
-Amani, M., Brisco, B., Afshar, M., Mirmazloumi, S. M., Mahdavi, S., Mirzadeh, S. M. J., Huang, W., & Granger, J. (2019). A generalized supervised classification scheme to produce provincial wetland inventory maps: An application of Google Earth Engine for big geo data processing. *GIScience and Remote Sensing, 56*(7), 1023-1045.  
-Amani, M., Mahdavi, S., Afshar, M., Brisco, B., Huang, W., Mirzadeh, S. M. J., White, L., Banks, S., Montgomery, J., & Hopkinson, C. (2020). Canadian wetland inventory using Google Earth Engine: The first map and preliminary results. *Remote Sensing, 12*(7), 1190.  
-Amoakoh, A. O., Aplin, P., Awuah, K. T., Delgado-Fernandez, I., Moses, C., Peña Alonso, C., Kankam, S., & Mensah, J. C. (2021). Testing the contribution of multi-source remote sensing features for random forest classification of the Greater Amanzule tropical peatland. *Sensors, 21*(10), 3399.  
-Bene, C. (2003). When fishery rhymes with poverty: A first step beyond the old paradigm on poverty in small-scale fisheries. *World Development, 31*(6), 949-975.  
-Blair, P., & Buytaert, W. (2016). Socio-hydrological modelling: A review asking "why, what and how?". *Hydrology and Earth System Sciences, 20*(1), 443-478.  
-Breiman, L. (2001). Random forests. *Machine Learning, 45*(1), 5-32.  
-Campos, J. C., Sillero, N., & Brito, J. C. (2012). Normalized difference water indexes have dissimilar performances in detecting seasonal and permanent water in the Sahara-Sahel transition zone. *Journal of Hydrology, 464-465*, 438-446.  
-Chiotha, S. S. (1996). Contribution of the fishery of Lake Chilwa to the national total fish production of Malawi. In M. Kalk, A. J. McLachlan, & C. Howard-Williams (Eds.), Lake Chilwa: Studies of change in a tropical ecosystem (Monographiae Biologicae 35). Junk.  
-Clement, M. A., Kilsby, C. G., & Moore, P. (2018). Multi-temporal synthetic aperture radar flood mapping using change detection. *Journal of Flood Risk Management, 11*(2), 152-168.  
-Crossley, R., Davison-Hirshmann, S., Owen, B., & Shaw, P. (1983). Lake level fluctuations during the last 2,000 years in Malawi. In SASQUA International Symposium, Swaziland (pp. 305-316).  
-Davidson, N. C. (2014). How much wetland has the world lost? Long-term and recent trends in global wetland area. *Marine and Freshwater Research, 65*(10), 934-941.  
-Del Rio, T., Groot, J. C. J., & DeClerck, F. (2018). Landscape ecological knowledge base for Barotse Floodplain, Zambia. *Data in Brief, 19*, 2297-2304.  
-Demelash, T., Gessesse, G. D., Alemu, M. L., & Tilahun, S. A. (2025). Performance evaluation of water indices for surface water extraction in a semiarid environment. *H2Open Journal, 8*(5), 402.  
-Demichelis, C., Pottier, P., & Thibault, M. (2023). Socio-ecological approach combining remote sensing and local knowledge at the Bas-Ogooue Ramsar site, Gabon. Unpublished manuscript.  
-Deus, D., & Gloaguen, R. (2013). Remote sensing analysis of lake dynamics in semi-arid regions. *Remote Sensing, 5*(12), 5765-5781.  
-Di Baldassarre, G., Sivapalan, M., Rusca, M., Cudennec, C., Garcia, M., Kreibich, H., … Blöschl, G. (2019). Sociohydrology: Scientific challenges in addressing the sustainable development goals. *Water Resources Research, 55*(8), 6327-6355.  
-Di Martino, T., et al. (2023). Detection of forest fires through deep unsupervised learning modeling of Sentinel-1 time series. *\[journal to confirm\].*  
-Dong, C., & van de Giesen, N. (2011). Scenario development for decision-making in water resources planning and management. *2011 International Symposium on Water Resource and Environmental Protection (ISWREP), 2*, 928-931. IEEE.  
-Environmental Affairs Department. (2000). State of environment report for Malawi 2000. Ministry of Natural Resources and Environmental Affairs.  
-Eva, H., & Lambin, E. F. (2000). Fires and land-cover change in the tropics: A remote sensing analysis at the landscape scale. *Journal of Biogeography, 27*(3), 765-776.  
-Feyisa, G. L., Meilby, H., Fensholt, R., & Proud, S. R. (2014). Automated water extraction index: A new technique for surface water mapping using Landsat imagery. *Remote Sensing of Environment, 140*, 23-35.  
-Finlayson, C. M., Davies, G. T., Moomaw, W. R., Chmura, G. L., Natali, S. M., Perry, J. E., Rber, N., & Sutton-Grier, A. E. (2018). The second state of the world's wetlands and their services to people: A 2020 update. *Wetland Science and Practice, 35*(2), 1-18.  
-Fisher, A., Flood, N., & Danaher, T. (2016). Comparing Landsat water index methods for automated water classification in eastern Australia. *Remote Sensing of Environment, 175*, 167-177.  
-Freeman, T. G. (1991). Calculating catchment area with divergent flow based on a regular grid. *Computers & Geosciences, 17*(3), 413-422.  
-Furse, M. T., Kirk, R. C., Morgan, P. R., & Tweddle, D. (1979). Fishes: Distribution and biology in relation to changes. In M. Kalk, A. J. McLachlan, & C. Howard-Williams (Eds.), Lake Chilwa: Studies of change in a tropical ecosystem (pp. 175-208). Junk.  
-Girma, H., et al. (2025). Evaluation of water extraction indices for spatial mapping of surface water bodies using Sentinel-2 in Ethiopia. *\[journal to confirm\].*  
-Gorelick, N., Hancher, M., Dixon, M., Ilyushchenko, S., Thau, D., & Moore, R. (2017). Google Earth Engine: Planetary-scale geospatial analysis for everyone. *Remote Sensing of Environment, 202*, 18-27.  
-Halabisky, M., Moskal, L. M., Gillespie, A., & Hannam, M. (2016). Reconstructing semi-arid wetland surface water dynamics through spectral mixture analysis of a time series of Landsat satellite images (1984-2011). *Remote Sensing of Environment, 177*, 171-183.  
-Hara, M., & Nielsen, J. (2003). Experiences with fisheries co-management in Africa. In D. Wilson, J. Nielsen, & P. Degnbol (Eds.), The fisheries co-management experience (pp. 82-95). Kluwer Academic Publishers.  
-Hardy, A., Ettritch, G., Cross, D. E., Sheridan, S., Mason, D., Sherlock, R., Sherlock, M., Lopez, J., & Sherlock, N. (2019). Automatic detection of open and vegetated water bodies using Sentinel-1. *Remote Sensing, 11*(6), 720.  
-Heimhuber, V., Tulbure, M. G., & Broich, M. (2018). Modelling 25 years of spatio-temporal surface water and inundation dynamics on large river basin scale using time series of Earth observation data. *Remote Sensing of Environment, 209*, 27-42.  
-Hess, L. L., Melack, J. M., & Simonett, D. S. (1995). Radar detection of flooding beneath the forest canopy: A review. *IEEE Transactions on Geoscience and Remote Sensing, 33*(4), 896-904.  
-Hess, L. L., Melack, J. M., Novo, E. M. L. M., Barbosa, C. C. F., & Gastil, M. (2003). Dual-season mapping of wetland inundation and vegetation for the central Amazon basin. *Remote Sensing of Environment, 87*(4), 404-428.  
-Hestir, E. L., & Dronova, I. (2023). Remote sensing of primary producers in the Bay-Delta. *San Francisco Estuary and Watershed Science, 20*(4), Article 5.  
-Hodbod, J., Tebbs, E., Chan, K., & Sharma, S. (2019). Integrating participatory methods and remote sensing to enhance understanding of ecosystem service dynamics across scales. *Land, 8*(9), 132.  
-Hong, S.-H., & Wdowinski, S. (2017). Multitemporal multitrack monitoring of wetland water levels in the Florida Everglades using ALOS PALSAR data. *IEEE Geoscience and Remote Sensing Letters, 14*(8), 1370-1374.  
-Howard-Williams, C., & Gaudet, J. J. (1985). The structure and functioning of African swamps. In P. Denny (Ed.), The ecology and management of African wetland vegetation (pp. 153-175). Springer.  
-Howard-Williams, C., & Walker, B. H. (1974). The vegetation of a tropical African lake: Classification and ordination of the vegetation of Lake Chilwa (Malawi). *Journal of Ecology, 62*(3), 831-854.  
-Huang, C., Peng, Y., Lang, M., Yeo, I.-Y., & McCarty, G. (2014). Wetland inundation mapping and change monitoring using Landsat and airborne LiDAR data. *Remote Sensing of Environment, 141*, 231-242.  
-Jamu, D., Chapotera, M., & Likongwe, J. (2003). Uncovering human social networks in coping with Lake Chilwa recessions. *Journal of Environmental Management, 69*, 1-8.  
-Ji, L., Gong, P., Wang, J., Shi, J., & Zhu, Z. (2015). Construction of the 500-m resolution daily global surface water change database (2001-2015). *International Journal of Applied Earth Observation and Geoinformation, 41*, 109-117.  
-Ji, L., Zhang, L., & Wylie, B. (2009). Analysis of dynamic thresholds for the normalized difference water index. *Photogrammetric Engineering and Remote Sensing, 75*(11), 1307-1317.  
-Kalanda-Sabola, M. D., Henry, E. M. T., Kambewa, E., & Saka, J. (2007). Use of indigenous knowledge and traditional practices in fisheries management: A case of Chisi Island, Lake Chilwa, Zomba. *Malawi Journal of Science and Technology, 8*, 53-66.  
-Kalk, M. (Ed.). (1979). Lake Chilwa: Studies of change in a tropical ecosystem (Monographiae Biologicae 35). Junk.  
-Kalk, M. J., & Schulten-Senden, C. M. (1977). Zooplankton in a tropical endorheic lake (Lake Chilwa, Malawi) during drying and recovery phases. *Journal of the Limnological Society of Southern Africa, 3*(1), 1-7.  
-Kambombe, O., Ngongondo, C., Eneya, L., Monjerezi, M., & Boyce, C. (2021). Spatio-temporal analysis of droughts in the Lake Chilwa Basin, Malawi. *Theoretical and Applied Climatology, 144*, 1219-1231.  
-Kim, S., Wdowinski, S., Amelung, F., Dixon, T. H., & Won, J.-S. (2021). Interferometric coherence analysis of the Everglades wetlands, South Florida. *Remote Sensing of Environment, 252*, 112150.  
-Kolding, J., & van Zwieten, P. A. M. (2012). Relative lake level, water colour and fisheries productivity in fluctuating tropical lakes and reservoirs. *Fisheries Research, 115-116*, 99-109.  
-Lacaux, J. P., Tourre, Y. M., Vignolles, C., Ndione, J. A., & Lafaye, M. (2007). Classification of ponds from high-spatial resolution remote sensing: Application to Rift Valley Fever epidemics in Senegal. *Remote Sensing of Environment, 106*(1), 66-80.  
-Lateef, L. O., Costa, H., & Cabral, P. (2025). Improved integrated framework for flooded crop damage and recovery assessment: A multi-source Earth observation and participatory mapping in Hadejia, Nigeria. *Journal of Environmental Management, 384*, 125542.  
-Li, J., Wang, L., Liu, S., Peng, B., & Ye, H. (2023). An automated method for mapping surface water using Sentinel-2 imagery. *Remote Sensing, 15*(6), 1678.  
-Li, W., Du, Z., Ling, F., Zhou, D., Wang, H., Gui, Y., Sun, B., & Zhang, X. (2013). A comparison of land surface water mapping using the normalized difference water index from TM, ETM+ and ALI. *Remote Sensing, 5*(11), 5530-5549.  
-Lindsay, J. B. (2016). Efficient hybrid breaching-filling sink removal methods for flow-path enforcement in digital elevation models. *Hydrological Processes, 30*(6), 846-857.  
-Lubala, N., Kavwaya, Y., & Kalonda, D. (2023). Combining Sentinel-1, Sentinel-2, and ALOS PALSAR for mapping small inland wetlands in the Democratic Republic of Congo. *Ecological Indicators, 155*, 110962.  
-Luca, G., Marasco, A., & Balzano, L. (2025). Mapping seasonal inundation dynamics of the Okavango Delta using Sentinel-1 SAR time series. *Remote Sensing of Environment, 310*, 114474.  
-Mahdavi, S., Salehi, B., Granger, J., Amani, M., Brisco, B., & Huang, W. (2018). Remote sensing for wetland classification: A comprehensive review. *Remote Sensing of Environment, 206*, 1-21.  
-Mahdianpari, M., Salehi, B., Mohammadimanesh, F., & Motagh, M. (2017). Random forest wetland classification using ALOS-2 L-band, RADARSAT-2 C-band, and TerraSAR-X imagery. *ISPRS Journal of Photogrammetry and Remote Sensing, 130*, 13-31.  
-Mahdianpari, M., Salehi, B., Mohammadimanesh, F., Homayouni, S., & Gill, E. (2019). The first wetland inventory map of Newfoundland at a spatial resolution of 10 m using Sentinel-1 and Sentinel-2 data on the Google Earth Engine cloud computing platform. *Remote Sensing, 11*(1), 43.  
-Martinis, S., Twele, A., & Voigt, S. (2015). Towards operational near real-time flood detection using a split-based automatic thresholding procedure on high resolution TerraSAR-X data. *Natural Hazards and Earth System Sciences, 15*(5), 1069-1085.  
-Matthews, M. W. (2011). A current review of empirical procedures of remote sensing in inland and near-coastal transitional waters. *International Journal of Remote Sensing, 32*(21), 6855-6899.  
-McFeeters, S. K. (1996). The use of the normalized difference water index (NDWI) in the delineation of open water features. *International Journal of Remote Sensing, 17*(7), 1425-1432.  
-Mitsch, W. J., & Gosselink, J. G. (2015). Wetlands (5th ed.). Wiley.  
-Muro, J., Canty, M., Conradsen, K., Huttich, C., Nielsen, A. A., Skriver, H., Remy, F., Strauch, A., Thonfeld, F., & Menz, G. (2016). Short-term change detection in wetlands using Sentinel-1 time series. *Remote Sensing, 8*(10), 795.  
-Murphy, S. (2014). Contested meanings through social change: An ethnography of institutions, organisations, ideologies and power in the market development of the Lake Chilwa commons, southern Malawi \[Doctoral dissertation, SOAS, University of London\].  
-Murphy, S., et al. (2026). *\[Title to confirm\]. Forest Ecology and Management, 618*, 123985.  
-Ngongondo, C., Xu, C.-Y., Gottschalk, L., & Alemaw, B. (2011). Evaluation of spatial and temporal characteristics of rainfall in Malawi: A case of data scarce region. *Theoretical and Applied Climatology, 106*, 79-93.  
-Nicholson, S. E., Klotter, D., & Chavula, G. (2014). A detailed rainfall climatology for Malawi, Southern Africa. *International Journal of Climatology, 34*(2), 315-325.  
-Njaya, F. (2001). Review of fisheries and fish biology of Lake Chilwa. In D. Jamu, M. Chapotera, & J. Likongwe (Eds.), Lake Chilwa state of the environment report. Chancellor College.  
-Njaya, F. (2009). Governance of Lake Chilwa common pool resources: Evolution of institutions and user perceptions. *Development Southern Africa, 26*(4), 663-676.  
-Njaya, F., Donda, S., & Bene, C. (2012). Analysis of power in fisheries co-management: Experiences from Malawi. *Society and Natural Resources, 25*(4), 332-346.  
-Njaya, F., Snyder, K. A., Jamu, D., Wilson, J., Howard-Williams, C., Allison, E. H., & Andrew, N. L. (2011). The natural history and fisheries ecology of Lake Chilwa, southern Malawi. *Journal of Great Lakes Research, 37*(Suppl. 1), 15-25.  
-Ogashawara, I., Mishra, D. R., & Gitelson, A. A. (2017). Remote sensing of inland waters: Background and current state-of-the-art. In Bio-optical modeling and remote sensing of inland waters (pp. 1-24). Elsevier.  
-Ozesmi, S. L., & Bauer, M. E. (2002). Satellite remote sensing of wetlands. *Wetlands Ecology and Management, 10*(5), 381-402.  
-Palmer, S. C. J., Kutser, T., & Hunter, P. D. (2015). Remote sensing of inland waters: Challenges, progress and future directions. *Remote Sensing of Environment, 157*, 1-8.  
-Pekel, J.-F., Cottam, A., Gorelick, N., & Belward, A. S. (2016). High-resolution mapping of global surface water and its long-term changes. *Nature, 540*(7633), 418-422.  
-Philippe, M. T., & Karume, K. (2019). Assessing forest cover change and deforestation hot-spots in the North Kivu Province, DR-Congo using remote sensing and GIS. *American Journal of Geographic Information System, 8*(2), 39-54.  
-Quinn, P., Beven, K., Chevallier, P., & Planchon, O. (1991). The prediction of hillslope flow paths for distributed hydrological modelling using digital terrain models. *Hydrological Processes, 5*(1), 59-79.  
-Rebelo, L.-M., Finlayson, C. M., & Nagabhatla, N. (2009). Remote sensing and GIS for wetland inventory, mapping and change analysis. *Journal of Environmental Management, 90*(7), 2144-2153.  
-Roth, F., Bauer-Marschallinger, B., Tupas, M. E., & Wagner, W. (2025). The Sentinel-1 Global Flood Monitoring system. *Remote Sensing of Environment, 310*, 114493.  
-Sarch, M. T., & Allison, E. H. (2000). Fluctuating fisheries in Africa's inland waters: Well adapted livelihoods, maladapted management. In Proceedings of the 10th Biennial Conference of the International Institute of Fisheries Economics and Trade. IIFET.  
-Shanmugam, P., Ahn, Y.-H., & Sanjeevi, S. (2006). A comparison of the classification of wetland characteristics by linear spectral mixture modelling and traditional hard classifiers on multispectral remotely sensed imagery in southern India. *Ecological Modelling, 194*(4), 379-394.  
-Shen, L., & Li, C. (2010). Water body extraction from Landsat ETM+ imagery using adaboost algorithm. In Proceedings of the 18th International Conference on Geoinformatics (pp. 1-4). IEEE.  
-Shimada, M., Itoh, T., Motooka, T., Watanabe, M., Shiraishi, T., Thapa, R., & Lucas, R. (2014). New global forest/non-forest maps from ALOS PALSAR data (2007-2010). *Remote Sensing of Environment, 155*, 13-31.  
-Slagter, B., Tsendbazar, N.-E., Vollrath, A., & Reiche, J. (2020). Mapping wetland characteristics using temporally dense Sentinel-1 and Sentinel-2 data: A case study in the St. Lucia wetlands, South Africa. *International Journal of Applied Earth Observation and Geoinformation, 86*, 102009.  
-Srinivasan, V., Sanderson, M., Garcia, M., Konar, M., Blöschl, G., & Sivapalan, M. (2017). Prediction in a socio-hydrological world. *Hydrological Sciences Journal, 62*(3), 338-345.  
-Sulieman, H. M., & Ahmed, A. G. M. (2013). Monitoring changes in pastoral resources in eastern Sudan: A synthesis of remote sensing and local knowledge. *Pastoralism: Research, Policy and Practice, 3*(1), 1-16.  
-Tarboton, D. G. (1997). A new method for the determination of flow directions and upslope areas in grid digital elevation models. *Water Resources Research, 33*(2), 309-319.  
-Tsyganskaya, V., Martinis, S., Marzahn, P., & Ludwig, R. (2018). SAR-based detection of flooded vegetation: A review of characteristics and approaches. *International Journal of Applied Earth Observation and Geoinformation, 73*, 205-218.  
-Vanden Bossche, J.-P., & Bernacsek, G. M. (1990). Source book for the inland fishery resources of Africa (Vol. 1, CIFA Technical Paper 18). FAO.  
-Vollrath, A., Mullissa, A., & Reiche, J. (2020). Angular-based radiometric slope correction for Sentinel-1 on Google Earth Engine. *Remote Sensing, 12*(11), 1867.  
-Wdowinski, S., Kim, S.-W., Amelung, F., Dixon, T. H., Miralles-Wilhelm, F., & Sonenshein, R. (2008). Space-based detection of wetlands' surface water level changes from L-band SAR interferometry. *Remote Sensing of Environment, 112*(3), 681-696.  
-Whyte, A., Ferentinos, K. P., & Petropoulos, G. P. (2018). A new synergistic approach for monitoring wetlands using Sentinels-1 and 2 data with object-based machine learning algorithms. *Environmental Modelling and Software, 104*, 40-54.  
-Wilson, J. (2010). The people of the lake and basin. Unpublished manuscript, Zomba.  
-Wilson, J. (2014). The history of the level of Lake Chilwa. *The Society of Malawi Journal, 67*(2), 41-45.  
-Wilson, J. G. M. (2007). The waterfowl of Lake Chilwa and their utilisation by local communities. Lake Chilwa Wetland Project.  
-Wilson, J. G. M. (2008). Fisheries management in Malawi: A patchwork of traditional, modern, and post-modern regimes unfolds. In R. M. Hughes, L. Wang, & P. W. Seelbach (Eds.), Landscape influences on stream habitats and biological assemblages (American Fisheries Society Symposium 62). American Fisheries Society.  
-Wilson, J. G. M. (2009). Lake Chilwa and Mpoto Lagoon fisheries management plan. Government of Malawi, Ministry of Agriculture. Unpublished.  
-Woodward, K., Marti-Cardona, B., & Oberg, J. (2021). Integrating participatory mapping with remote sensing for wetland conservation. *Remote Sensing, 13*(5), 890.  
-Wu, H., Bolte, J. P., Hulse, D., & Johnson, B. R. (2015). A scenario-based approach to integrating flow-ecology research with watershed development planning. *Landscape and Urban Planning, 144*, 74-89.  
-Xia, J., Dong, Y., & Zou, L. (2022). Developing socio-hydrology: Research progress, opportunities and challenges. *Journal of Geographical Sciences, 32*(11), 2131-2146.  
-Xu, H. (2006). Modification of normalised difference water index (NDWI) to enhance open water features in remotely sensed imagery. *International Journal of Remote Sensing, 27*(14), 3025-3033.  
-Xu, Y., Liu, Y., & Liu, S. (2025). Mapping surface water dynamics across East Africa at 10 m resolution by integrating Sentinel-1 and Sentinel-2 time series. *ISPRS Journal of Photogrammetry and Remote Sensing, 215*, 101-118.  
-Yiran, G. A. B., Kusimi, J. M., & Kufogbe, S. K. (2012). A synthesis of remote sensing and local knowledge approaches in land degradation assessment in the Bawku East District, Ghana. *International Journal of Applied Earth Observation and Geoinformation, 14*(1), 204-213.  
-Zebker, H. A., & Villasenor, J. (1992). Decorrelation in interferometric radar echoes. *IEEE Transactions on Geoscience and Remote Sensing, 30*(5), 950-959.  
+Acharya, T. D., Subedi, A., & Lee, D. H. (2018). Evaluation of water indices for surface water mapping using Sentinel-2 imagery. *Sensors, 18*(8), 2580.\
+Albertini, C., Mazzoleni, M., Totaro, V., Iacobellis, V., & Di Baldassarre, G. (2020). Socio-hydrological modelling: The influence of reservoir management and societal responses on flood impacts. *Water, 12*(5), 1384.\
+Allison, E. H., & Mvula, P. M. (2002). Fishing livelihoods and fisheries management in Malawi (LADDER Working Paper No. 23). Overseas Development Institute.\
+Amani, M., Brisco, B., Afshar, M., Mirmazloumi, S. M., Mahdavi, S., Mirzadeh, S. M. J., Huang, W., & Granger, J. (2019). A generalized supervised classification scheme to produce provincial wetland inventory maps: An application of Google Earth Engine for big geo data processing. *GIScience and Remote Sensing, 56*(7), 1023-1045.\
+Amani, M., Mahdavi, S., Afshar, M., Brisco, B., Huang, W., Mirzadeh, S. M. J., White, L., Banks, S., Montgomery, J., & Hopkinson, C. (2020). Canadian wetland inventory using Google Earth Engine: The first map and preliminary results. *Remote Sensing, 12*(7), 1190.\
+Amoakoh, A. O., Aplin, P., Awuah, K. T., Delgado-Fernandez, I., Moses, C., Peña Alonso, C., Kankam, S., & Mensah, J. C. (2021). Testing the contribution of multi-source remote sensing features for random forest classification of the Greater Amanzule tropical peatland. *Sensors, 21*(10), 3399.\
+Bene, C. (2003). When fishery rhymes with poverty: A first step beyond the old paradigm on poverty in small-scale fisheries. *World Development, 31*(6), 949-975.\
+Blair, P., & Buytaert, W. (2016). Socio-hydrological modelling: A review asking "why, what and how?". *Hydrology and Earth System Sciences, 20*(1), 443-478.\
+Breiman, L. (2001). Random forests. *Machine Learning, 45*(1), 5-32.\
+Campos, J. C., Sillero, N., & Brito, J. C. (2012). Normalized difference water indexes have dissimilar performances in detecting seasonal and permanent water in the Sahara-Sahel transition zone. *Journal of Hydrology, 464-465*, 438-446.\
+Chiotha, S. S. (1996). Contribution of the fishery of Lake Chilwa to the national total fish production of Malawi. In M. Kalk, A. J. McLachlan, & C. Howard-Williams (Eds.), Lake Chilwa: Studies of change in a tropical ecosystem (Monographiae Biologicae 35). Junk.\
+Clement, M. A., Kilsby, C. G., & Moore, P. (2018). Multi-temporal synthetic aperture radar flood mapping using change detection. *Journal of Flood Risk Management, 11*(2), 152-168.\
+Crossley, R., Davison-Hirshmann, S., Owen, B., & Shaw, P. (1983). Lake level fluctuations during the last 2,000 years in Malawi. In SASQUA International Symposium, Swaziland (pp. 305-316).\
+Davidson, N. C. (2014). How much wetland has the world lost? Long-term and recent trends in global wetland area. *Marine and Freshwater Research, 65*(10), 934-941.\
+Del Rio, T., Groot, J. C. J., & DeClerck, F. (2018). Landscape ecological knowledge base for Barotse Floodplain, Zambia. *Data in Brief, 19*, 2297-2304.\
+Demelash, T., Gessesse, G. D., Alemu, M. L., & Tilahun, S. A. (2025). Performance evaluation of water indices for surface water extraction in a semiarid environment. *H2Open Journal, 8*(5), 402.\
+Demichelis, C., Pottier, P., & Thibault, M. (2023). Socio-ecological approach combining remote sensing and local knowledge at the Bas-Ogooue Ramsar site, Gabon. Unpublished manuscript.\
+Deus, D., & Gloaguen, R. (2013). Remote sensing analysis of lake dynamics in semi-arid regions. *Remote Sensing, 5*(12), 5765-5781.\
+Di Baldassarre, G., Sivapalan, M., Rusca, M., Cudennec, C., Garcia, M., Kreibich, H., … Blöschl, G. (2019). Sociohydrology: Scientific challenges in addressing the sustainable development goals. *Water Resources Research, 55*(8), 6327-6355.\
+Di Martino, T., et al. (2023). Detection of forest fires through deep unsupervised learning modeling of Sentinel-1 time series. $$journal to confirm$$.\
+Dong, C., & van de Giesen, N. (2011). Scenario development for decision-making in water resources planning and management. *2011 International Symposium on Water Resource and Environmental Protection (ISWREP), 2*, 928-931. IEEE.\
+Environmental Affairs Department. (2000). State of environment report for Malawi 2000. Ministry of Natural Resources and Environmental Affairs.\
+Eva, H., & Lambin, E. F. (2000). Fires and land-cover change in the tropics: A remote sensing analysis at the landscape scale. *Journal of Biogeography, 27*(3), 765-776.\
+Feyisa, G. L., Meilby, H., Fensholt, R., & Proud, S. R. (2014). Automated water extraction index: A new technique for surface water mapping using Landsat imagery. *Remote Sensing of Environment, 140*, 23-35.\
+Finlayson, C. M., Davies, G. T., Moomaw, W. R., Chmura, G. L., Natali, S. M., Perry, J. E., Rber, N., & Sutton-Grier, A. E. (2018). The second state of the world's wetlands and their services to people: A 2020 update. *Wetland Science and Practice, 35*(2), 1-18.\
+Fisher, A., Flood, N., & Danaher, T. (2016). Comparing Landsat water index methods for automated water classification in eastern Australia. *Remote Sensing of Environment, 175*, 167-177.\
+Freeman, T. G. (1991). Calculating catchment area with divergent flow based on a regular grid. *Computers & Geosciences, 17*(3), 413-422.\
+Furse, M. T., Kirk, R. C., Morgan, P. R., & Tweddle, D. (1979). Fishes: Distribution and biology in relation to changes. In M. Kalk, A. J. McLachlan, & C. Howard-Williams (Eds.), Lake Chilwa: Studies of change in a tropical ecosystem (pp. 175-208). Junk.\
+Girma, H., et al. (2025). Evaluation of water extraction indices for spatial mapping of surface water bodies using Sentinel-2 in Ethiopia. $$journal to confirm$$.\
+Gorelick, N., Hancher, M., Dixon, M., Ilyushchenko, S., Thau, D., & Moore, R. (2017). Google Earth Engine: Planetary-scale geospatial analysis for everyone. *Remote Sensing of Environment, 202*, 18-27.\
+Halabisky, M., Moskal, L. M., Gillespie, A., & Hannam, M. (2016). Reconstructing semi-arid wetland surface water dynamics through spectral mixture analysis of a time series of Landsat satellite images (1984-2011). *Remote Sensing of Environment, 177*, 171-183.\
+Hara, M., & Nielsen, J. (2003). Experiences with fisheries co-management in Africa. In D. Wilson, J. Nielsen, & P. Degnbol (Eds.), The fisheries co-management experience (pp. 82-95). Kluwer Academic Publishers.\
+Hardy, A., Ettritch, G., Cross, D. E., Sheridan, S., Mason, D., Sherlock, R., Sherlock, M., Lopez, J., & Sherlock, N. (2019). Automatic detection of open and vegetated water bodies using Sentinel-1. *Remote Sensing, 11*(6), 720.\
+Heimhuber, V., Tulbure, M. G., & Broich, M. (2018). Modelling 25 years of spatio-temporal surface water and inundation dynamics on large river basin scale using time series of Earth observation data. *Remote Sensing of Environment, 209*, 27-42.\
+Hess, L. L., Melack, J. M., & Simonett, D. S. (1995). Radar detection of flooding beneath the forest canopy: A review. *IEEE Transactions on Geoscience and Remote Sensing, 33*(4), 896-904.\
+Hess, L. L., Melack, J. M., Novo, E. M. L. M., Barbosa, C. C. F., & Gastil, M. (2003). Dual-season mapping of wetland inundation and vegetation for the central Amazon basin. *Remote Sensing of Environment, 87*(4), 404-428.\
+Hestir, E. L., & Dronova, I. (2023). Remote sensing of primary producers in the Bay-Delta. *San Francisco Estuary and Watershed Science, 20*(4), Article 5.\
+Hodbod, J., Tebbs, E., Chan, K., & Sharma, S. (2019). Integrating participatory methods and remote sensing to enhance understanding of ecosystem service dynamics across scales. *Land, 8*(9), 132.\
+Hong, S.-H., & Wdowinski, S. (2017). Multitemporal multitrack monitoring of wetland water levels in the Florida Everglades using ALOS PALSAR data. *IEEE Geoscience and Remote Sensing Letters, 14*(8), 1370-1374.\
+Howard-Williams, C., & Gaudet, J. J. (1985). The structure and functioning of African swamps. In P. Denny (Ed.), The ecology and management of African wetland vegetation (pp. 153-175). Springer.\
+Howard-Williams, C., & Walker, B. H. (1974). The vegetation of a tropical African lake: Classification and ordination of the vegetation of Lake Chilwa (Malawi). *Journal of Ecology, 62*(3), 831-854.\
+Huang, C., Peng, Y., Lang, M., Yeo, I.-Y., & McCarty, G. (2014). Wetland inundation mapping and change monitoring using Landsat and airborne LiDAR data. *Remote Sensing of Environment, 141*, 231-242.\
+Jamu, D., Chapotera, M., & Likongwe, J. (2003). Uncovering human social networks in coping with Lake Chilwa recessions. *Journal of Environmental Management, 69*, 1-8.\
+Ji, L., Gong, P., Wang, J., Shi, J., & Zhu, Z. (2015). Construction of the 500-m resolution daily global surface water change database (2001-2015). *International Journal of Applied Earth Observation and Geoinformation, 41*, 109-117.\
+Ji, L., Zhang, L., & Wylie, B. (2009). Analysis of dynamic thresholds for the normalized difference water index. *Photogrammetric Engineering and Remote Sensing, 75*(11), 1307-1317.\
+Kalanda-Sabola, M. D., Henry, E. M. T., Kambewa, E., & Saka, J. (2007). Use of indigenous knowledge and traditional practices in fisheries management: A case of Chisi Island, Lake Chilwa, Zomba. *Malawi Journal of Science and Technology, 8*, 53-66.\
+Kalk, M. (Ed.). (1979). Lake Chilwa: Studies of change in a tropical ecosystem (Monographiae Biologicae 35). Junk.\
+Kalk, M. J., & Schulten-Senden, C. M. (1977). Zooplankton in a tropical endorheic lake (Lake Chilwa, Malawi) during drying and recovery phases. *Journal of the Limnological Society of Southern Africa, 3*(1), 1-7.\
+Kambombe, O., Ngongondo, C., Eneya, L., Monjerezi, M., & Boyce, C. (2021). Spatio-temporal analysis of droughts in the Lake Chilwa Basin, Malawi. *Theoretical and Applied Climatology, 144*, 1219-1231.\
+Kim, S., Wdowinski, S., Amelung, F., Dixon, T. H., & Won, J.-S. (2021). Interferometric coherence analysis of the Everglades wetlands, South Florida. *Remote Sensing of Environment, 252*, 112150.\
+Kolding, J., & van Zwieten, P. A. M. (2012). Relative lake level, water colour and fisheries productivity in fluctuating tropical lakes and reservoirs. *Fisheries Research, 115-116*, 99-109.\
+Lacaux, J. P., Tourre, Y. M., Vignolles, C., Ndione, J. A., & Lafaye, M. (2007). Classification of ponds from high-spatial resolution remote sensing: Application to Rift Valley Fever epidemics in Senegal. *Remote Sensing of Environment, 106*(1), 66-80.\
+Lateef, L. O., Costa, H., & Cabral, P. (2025). Improved integrated framework for flooded crop damage and recovery assessment: A multi-source Earth observation and participatory mapping in Hadejia, Nigeria. *Journal of Environmental Management, 384*, 125542.\
+Li, J., Wang, L., Liu, S., Peng, B., & Ye, H. (2023). An automated method for mapping surface water using Sentinel-2 imagery. *Remote Sensing, 15*(6), 1678.\
+Li, W., Du, Z., Ling, F., Zhou, D., Wang, H., Gui, Y., Sun, B., & Zhang, X. (2013). A comparison of land surface water mapping using the normalized difference water index from TM, ETM+ and ALI. *Remote Sensing, 5*(11), 5530-5549.\
+Lindsay, J. B. (2016). Efficient hybrid breaching-filling sink removal methods for flow-path enforcement in digital elevation models. *Hydrological Processes, 30*(6), 846-857.\
+Lubala, N., Kavwaya, Y., & Kalonda, D. (2023). Combining Sentinel-1, Sentinel-2, and ALOS PALSAR for mapping small inland wetlands in the Democratic Republic of Congo. *Ecological Indicators, 155*, 110962.\
+Luca, G., Marasco, A., & Balzano, L. (2025). Mapping seasonal inundation dynamics of the Okavango Delta using Sentinel-1 SAR time series. *Remote Sensing of Environment, 310*, 114474.\
+Mahdavi, S., Salehi, B., Granger, J., Amani, M., Brisco, B., & Huang, W. (2018). Remote sensing for wetland classification: A comprehensive review. *Remote Sensing of Environment, 206*, 1-21.\
+Mahdianpari, M., Salehi, B., Mohammadimanesh, F., & Motagh, M. (2017). Random forest wetland classification using ALOS-2 L-band, RADARSAT-2 C-band, and TerraSAR-X imagery. *ISPRS Journal of Photogrammetry and Remote Sensing, 130*, 13-31.\
+Mahdianpari, M., Salehi, B., Mohammadimanesh, F., Homayouni, S., & Gill, E. (2019). The first wetland inventory map of Newfoundland at a spatial resolution of 10 m using Sentinel-1 and Sentinel-2 data on the Google Earth Engine cloud computing platform. *Remote Sensing, 11*(1), 43.\
+Martinis, S., Twele, A., & Voigt, S. (2015). Towards operational near real-time flood detection using a split-based automatic thresholding procedure on high resolution TerraSAR-X data. *Natural Hazards and Earth System Sciences, 15*(5), 1069-1085.\
+Matthews, M. W. (2011). A current review of empirical procedures of remote sensing in inland and near-coastal transitional waters. *International Journal of Remote Sensing, 32*(21), 6855-6899.\
+McFeeters, S. K. (1996). The use of the normalized difference water index (NDWI) in the delineation of open water features. *International Journal of Remote Sensing, 17*(7), 1425-1432.\
+Mitsch, W. J., & Gosselink, J. G. (2015). Wetlands (5th ed.). Wiley.\
+Muro, J., Canty, M., Conradsen, K., Huttich, C., Nielsen, A. A., Skriver, H., Remy, F., Strauch, A., Thonfeld, F., & Menz, G. (2016). Short-term change detection in wetlands using Sentinel-1 time series. *Remote Sensing, 8*(10), 795.\
+Murphy, S. (2014). "Contested meanings through social change: An ethnography of institutions, organisations, ideologies and power in the market development of the Lake Chilwa commons, southern Malawi"; Doctoral dissertation, SOAS, University of London\
+Murphy, S., et al. (2026). "Spatial patterns of conifer regeneration following Mountain pine beetle outbreak (Dendroctonus ponderosae) and mixed-severity wildfire: A point process model of disturbance interactions in the southern Selkirk Mountains, British Columbia". Forest Ecology and Management, 618, 123985.\
+Ngongondo, C., Xu, C.-Y., Gottschalk, L., & Alemaw, B. (2011). Evaluation of spatial and temporal characteristics of rainfall in Malawi: A case of data scarce region. *Theoretical and Applied Climatology, 106*, 79-93.\
+Nicholson, S. E., Klotter, D., & Chavula, G. (2014). A detailed rainfall climatology for Malawi, Southern Africa. *International Journal of Climatology, 34*(2), 315-325.\
+Njaya, F. (2001). Review of fisheries and fish biology of Lake Chilwa. In D. Jamu, M. Chapotera, & J. Likongwe (Eds.), Lake Chilwa state of the environment report. Chancellor College.\
+Njaya, F. (2009). Governance of Lake Chilwa common pool resources: Evolution of institutions and user perceptions. *Development Southern Africa, 26*(4), 663-676.\
+Njaya, F., Donda, S., & Bene, C. (2012). Analysis of power in fisheries co-management: Experiences from Malawi. *Society and Natural Resources, 25*(4), 332-346.\
+Njaya, F., Snyder, K. A., Jamu, D., Wilson, J., Howard-Williams, C., Allison, E. H., & Andrew, N. L. (2011). The natural history and fisheries ecology of Lake Chilwa, southern Malawi. *Journal of Great Lakes Research, 37*(Suppl. 1), 15-25.\
+Ogashawara, I., Mishra, D. R., & Gitelson, A. A. (2017). Remote sensing of inland waters: Background and current state-of-the-art. In Bio-optical modeling and remote sensing of inland waters (pp. 1-24). Elsevier.\
+Ozesmi, S. L., & Bauer, M. E. (2002). Satellite remote sensing of wetlands. *Wetlands Ecology and Management, 10*(5), 381-402.\
+Palmer, S. C. J., Kutser, T., & Hunter, P. D. (2015). Remote sensing of inland waters: Challenges, progress and future directions. *Remote Sensing of Environment, 157*, 1-8.\
+Pekel, J.-F., Cottam, A., Gorelick, N., & Belward, A. S. (2016). High-resolution mapping of global surface water and its long-term changes. *Nature, 540*(7633), 418-422.\
+Philippe, M. T., & Karume, K. (2019). Assessing forest cover change and deforestation hot-spots in the North Kivu Province, DR-Congo using remote sensing and GIS. *American Journal of Geographic Information System, 8*(2), 39-54.\
+Quinn, P., Beven, K., Chevallier, P., & Planchon, O. (1991). The prediction of hillslope flow paths for distributed hydrological modelling using digital terrain models. *Hydrological Processes, 5*(1), 59-79.\
+Rebelo, L.-M., Finlayson, C. M., & Nagabhatla, N. (2009). Remote sensing and GIS for wetland inventory, mapping and change analysis. *Journal of Environmental Management, 90*(7), 2144-2153.\
+Roth, F., Bauer-Marschallinger, B., Tupas, M. E., & Wagner, W. (2025). The Sentinel-1 Global Flood Monitoring system. *Remote Sensing of Environment, 310*, 114493.\
+Sarch, M. T., & Allison, E. H. (2000). Fluctuating fisheries in Africa's inland waters: Well adapted livelihoods, maladapted management. In Proceedings of the 10th Biennial Conference of the International Institute of Fisheries Economics and Trade. IIFET.\
+Shanmugam, P., Ahn, Y.-H., & Sanjeevi, S. (2006). A comparison of the classification of wetland characteristics by linear spectral mixture modelling and traditional hard classifiers on multispectral remotely sensed imagery in southern India. *Ecological Modelling, 194*(4), 379-394.\
+Shen, L., & Li, C. (2010). Water body extraction from Landsat ETM+ imagery using adaboost algorithm. In Proceedings of the 18th International Conference on Geoinformatics (pp. 1-4). IEEE.\
+Shimada, M., Itoh, T., Motooka, T., Watanabe, M., Shiraishi, T., Thapa, R., & Lucas, R. (2014). New global forest/non-forest maps from ALOS PALSAR data (2007-2010). *Remote Sensing of Environment, 155*, 13-31.\
+Slagter, B., Tsendbazar, N.-E., Vollrath, A., & Reiche, J. (2020). Mapping wetland characteristics using temporally dense Sentinel-1 and Sentinel-2 data: A case study in the St. Lucia wetlands, South Africa. *International Journal of Applied Earth Observation and Geoinformation, 86*, 102009.\
+Srinivasan, V., Sanderson, M., Garcia, M., Konar, M., Blöschl, G., & Sivapalan, M. (2017). Prediction in a socio-hydrological world. *Hydrological Sciences Journal, 62*(3), 338-345.\
+Sulieman, H. M., & Ahmed, A. G. M. (2013). Monitoring changes in pastoral resources in eastern Sudan: A synthesis of remote sensing and local knowledge. *Pastoralism: Research, Policy and Practice, 3*(1), 1-16.\
+Tarboton, D. G. (1997). A new method for the determination of flow directions and upslope areas in grid digital elevation models. *Water Resources Research, 33*(2), 309-319.\
+Tsyganskaya, V., Martinis, S., Marzahn, P., & Ludwig, R. (2018). SAR-based detection of flooded vegetation: A review of characteristics and approaches. *International Journal of Applied Earth Observation and Geoinformation, 73*, 205-218.\
+Vanden Bossche, J.-P., & Bernacsek, G. M. (1990). Source book for the inland fishery resources of Africa (Vol. 1, CIFA Technical Paper 18). FAO.\
+Vollrath, A., Mullissa, A., & Reiche, J. (2020). Angular-based radiometric slope correction for Sentinel-1 on Google Earth Engine. *Remote Sensing, 12*(11), 1867.\
+Wdowinski, S., Kim, S.-W., Amelung, F., Dixon, T. H., Miralles-Wilhelm, F., & Sonenshein, R. (2008). Space-based detection of wetlands' surface water level changes from L-band SAR interferometry. *Remote Sensing of Environment, 112*(3), 681-696.\
+Whyte, A., Ferentinos, K. P., & Petropoulos, G. P. (2018). A new synergistic approach for monitoring wetlands using Sentinels-1 and 2 data with object-based machine learning algorithms. *Environmental Modelling and Software, 104*, 40-54.\
+Wilson, J. (2010). The people of the lake and basin. Unpublished manuscript, Zomba.\
+Wilson, J. (2014). The history of the level of Lake Chilwa. *The Society of Malawi Journal, 67*(2), 41-45.\
+Wilson, J. G. M. (2007). The waterfowl of Lake Chilwa and their utilisation by local communities. Lake Chilwa Wetland Project.\
+Wilson, J. G. M. (2008). Fisheries management in Malawi: A patchwork of traditional, modern, and post-modern regimes unfolds. In R. M. Hughes, L. Wang, & P. W. Seelbach (Eds.), Landscape influences on stream habitats and biological assemblages (American Fisheries Society Symposium 62). American Fisheries Society.\
+Wilson, J. G. M. (2009). Lake Chilwa and Mpoto Lagoon fisheries management plan. Government of Malawi, Ministry of Agriculture. Unpublished.\
+Woodward, K., Marti-Cardona, B., & Oberg, J. (2021). Integrating participatory mapping with remote sensing for wetland conservation. *Remote Sensing, 13*(5), 890.\
+Wu, H., Bolte, J. P., Hulse, D., & Johnson, B. R. (2015). A scenario-based approach to integrating flow-ecology research with watershed development planning. *Landscape and Urban Planning, 144*, 74-89.\
+Xia, J., Dong, Y., & Zou, L. (2022). Developing socio-hydrology: Research progress, opportunities and challenges. *Journal of Geographical Sciences, 32*(11), 2131-2146.\
+Xu, H. (2006). Modification of normalised difference water index (NDWI) to enhance open water features in remotely sensed imagery. *International Journal of Remote Sensing, 27*(14), 3025-3033.\
+Xu, Y., Liu, Y., & Liu, S. (2025). Mapping surface water dynamics across East Africa at 10 m resolution by integrating Sentinel-1 and Sentinel-2 time series. *ISPRS Journal of Photogrammetry and Remote Sensing, 215*, 101-118.\
+Yiran, G. A. B., Kusimi, J. M., & Kufogbe, S. K. (2012). A synthesis of remote sensing and local knowledge approaches in land degradation assessment in the Bawku East District, Ghana. *International Journal of Applied Earth Observation and Geoinformation, 14*(1), 204-213.\
+Zebker, H. A., & Villasenor, J. (1992). Decorrelation in interferometric radar echoes. *IEEE Transactions on Geoscience and Remote Sensing, 30*(5), 950-959.\
 Zhang, G., Yao, T., Chen, W., Zheng, G., Shum, C. K., Yang, K., Peng, S., Tian, Y., Shang, Y., & Zhang, S. (2019). Regional differences of lake evolution across China during 1960s-2015 and its natural and anthropogenic causes. *Science of the Total Environment, 655*, 1390-1401.
 
----
+------------------------------------------------------------------------
 
 ## Repository Navigation
 
-- `01.manuscript/` — the canonical Quarto notebook `mapping-wetland-inundation-lake-chilwa.qmd` (edit this) and the rendered manuscript drafts (DOCX). `Manuscript_2026-07-08.docx` is the draft this README mirrors.
-- `02.inputs/` — field photographs (`PNG/`), the shared setup script (`Scripts/_common.R`), basin and lake shapefiles (`SHP/`), and the differential-GPS ground-truth template (`GPS/`).
-- `03.outputs/` — processing figures (`PNG/`), the self-derived basin and sub-basin shapefiles (`SHP/chilwa_basin.*`, `chilwa_subasins.*`), the least-cost-breached, D-infinity terrain grids (`DEM/`), and the exported time-series tables (sensor availability, Landsat, Sentinel-1, spectral-mixture, and ALOS PALSAR CSVs).
-- `04.references/` — `references.bib`, `apa.csl`, `style.docx`, `styles.scss`, and the `literature/` library. Journal of Hydrology uses Elsevier's Harvard style, so the CSL will need swapping before submission.
-- `04.images/` — figures, including the socio-hydrological causal-loop diagram.
-- `05.scripts/` — the consolidated Earth Engine pipeline (`gee_sar_landsat_pipeline.R`), the watershed derivation (`watershed-algorithms.qmd`; least-cost depression breaching and D-infinity flow routing in WhiteboxTools and flowdem), the spectral-mixture and separability scripts, and the DGPS-to-ground-truth builder (`build_ground_truth_points.R`).
-- `_staging/` — the manuscript changelog and working notes.
+-   `01.manuscript/` — the canonical Quarto notebook `mapping-wetland-inundation-lake-chilwa.qmd` (edit this) and the rendered manuscript drafts (DOCX). `Manuscript_2026-07-08.docx` is the draft this README mirrors.
+-   `02.inputs/` — field photographs (`PNG/`), the shared setup script (`Scripts/_common.R`), basin and lake shapefiles (`SHP/`), and the differential-GPS ground-truth template (`GPS/`).
+-   `03.outputs/` — processing figures (`PNG/`), the self-derived basin and sub-basin shapefiles (`SHP/chilwa_basin.*`, `chilwa_subasins.*`), the least-cost-breached, D-infinity terrain grids (`DEM/`), and the exported time-series tables (sensor availability, Landsat, Sentinel-1, spectral-mixture, and ALOS PALSAR CSVs).[^readme-1]
+-   `04.references/` — `references.bib`, `apa.csl`, `style.docx`, `styles.scss`, and the `literature/` library. Journal of Hydrology uses Elsevier's Harvard style, so the CSL will need swapping before submission.
+-   `04.images/` — figures, including the socio-hydrological causal-loop diagram.
+-   `05.scripts/` — the consolidated Earth Engine pipeline (`gee_sar_landsat_pipeline.R`), the watershed derivation (`watershed-algorithms.qmd`; least-cost depression breaching and D-infinity flow routing in WhiteboxTools and flowdem), the spectral-mixture and separability scripts, and the DGPS-to-ground-truth builder (`build_ground_truth_points.R`).
+-   `_staging/` — the manuscript changelog and working notes.
 
-**Terrain method of record:** the basin is self-derived by least-cost depression breaching and D-infinity flow routing, replacing the retired TauDEM, HydroSHEDS, and MERIT Hydro products of earlier drafts.
+[^readme-1]: Terrain method of record: the basin is self-derived by least-cost depression breaching and D-infinity flow routing, replacing the retired TauDEM, HydroSHEDS, and MERIT Hydro products of earlier drafts.

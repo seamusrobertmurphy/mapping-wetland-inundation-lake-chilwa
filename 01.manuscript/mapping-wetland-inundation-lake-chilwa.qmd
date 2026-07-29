@@ -264,14 +264,21 @@ GPS points were imported into a GIS environment and used to generate training an
 
 Field data collection summary:
 
-| Component | n | Detail |
-|:-----------------------|----:|:-----------------------|
-| Key informant interviews | 45 | Village leaders, camp chairmen, BVC members, Fisheries officers |
-| Focus group discussions | 18 | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
-| Districts | 3 | Zomba, Phalombe, Machinga |
-| Georeferenced sites | 23 | Fishing camps, landing sites, processing areas |
-| Beach Village Committees | 53 | Aligned to Group Village Headmen |
-| Fisheries Associations | 6 | Aligned to Traditional Authorities |
++-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Component                                                 | n           | Description                                                                                                                                                   |
++:==========================================================+============:+:==============================================================================================================================================================+
+| Key informant interviews                                  | 45          | Village leaders, camp chairmen, BVC members, Fisheries officers                                                                                               |
++-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Focus group discussions                                   | 18          | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders                                                                                    |
++-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Districts                                                 | 3           | Zomba, Phalombe, Machinga                                                                                                                                     |
++-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Georeferenced sites                                       | 23          | Fishing camps, landing sites, processing areas                                                                                                                |
++-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Beach Village Committees                                  | 53          | ~~Update Definition~~[^1]                                                                                                                                     |
++-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Fisheries Associations                                    | 6           | ~~Update Definition~~                                                                                                                                         |
++-----------------------------------------------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 #### 2.1.1 Photographic Evidence and Participatory Ground Truth
 
@@ -672,9 +679,7 @@ print(head(s1_df))
 
 Multi-temporal gradient analysis, adapted from sea ice monitoring methodologies, enhanced detection of dynamic water boundaries through comparative analysis of seasonal backscatter patterns. This approach proved effective for identifying transitions between open water, flooded vegetation, and terrestrial surfaces, and for tracking the recession-refilling wavefront described in Section 3.3.
 
-##### Visualise
-
-Map a wet-season and dry-season composite side by side.
+Maps of wet-season and dry-season composite side by side.
 
 ```{r map-composites}
 # Compare months in wet and dry seasons
@@ -898,19 +903,35 @@ write.csv(avail_all, here::here("03.outputs", "sensor_availability_by_year.csv")
 print(avail_all[order(avail_all$sensor, avail_all$year), ])
 ```
 
-![Optical and radar scene availability over the Lake Chilwa basin, 1984 to 2024. Landsat carries the record from 1984; Sentinel-1 C-band adds dense coverage from 2015, lifting annual scene counts from roughly 15 in the Landsat-only era to about 145 in the last decade.](../04.images/fig03_sensor_availability.png){width="100%"}
+![Optical and radar scene availability over the Lake Chilwa basin, 1984 to 2024. Landsat carries the record from 1984; Sentinel-1 C-band adds dense coverage from 2015, lifting annual scene counts from roughly 15 in the Landsat-only era to about 145 in the last decade.](images/fig03_sensor_availability.png)
 
 #### 2.2.D Spectral Water Indices
 
 We evaluated five water-extraction indices, selected to span the range of spectral approaches available for inland water mapping and to test their relative performance under the specific conditions Lake Chilwa presents; the same family of indices was recently benchmarked for surface-water extraction with Sentinel-2 by Girma et al. (2025). Each index, its band algebra, and its expected behaviour in this setting are set out below.
 
-| Index | Formula | Behaviour in the Lake Chilwa setting |
-|:-----------------------|:-----------------------|:-----------------------|
-| NDWI (McFeeters, 1996) | (Green - NIR) / (Green + NIR) | The original water index, sensitive to deep open water but prone to false negatives in turbid, shallow, or vegetated conditions because suspended sediment and canopy raise NIR reflectance; the baseline against which the others are compared. |
-| MNDWI (Xu, 2006) | (Green - SWIR1) / (Green + SWIR1) | Substitutes SWIR for NIR, improving discrimination of water from built-up and bare-soil surfaces; the strongest single optical index for turbid water, though it fails beneath emergent vegetation and requires adaptive thresholding in saline systems. |
-| AWEIsh (Feyisa et al., 2014) | Blue + 2.5 x Green - 1.5 x (NIR + SWIR1) - 0.25 x SWIR2 | A five-band combination optimised for shadow suppression and complex-landscape discrimination; outperforms simpler indices where topographic or shadow effects confound classification but offers no clear advantage in shallow vegetated wetlands. |
-| WRI (Shen and Li, 2010) | (Green + Red) / (NIR + SWIR1) | A ratio index that suppresses cloud and shadow noise effectively; competitive in bare-soil landscapes but vulnerable to inflation from suspended sediment in the red band, and untested in endorheic systems. |
-| NDPI (Lacaux et al., 2007) | (SWIR1 - Green) / (SWIR1 + Green) | Designed for temporary pond detection in semi-arid Africa using SPOT-5 data; the algebraic inverse of MNDWI, sensitive to the water-vegetation boundary where other indices fail, most appropriate for Lake Chilwa's seasonal vegetated margins but weaker in deep or turbid water. |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Index                 | Formula                                                 | Lake Chilwa Application                                                                                                                                                                                                                                                             |
++=======================+=========================================================+=====================================================================================================================================================================================================================================================================================+
+| NDWI                  | (Green - NIR) / (Green + NIR)                           | The original water index, sensitive to deep open water but prone to false negatives in turbid, shallow, or vegetated conditions because suspended sediment and canopy raise NIR reflectance; the baseline against which the others are compared.                                    |
+|                       |                                                         |                                                                                                                                                                                                                                                                                     |
+| (McFeeters, 1996)     |                                                         |                                                                                                                                                                                                                                                                                     |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| MNDWI                 | (Green - SWIR1) / (Green + SWIR1)                       | Substitutes SWIR for NIR, improving discrimination of water from built-up and bare-soil surfaces; the strongest single optical index for turbid water, though it fails beneath emergent vegetation and requires adaptive thresholding in saline systems.                            |
+|                       |                                                         |                                                                                                                                                                                                                                                                                     |
+| (Xu, 2006)            |                                                         |                                                                                                                                                                                                                                                                                     |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| AWEIsh                | Blue + 2.5 x Green - 1.5 x (NIR + SWIR1) - 0.25 x SWIR2 | A five-band combination optimised for shadow suppression and complex-landscape discrimination; outperforms simpler indices where topographic or shadow effects confound classification but offers no clear advantage in shallow vegetated wetlands.                                 |
+|                       |                                                         |                                                                                                                                                                                                                                                                                     |
+| (Feyisa et al., 2014) |                                                         |                                                                                                                                                                                                                                                                                     |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| WRI                   | (Green + Red) / (NIR + SWIR1)                           | A ratio index that suppresses cloud and shadow noise effectively; competitive in bare-soil landscapes but vulnerable to inflation from suspended sediment in the red band, and untested in endorheic systems.                                                                       |
+|                       |                                                         |                                                                                                                                                                                                                                                                                     |
+| (Shen and Li, 2010)   |                                                         |                                                                                                                                                                                                                                                                                     |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| NDPI                  | (SWIR1 - Green) / (SWIR1 + Green)                       | Designed for temporary pond detection in semi-arid Africa using SPOT-5 data; the algebraic inverse of MNDWI, sensitive to the water-vegetation boundary where other indices fail, most appropriate for Lake Chilwa’s seasonal vegetated margins but weaker in deep or turbid water. |
+|                       |                                                         |                                                                                                                                                                                                                                                                                     |
+| (Lacaux et al., 2007) |                                                         |                                                                                                                                                                                                                                                                                     |
++-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ```{r spectral-indices}
 #| eval: true
@@ -1210,7 +1231,7 @@ for (nm in names(ref_years)) {
 }
 ```
 
-![Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary.](../04.images/fig07_sma_endmembers.png){width="100%"}
+![Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary.](images/fig07_sma_endmembers.png)
 
 #### 2.2.F Feature Selection and Spectral Separability
 
@@ -1510,9 +1531,9 @@ The early record rests on thin sampling. Several years before 2000 carry only tw
 
 The five water indices do not track inundation equally (Figure 2). Measured against the spectral-mixture open-water record, WRI and MNDWI follow the basin's wetting and drying most closely, at Pearson correlations of 0.90 and 0.79, while NDWI and AWEIsh lag at 0.65 and 0.61. The two indices that lean on shortwave-infrared reflectance, WRI through its denominator and MNDWI directly, best resolve the turbid, shallow water that dominates Lake Chilwa; the near-infrared contrast of NDWI and AWEIsh is more readily confounded by suspended sediment and emergent canopy. Basin-mean annual MNDWI ranged from -0.52 to -0.23, its troughs and peaks falling in the recession and refill years of the mixture record.
 
-*Figure 2: Spectral-index behaviour, 1984 to 2024. (a) Standardised annual anomalies of the five water indices against the spectral-mixture open-water record. (b) Pearson correlation of each index with that record; WRI and MNDWI track inundation most closely, and NDPI is the inverse of MNDWI.*
+![](images/fig05_index_performance.png){fig-align="center"}
 
-![](../04.images/fig05_index_performance.png){width="100%"}
+*Figure 2: Spectral-index behaviour, 1984 to 2024. (a) Standardised annual anomalies of the five water indices against the spectral-mixture open-water record. (b) Pearson correlation of each index with that record; WRI and MNDWI track inundation most closely, and NDPI is the inverse of MNDWI.*
 
 The indices also carry overlapping information (Table 1). NDPI is the exact algebraic inverse of MNDWI, correlated at r = -1.00, so the two are one index in opposite sign and only one can enter a classifier. WRI is strongly tied to MNDWI (r = 0.76) and adds little once MNDWI is present. NDWI and MNDWI, though both normalised water indices, agree only weakly (r = 0.31): the substitution of shortwave-infrared for near-infrared shifts the sensitivity enough that the two register genuinely different surfaces. AWEIsh sits closer to NDWI (r = 0.75) than to MNDWI (r = 0.54), consistent with their shared near-infrared term.
 
@@ -1534,7 +1555,7 @@ Sentinel-1 C-band backscatter carries an intra-annual inundation signal through 
 
 *Figure 3: SAR dynamics of the Lake Chilwa basin. (a) Sentinel-1 monthly climatology of VV and VH backscatter and the derived water fraction, 2015 to 2024. (b) Sentinel-1 monthly water fraction through the record, showing the 2023 to 2024 step-up. (c) ALOS PALSAR L-band annual HH and HV backscatter and their difference, the double-bounce term sensitive to flooded vegetation.*
 
-![](../04.images/fig06_sar_seasonality.png){width="100%"}
+![](images/fig06_sar_seasonality.png){fig-align="center"}
 
 The monthly series also records the recent refill (Figure 3b). Basin water fraction held near 0.12 from 2015 through 2022, then stepped up to 0.21 across 2023 and 2024. Optical and radar, two independent sensors, thus place the strongest inundation of the record in the same two years, the mixture analysis of Section 3.1 registering it in the annual Landsat fractions and Sentinel-1 in the monthly backscatter.
 
@@ -1879,3 +1900,5 @@ Zhang, G., Yao, T., Chen, W., Zheng, G., Shum, C. K., Yang, K., Peng, S., Tian, 
 ------------------------------------------------------------------------
 
 *This study represents a collaborative effort between remote sensing specialists, the Department of Fisheries, and the Lake Chilwa communities. All community knowledge was shared with consent and attribution according to established research ethics protocols.*
+
+[^1]: Note to self, missing updates 20260729
