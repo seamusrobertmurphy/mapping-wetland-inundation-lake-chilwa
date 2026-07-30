@@ -1,9 +1,10 @@
 ---
-title: "Multisource remote sensing of wetland inundation dynamics through the recession cycles of Lake Chilwa"
-subtitle: "Optical and radar time-series fused with participatory mapping of a socio-hydrological lake"
+title: "Mapping the wetland inundation dynamics of Lake Chilwa’s recession and refilling cycles using multisource remote sensing data"
+subtitle: "Integrating optical-radar time-series data with participatory mapping of migrant fishing communities"
 author:
   - name: "Murphy, S."
   - name: "Wilson, J"
+  - name: "Banks, L"
 
 date: today
 format:
@@ -51,7 +52,7 @@ csl: ../04.references/apa.csl
 
 ## Abstract
 
-Wetlands are among the most valuable ecosystems on Earth and among the most difficult to monitor at scale, particularly in sub-Saharan Africa, where wet-season cloud, turbid shallow water, and dense emergent vegetation defeat optical sensors and the fluctuating shorelines of endorheic lakes escape single-date mapping. Endorheic lakes compound the difficulty, since their water is continuously redistributed through cycles of recession and refilling that no single-date image can capture. Lake Chilwa, a shallow terminal basin in southern Malawi, advances and retreats on a cycle of recession and refilling approximately every fifteen years, drying almost completely in some years and rebounding to high fish productivity in others; its ecology and its migratory fishing communities track this cycle, yet conventional management frameworks capture neither the shifting hydrology nor the migrant economy that surrounds it. The binding constraint on mapping such systems is the detection of water standing beneath emergent vegetation, a recognised weak point of wetland remote sensing that optical sensors cannot resolve in principle and C-band radar resolves only conditionally, and which the state of the art commonly answers by excluding the class altogether. Because vegetated water can constitute the greater part of a wetland's inundated area, its omission misstates inundated extent, hydroperiod, and the timing of recession and refilling. In this study, we take that detection problem as the primary objective and combine multi-source remote sensing with participatory mapping used as ground-truth training data to map the basin's inundation dynamics, retaining the flooded-vegetation class rather than masking it and reporting the inundated footprint as the sum of open water and vegetated water. We assembled a harmonized Landsat time series from 1984 to 2024 to reconstruct four decades of recession and refilling. We evaluated five spectral water indices at and resolving surface water at the sub-pixel scale through spectral mixture analysis. The was fitted with also with ALOS PALSAR L-band backscatter and trained a Random Forest classifier to classify across open water, flooded vegetation, dry vegetation, and bare soil. The classification reached an overall accuracy of 81 percent and a kappa of 0.77, highest for open water and lowest for flooded vegetation and bare soil, where dense Typha attenuates the C-band double-bounce signal that the L-band layer was included to overcome. Sub-pixel open water within the 8,752 km² basin averaged 1,230 km² and ranged from 2,083 km² at the 2024 peak to 835 km² in the 1995 recession, two fifths of peak extent, when the lake survived only as residual channels and swamp refugia; counting emergent vegetation with it, the inundated footprint reached 2,810 km² at the 2023 refill. The fieldwork that supplied the training data also cross-checked the result, agreeing with the classified boundaries and seasonal timing at 74 to 92 percent of locations and revealing the migrant and floating fishing communities and governance structures invisible to earth observation, from seasonal migration timing to enforcement conflict across jurisdictions. Integrating multi-source remote sensing with sustained participatory fieldwork resolves dynamics that neither approach captures alone, nor provides a transferable basis for monitoring the fluctuating wetlands on which fishing economies and lakeshore communities depend.
+Wetlands rank among the most valuable ecosystems on Earth and the hardest to monitor, nowhere more so than in sub-Saharan Africa. The binding constraint is the detection of water standing beneath emergent vegetation: optical sensors cannot resolve it in principle, C-band radar resolves it only conditionally, and the state of the art commonly answers by excluding the class. Because vegetated water can constitute most of a wetland's inundated area, omitting it misstates extent, hydroperiod, and flood timing. We take that problem as our primary objective in the Lake Chilwa basin, a shallow endorheic lake in southern Malawi that recedes and refills on a cycle of roughly fifteen years and whose migratory fishery tracks the water. We build one model from four components: a harmonised Landsat record spanning 1984 to 2024 with five spectral water indices; Sentinel-1 C-band and ALOS PALSAR L-band backscatter; sub-pixel cover fractions fitted by spectral endmember mixture analysis; and training labels from participatory mapping with fishing communities, who observe sub-canopy water directly. Within the self-derived 8,752 km² basin, sub-pixel open water averaged 1,225 km², peaking at 2,083 km² in 2024 and falling to 835 km² in the 1995 recession, two fifths of peak extent. Open water and emergent vegetation are anti-correlated, so the wetland compensates as the lake retreats and the combined footprint, 2,807 km² at the 2023 refill, varies far less than open water alone. Mapping the footprint rather than the lake changes how recession reads hydrologically, and the fieldwork records the migration and enforcement patterns satellites cannot.
 
 **Keywords:** Wetland inundation mapping; SAR backscatter; spectral mixture analysis; participatory mapping; socio-hydrological systems; endorheic lakes; Lake Chilwa, Malawi
 
@@ -278,21 +279,14 @@ GPS points were imported into a GIS environment and used to generate training an
 
 Field data collection summary:
 
-+--------------------------+-------------+----------------------------------------------------------------------------+
-| Component                | n           | Description                                                                |
-+:=========================+============:+:===========================================================================+
-| Key informant interviews | 45          | Village leaders, camp chairmen, BVC members, Fisheries officers            |
-+--------------------------+-------------+----------------------------------------------------------------------------+
-| Focus group discussions  | 18          | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
-+--------------------------+-------------+----------------------------------------------------------------------------+
-| Districts                | 3           | Zomba, Phalombe, Machinga                                                  |
-+--------------------------+-------------+----------------------------------------------------------------------------+
-| Georeferenced sites      | 23          | Fishing camps, landing sites, processing areas                             |
-+--------------------------+-------------+----------------------------------------------------------------------------+
-| Beach Village Committees | 53          | [~~Update Definition~~]{.smallcaps}                                        |
-+--------------------------+-------------+----------------------------------------------------------------------------+
-| Fisheries Associations   | 6           | [~~Update Definition~~]{.smallcaps}                                        |
-+--------------------------+-------------+----------------------------------------------------------------------------+
+| Component | n | Description |
+|:---|---:|:---|
+| Key informant interviews | 45 | Village leaders, camp chairmen, BVC members, Fisheries officers |
+| Focus group discussions | 18 | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
+| Districts | 3 | Zomba, Phalombe, Machinga |
+| Georeferenced sites | 23 | Fishing camps, landing sites, processing areas |
+| Beach Village Committees | 53 | [~~Update Definition~~]{.smallcaps} |
+| Fisheries Associations | 6 | [~~Update Definition~~]{.smallcaps} |
 
 #### 2.1.1 Photographic Evidence and Participatory Ground Truth
 
@@ -402,19 +396,13 @@ The workflow runs within Google Earth Engine, which hosts the full multi-sensor 
 
 The three streams do not share a common window, and the gaps between them constrain what can be compared (Table 1). Landsat yields 37 annual composites across 1984 to 2024 but none for 2012, when Landsat 5 had ceased imaging and Landsat 8 had not yet launched, leaving only scan-line-corrector-off Landsat 7 scenes that the cloud screen rejected. Sentinel-1 begins in 2015. The L-band record divides at the loss of ALOS-1 in May 2011 and the launch of ALOS-2 in May 2014, so no PALSAR mosaic covers 2011 to 2014. The field evidence falls almost wholly in 2012, inside the recession the study targets but outside the optical record, so the participatory data rather than the photographs carry the validation for the recession years.
 
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| Data stream                        | Coverage                           | Gaps                                                                       |
-+====================================+====================================+============================================================================+
-| Landsat 5, 7, and 8, harmonised    | 1984 to 2024, 37 annual composites | 1985, 1988, 2002, and 2012 absent                                          |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| Sentinel-1 C-band                  | 2015 to 2024, monthly composites   | 2016 absent; 2014 scenes too few to composite                              |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| ALOS PALSAR L-band                 | 2007 to 2010, 2015 to 2024         | 2011 to 2014 absent between the two missions                               |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| Field photographs                  | 2011 to 2014, 244 frames           | 219 fall in February to June 2012; 21 carry unusable camera-clock defaults |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| Participatory and interview record | September 2012 to March 2014       | Continuous                                                                 |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| Data stream | Coverage | Gaps |
+|----|----|----|
+| Landsat 5, 7, and 8, harmonised | 1984 to 2024, 37 annual composites | 1985, 1988, 2002, and 2012 absent |
+| Sentinel-1 C-band | 2015 to 2024, monthly composites | 2016 absent; 2014 scenes too few to composite |
+| ALOS PALSAR L-band | 2007 to 2010, 2015 to 2024 | 2011 to 2014 absent between the two missions |
+| Field photographs | 2011 to 2014, 244 frames | 219 fall in February to June 2012; 21 carry unusable camera-clock defaults |
+| Participatory and interview record | September 2012 to March 2014 | Continuous |
 
 *Table 1: Temporal coverage of each data stream, with the gaps that constrain cross-sensor comparison. The absence of Landsat in 2012 and of L-band between 2011 and 2014 leaves the 2012 recession observable only through the adjacent years and the participatory record.*
 
