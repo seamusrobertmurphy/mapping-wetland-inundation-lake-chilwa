@@ -948,7 +948,7 @@ write.csv(avail_all, here::here("03.outputs", "sensor_availability_by_year.csv")
 print(avail_all[order(avail_all$sensor, avail_all$year), ])
 ```
 
-![Optical and radar scene availability over the Lake Chilwa basin, 1984 to 2024. Landsat carries the record from 1984; Sentinel-1 C-band adds dense coverage from 2015, lifting annual scene counts from roughly 15 in the Landsat-only era to about 145 in the last decade.](images/fig03_sensor_availability.png)
+![Optical and radar scene availability over the Lake Chilwa basin, 1984 to 2024. Landsat carries the record from 1984; Sentinel-1 C-band adds dense coverage from 2015, lifting annual scene counts from roughly 15 in the Landsat-only era to about 145 in the last decade.](../03.outputs/PNG/fig03_sensor_availability.png)
 
 #### 2.2.D Spectral Water Indices
 
@@ -1278,7 +1278,7 @@ for (nm in names(ref_years)) {
 }
 ```
 
-![Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary.](images/fig07_sma_endmembers.png)
+![Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary.](../03.outputs/PNG/fig07_sma_endmembers.png)
 
 #### 2.2.F Feature Selection and Spectral Separability
 
@@ -1580,7 +1580,7 @@ The early record rests on thin sampling. Several years before 2000 carry only tw
 
 The five water indices do not track inundation equally (Figure 2). Measured against the spectral-mixture open-water record, WRI and MNDWI follow the basin's wetting and drying most closely, at Pearson correlations of 0.90 and 0.79, while NDWI and AWEIsh lag at 0.65 and 0.61. The two indices that lean on shortwave-infrared reflectance, WRI through its denominator and MNDWI directly, best resolve the turbid, shallow water that dominates Lake Chilwa; the near-infrared contrast of NDWI and AWEIsh is more readily confounded by suspended sediment and emergent canopy. Basin-mean annual MNDWI ranged from -0.52 to -0.23, its troughs and peaks falling in the recession and refill years of the mixture record.
 
-![](images/fig05_index_performance.png){fig-align="center"}
+![](../03.outputs/PNG/fig05_index_performance.png){fig-align="center"}
 
 *Figure 2: Spectral-index behaviour, 1984 to 2024. (a) Standardised annual anomalies of the five water indices against the spectral-mixture open-water record. (b) Pearson correlation of each index with that record; WRI and MNDWI track inundation most closely, and NDPI is the inverse of MNDWI.*
 
@@ -1604,7 +1604,7 @@ Sentinel-1 C-band backscatter carries an intra-annual inundation signal through 
 
 *Figure 3: SAR dynamics of the Lake Chilwa basin. (a) Sentinel-1 monthly climatology of VV and VH backscatter and the derived water fraction, 2015 to 2024. (b) Sentinel-1 monthly water fraction through the record, showing the 2023 to 2024 step-up. (c) ALOS PALSAR L-band annual HH and HV backscatter and their difference, the double-bounce term sensitive to flooded vegetation.*
 
-![](images/fig06_sar_seasonality.png){fig-align="center"}
+![](../03.outputs/PNG/fig06_sar_seasonality.png){fig-align="center"}
 
 The monthly series also records the recent refill (Figure 3b). Basin water fraction held near 0.12 from 2015 through 2022, then stepped up to 0.21 across 2023 and 2024. Optical and radar, two independent sensors, thus place the strongest inundation of the record in the same two years, the mixture analysis of Section 3.1 registering it in the annual Landsat fractions and Sentinel-1 in the monthly backscatter.
 
