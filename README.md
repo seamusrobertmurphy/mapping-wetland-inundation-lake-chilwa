@@ -1,6 +1,4 @@
-# Mapping the wetland inundation dynamics of Lake Chilwa's recession and refilling cycles using multisource remote sensing data
-
-### Integrating optical-radar time-series data with participatory mapping of migrant fishing communities
+# Mapping long-term wetland inundation dynamics of the Lake Chilwa recession using multisource remote sensing data
 
 Murphy, S.<sup>a,\*</sup>, Wilson, J.<sup>b</sup>, Banks, L.<sup>c</sup>
 
