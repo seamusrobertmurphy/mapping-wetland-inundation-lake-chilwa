@@ -9,7 +9,7 @@ date: today
 format:
   docx:
     prefer-html: true
-    reference-doc: ../04.references/style.docx
+    reference-doc: ../04.references/style-formal.docx
     highlight-style: pygments
     latex_engine: xelatex
 
@@ -278,21 +278,21 @@ GPS points were imported into a GIS environment and used to generate training an
 
 Field data collection summary:
 
-+-------------------------------+-----------+----------------------------------------------------------------------------+
-| Component                     | n         | Description                                                                |
-+:==============================+==========:+:===========================================================================+
-| Key informant interviews      | 45        | Village leaders, camp chairmen, BVC members, Fisheries officers            |
-+-------------------------------+-----------+----------------------------------------------------------------------------+
-| Focus group discussions       | 18        | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
-+-------------------------------+-----------+----------------------------------------------------------------------------+
-| Districts                     | 3         | Zomba, Phalombe, Machinga                                                  |
-+-------------------------------+-----------+----------------------------------------------------------------------------+
-| Georeferenced sites           | 23        | Fishing camps, landing sites, processing areas                             |
-+-------------------------------+-----------+----------------------------------------------------------------------------+
-| Beach Village Committees      | 53        | [~~Update Definition~~]{.smallcaps}                                        |
-+-------------------------------+-----------+----------------------------------------------------------------------------+
-| Fisheries Associations        | 6         | [~~Update Definition~~]{.smallcaps}                                        |
-+-------------------------------+-----------+----------------------------------------------------------------------------+
++--------------------------+-------------+----------------------------------------------------------------------------+
+| Component                | n           | Description                                                                |
++:=========================+============:+:===========================================================================+
+| Key informant interviews | 45          | Village leaders, camp chairmen, BVC members, Fisheries officers            |
++--------------------------+-------------+----------------------------------------------------------------------------+
+| Focus group discussions  | 18          | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
++--------------------------+-------------+----------------------------------------------------------------------------+
+| Districts                | 3           | Zomba, Phalombe, Machinga                                                  |
++--------------------------+-------------+----------------------------------------------------------------------------+
+| Georeferenced sites      | 23          | Fishing camps, landing sites, processing areas                             |
++--------------------------+-------------+----------------------------------------------------------------------------+
+| Beach Village Committees | 53          | [~~Update Definition~~]{.smallcaps}                                        |
++--------------------------+-------------+----------------------------------------------------------------------------+
+| Fisheries Associations   | 6           | [~~Update Definition~~]{.smallcaps}                                        |
++--------------------------+-------------+----------------------------------------------------------------------------+
 
 #### 2.1.1 Photographic Evidence and Participatory Ground Truth
 
