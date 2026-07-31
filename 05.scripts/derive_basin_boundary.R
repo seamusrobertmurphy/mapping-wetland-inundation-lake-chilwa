@@ -34,7 +34,8 @@ root <- getwd()
 while (!dir.exists(file.path(root, "03.outputs")) && dirname(root) != root) root <- dirname(root)
 stopifnot(dir.exists(file.path(root, "03.outputs")))
 
-dem_src  <- file.path(root, "03.outputs", "DEM", "extracted", "output_SRTM15Plus.tif")
+dem_src  <- file.path(root, "03.outputs", "DEM", "extracted", "srtm30m_chilwa.tif")
+lake_src <- file.path(root, "02.inputs", "SHP", "lakes_site.shp")
 work     <- file.path(tempdir(), "chilwa_basin")
 dir.create(work, showWarnings = FALSE, recursive = TRUE)
 stopifnot(file.exists(dem_src))
@@ -42,7 +43,7 @@ stopifnot(file.exists(dem_src))
 # ---- 0. Project to metres so slopes, areas, and thresholds are physical -----
 message("0. reprojecting to EPSG:32736")
 dem_ll <- terra::rast(dem_src)
-res_m  <- 450  # native SRTM15+ is ~450 m at this latitude
+res_m  <- 30   # SRTM 1 arc-second (USGS/SRTMGL1_003), ~30 m at this latitude
 dem_m  <- terra::project(dem_ll, "EPSG:32736", res = res_m, method = "bilinear")
 p_raw  <- file.path(work, "dem_00_raw.tif")
 terra::writeRaster(dem_m, p_raw, overwrite = TRUE)
@@ -50,11 +51,20 @@ terra::writeRaster(dem_m, p_raw, overwrite = TRUE)
 # ---- 1. Terminal point of the internal drainage --------------------------
 # Located on the unconditioned surface, before breaching can carve through it.
 # For a closed basin the terminal point is the lowest cell of the lake floor.
-message("1. locating the terminal point on the unconditioned surface")
+# The global minimum of the window is NOT the terminal depression: it sits on
+# the Shire side of the divide, outside the basin. The terminal depression of an
+# endorheic basin is the lowest cell of its terminal lake, so the search is
+# confined to the mapped lake polygon.
+message("1. locating the terminal point inside the terminal lake")
 raw_r <- terra::rast(p_raw)
-min_cell <- terra::where.min(raw_r)
-terminal_xy <- terra::xyFromCell(raw_r, min_cell[1, "cell"])
+lake_v <- terra::project(terra::vect(lake_src), terra::crs(raw_r))
+lake_r <- terra::mask(terra::crop(raw_r, lake_v), lake_v)
+min_cell <- terra::where.min(lake_r)
+terminal_xy <- terra::xyFromCell(lake_r, min_cell[1, "cell"])
 terminal_elev <- min_cell[1, "value"]
+g_min <- terra::where.min(raw_r)
+message("   window minimum ", round(g_min[1, "value"], 1),
+        " m lies outside the lake and is deliberately not used as the seed")
 message("   terminal cell at ", round(terminal_xy[1]), ", ", round(terminal_xy[2]),
         "  elevation ", round(terminal_elev, 1), " m")
 
@@ -137,7 +147,7 @@ if (file.exists(inherited_p)) {
 message("6. writing outputs")
 out_sf <- sf::st_sf(
   basin_id    = 1L,
-  dem_src     = "SRTM15+ (03.outputs/DEM)",
+  dem_src     = "SRTM 1 arc-second (USGS/SRTMGL1_003)",
   dem_res_m   = res_m,
   conditioning = "BreachSingleCellPits + BreachDepressionsLeastCost(fill=FALSE)",
   route_struct = "Dinf",

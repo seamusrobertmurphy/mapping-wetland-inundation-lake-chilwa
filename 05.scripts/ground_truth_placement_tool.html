@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lake Chilwa ground-truth placement</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root{--bg:#14161a;--panel:#1c1f26;--line:#2b303a;--ink:#e6e8ec;--dim:#9aa3b2;--acc:#4C72B0;--warn:#C44E52;--ok:#55A868}
+  *{box-sizing:border-box}
+  body{margin:0;font:13px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;flex-direction:column}
+  header{padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  header h1{font-size:14px;margin:0;font-weight:650;letter-spacing:.2px}
+  .crs{font:11px ui-monospace,Menlo,monospace;color:var(--dim)}
+  .warn{background:#3a2326;border:1px solid #5c3338;color:#f0c9cc;padding:5px 9px;border-radius:5px;font-size:11.5px;max-width:640px}
+  main{flex:1;display:grid;grid-template-columns:300px 1fr 300px;min-height:0}
+  .col{overflow-y:auto;background:var(--panel);border-right:1px solid var(--line)}
+  .col:last-child{border-right:0;border-left:1px solid var(--line)}
+  #map{min-height:0}
+  .sess{padding:7px 10px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;gap:8px;align-items:baseline}
+  .sess:hover{background:#232733}
+  .sess.on{background:#2b3550;box-shadow:inset 3px 0 0 var(--acc)}
+  .sess.skip{opacity:.42}
+  .sess b{font-size:12px;min-width:20px}
+  .sess small{color:var(--dim);font-size:11px}
+  .dot{width:7px;height:7px;border-radius:50%;background:#454b58;flex:none;align-self:center}
+  .dot.set{background:var(--ok)}
+  .pad{padding:11px 12px}
+  .pad h2{font-size:12px;margin:0 0 7px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim);font-weight:600}
+  img#frame{width:100%;border-radius:5px;background:#000;display:block;cursor:zoom-in}
+  label{display:block;margin:9px 0 3px;font-size:11px;color:var(--dim)}
+  input,select,textarea{width:100%;padding:5px 7px;background:#12141a;color:var(--ink);border:1px solid var(--line);border-radius:4px;font:12px inherit}
+  textarea{resize:vertical;min-height:44px}
+  button{padding:6px 11px;border:1px solid var(--line);background:#262b36;color:var(--ink);border-radius:5px;cursor:pointer;font:12px inherit}
+  button:hover{background:#313747}
+  button.p{background:var(--acc);border-color:var(--acc);font-weight:600}
+  button.d{background:#3a2326;border-color:#5c3338;color:#f0c9cc}
+  .row{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+  .note{color:var(--dim);font-size:11px;margin-top:6px;line-height:1.4}
+  .coord{font:12px ui-monospace,Menlo,monospace;background:#12141a;padding:6px 8px;border-radius:4px;border:1px solid var(--line);margin-top:8px}
+  .pill{display:inline-block;padding:1px 6px;border-radius:9px;font-size:10.5px;background:#2b303a;color:var(--dim)}
+  .pill.lc{background:#20402c;color:#a9e6bf}
+  #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.93);display:none;align-items:center;justify-content:center;z-index:9999;cursor:zoom-out}
+  #lightbox img{max-width:96%;max-height:96%}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lake Chilwa ground-truth placement</h1>
+  <span class="crs">Master CRS EPSG:4326 (WGS 84) &nbsp;|&nbsp; metric EPSG:32736 (UTM 36S)</span>
+  <span class="warn"><b>No Sentinel-2 exists for these photographs.</b> The frames run Dec 2011 to Nov 2014; the first Sentinel-2 scene over this basin is 4 Sep 2015. Landsat 5 ended 18 Oct 2011 and 2012 has no optical coverage, so the contemporaneous layers are Landsat 5 (2011) and Landsat 8 (2013).</span>
+  <span id="prog" class="pill"></span>
+</header>
+
+<main>
+  <div class="col" id="list"></div>
+  <div id="map"></div>
+  <div class="col">
+    <div class="pad">
+      <h2>Frame</h2>
+      <img id="frame" alt="representative frame">
+      <div class="note" id="meta"></div>
+
+      <h2 style="margin-top:14px">Position</h2>
+      <div class="coord" id="coord">no point placed</div>
+      <div class="note">Click the map to place. Drag the marker to adjust.</div>
+
+      <label>Site name</label><input id="site">
+      <label>Cover class for the ground-truth set</label>
+      <select id="cover">
+        <option value="">(exclude from ground truth)</option>
+        <option>open water</option>
+        <option>emergent/flooded vegetation</option>
+        <option>dry vegetation</option>
+        <option>bare soil</option>
+      </select>
+      <label>How was this located</label>
+      <select id="src">
+        <option value="">(unset)</option>
+        <option value="author placement">author placement</option>
+        <option value="skyline match">skyline match</option>
+        <option value="filename toponym">filename toponym</option>
+        <option value="dgps tracklog">dgps tracklog</option>
+      </select>
+      <label>Positional uncertainty (m)</label><input id="unc" type="number" min="0" step="50" value="250">
+      <label>Confidence</label>
+      <select id="conf"><option>low</option><option selected>medium</option><option>high</option></select>
+      <label>Note</label><textarea id="userNote"></textarea>
+
+      <div class="row">
+        <button class="p" id="save">Save session</button>
+        <button class="d" id="clear">Clear point</button>
+      </div>
+      <div class="row">
+        <button id="exp">Export dgps_points.csv</button>
+        <button id="expFull">Export sessions CSV</button>
+      </div>
+      <div class="note">Work is kept in this browser as you go. Export writes to your downloads folder; move the file to <code>02.inputs/GPS/dgps_points.csv</code> to feed <code>build_ground_truth_points.R</code>.</div>
+    </div>
+  </div>
+</main>
+<div id="lightbox"><img></div>
+
+<script>
+const SESSIONS = [{"id": "1", "date": "2011-12-21", "n": 2, "photo": "../02.inputs/PNG/landcanoe.jpg", "cls": "dry vegetation / exposed lakebed", "lc": "yes", "note": "stranded dugout on grassed lakebed, hills on horizon", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "2", "date": "2012-02-20", "n": 10, "photo": "../02.inputs/PNG/Multiple fish fences and fish traps at Phaloni 1.JPG", "cls": "open water", "lc": "yes", "note": "river inflow, fish fences and traps, reeds, hill behind", "hint": "Phaloni; Sombani", "lon": "", "lat": "", "src": ""}, {"id": "3", "date": "2012-02-22", "n": 17, "photo": "../02.inputs/PNG/marshman.jpg", "cls": "flooded vegetation", "lc": "yes", "note": "channel cut through dense live reed stand, standing water", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "4", "date": "2012-02-22", "n": 6, "photo": "../02.inputs/PNG/CIMG1832-001.jpg", "cls": "open water", "lc": "yes", "note": "zimbowera raft and shelter in open water, gulls, reed line behind", "hint": "Zambia", "lon": "", "lat": "", "src": ""}, {"id": "5", "date": "2012-02-22", "n": 13, "photo": "../02.inputs/PNG/CIMG1838-001.jpg", "cls": "flooded vegetation", "lc": "yes", "note": "reed-mat shelter on cut-reed raft, live reeds behind", "hint": "Zambia", "lon": "", "lat": "", "src": ""}, {"id": "6", "date": "2012-02-22", "n": 7, "photo": "../02.inputs/PNG/CIMG1847.jpg", "cls": "open water", "lc": "yes", "note": "open water with fish fences and reed islands, mountains behind", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "7", "date": "2012-02-25", "n": 1, "photo": "../02.inputs/PNG/CIMG1882.JPG", "cls": "flooded cropland (rice paddy)", "lc": "yes", "note": "rice transplanting into wet mud with standing water between rows; NOT one of the four study classes; sparse emergent cover, spectrally ambiguous with bare soil; author to assign or exclude", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "8", "date": "2012-02-28", "n": 3, "photo": "../02.inputs/PNG/CIMG1901.JPG", "cls": "settlement / market", "lc": "no", "note": "village trading street, sandy road, fish being carried; low hill on horizon centre-right", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "9", "date": "2012-03-21", "n": 2, "photo": "../02.inputs/PNG/CIMG1954-001.jpg", "cls": "open water", "lc": "yes", "note": "open water foreground, fishing camp with beached boats along the shore; prominent forested hill behind, strong skyline candidate", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "10", "date": "2012-03-21", "n": 2, "photo": "../02.inputs/PNG/CIMG1965.jpg", "cls": "settlement / processing", "lc": "no", "note": "fish-smoking kiln under trees on rocky ground with exposed roots; same date as session 9, probably the same site", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "11", "date": "2012-03-27", "n": 3, "photo": "../02.inputs/PNG/CIMG1999-001.jpg", "cls": "dry vegetation", "lc": "yes", "note": "sandy track through tall green grassland on the lake plain; reed mats carried by bicycle; low hills on the horizon", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "12", "date": "2012-03-28", "n": 52, "photo": "../02.inputs/PNG/CIMG2007-001.jpg", "cls": "settlement / market", "lc": "no", "note": "trading scene, not a land-cover frame", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "13", "date": "2012-03-28", "n": 10, "photo": "../02.inputs/PNG/CIMG2137.JPG", "cls": "settlement / built", "lc": "no", "note": "brick construction, not a land-cover frame", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "14", "date": "2012-03-28", "n": 1, "photo": "../02.inputs/PNG/CIMG2174-001.jpg", "cls": "dry vegetation", "lc": "yes", "note": "grazed grassland with livestock kraal and thatched shed, tree line behind", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "15", "date": "2012-03-29", "n": 3, "photo": "../02.inputs/PNG/CIMG2190-001.jpg", "cls": "flooded vegetation", "lc": "yes", "note": "emergent grass and sedge standing in shallow water at the marsh margin, cut-grass mounds; tree line and buildings behind", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "16", "date": "2012-03-30", "n": 1, "photo": "../02.inputs/PNG/CIMG2196-001.jpg", "cls": "settlement / processing", "lc": "no", "note": "fish drying racks and tarpaulins among reed-walled structures; mountains faintly visible top left", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "17", "date": "2012-04-04", "n": 4, "photo": "../02.inputs/PNG/CIMG2234.jpg", "cls": "gear detail", "lc": "no", "note": "close-up of fishing nets on sand; no landscape visible", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "18", "date": "2012-04-19", "n": 5, "photo": "../02.inputs/PNG/CIMG2247.JPG", "cls": "open water", "lc": "yes", "note": "hazy long view from high ground across open water to a shoreline village and green plain; fish fences in the near water; elevated viewpoint, useful for placement", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "19", "date": "2012-04-23", "n": 5, "photo": "../02.inputs/PNG/20120423_194014.jpg", "cls": "domestic interior", "lc": "no", "note": "indoor kitchen; no landscape", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "20", "date": "2012-04-29", "n": 1, "photo": "../02.inputs/PNG/20120429_091523.jpg", "cls": "fauna / specimen", "lc": "no", "note": "chameleon in a plastic basin; no landscape", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "21", "date": "2012-05-05", "n": 1, "photo": "../02.inputs/PNG/20120505_120351.jpg", "cls": "fauna / specimen", "lc": "no", "note": "chameleon in a plastic basin; no landscape", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "22", "date": "2012-05-19", "n": 23, "photo": "../02.inputs/PNG/20120519_125615.jpg", "cls": "gathering / event", "lc": "no", "note": "panoramic crowd on a rocky grassed shoreline, open water to the right; distant mountain on the horizon, skyline candidate", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "23", "date": "2012-05-20", "n": 1, "photo": "../02.inputs/PNG/thomas1.jpg", "cls": "landing site", "lc": "no", "note": "researcher and boats at a muddy landing; selective-colour edit applied, unusable for any spectral comparison", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "24", "date": "2012-05-20", "n": 3, "photo": "../02.inputs/PNG/marshman1.jpg", "cls": "flooded vegetation", "lc": "yes", "note": "boat poled along a channel cut through a dense live reed stand; prominent mountain behind, strong skyline candidate; pairs with session 3 (marshman.jpg)", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "25", "date": "2012-05-21", "n": 1, "photo": "../02.inputs/PNG/sugarcane boatman.jpg", "cls": "open water", "lc": "yes", "note": "boat loaded with cut reeds on wide open water, low emergent reed islands in the middle distance; faint distant hills", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "26", "date": "2012-05-22", "n": 1, "photo": "../02.inputs/PNG/manstandngonboat.jpg", "cls": "open water", "lc": "yes", "note": "mixed frame: open water with an adjacent reed bed standing in water and sparse emergent shoots throughout; water-vegetation boundary, place points with care; hill to the right", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "27", "date": "2012-05-23", "n": 1, "photo": "../02.inputs/PNG/CIMG2484.JPG", "cls": "settlement / built", "lc": "no", "note": "village lane, mud-walled thatched houses, reed fences, baobab", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "28", "date": "2012-05-24", "n": 1, "photo": "../02.inputs/PNG/pushboat1.jpg", "cls": "open water", "lc": "yes", "note": "same subject and site as session 25; heavily processed contrast and saturation, unusable for any spectral comparison", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "29", "date": "2012-05-29", "n": 1, "photo": "../02.inputs/PNG/CIMG2603.JPG", "cls": "road / transport", "lc": "no", "note": "dusty dirt road with a loaded pickup and roadside grass", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "30", "date": "2012-05-30", "n": 1, "photo": "../02.inputs/PNG/CIMG2617.JPG", "cls": "settlement / woodfuel", "lc": "no", "note": "split firewood being bundled under a eucalyptus; dry grassland behind", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "31", "date": "2012-05-30", "n": 3, "photo": "../02.inputs/PNG/CIMG2618.JPG", "cls": "documentation / display", "lc": "no", "note": "jars of seeds on cloths with typed Chichewa lists; no landscape", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "32", "date": "2012-06-12", "n": 18, "photo": "../02.inputs/PNG/CIMG2808.JPG", "cls": "archival document", "lc": "no", "note": "photographed page, East African Geographical Review, 1966 Lake Chilwa maps of district of birth and language groups; names Marshes, Tongwe, Uzingo, Nchisi, Kachulu, Chisoni, Ngangala, Njalo; useful for toponym georeferencing", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "33", "date": "2012-06-19", "n": 11, "photo": "../02.inputs/PNG/CIMG3173.JPG", "cls": "archival document", "lc": "no", "note": "photographed page, parastatal planning and budgeting figure; unrelated to land cover", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "34", "date": "2012-06-19", "n": 1, "photo": "../02.inputs/PNG/CIMG3200.JPG", "cls": "archival document", "lc": "no", "note": "photographed pages 52-53, the same 1966 Lake Chilwa maps as session 32, better exposure", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "35", "date": "2012-09-26", "n": 4, "photo": "../02.inputs/PNG/DSC_2375.JPG", "cls": "open water", "lc": "yes", "note": "open water with a low sand spit carrying a thatched hut and a fishing camp; dry-season shoreline", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "36", "date": "2012-12-06", "n": 2, "photo": "../02.inputs/PNG/IMG_0014.jpg", "cls": "archival document", "lc": "no", "note": "photographed page 39 of Fishermen of Lake Chilwa on fishing gear; page inverted", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "37", "date": "2014-11-23", "n": 1, "photo": "../02.inputs/PNG/IMG_5333.JPG", "cls": "settlement / processing", "lc": "no", "note": "fish drying racks on a rocky shore, open water and boats beyond; distinctive conical island on the horizon, strong skyline candidate", "hint": "", "lon": "", "lat": "", "src": ""}, {"id": "38", "date": "2011-01-01", "n": 21, "photo": "../02.inputs/PNG/CIMG1312.JPG", "cls": "flooded vegetation", "lc": "yes", "note": "zimbowera on cut-reed raft inside live reed stand, open water foreground", "hint": "", "lon": "", "lat": "", "src": ""}];
+const BOUNDS   = {"west": 35.0958, "south": -15.9089, "east": 36.2958, "north": -14.775};
+const KEY = "chilwa-gt-placement-v1";
+let store = JSON.parse(localStorage.getItem(KEY) || "{}");
+let cur = null, marker = null;
+
+const map = L.map("map", {center:[-15.30, 35.70], zoom:10});
+const esri = L.tileLayer(
+  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  {maxZoom:19, attribution:"Esri World Imagery"}).addTo(map);
+const osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+  {maxZoom:19, attribution:"OpenStreetMap"});
+const bb = [[BOUNDS.south, BOUNDS.west],[BOUNDS.north, BOUNDS.east]];
+const l5 = L.imageOverlay("../03.outputs/PNG/placement/landsat5_2011_rgb.png", bb, {opacity:.85});
+const l8 = L.imageOverlay("../03.outputs/PNG/placement/landsat8_2013_rgb.png", bb, {opacity:.85});
+L.control.layers(
+  {"Esri World Imagery (modern, high resolution)": esri, "OpenStreetMap": osm},
+  {"Landsat 5, 2011 composite": l5, "Landsat 8, 2013 composite": l8},
+  {collapsed:false}).addTo(map);
+L.control.scale({imperial:false}).addTo(map);
+
+const $ = id => document.getElementById(id);
+
+function progress(){
+  const need = SESSIONS.filter(s=>s.lc==="yes").length;
+  const done = SESSIONS.filter(s=>s.lc==="yes" && store[s.id]?.lat).length;
+  $("prog").textContent = `${done} of ${need} land-cover sessions placed`;
+}
+
+function drawList(){
+  $("list").innerHTML = "";
+  SESSIONS.forEach(s=>{
+    const d = document.createElement("div");
+    d.className = "sess" + (s.lc!=="yes" ? " skip":"") + (cur===s.id?" on":"");
+    d.innerHTML = `<span class="dot${store[s.id]?.lat?" set":""}"></span>
+      <b>${s.id}</b><span><small>${s.date}</small><br>${s.cls}</span>`;
+    d.onclick = ()=>select(s.id);
+    $("list").appendChild(d);
+  });
+  progress();
+}
+
+function select(id){
+  cur = id;
+  const s = SESSIONS.find(x=>x.id===id), r = store[id] || {};
+  $("frame").src = s.photo;
+  $("meta").innerHTML =
+    `<span class="pill${s.lc==="yes"?" lc":""}">${s.lc==="yes"?"land-cover frame":"not land cover"}</span>
+     <span class="pill">${s.n} photo${s.n>1?"s":""}</span><br>${s.note}`
+     + (s.hint ? `<br><b>hint:</b> ${s.hint}` : "");
+  $("site").value = r.site || s.hint || "";
+  $("cover").value = r.cover ?? guessCover(s.cls);
+  $("src").value = r.src || "";
+  $("unc").value = r.unc ?? 250;
+  $("conf").value = r.conf || "medium";
+  $("userNote").value = r.userNote || "";
+  setMarker(r.lat ? [r.lat, r.lon] : null, false);
+  drawList();
+}
+
+function guessCover(c){
+  if(c==="open water") return "open water";
+  if(c==="flooded vegetation") return "emergent/flooded vegetation";
+  if(c.startsWith("dry vegetation")) return "dry vegetation";
+  return "";
+}
+
+function setMarker(ll, pan=true){
+  if(marker){ map.removeLayer(marker); marker = null; }
+  if(!ll){ $("coord").textContent = "no point placed"; return; }
+  marker = L.marker(ll, {draggable:true}).addTo(map);
+  marker.on("dragend", ()=>showCoord(marker.getLatLng()));
+  showCoord(L.latLng(ll[0], ll[1]));
+  if(pan) map.panTo(ll);
+}
+function showCoord(ll){
+  $("coord").textContent = `lon ${ll.lng.toFixed(5)}   lat ${ll.lat.toFixed(5)}   (EPSG:4326)`;
+}
+
+map.on("click", e=>{ if(cur) setMarker([e.latlng.lat, e.latlng.lng], false); });
+
+$("save").onclick = ()=>{
+  if(!cur) return alert("Select a session first.");
+  if(!marker) return alert("Place a point on the map first.");
+  const ll = marker.getLatLng();
+  store[cur] = {lat:ll.lat, lon:ll.lng, site:$("site").value, cover:$("cover").value,
+                src:$("src").value, unc:+$("unc").value, conf:$("conf").value,
+                userNote:$("userNote").value};
+  localStorage.setItem(KEY, JSON.stringify(store));
+  drawList();
+};
+$("clear").onclick = ()=>{ if(cur){ delete store[cur]; localStorage.setItem(KEY, JSON.stringify(store)); setMarker(null); drawList(); } };
+
+function dl(name, text){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], {type:"text/csv"}));
+  a.download = name; a.click();
+}
+const q = v => `"${String(v??"").replace(/"/g,'""')}"`;
+
+$("exp").onclick = ()=>{
+  // Schema consumed by 05.scripts/build_ground_truth_points.R
+  const out = ["site_id,lon,lat,date,cover,photo"];
+  SESSIONS.forEach(s=>{
+    const r = store[s.id];
+    if(!r || !r.lat || !r.cover) return;          // only located, classed sites
+    out.push([q(r.site||("session_"+s.id)), r.lon.toFixed(6), r.lat.toFixed(6),
+              q(s.date), q(r.cover), q(s.photo.split("/").pop())].join(","));
+  });
+  if(out.length===1) return alert("Nothing to export: no session has both a point and a cover class.");
+  dl("dgps_points.csv", out.join("\n")+"\n");
+};
+
+$("expFull").onclick = ()=>{
+  const out = ["session_id,date,n_files,first_capture,cover_class_reviewed,land_cover_frame,site_name,lon,lat,position_source,position_uncertainty_m,confidence,note"];
+  SESSIONS.forEach(s=>{
+    const r = store[s.id] || {};
+    out.push([s.id, q(s.date), s.n, q(s.photo.split("/").pop()), q(s.cls), q(s.lc),
+      q(r.site||""), r.lon?r.lon.toFixed(6):"", r.lat?r.lat.toFixed(6):"",
+      q(r.src||""), r.unc??"", q(r.conf||""), q(r.userNote||s.note)].join(","));
+  });
+  dl("photo_sessions_located.csv", out.join("\n")+"\n");
+};
+
+$("frame").onclick = ()=>{ const lb=$("lightbox"); lb.querySelector("img").src=$("frame").src; lb.style.display="flex"; };
+$("lightbox").onclick = ()=>{ $("lightbox").style.display="none"; };
+
+drawList();
+select(SESSIONS.find(s=>s.lc==="yes").id);
+map.fitBounds(bb);
+</script>
+</body>
+</html>

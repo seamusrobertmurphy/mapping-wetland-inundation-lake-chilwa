@@ -37,3 +37,11 @@ _quarto_book.yml.disabled
 01.manuscript/*_files/
 01.manuscript/*.rmarkdown
 Rplots.pdf
+DECISIONS.md
+
+# Word lock files
+~$*
+
+# Word autosave backup folders and macOS resource forks
+Backup of *
+._*
