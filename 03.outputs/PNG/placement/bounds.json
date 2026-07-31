@@ -1,0 +1,10 @@
+{
+  "crs": "EPSG:4326",
+  "bounds": {
+    "west": 35.0958,
+    "south": -15.9089,
+    "east": 36.2958,
+    "north": -14.775
+  },
+  "note": "Sentinel-2 does not cover the 2011-2014 photographs; first S2 scene over this basin is 2015-09-04. Landsat 5 ends 2011-10-18 and 2012 has no optical coverage, so these bracket the fieldwork."
+}

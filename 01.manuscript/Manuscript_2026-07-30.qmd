@@ -1,10 +1,24 @@
 ---
 title: "Mapping the wetland inundation dynamics of Lake Chilwa’s recession and refilling cycles using multisource remote sensing data"
 subtitle: "Integrating optical-radar time-series data with participatory mapping of migrant fishing communities"
-author:
-  - name: "Murphy, S."
-  - name: "Wilson, J"
-  - name: "Banks, L"
+author: 
+  - name: Seamus Murphy
+    orcid: 0000-0002-1792-0351 
+    email: seamusrobertmurphy@gmail.com
+  - name: John Wilson
+    email: johnwilson26313@gmail.com
+  - name: Lauren K Banks
+    email: laurenkbnks@gmail.com
+abstract: > 
+  Wetlands rank among the most valuable ecosystems on Earth and the hardest to monitor, nowhere more so than in sub-Saharan Africa. The binding constraint is the detection of water standing beneath emergent vegetation: optical sensors cannot resolve it in principle, C-band radar resolves it only conditionally, and the state of the art commonly answers by excluding the class. Because vegetated water can constitute most of a wetland's inundated area, omitting it misstates extent, hydroperiod, and flood timing. We take that problem as our primary objective in the Lake Chilwa basin, a shallow endorheic lake in southern Malawi that recedes and refills on a cycle of roughly fifteen years and whose migratory fishery tracks the water. We build one model from four components: a harmonised Landsat record spanning 1984 to 2024 with five spectral water indices; Sentinel-1 C-band and ALOS PALSAR L-band backscatter; sub-pixel cover fractions fitted by spectral endmember mixture analysis; and training labels from participatory mapping with fishing communities, who observe water beneath the vegetation directly. Within the self-derived 8,752 km² basin, sub-pixel open water averaged 1,225 km², peaking at 2,083 km² in 2024 and falling to 835 km² in the 1995 recession, two fifths of peak extent. Open water and emergent vegetation are anti-correlated, so the wetland compensates as the lake retreats and the combined footprint, 2,807 km² at the 2023 refill, varies far less than open water alone. Mapping the footprint rather than the lake changes how recession reads hydrologically, and the fieldwork records the migration and enforcement patterns satellites cannot.
+keywords:
+  - Wetland inundation dynamics
+  - SAR backscatter
+  - Spectral mixture analysis 
+  - Participatory mapping 
+  - Socio-hydrological systems 
+  - Endorheic lakes
+  - Lake Chilwa
 
 date: today
 format:
@@ -48,15 +62,8 @@ citeproc: true
 editor: visual
 bibliography: ../04.references/references.bib
 csl: ../04.references/apa.csl
+df-print: kable
 ---
-
-## Abstract
-
-Wetlands rank among the most valuable ecosystems on Earth and the hardest to monitor, nowhere more so than in sub-Saharan Africa. The binding constraint is the detection of water standing beneath emergent vegetation: optical sensors cannot resolve it in principle, C-band radar resolves it only conditionally, and the state of the art commonly answers by excluding the class. Because vegetated water can constitute most of a wetland's inundated area, omitting it misstates extent, hydroperiod, and flood timing. We take that problem as our primary objective in the Lake Chilwa basin, a shallow endorheic lake in southern Malawi that recedes and refills on a cycle of roughly fifteen years and whose migratory fishery tracks the water. We build one model from four components: a harmonised Landsat record spanning 1984 to 2024 with five spectral water indices; Sentinel-1 C-band and ALOS PALSAR L-band backscatter; sub-pixel cover fractions fitted by spectral endmember mixture analysis; and training labels from participatory mapping with fishing communities, who observe water beneath the vegetation directly. Within the self-derived 8,752 km² basin, sub-pixel open water averaged 1,225 km², peaking at 2,083 km² in 2024 and falling to 835 km² in the 1995 recession, two fifths of peak extent. Open water and emergent vegetation are anti-correlated, so the wetland compensates as the lake retreats and the combined footprint, 2,807 km² at the 2023 refill, varies far less than open water alone. Mapping the footprint rather than the lake changes how recession reads hydrologically, and the fieldwork records the migration and enforcement patterns satellites cannot.
-
-**Keywords:** Wetland inundation mapping; SAR backscatter; spectral mixture analysis; participatory mapping; socio-hydrological systems; endorheic lakes; Lake Chilwa, Malawi
-
-------------------------------------------------------------------------
 
 ## Introduction
 
@@ -287,14 +294,21 @@ GPS points were imported into a GIS environment and used to generate training an
 
 Field data collection summary:
 
-| Component | n | Description |
-|:---|---:|:---|
-| Key informant interviews | 45 | Village leaders, camp chairmen, BVC members, Fisheries officers |
-| Focus group discussions | 18 | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
-| Districts | 3 | Zomba, Phalombe, Machinga |
-| Georeferenced sites | 23 | Fishing camps, landing sites, processing areas |
-| Beach Village Committees | 53 | [~~Update Definition~~]{.smallcaps} |
-| Fisheries Associations | 6 | [~~Update Definition~~]{.smallcaps} |
++--------------------------+----------------------+----------------------------------------------------------------------------+
+| Component                | n                    | Description                                                                |
++:=========================+=====================:+:===========================================================================+
+| Key informant interviews | 45                   | Village leaders, camp chairmen, BVC members, Fisheries officers            |
++--------------------------+----------------------+----------------------------------------------------------------------------+
+| Focus group discussions  | 18                   | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
++--------------------------+----------------------+----------------------------------------------------------------------------+
+| Districts                | 3                    | Zomba, Phalombe, Machinga                                                  |
++--------------------------+----------------------+----------------------------------------------------------------------------+
+| Georeferenced sites      | 23                   | Fishing camps, landing sites, processing areas                             |
++--------------------------+----------------------+----------------------------------------------------------------------------+
+| Beach Village Committees | 53                   | Aligned to Group Village Headmen                                           |
++--------------------------+----------------------+----------------------------------------------------------------------------+
+| Fisheries Associations   | 6                    | Aligned to Traditional Authorities                                         |
++--------------------------+----------------------+----------------------------------------------------------------------------+
 
 #### 2.1.1 Photographic Evidence and Participatory Ground Truth
 
@@ -404,15 +418,143 @@ The workflow runs within Google Earth Engine, which hosts the full multi-sensor 
 
 The three streams do not share a common window, and the gaps between them constrain what can be compared (Table 1). Landsat yields 37 annual composites across 1984 to 2024 but none for 2012, when Landsat 5 had ceased imaging and Landsat 8 had not yet launched, leaving only scan-line-corrector-off Landsat 7 scenes that the cloud screen rejected. Sentinel-1 begins in 2015. The L-band record divides at the loss of ALOS-1 in May 2011 and the launch of ALOS-2 in May 2014, so no PALSAR mosaic covers 2011 to 2014. The field evidence falls almost wholly in 2012, inside the recession the study targets but outside the optical record, so the participatory data rather than the photographs carry the validation for the recession years.
 
-| Data stream | Coverage | Gaps |
-|----|----|----|
-| Landsat 5, 7, and 8, harmonised | 1984 to 2024, 37 annual composites | 1985, 1988, 2002, and 2012 absent |
-| Sentinel-1 C-band | 2015 to 2024, monthly composites | 2016 absent; 2014 scenes too few to composite |
-| ALOS PALSAR L-band | 2007 to 2010, 2015 to 2024 | 2011 to 2014 absent between the two missions |
-| Field photographs | 2011 to 2014, 244 frames | 219 fall in February to June 2012; 21 carry unusable camera-clock defaults |
-| Participatory and interview record | September 2012 to March 2014 | Continuous |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| Data stream                        | Coverage                           | Gaps                                                                       |
++====================================+====================================+============================================================================+
+| Landsat 5, 7, and 8, harmonised    | 1984 to 2024, 37 annual composites | 1985, 1988, 2002, and 2012 absent                                          |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| Sentinel-1 C-band                  | 2015 to 2024, monthly composites   | 2016 absent; 2014 scenes too few to composite                              |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| ALOS PALSAR L-band                 | 2007 to 2010, 2015 to 2024         | 2011 to 2014 absent between the two missions                               |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| Field photographs                  | 2011 to 2014, 244 frames           | 219 fall in February to June 2012; 21 carry unusable camera-clock defaults |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| Participatory and interview record | September 2012 to March 2014       | Continuous                                                                 |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| Climate reanalysis and satellite   | 1984 to 2024, 492 monthly steps    | Continuous; TerraClimate and SPEI end December 2024                        |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
 
 *Table 1: Temporal coverage of each data stream, with the gaps that constrain cross-sensor comparison. The absence of Landsat in 2012 and of L-band between 2011 and 2014 leaves the 2012 recession observable only through the adjacent years and the participatory record.*
+
+
+#### Climatic Setting and Hydrological Drivers
+
+Lake Chilwa is endorheic, so water leaves the basin only by evaporation and seepage, and the balance between rainfall and atmospheric demand sets the level the lake can hold. We assembled a basin-mean climate record over the same window as the satellite series, 1984 to 2024, drawing on three products so that no single reanalysis or satellite estimate carries it alone: CHIRPS pentad precipitation, which blends station observations across Africa; TerraClimate monthly precipitation, potential evapotranspiration, and air temperature; and ERA5-Land monthly precipitation and two-metre air temperature. Drought state comes from the standardised precipitation-evapotranspiration index at a twelve-month accumulation (Vicente-Serrano et al., 2010), chosen over the more common standardised precipitation index because the evaporative term is not optional in a closed basin.
+
+Precipitation averages 1,112 mm a year against potential evapotranspiration of 1,347 mm, a mean deficit of 235 mm, and the deficit is the normal state: rainfall exceeded atmospheric demand in only seven of the forty-one years. Rainfall is the variable term, ranging from 659 mm in 1992 to 1,444 mm in 1997 with a coefficient of variation of 0.17, while demand is nearly fixed, its standard deviation 45 mm against a mean of 1,347 mm. Mean annual air temperature is 22.4 °C and rises at 0.19 °C per decade across the record, from 21.6 °C in 1985 to 23.3 °C in 2024, lifting the evaporative term any refill must overcome.
+
+The drought index dates the dry periods but does not predict the lake. SPEI-12 falls below -1.5 in 1992, 1994, 1995, 2005, and 2006, and two of those years, 1992 and 1995, sit among the five lowest in sub-pixel open water. The extremes contradict, however. The lowest open-water year of the record, 2003, was climatically unremarkable at 1,250 mm of rainfall, and the highest, 2024, was dry at 859 mm, following 2023, one of only three years since 2005 in which precipitation exceeded atmospheric demand. Across the record annual rainfall explains little of the annual variation in open water, the lagged cross-correlation peaking at r = 0.28 at one year over thirty-two paired years. The lake integrates its inputs over intervals the annual composite does not resolve, which is a reason to measure inundation from imagery rather than infer it from rainfall.
+
+```{r climate-extract}
+#| eval: false
+#| echo: true
+#| comment: NA
+# Basin-mean monthly climate, 1984 to 2024, over the self-derived basin polygon.
+# Run once; the full script is 05.scripts/extract_climate_timeseries.R, which
+# writes 03.outputs/CSV/climate_monthly.csv and climate_annual.csv.
+start  <- ee$Date$fromYMD(1984L, 1L, 1L)
+end    <- ee$Date$fromYMD(2025L, 1L, 1L)
+months <- ee$List$sequence(0, 41L * 12L - 1L)
+
+# reduceRegion at each product's native grid; a coarser scale would alias.
+basin_mean <- function(img, scale, date_str) {
+  v <- img$reduceRegion(ee$Reducer$mean(), aoi_ee, scale, maxPixels = 1e9)
+  ee$Feature(NULL, v)$set("date", date_str)
+}
+month_of <- function(img) ee$Date(img$get("system:time_start"))$format("YYYY-MM")
+
+# CHIRPS pentads summed to calendar months: six per month, none straddling.
+chirps <- ee$ImageCollection("UCSB-CHG/CHIRPS/PENTAD")$select("precipitation")
+chirps_fc <- ee$FeatureCollection(months$map(ee_utils_pyfunc(function(m) {
+  s <- start$advance(m, "month")
+  basin_mean(chirps$filterDate(s, s$advance(1, "month"))$sum()$rename("pr_chirps"),
+             5566, s$format("YYYY-MM"))
+})))
+
+# TerraClimate scale factors: pet, tmmx and tmmn are 0.1; pdsi is 0.01.
+tc_fc <- ee$ImageCollection("IDAHO_EPSCOR/TERRACLIMATE")$filterDate(start, end)$
+  map(ee_utils_pyfunc(function(img) {
+    img <- ee$Image(img)
+    b <- img$select("pr")$rename("pr_terraclim")$
+      addBands(img$select("pet")$multiply(0.1)$rename("pet_terraclim"))$
+      addBands(img$select("tmmx")$multiply(0.1)$rename("tmax_terraclim"))$
+      addBands(img$select("tmmn")$multiply(0.1)$rename("tmin_terraclim"))
+    basin_mean(b, 4638, month_of(img))
+  }))
+
+# ERA5-Land: precipitation in metres, air temperature in kelvin.
+era_fc <- ee$ImageCollection("ECMWF/ERA5_LAND/MONTHLY_AGGR")$filterDate(start, end)$
+  map(ee_utils_pyfunc(function(img) {
+    img <- ee$Image(img)
+    b <- img$select("total_precipitation_sum")$multiply(1000)$rename("pr_era5")$
+      addBands(img$select("temperature_2m")$subtract(273.15)$rename("tmean_era5"))
+    basin_mean(b, 11132, month_of(img))
+  }))
+
+# SPEI at twelve months: the wet or dry state of the preceding hydrological year.
+spei_fc <- ee$ImageCollection("CSIC/SPEI/2_11")$select("SPEI_12_month")$
+  filterDate(start, end)$map(ee_utils_pyfunc(function(img) {
+    img <- ee$Image(img)
+    basin_mean(img$rename("spei12"), 55660, month_of(img))
+  }))
+```
+
+```{r climate-timeseries}
+#| eval: true
+#| echo: true
+#| warning: false
+#| message: false
+#| comment: NA
+#| fig-width: 7.2
+#| fig-height: 8.4
+climate_annual <- read.csv(here::here("03.outputs", "CSV", "climate_annual.csv"))
+
+theme_clim <- ggplot2::theme_minimal(base_size = 9) +
+  ggplot2::theme(panel.grid.minor  = ggplot2::element_blank(),
+                 plot.title        = ggplot2::element_text(face = "bold", size = 9),
+                 legend.position   = "bottom",
+                 legend.title      = ggplot2::element_blank(),
+                 legend.key.height = grid::unit(3, "mm"))
+wet_dry <- c(`TRUE` = "#4C72B0", `FALSE` = "#C44E52")
+
+p_pr <- climate_annual |>
+  dplyr::select(year, CHIRPS = pr_chirps, TerraClimate = pr_terraclim,
+                `ERA5-Land` = pr_era5) |>
+  tidyr::pivot_longer(-year) |>
+  ggplot2::ggplot(ggplot2::aes(year, value, colour = name)) +
+  ggplot2::geom_line(linewidth = .4, alpha = .8) +
+  ggplot2::geom_line(data = climate_annual, ggplot2::aes(year, pr_ensemble),
+                     inherit.aes = FALSE, colour = "black", linewidth = .8) +
+  ggplot2::scale_colour_manual(values = c("#4C72B0", "#DD8452", "#55A868")) +
+  ggplot2::labs(title = "(a) Annual precipitation, three products and their mean",
+                x = NULL, y = "mm") + theme_clim
+
+p_bal <- ggplot2::ggplot(climate_annual, ggplot2::aes(year, p_minus_pet)) +
+  ggplot2::geom_col(ggplot2::aes(fill = p_minus_pet > 0), width = .8) +
+  ggplot2::scale_fill_manual(values = wet_dry, guide = "none") +
+  ggplot2::geom_hline(yintercept = 0, linewidth = .3) +
+  ggplot2::labs(title = "(b) Climatic water balance, precipitation minus PET",
+                x = NULL, y = "mm") + theme_clim
+
+p_tmp <- ggplot2::ggplot(climate_annual, ggplot2::aes(year, tmean_ensemble)) +
+  ggplot2::geom_line(colour = "#C44E52", linewidth = .6) +
+  ggplot2::geom_smooth(method = "lm", formula = y ~ x, se = FALSE,
+                       colour = "grey40", linewidth = .4, linetype = 2) +
+  ggplot2::labs(title = "(c) Mean annual air temperature", x = NULL, y = "°C") +
+  theme_clim
+
+p_spei <- climate_annual[!is.na(climate_annual$spei12_oct), ] |>
+  ggplot2::ggplot(ggplot2::aes(year, spei12_oct)) +
+  ggplot2::geom_col(ggplot2::aes(fill = spei12_oct > 0), width = .8) +
+  ggplot2::scale_fill_manual(values = wet_dry, guide = "none") +
+  ggplot2::geom_hline(yintercept = c(-1.5, 1.5), linetype = 3, linewidth = .3) +
+  ggplot2::labs(title = "(d) SPEI-12 at October, wet and dry periods",
+                x = "Year", y = "SPEI") + theme_clim
+
+patchwork::wrap_plots(p_pr, p_bal, p_tmp, p_spei, ncol = 1)
+```
+
+*Climatic setting of the Lake Chilwa basin, 1984 to 2024, over the same window as the optical and radar record. (a) Annual precipitation from CHIRPS, TerraClimate, and ERA5-Land, with their mean in black. (b) Climatic water balance, precipitation minus potential evapotranspiration; the deficit is the normal state and only seven years are positive. (c) Mean annual air temperature, rising at 0.19 °C per decade. (d) Twelve-month SPEI at October, with the conventional thresholds at plus and minus 1.5.*
 
 #### Import AOI Data
 
@@ -516,34 +658,108 @@ The basin boundary and drainage network are derived from the terrain, not inheri
 We conditioned the elevation model by least-cost depression breaching alone (Lindsay, 2016), carving minimal-descent paths through spurious barriers rather than filling depressions, which on a near-flat basin floor would erase the very gradients the routing depends on. Flow was then routed by the D-infinity method (Tarboton, 1997), whose continuous angular partitioning represents dispersal across low-relief terrain more faithfully than the eight discrete directions of D8; where fuller flow dispersion is wanted, a multiple-flow-direction variant (Freeman, 1991; Quinn, 1991) is the defensible alternative. Routing was computed twice for algorithmic consensus: once in WhiteboxTools (`wbt_d_inf_pointer`, `wbt_d_inf_flow_accumulation`) and once in the flowdem package (`dirs` and `accum`, mode `dinf`). From the D-infinity flow accumulation we extracted the stream network (`wbt_extract_streams`), ordered it by the Strahler scheme (`wbt_strahler_stream_order`), and delineated the basin and its sub-catchments, the polygons that serve as the analysis boundary (`03.outputs/SHP/chilwa_basin.shp`, `chilwa_subasins.shp`). The full workflow, including the depression-breaching and DEM-resolution comparisons, is documented in `05.scripts/watershed-algorithms.qmd` and its published mirror.
 
 ```{r terrain-extract}
-# Terrain grids from the local least-cost-breaching + D-infinity derivation
-# (05.scripts/watershed-algorithms.qmd; WhiteboxTools + flowdem). Earth Engine
-# has no breaching, flow-accumulation, or D-infinity operator, so the basin is
-# derived locally and only the resulting grids are loaded here.
-# The method of record is breaching-only conditioning with D-infinity routing.
-# Paths use here::here() because the setup chunk sets knitr root.dir = here::here().
-dem_dir <- here::here("03.outputs", "DEM")
-dem_files <- c("rasters_SRTM15Plus", "dinfFlowDirection", "Dinfarea")
-dem_extract_dir <- file.path(dem_dir, "extracted")
+# Terrain derivation, 1 arc-second SRTM, run from this notebook.
+#
+# The elevation model is SRTM 1 arc-second (USGS/SRTMGL1_003), ~30 m at this
+# latitude. The 15 arc-second SRTM15Plus product used in earlier drafts is a
+# global OCEAN BATHYMETRY dataset (Tozer et al., 2019) that carries land at
+# ~450 m; on a basin whose floor relief is a few metres it cannot hold the
+# gradients D-infinity routing needs, and it is retired here.
+#
+# Conditioning is least-cost depression breaching only, never filling
+# (Lindsay, 2016), because filling flattens the basin floor. Routing is
+# D-infinity (Tarboton, 1997). Earth Engine has no breaching, flow-accumulation
+# or D-infinity operator, so conditioning and routing run locally in
+# WhiteboxTools while the elevation model itself is pulled from Earth Engine.
+#
+# Each step is skipped when its output already exists, so a re-render costs
+# nothing; delete the files in 03.outputs/DEM/extracted to force a rebuild.
+dem_extract_dir <- here::here("03.outputs", "DEM", "extracted")
 dir.create(dem_extract_dir, recursive = TRUE, showWarnings = FALSE)
-for (f in dem_files) {
-  archive <- file.path(dem_dir, paste0(f, ".tar.gz"))
-  if (file.exists(archive)) {
-    untar(archive, exdir = dem_extract_dir)
-  } else {
-    warning("Missing DEM archive, skipped: ", archive)
+f_ll   <- file.path(dem_extract_dir, "srtm30m_chilwa.tif")           # 4326 source
+f_utm  <- file.path(dem_extract_dir, "srtm30m_utm.tif")              # 32736, 30 m
+f_brc  <- file.path(dem_extract_dir, "srtm30m_breached.tif")
+f_ptr  <- file.path(dem_extract_dir, "dinf30m_FlowDirectionang.tif")
+f_sca  <- file.path(dem_extract_dir, "dinf30m_areasca.tif")
+
+whitebox::wbt_init()
+terra::terraOptions(memfrac = 0.5, progress = 0)
+
+# 1. Elevation model, tiled out of Earth Engine to stay inside the download cap.
+if (!file.exists(f_ll)) {
+  bb  <- as.numeric(sf::st_bbox(aoi_sf)); pad <- 0.05
+  xs  <- seq(bb[1] - pad, bb[3] + pad, length.out = 4)
+  ys  <- seq(bb[2] - pad, bb[4] + pad, length.out = 4)
+  srtm <- ee$Image("USGS/SRTMGL1_003")$select("elevation")
+  tiles <- character(0)
+  for (i in 1:3) for (j in 1:3) {
+    g <- ee$Geometry$Rectangle(list(xs[i], ys[j], xs[i + 1], ys[j + 1]))
+    u <- srtm$getDownloadURL(list(scale = 30, crs = "EPSG:4326",
+                                  region = g, format = "GEO_TIFF"))
+    tf <- tempfile(fileext = ".tif"); download.file(u, tf, quiet = TRUE, mode = "wb")
+    tiles <- c(tiles, tf)
   }
+  terra::writeRaster(do.call(terra::merge, lapply(tiles, terra::rast)),
+                     f_ll, overwrite = TRUE, datatype = "INT2S",
+                     gdal = c("COMPRESS=DEFLATE", "TILED=YES"))
 }
-list.files(dem_extract_dir)
+
+# 2. Project to metres so slope, distance and contributing area are physical.
+if (!file.exists(f_utm)) {
+  terra::writeRaster(terra::project(terra::rast(f_ll), "EPSG:32736",
+                                    res = 30, method = "bilinear"),
+                     f_utm, overwrite = TRUE,
+                     gdal = c("COMPRESS=DEFLATE", "TILED=YES"))
+}
+
+# 3. Breaching only, fill = FALSE.
+if (!file.exists(f_brc)) {
+  whitebox::wbt_breach_depressions_least_cost(
+    dem = f_utm, output = f_brc, dist = 200, min_dist = TRUE,
+    flat_increment = 0.001, fill = FALSE)
+}
+
+# 4. D-infinity pointer and specific contributing area.
+if (!file.exists(f_ptr))
+  whitebox::wbt_d_inf_pointer(dem = f_brc, output = f_ptr)
+if (!file.exists(f_sca))
+  whitebox::wbt_d_inf_flow_accumulation(input = f_brc, output = f_sca,
+                                        out_type = "Specific Contributing Area")
+
+# 5. Geographic copies for the map chunks, which crop in degrees.
+for (pr in list(c(f_utm, "srtm30m_ll.tif", "bilinear"),
+                c(f_ptr, "dinf30m_FlowDirectionang_ll.tif", "near"),
+                c(f_sca, "dinf30m_areasca_ll.tif", "bilinear"))) {
+  fo <- file.path(dem_extract_dir, pr[2])
+  if (!file.exists(fo) && file.exists(pr[1]))
+    terra::writeRaster(terra::project(terra::rast(pr[1]), "EPSG:4326",
+                                      method = pr[3]),
+                       fo, overwrite = TRUE, gdal = c("COMPRESS=DEFLATE"))
+}
+
+# Resolution actually in use, printed so the record cannot drift again.
+data.frame(
+  grid = c("elevation", "D-inf direction", "D-inf contributing area"),
+  file = c("srtm30m_ll.tif", "dinf30m_FlowDirectionang_ll.tif",
+           "dinf30m_areasca_ll.tif"),
+  res_m = vapply(c("srtm30m_ll.tif", "dinf30m_FlowDirectionang_ll.tif",
+                   "dinf30m_areasca_ll.tif"),
+                 function(f) {
+                   fp <- file.path(dem_extract_dir, f)
+                   if (file.exists(fp))
+                     round(terra::res(terra::rast(fp))[1] * 111320) else NA_real_
+                 }, numeric(1)))
 ```
 
 ```{r terrain-load}
 # The SRTM input and the D-infinity grids from the breach-conditioned derivation.
-srtm15plus <- terra::rast(file.path(dem_extract_dir, "output_SRTM15Plus.tif"))
-dinf_dir   <- terra::rast(file.path(dem_extract_dir, "dinfFlowDirectionang.tif"))
-dinf_area  <- terra::rast(file.path(dem_extract_dir, "Dinfareasca.tif"))
+# Routing is computed in EPSG:32736 so slopes and areas are metric; the grids
+# are carried here in EPSG:4326 to match the AOI used by the map chunks below.
+srtm30m   <- terra::rast(file.path(dem_extract_dir, "srtm30m_ll.tif"))
+dinf_dir  <- terra::rast(file.path(dem_extract_dir, "dinf30m_FlowDirectionang_ll.tif"))
+dinf_area <- terra::rast(file.path(dem_extract_dir, "dinf30m_areasca_ll.tif"))
 
-print(srtm15plus)
+print(srtm30m)
 ```
 
 Contributing area spans several orders of magnitude, so the D-infinity accumulation is mapped on a log scale, cropped to the basin and a surrounding buffer for comparison against the GEE-derived relief map above.
@@ -965,7 +1181,7 @@ We evaluated five water-extraction indices, selected to span the range of spectr
 +-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Index                 | Formula                                                 | Lake Chilwa Application                                                                                                                                                                                                                                                             |
 +=======================+=========================================================+=====================================================================================================================================================================================================================================================================================+
-| NDWI                  | (Green - NIR) / (Green + NIR)                           | The original water index, sensitive to deep open water but prone to false negatives in turbid, shallow, or vegetated conditions because suspended sediment and vegetation raise NIR reflectance; the baseline against which the others are compared.                                    |
+| NDWI                  | (Green - NIR) / (Green + NIR)                           | The original water index, sensitive to deep open water but prone to false negatives in turbid, shallow, or vegetated conditions because suspended sediment and vegetation raise NIR reflectance; the baseline against which the others are compared.                                |
 |                       |                                                         |                                                                                                                                                                                                                                                                                     |
 | (McFeeters, 1996)     |                                                         |                                                                                                                                                                                                                                                                                     |
 +-----------------------+---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+

@@ -1,0 +1,21 @@
+{
+  "derived_utc": "2026-07-30T13:54:33Z",
+  "dem_source": "/Volumes/PortableSSD/Github/mapping-wetland-inundation-lake-chilwa/03.outputs/DEM/extracted/output_SRTM15Plus.tif",
+  "dem_res_m": 450,
+  "conditioning": "breaching only, fill = FALSE",
+  "cells_raised": 266,
+  "max_breach_depth_m": 108.824,
+  "routing_structure": "D-infinity (Tarboton 1997)",
+  "routing_alternative": "MDInf / FD8 (Freeman 1991; Quinn 1991)",
+  "divide_rule": "internally drained region containing the terminal cell",
+  "terminal_cell_xy": [696054.7, 8225112.1],
+  "terminal_elev_m": 76.64,
+  "area_km2_utm": 17317.8,
+  "area_km2_wgs84_s2off": 17303.13,
+  "hydrobasins_fields_present": false,
+  "inherited_area_km2": 8763.9,
+  "intersection_km2": 8719.6,
+  "union_km2": 17362.1,
+  "jaccard": 0.5022,
+  "area_difference_km2": 8553.9
+}
