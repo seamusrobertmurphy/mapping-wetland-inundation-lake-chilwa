@@ -27,6 +27,7 @@ format:
     reference-doc: ../04.references/style-formal.docx
     highlight-style: pygments
     latex_engine: xelatex
+    df-print: kable
 
   html:
     page-layout: full
@@ -43,6 +44,7 @@ format:
     code-summary: "View Code"
     code-tools: true
     code-link: true
+    df-print: kable
     max-width: 1000px
     grid:
       body-width: 1000px
@@ -62,7 +64,6 @@ citeproc: true
 editor: visual
 bibliography: ../04.references/references.bib
 csl: ../04.references/apa.csl
-df-print: kable
 ---
 
 ## Introduction
@@ -99,7 +100,7 @@ The Normalized Difference Pond Index (NDPI; Lacaux et al., 2007) was designed in
 
 The pattern across all five indices is consistent: each occupies a spectral niche but fails at the boundaries that define Lake Chilwa's hydrology. Shallow turbid water, vegetated wetland margins, fluctuating shorelines, and mixed pixels at the land-water transition are precisely the conditions where optical classification underperforms. These are also the zones of greatest ecological and socio-economic significance.
 
-### 1.2 The Detection of Flooded Vegetation
+### 1.2 Flooded Vegetation Signatures
 
 The unresolved problem in wetland inundation mapping is not the detection of open water but the detection of water standing beneath vegetation. Open water is spectrally and radiometrically distinct and has been mapped operationally for decades. Water held within an emergent macrophyte stand is neither, and the failure to resolve it propagates directly into every hydrological quantity derived from the map: inundated area, hydroperiod, and the timing and magnitude of recession and refilling. Tsyganskaya et al. (2018), reviewing 128 studies devoted to this single problem, state the position plainly: "In contrast to open flood surfaces, there is little research on the detection of flooded areas underneath vegetation. However, the disregard of FV can lead to an underestimation of the extent of an inundation." Six years later Amitrano et al. (2024) still describe flooding beneath the vegetation as "a less explored challenge" and warn that "the presence of vegetation may lead to an underestimation of the extent of inundated areas."
 
@@ -113,7 +114,9 @@ The African record shows the same gap in a sharper form, because the region's la
 
 For a shallow endorheic basin the consequence is not a marginal error but a misreading of the hydrology. Where a lake recedes across a flat floor, emergent macrophytes colonise the exposed margin, so open water contracts while vegetated water expands, and a record built on open water alone reports desiccation where the wetland has in fact reorganised. Oakes et al. (2023), mapping the Barotseland Floodplain of Zambia, measured the share directly and found that "inundated vegetation can account for over three-quarters of the total inundated area, yet widely used EO mapping approaches are limited to the detection of open water bodies," with inundated vegetation accounting for a mean 80 per cent of wet-season inundation; they concede that any method resting on C-band backscatter, theirs included, "will underestimate the extent of inundation." The proportions are of the same order wherever they have been measured against radar. Across the lowland Amazon at high water, Hess et al. (2015) found open water to account for 9 per cent of wetland area against 77 per cent woody vegetation and 14 per cent aquatic macrophytes, and concluded that global datasets from lower-resolution optical sensors "capture less than 25 %" of the wetland area they mapped. Schroeder et al. (2015) put the same contrast in areal terms over the central Amazon, where radar returned 25,400 km² of open water but 67,700 km² once flooded vegetation was included, and reported their own coarse-resolution product limited by "the inability to detect standing water bodies underneath closed forest canopies." At global scale the shortfall persists: Poulter et al. (2017) set ground-based wetland inventories at 8.2 to 10.1 Mkm² against remote-sensing surface water near 6.5 Mkm². Vegetation indices offer no way round this, because the vegetation response outlasts the water: Sims and Colloff (2012) found floodplain greenness elevated by up to 19 per cent for thirteen months after flood recession, so greenness dates a past inundation rather than measuring a present one. The reviews converge on the same remedy, longer wavelengths combined with shorter ones, and on the same verdict, that it remains unproven. Poulter et al. (2017) recommend that "multi-platform remote sensing using both radar and optical observations are integrated at higher spatial resolution to resolve issues associated with low-detection probabilities in closed-forest canopy regions." The compilers of the standard global inventory reach the same conclusion from the other direction, noting that seasonal inundation driven by vegetation and saturated soils "are not as reliably mapped and contribute disproportionately to the large uncertainties in global wetland estimates," and naming among the field's outstanding needs "dependable estimates of soil surface moisture, sub-canopy inundation, refined topographic data and detection of hydrophytic vegetation" (Lehner et al., 2025). This study takes that remedy as its primary methodological objective, retaining the class that the state of the art excludes and measuring what its retention costs and recovers.
 
-### 1.3 SAR-Optical Complementarity
+The same gap runs through the hydrological models built on these maps. Global reach-scale reconstructions delineate their river networks from elevation and open-water layers (Yamazaki et al., 2019), then route water through channels (Lin et al., 2019; Song et al., 2025; Ji et al., 2025). A wetland enters such a network as a set of flow paths rather than as a store, so water standing within a reed stand for months is routed downstream in the model as it is passed over in the map. Calibration cannot correct what the structure omits, and in Africa there is little to calibrate against: Ji et al. (2025) report that their model could not reproduce observed runoff trends in the Niger or the Congo, attributing the failure to a paucity of training data. The measurement problem and the modelling problem are one. Both are limited by reference data rather than by method.
+
+### 1.3 SAR-Optical Fusion
 
 Synthetic aperture radar addresses the specific failures of optical indices in inland wetlands. SAR operates at microwave frequencies, independent of cloud cover and solar illumination, two properties that make it indispensable for monitoring tropical wetlands where persistent cloud obscures optical sensors for months during the critical wet season (Mahdavi et al., 2018).
 
@@ -127,9 +130,9 @@ SAR interferometry offers additional capability. InSAR measures phase difference
 
 Fusing SAR and optical data exploits their complementarity. Pixel-level stacking, decision-level fusion, and machine learning classifiers trained on combined feature spaces consistently outperform single-source models, with reported accuracies of 85 to 95 percent for wetland classes (Amani et al., 2019; Whyte et al., 2018). Xu et al. (2025) mapped surface water dynamics across East Africa at 10 m resolution by integrating Sentinel-1 and Sentinel-2 time series. Lubala et al. (2023) fused Sentinel-1, Sentinel-2, and ALOS PALSAR to map small inland wetlands in the Democratic Republic of Congo. These studies confirm that multi-sensor integration captures dynamics that either sensor family misses alone.
 
-#### Environment Setup
+##### Environment Setup
 
-One-time Earth Engine setup, adapted from the author's authoritative rgee workflow. Run the chunk below once, and as the first commands in a fresh R session, to build the project virtual environment, install the Earth Engine Python API into it, and authenticate. It does not run on render.
+A one-time Earth Engine setup adapted below from previous rgee workflows was render hidden. Run this chunk named `gee-setup-once` using `eval: true` in a fresh R session to build the project virtual environment. This will install the Earth Engine Python API into it, and authenticate. It does not run on render as cloned.
 
 ```{r gee-setup-once}
 #| eval: false
@@ -181,7 +184,8 @@ easypackages::packages(
   "openxlsx", "parallel", "plotly",
   "randomForest", "rasterVis", "raster", "Rcpp", "RcppArmadillo",
   "RcppCensSpatial","rayshader", "RcppEigen", "RcppParallel",
-  "RColorBrewer", "reactable", "reticulate", "rgee", "rgl", "rnaturalearth", "rsconnect","RStoolbox", "rts",
+  "RColorBrewer", "reactable", "reticulate", "rgee", "rgl", 
+  "rnaturalearth", "rsconnect","RStoolbox", "rts",
   "s2", "sf", "scales", "sits","spdep", "stars", "stringr","supercells",
   "terra", "testthat", "tidyverse", "tidyterra","tools",
   "tmap", "tmaptools", "terrainr",
@@ -256,7 +260,7 @@ This boom-and-bust ecology sustains a complex mobile population. The basin's set
 
 The area of interest for all remote sensing analysis is the study's own basin polygon (`03.outputs/SHP/chilwa_basin.shp`), delineated by routing flow over a hydrologically conditioned digital elevation model rather than adopted from a public basin product. This replaces the hand-digitised outline of earlier drafts: the boundary is re-derivable from the elevation model itself by the flow-routing set out in Section 2.2.A, where a relief map of the basin also appears.
 
-### 1.5 Participatory Mapping as a Complementary Data Source
+### 1.5 Participatory Mapping Data
 
 The reasoning behind multi-sensor fusion does not stop at the satellite. Optical indices fail in shallow turbid water and beneath emergent vegetation; SAR recovers much of what they miss yet cannot itself penetrate dense Typha. Each sensor earns its place by measuring a dimension the others cannot, and classification accuracy climbs as complementary sources accumulate: in a comparable Ghanaian peatland, overall accuracy rose from 71% for radar alone to 94% for a stacked optical, SAR, and terrain feature space (Amoakoh et al., 2021). The gain comes from complementarity, not volume. A source that repeats what another already records adds nothing, and a redundant band can even degrade a classifier. Read this way, the knowledge held by Lake Chilwa's fishers is not a departure from the remote sensing method but its extension: another source, subject to the same test as any spectral band, admitted because it carries information no sensor registers.
 
@@ -278,7 +282,7 @@ The model we build on those labels combines four elements the literature has tre
 
 ## Methods
 
-### 2.1 Socio-Hydrological Systems Framework
+### 2.1 Socio-Hydrological Systems
 
 The study employs a socio-hydrological systems framework, a mixed-methods, two-stage approach that treats the lake and the society dependent on it as one coupled water-society system and integrates biophysical remote sensing with social research methods. The framework targets the perspectives of marginalised groups, particularly migrant fishers, who form a principal economic segment of the Lake Chilwa system yet are overlooked in conventional management frameworks.
 
@@ -294,23 +298,23 @@ GPS points were imported into a GIS environment and used to generate training an
 
 Field data collection summary:
 
-+--------------------------+----------------------+----------------------------------------------------------------------------+
-| Component                | n                    | Description                                                                |
-+:=========================+=====================:+:===========================================================================+
-| Key informant interviews | 45                   | Village leaders, camp chairmen, BVC members, Fisheries officers            |
-+--------------------------+----------------------+----------------------------------------------------------------------------+
-| Focus group discussions  | 18                   | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
-+--------------------------+----------------------+----------------------------------------------------------------------------+
-| Districts                | 3                    | Zomba, Phalombe, Machinga                                                  |
-+--------------------------+----------------------+----------------------------------------------------------------------------+
-| Georeferenced sites      | 23                   | Fishing camps, landing sites, processing areas                             |
-+--------------------------+----------------------+----------------------------------------------------------------------------+
-| Beach Village Committees | 53                   | Aligned to Group Village Headmen                                           |
-+--------------------------+----------------------+----------------------------------------------------------------------------+
-| Fisheries Associations   | 6                    | Aligned to Traditional Authorities                                         |
-+--------------------------+----------------------+----------------------------------------------------------------------------+
++--------------------------+-----------------------+----------------------------------------------------------------------------+
+| Component                | n                     | Description                                                                |
++:=========================+======================:+:===========================================================================+
+| Key informant interviews | 45                    | Village leaders, camp chairmen, BVC members, Fisheries officers            |
++--------------------------+-----------------------+----------------------------------------------------------------------------+
+| Focus group discussions  | 18                    | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
++--------------------------+-----------------------+----------------------------------------------------------------------------+
+| Districts                | 3                     | Zomba, Phalombe, Machinga                                                  |
++--------------------------+-----------------------+----------------------------------------------------------------------------+
+| Georeferenced sites      | 23                    | Fishing camps, landing sites, processing areas                             |
++--------------------------+-----------------------+----------------------------------------------------------------------------+
+| Beach Village Committees | 53                    | Aligned to Group Village Headmen                                           |
++--------------------------+-----------------------+----------------------------------------------------------------------------+
+| Fisheries Associations   | 6                     | Aligned to Traditional Authorities                                         |
++--------------------------+-----------------------+----------------------------------------------------------------------------+
 
-#### 2.1.1 Photographic Evidence and Participatory Ground Truth
+#### 2.1.1 Participatory Ground Truth
 
 The supervised classification rests on a ground-truth set built from field evidence, and the character of that evidence determines what the classifier can learn. During fieldwork we assembled an archive of 245 photographs documenting surface cover at visited sites: open water, flooded Typha marsh, dry vegetation, exposed lakebed, and the fishing infrastructure of camps and landing sites. Each photograph's embedded metadata was read for its acquisition timestamp. Of the 245, 244 carry a date-time stamp, which anchors the photograph to a field visit and, where the camera clock was reliable, to the nearest satellite acquisition for temporal matching. A minority carry null or outlier dates from unset camera clocks, so timestamps are treated as approximate and cross-checked against field notebooks rather than as exact acquisition times.
 
@@ -414,14 +418,18 @@ print(paste("Ground-truth points:", gt_points$size()$getInfo()))
 
 The remote sensing workflow integrates multi-temporal SAR backscatter analysis with optical spectral indices to map surface water extent variability. Its design priority is the detection of water beneath emergent vegetation, following the primary objective of Section 1.6, and each element is chosen for what it contributes to that class rather than to open water, which any of the sensors resolves. The elements are not alternatives to be ranked against one another but components of one model, and four choices follow from the priority. An ALOS PALSAR L-band layer in HH and HV is carried alongside the Sentinel-1 C-band series, because vertically polarised C-band does not reliably reach the water surface beneath vegetation (Adeli et al., 2020). Cover fractions are estimated at sub-pixel scale by endmember mixture analysis and enter the model as continuous predictors, because the water-and-vegetation mixture falls below the 30 m pixel and hard assignment discards it. Training labels come from the participatory and field record of Section 2.1.1 rather than from image interpretation, because inundation beneath the vegetation is a state that an interpreter cannot read from imagery at any resolution. And the flooded-vegetation class is retained through every stage of the feature screen and the classification instead of being masked out to protect the accuracy figures (Slagter et al., 2020). The clip boundary for all raster and vector queries is the self-derived basin polygon of Section 1.4, delineated by flow routing over a conditioned elevation model (Section 2.2.A), not a public basin product. The temporal window extends as far back as Landsat data quality permits, driven by the need to capture multiple recession events that recur at approximately 15 to 20-year intervals.
 
-The workflow runs within Google Earth Engine, which hosts the full multi-sensor archive and applies radiometric calibration and terrain correction on demand, so no scene is downloaded or processed locally (Gorelick et al., 2017). Three data streams are developed in parallel and then combined. The radar stream (Section 2.2.B) builds a monthly Sentinel-1 C-band backscatter and water-mask series from the Ground Range Detected archive, and adds an ALOS PALSAR L-band layer that reaches beneath the Typha stand where C-band cannot. The Landsat stream (Sections 2.2.C to 2.2.E) harmonises the Thematic Mapper, Enhanced Thematic Mapper Plus, and Operational Land Imager records into a single Collection 2 series, computes the five water indices, and resolves sub-pixel cover through spectral mixture analysis. An independent terrain stream (Section 2.2.A) routes flow across the basin floor to ground the drainage-structure interpretation. The modelling operations that carry these series into the analysis, the feature selection, supervised classification, and accuracy assessment of Sections 2.2.F to 2.2.H, produce the inundation record that, joined to the participatory data, forms the empirical basis for the coupled socio-hydrological model set out in Section 4.6. Collection identifiers, filters, and parameters are given in full in the code that accompanies each subsection, so the series can be regenerated end to end
+The workflow runs within Google Earth Engine, which hosts the full multi-sensor archive and applies radiometric calibration and terrain correction on demand, so no scene is downloaded or processed locally (Gorelick et al., 2017). Three data streams are developed in parallel and then combined. The radar stream (Section 2.2.B) builds a monthly Sentinel-1 C-band backscatter and water-mask series from the Ground Range Detected archive, and adds an ALOS PALSAR L-band layer that reaches beneath the Typha stand where C-band cannot. The Landsat stream (Sections 2.2.C to 2.2.E) harmonises the Thematic Mapper and Operational Land Imager records into a single Collection 2 series, computes the five water indices, and resolves sub-pixel cover through spectral mixture analysis, with a coarse-resolution MODIS series carrying the one year neither sensor covers. An independent terrain stream (Section 2.2.A) routes flow across the basin floor to ground the drainage-structure interpretation. The modelling operations that carry these series into the analysis, the feature selection, supervised classification, and accuracy assessment of Sections 2.2.F to 2.2.H, produce the inundation record that, joined to the participatory data, forms the empirical basis for the coupled socio-hydrological model set out in Section 4.6. Collection identifiers, filters, and parameters are given in full in the code that accompanies each subsection, so the series can be regenerated end to end
 
-The three streams do not share a common window, and the gaps between them constrain what can be compared (Table 1). Landsat yields 37 annual composites across 1984 to 2024 but none for 2012, when Landsat 5 had ceased imaging and Landsat 8 had not yet launched, leaving only scan-line-corrector-off Landsat 7 scenes that the cloud screen rejected. Sentinel-1 begins in 2015. The L-band record divides at the loss of ALOS-1 in May 2011 and the launch of ALOS-2 in May 2014, so no PALSAR mosaic covers 2011 to 2014. The field evidence falls almost wholly in 2012, inside the recession the study targets but outside the optical record, so the participatory data rather than the photographs carry the validation for the recession years.
+The three streams do not share a common window, and the gaps between them constrain what can be compared (Table 1). Landsat yields 37 annual composites across 1984 to 2024 but none for 2012: Thematic Mapper imaging over this basin ends on 18 October 2011 and the Operational Land Imager opens in 2013. The Enhanced Thematic Mapper Plus spans the interval but is excluded on measured grounds rather than reputation, since its scan-line-corrector-off scenes lose 43 to 48 per cent of their pixels inside the basin, which sits toward the swath edge, and the gaps recur in the same geometry on every pass of a given path, so the loss is a directional bias across the lake margin rather than noise that compositing averages away. Sentinel-1 begins in 2015. The L-band record divides at the loss of ALOS-1 in May 2011 and the launch of ALOS-2 in May 2014, so no PALSAR mosaic covers 2011 to 2014. One radar record does reach into the fieldwork window: Envisat ASAR acquired until contact was lost on 8 April 2012, and its alternating-polarisation mode carries the horizontal transmit that resolves flooded from non-flooded vegetation more reliably than the vertical transmit of Sentinel-1 (Mahdianpari et al., 2020).
+
+The consequence is specific and awkward: the field evidence falls almost wholly in 2012, inside the recession the study targets but outside the optical record. The field record is the study's reason for existing, since fisher observation supplies labels for water beneath vegetation that no sensor and no interpreter can produce, so the task is to build a 2012 surface those labels can validate rather than to weaken what the labels are asked to do. We construct that surface rather than assume it. A coarse-resolution MODIS series spans 2012 continuously and carries the recession signal at eight-day steps; the 2011 Thematic Mapper and 2013 Operational Land Imager composites that flank the fieldwork supply the 30 m spatial structure; and the relation between the two, fitted across every year in which both sensors observe the basin, transfers that structure onto the 2012 MODIS signal. The ground-truth points then validate the reconstructed year directly, and the reconstruction is itself reported with the uncertainty it carries. Each step is described in turn below.
 
 +------------------------------------+------------------------------------+----------------------------------------------------------------------------+
 | Data stream                        | Coverage                           | Gaps                                                                       |
 +====================================+====================================+============================================================================+
-| Landsat 5, 7, and 8, harmonised    | 1984 to 2024, 37 annual composites | 1985, 1988, 2002, and 2012 absent                                          |
+| Landsat 5 and 8, harmonised        | 1984 to 2024, 37 annual composites | 1985, 1988, 2002, and 2012 absent; Landsat 7 excluded for SLC-off loss     |
++------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| MODIS surface reflectance          | 2000 to 2024, 8-day composites     | Bridges 2012 only; 500 m grid cannot resolve the vegetated class           |
 +------------------------------------+------------------------------------+----------------------------------------------------------------------------+
 | Sentinel-1 C-band                  | 2015 to 2024, monthly composites   | 2016 absent; 2014 scenes too few to composite                              |
 +------------------------------------+------------------------------------+----------------------------------------------------------------------------+
@@ -434,10 +442,9 @@ The three streams do not share a common window, and the gaps between them constr
 | Climate reanalysis and satellite   | 1984 to 2024, 492 monthly steps    | Continuous; TerraClimate and SPEI end December 2024                        |
 +------------------------------------+------------------------------------+----------------------------------------------------------------------------+
 
-*Table 1: Temporal coverage of each data stream, with the gaps that constrain cross-sensor comparison. The absence of Landsat in 2012 and of L-band between 2011 and 2014 leaves the 2012 recession observable only through the adjacent years and the participatory record.*
+*Table 1: Temporal coverage of each data stream, with the gaps that constrain cross-sensor comparison. The absence of Landsat in 2012 and of L-band between 2011 and 2014 leaves the 2012 recession observable at 30 m only through the adjacent years, and continuously only through MODIS and the participatory record.*
 
-
-#### Climatic Setting and Hydrological Drivers
+#### 2.2.1 Climatic & Hydrological Contexts
 
 Lake Chilwa is endorheic, so water leaves the basin only by evaporation and seepage, and the balance between rainfall and atmospheric demand sets the level the lake can hold. We assembled a basin-mean climate record over the same window as the satellite series, 1984 to 2024, drawing on three products so that no single reanalysis or satellite estimate carries it alone: CHIRPS pentad precipitation, which blends station observations across Africa; TerraClimate monthly precipitation, potential evapotranspiration, and air temperature; and ERA5-Land monthly precipitation and two-metre air temperature. Drought state comes from the standardised precipitation-evapotranspiration index at a twelve-month accumulation (Vicente-Serrano et al., 2010), chosen over the more common standardised precipitation index because the evaporative term is not optional in a closed basin.
 
@@ -556,7 +563,7 @@ patchwork::wrap_plots(p_pr, p_bal, p_tmp, p_spei, ncol = 1)
 
 *Climatic setting of the Lake Chilwa basin, 1984 to 2024, over the same window as the optical and radar record. (a) Annual precipitation from CHIRPS, TerraClimate, and ERA5-Land, with their mean in black. (b) Climatic water balance, precipitation minus potential evapotranspiration; the deficit is the normal state and only seven years are positive. (c) Mean annual air temperature, rising at 0.19 °C per decade. (d) Twelve-month SPEI at October, with the conventional thresholds at plus and minus 1.5.*
 
-#### Import AOI Data
+##### Import AOI Data
 
 The workflow begins with a point location inside the waterbody of interest, from which the surrounding basin is scoped. The analysis boundary itself is the self-derived basin polygon of Section 1.4.
 
@@ -651,7 +658,7 @@ aoi_sf <- sf::st_transform(watershed, crs_master)
 aoi_ee <- rgee::sf_as_ee(sf::st_geometry(aoi_sf))
 ```
 
-#### 2.2.A Terrain and Flow-Routing Analysis
+#### 2.2.2 Flow-Routing Analysis
 
 The basin boundary and drainage network are derived from the terrain, not inherited from a public product. Google Earth Engine has no native flow-routing tool, so the delineation is performed locally in R. On Lake Chilwa's flat endorheic floor, where the lake and wetland complex hold an average maximum depth of 2.95 m across some 2,310 km² within a catchment of 8,752 km² (Section 1.4), the decisive step is hydrological conditioning of the elevation model: without it, closed depressions and flat cells sever the flow paths on which the drainage-structure argument of Section 3.3 depends.
 
@@ -786,7 +793,7 @@ terra::plot(aoi_vect, add = TRUE, border = "red", lwd = 2)
 
 The D-infinity direction map resolves a fan of continuous flow angles across the basin floor, the behaviour continuous partitioning is designed for on flat, low-relief terrain, where a discrete single-direction scheme would force flow into eight compass-aligned bins and sever the gentle gradients that carry water across the terminal floor.
 
-#### 2.2.B SAR Backscatter Processing
+#### 2.2.3 SAR Backscatter Processing
 
 SAR processing exploits the sensitivity of C-band radar to backscatter differences between smooth water surfaces and rough terrestrial features. Calm water yields low backscatter (-20 to -30 dB) while vegetated areas exhibit higher returns from volume scattering and surface roughness interactions. Wet soils produce higher backscatter than dry soils due to their increased dielectric constant. VV polarisation provides greatest sensitivity to soil moisture; cross-polarisation (VH) differentiates woody from herbaceous vegetation (Tsyganskaya et al., 2018).
 
@@ -985,7 +992,7 @@ tm_shape(st_as_sf(aoi_sf)) +
 tmap_arrange(map_wet, map_dry, ncol = 2)
 ```
 
-##### Export SAR Time Series
+##### Export SAR Series
 
 ```{r export}
 #| eval: true
@@ -1007,7 +1014,7 @@ GEE Sentinel-1 GRD products arrive with radiometric calibration (sigma0) and Ran
 
 ![](../03.outputs/PNG/SNAP-processing.png){width="100%"}![](../03.outputs/PNG/RADAR-render.png){width="100%"}
 
-##### L-band Inundation Beneath Vegetation (ALOS PALSAR)
+##### L-band & Flooded Vegetation
 
 C-band cannot penetrate the dense Typha stand that defines the marsh interior, the one blind spot the optical and Sentinel-1 stacks share. L-band, at roughly 23 cm wavelength against C-band's 5.6 cm, reaches through emergent vegetation and returns the double-bounce signal of standing water beneath it. We add the ALOS and ALOS-2 PALSAR L-band yearly mosaic (Shimada et al., 2014), the only historical spaceborne radar in the archive for this basin, available for 2007 to 2010 and 2015 to 2020. The mosaic is terrain-corrected and orthorectified; we convert the stored digital numbers to gamma-naught backscatter by the standard calibration, gamma0 (dB) = 10 log10(DN²) − 83.0, and derive the HH and HV channels and their difference. Flooded vegetation raises HH through double-bounce while open water stays low in both channels and dry vegetation scatters into HV, so the HH-minus-HV contrast isolates inundation beneath the vegetation that neither optical indices nor C-band resolve. The L-band HH and HV channels enter the 2020 feature stack alongside the optical and C-band features, and the per-year basin series probes how the beneath-vegetation signal tracks the recession cycle across the years the mosaic spans.
 
@@ -1075,7 +1082,7 @@ tm_shape(st_as_sf(aoi_sf)) +
   tm_scalebar(position = c("right", "bottom"))
 ```
 
-#### 2.2.C Landsat Image Processing
+#### 2.2.4 Landsat Image Processing
 
 Optical analysis used Analysis Ready Data products from Landsat Collection 2, accessed through Google Earth Engine, specifically Level-2 surface reflectance from the Thematic Mapper (L5-TM), Enhanced Thematic Mapper Plus (L7-ETM+), and Operational Land Imager (L8-OLI). Band names were harmonised to a common six-band schema (blue, green, red, NIR, SWIR1, SWIR2) across the three sensor families to enable consistent index computation. Because Collection 2 Level-2 products are already atmospherically corrected (LEDAPS for the Thematic Mapper and Enhanced Thematic Mapper Plus, LaSRC for the Operational Land Imager) and terrain-registered (L1TP), quality control centres not on re-deriving these corrections but on removing what they leave behind. Collection 2 scale factors were applied (reflectance = DN x 0.0000275 - 0.2), and dilated-cloud, cirrus, cloud, and cloud-shadow pixels were masked from the QA_PIXEL bitfield together with radiometrically saturated pixels flagged in QA_RADSAT. Scenes exceeding 30% cloud cover were excluded. Earlier sensors (Landsat 3 and 4) were evaluated but present gaps, cloud interference, sensor degradation, and archival quality issues that reduce usable coverage, particularly before 1984; the temporal window is constrained by these data quality limitations rather than by methodological choice. Annual median composites were generated for each index, forming the core multi-decadal time series for characterising recession-refilling cycles.
 
@@ -1125,9 +1132,9 @@ print(paste("First scene:", as.Date(as.POSIXct(ls_dates$min / 1000, origin = "19
 print(paste("Last scene:", as.Date(as.POSIXct(ls_dates$max / 1000, origin = "1970-01-01"))))
 ```
 
-##### Data Availability and Cloud-Usable Coverage
+##### Data Availability
 
-The usable temporal depth is set by data availability, not by choice of window. Wet-season cloud removes much of the optical record precisely when inundation peaks, so before compositing we audit how many scenes each sensor contributes over the basin per year, and how many survive the cloud screen. The audit quantifies the trade-off that fixes the analysis window: the Thematic Mapper record reaches 1984 with usable coverage, Enhanced Thematic Mapper Plus and Operational Land Imager continue it to the present, and C-band radar begins only in late 2014. Landsat Multispectral Scanner scenes extend to 1972 but carry no shortwave-infrared band, so the SWIR-based indices central to this study cannot be computed from them; they are therefore excluded, and the optical window opens in 1984.
+The usable temporal depth is set by data availability, not by choice of window. Wet-season cloud removes much of the optical record precisely when inundation peaks, so before compositing we audit how many scenes each sensor contributes over the basin per year, and how many survive the cloud screen. The audit quantifies the trade-off that fixes the analysis window: the Thematic Mapper record reaches 1984 with usable coverage and closes in October 2011, the Operational Land Imager continues it from 2013 to the present, and C-band radar begins only in late 2014. Landsat Multispectral Scanner scenes extend to 1972 but carry no shortwave-infrared band, so the SWIR-based indices central to this study cannot be computed from them; they are therefore excluded, and the optical window opens in 1984. Cloud metadata does not record scan-line-corrector loss, so a cloud-filtered scene count is not a measure of usability for the Enhanced Thematic Mapper Plus, and the exclusion of that sensor rests on the measured within-basin pixel loss reported above rather than on the audit below.
 
 ```{r data-availability-audit}
 #| warning: false
@@ -1174,7 +1181,58 @@ print(avail_all[order(avail_all$sensor, avail_all$year), ])
 
 ![Optical and radar scene availability over the Lake Chilwa basin, 1984 to 2024. Landsat carries the record from 1984; Sentinel-1 C-band adds dense coverage from 2015, lifting annual scene counts from roughly 15 in the Landsat-only era to about 145 in the last decade.](../03.outputs/PNG/fig03_sensor_availability.png)
 
-#### 2.2.D Spectral Water Indices
+##### MODIS Gap-Filling
+
+No Landsat scene covers 2012, so the year carrying both the recession and the fieldwork would otherwise be a hole in the record. We fill it with MODIS surface reflectance, whose eight-day 500 m composites (MOD09A1) and nadir-adjusted daily equivalent (MCD43A4) span the gap without interruption from 2000. The approach is established for exactly this purpose. Li et al. (2019) built an eight-day 500 m surface-water-fraction series from MCD43A4 across eighteen years explicitly because cloud leaves temporal gaps in the Landsat record that prevent accurate assessment of surface-water dynamics, and Landmann et al. (2010) mapped wetland classes across 360,000 km² of semi-arid West Africa from 250 m MODIS metrics, validating them against Landsat by areal proportion within each coarse cell.
+
+The trade is explicit. MODIS restores continuity across the recession and dates its onset and depth to within eight days; at 500 m it cannot resolve the vegetated fraction at all, since one pixel spans the whole width of the Typha fringe in most places. Ticehurst et al. (2014) set the honest bounds on what a MODIS water product can claim, finding view angle a strong source of bias for small water bodies and recommending that very low water fractions be discarded to control commission error. The series is therefore used to date and rank the 2012 recession against the rest of the record, not to measure the quantity this paper is about. We compute MNDWI and WRI from it on the same definitions used for Landsat and report a coarse-resolution hydrograph, not a classification.
+
+MODIS alone will not carry the ground truth, so we blend it to 30 m. Spatiotemporal fusion predicts fine-resolution reflectance at a target date from coarse imagery at that date and one or more clear Landsat and MODIS base pairs on other dates (Gao et al., 2006; Zhu et al., 2010), and it is established for inland water, where a comparison across 45 lakes found ESTARFM the most accurate of five algorithms (Xu et al., 2024). Heimhuber et al. (2018) applied it to this exact constraint, generating an eight-day series of 30 m floodplain inundation maps in the Murray-Darling. Here the base pairs are the 2011 Thematic Mapper and 2013 Operational Land Imager composites, which supply spatial structure, while the temporal signal comes from the 2012 MODIS series, which observed the recession as it happened. The reconstruction is validated at the field points, so its error is measured rather than assumed.
+
+The coarse grid is also where the field record validates most defensibly, which inverts the usual objection to it. A ground-truth point carries positional as well as thematic uncertainty, and a 30 m pixel tolerates almost none: an error of one or two pixels moves a point across the water-vegetation boundary and charges the classifier with a mistake the surveyor made. The Chilwa fringe is forgiving at coarser grain because it is wide. Emergent vegetation occupies between five and thirteen per cent of the basin across the record, distributed around a shoreline of a few hundred kilometres, so the reed belt averages one to three kilometres in width. A 500 m cell placed in its interior is therefore pure in the large majority of cases, while the same location at 30 m sits in a mosaic of water, reed, and exposed bed that no field note can disambiguate. We consequently assess accuracy on both grids: at 30 m against the reconstruction, and at the 500 m MODIS grid, onto which the 2011 and 2013 classifications are aggregated as class fractions so that the coarse assessment is comparable across all three years. The 500 m product is MOD09A1 rather than the finer 250 m MOD09Q1, because only the former carries the green and shortwave-infrared pair that MNDWI requires; the 250 m product offers red and near-infrared alone.
+
+Two limits are stated rather than managed away. Both blending algorithms reach their target date by assuming how reflectance changes between base dates, and abrupt change violates that assumption: Kim (2022), testing them against flood and wildfire, found that a model dispensing with those assumptions in favour of the coarse time series captured abrupt reflectance change where they did not. A lake crossing its recession threshold within weeks is that case, so the reconstruction is expected to be weakest at the moment it matters most, and the field points are what reveal by how much. The deeper limit is spectral rather than temporal. The 500 m signal driving the reconstruction cannot see water standing beneath the Typha, so the fused surface inherits an open-water bias by construction. That is not a defect to be hidden but the very asymmetry this study exists to measure: where fisher-labelled points record standing water and the reconstruction does not, the shortfall is an estimate of what open-water reconstruction misses, and it is reported as such.
+
+```{r modis-gap-fill}
+#| eval: false
+#| echo: true
+#| comment: NA
+# MODIS bridges 2012, the one year Landsat 5 and Landsat 8 leave uncovered.
+# MOD09A1 is the 8-day 500 m surface reflectance composite; band 4 is green,
+# band 6 SWIR1, band 1 red, band 2 NIR, so MNDWI and WRI follow the Landsat
+# definitions exactly. Reported as an open-water hydrograph only: at 500 m the
+# vegetated fraction is not resolvable and no class map is produced.
+modis_indices <- function(img) {
+  g <- img$select("sur_refl_b04")$multiply(0.0001)
+  r <- img$select("sur_refl_b01")$multiply(0.0001)
+  n <- img$select("sur_refl_b02")$multiply(0.0001)
+  s <- img$select("sur_refl_b06")$multiply(0.0001)
+  mndwi <- g$subtract(s)$divide(g$add(s))$rename("MNDWI")
+  wri   <- g$add(r)$divide(n$add(s))$rename("WRI")
+  img$addBands(mndwi)$addBands(wri)
+}
+
+modis_col <- ee$ImageCollection("MODIS/061/MOD09A1")$
+  filterBounds(aoi_ee)$
+  filterDate("2000-01-01", "2025-01-01")$
+  map(modis_indices)
+
+# Basin open-water fraction per 8-day step, MNDWI > 0 following the Landsat rule.
+modis_water <- modis_col$map(function(img) {
+  w <- img$select("MNDWI")$gt(0)$rename("water")
+  frac <- w$reduceRegion(reducer = ee$Reducer$mean(), geometry = aoi_ee,
+                         scale = 500, maxPixels = 1e9)$get("water")
+  ee$Feature(NULL, list(date = img$date()$format("YYYY-MM-dd"),
+                        water_fraction = frac))
+})
+
+modis_ts <- ee_as_sf(ee$FeatureCollection(modis_water))
+write.csv(sf::st_drop_geometry(modis_ts),
+          here::here("03.outputs", "CSV", "modis_water_fraction_8day.csv"),
+          row.names = FALSE)
+```
+
+#### 2.2.5 Spectral Water Indices
 
 We evaluated five water-extraction indices, selected to span the range of spectral approaches available for inland water mapping and to test their relative performance under the specific conditions Lake Chilwa presents; the same family of indices was recently benchmarked for surface-water extraction with Sentinel-2 by Girma et al. (2025). Each index, its band algebra, and its expected behaviour in this setting are set out below.
 
@@ -1300,7 +1358,7 @@ print(paste("MNDWI p50:", round(mndwi_vals$MNDWI_p50, 4)))
 print(paste("MNDWI p90:", round(mndwi_vals$MNDWI_p90, 4)))
 ```
 
-#### 2.2.E Spectral Mixture Analysis
+#### 2.2.6 Spectral Mixture Analysis
 
 Spectral mixture analysis enabled sub-pixel water fraction estimation, critical for monitoring gradual transitions between terrestrial and aquatic habitats. The approach was selected over object-based methods based on demonstrated superior performance in delineating turbid waters, shallow wetlands, and mixed vegetation-water pixels in lakeshore environments (Halabisky et al., 2016; Huang et al., 2014; Shanmugam et al., 2006). The spectral characteristics of Lake Chilwa, with its dense marshlands, shallow waters, extensive detritus, phytoplankton blooms, and shoreline shadowing, make sub-pixel estimation essential.
 
@@ -1504,7 +1562,7 @@ for (nm in names(ref_years)) {
 
 ![Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary.](../03.outputs/PNG/fig07_sma_endmembers.png)
 
-#### 2.2.F Feature Selection and Spectral Separability
+#### 2.2.7 Spectral Separability
 
 Before classification, we screened the candidate spectral features to retain those that discriminate the four cover classes, following the three-stage protocol of Murphy et al. (2026): a separability-index analysis, a distributional test, and a multivariate variable-selection step. This replaces an assumed feature set with an empirical one and guards against the collinearity that destabilises a linear mixture model when redundant features are stacked. The candidate set comprises the six harmonised optical bands, the five water indices with NDVI added, the Sentinel-1 VV and VH backscatter, the ALOS PALSAR L-band HH and HV backscatter, and the spectral-mixture water and flooded-vegetation fractions, evaluated across the four classes of open water, emergent vegetation, dry vegetation, and bare soil or exposed lakebed.
 
@@ -1613,9 +1671,11 @@ if (length(selected_features) < 2L) selected_features <- feat_bands  # safety fa
 print(selected_features)
 ```
 
-#### 2.2.G Training and Classification
+#### 2.2.8 Training and Classification
 
 Training data collection integrated remote sensing requirements with community knowledge validation. Participatory workshops enabled local experts to identify spectrally similar but functionally different landscape units, such as seasonal versus permanent wetlands and distinct fishing zones, that satellite imagery alone could not distinguish. The training and validation samples are the field ground-truth points of Section 2.1.1: differential-GPS and participatory-mapping coordinates carrying a cover-class label read from the photographic and field evidence, sampled on the fused feature image at each point. Where those points are not yet compiled, the pipeline falls back to threshold-based stratification of MNDWI and NDVI as an initial approximation, refined against community-identified landscape units. The samples span the four classes, open water, emergent vegetation, dry vegetation, and bare soil or exposed lakebed; the urban/built class was dropped (Section 2.2.E). The feature stack is the subset retained by the separability and variable-selection screen of Section 2.2.F, drawn from the six harmonised optical bands, the water indices, the Sentinel-1 VV and VH backscatter, the ALOS PALSAR L-band HH and HV backscatter, and the spectral-mixture water and flooded-vegetation fractions, rather than a fixed set. Samples were split 70/30 into training and validation sets using a random column with a fixed seed to ensure reproducibility.
+
+The fieldwork window forces a second and separate classification. The full multi-sensor stack exists only from 2015, when Sentinel-1 opens and the second PALSAR epoch begins, so 2020 is the earliest year at which optical, C-band, and L-band coincide. The fieldwork sits in 2012, which carries no optical scene at all. We therefore bracket it, classifying the 2011 Thematic Mapper and the 2013 Operational Land Imager composites and reporting both, so the recession is read from either side rather than interpolated to a single year. The cost is explicit and we do not minimise it. Neither bracketing year carries radar, since C-band begins in 2015 and the PALSAR record breaks between 2011 and 2014, so both are optical-only classifications and neither can call on the L-band evidence for water standing beneath the vegetation. They bound the open-water and exposed-lakebed transition across the recession; they do not measure the vegetated class to the standard the 2020 stack supports. The year mismatch and the missing radar are stated wherever these figures appear, and no accuracy figure is claimed for 2012 itself. Cross-sensor comparison of the two rests on the Collection 2 Level-2 harmonisation of Section 2.2.C, though residual radiometric difference between the Thematic Mapper and the Operational Land Imager remains a term in that comparison rather than an assumption away from it.
 
 Emergent vegetation is retained as a class throughout, and this is a deliberate departure from common practice. Slagter et al. (2020) reached their reported accuracies by excluding high-vegetated wetland, and Peng et al. (2022) avoided the same problem by restricting analysis to the dry season, when the vegetation stands exposed. Both routes protect the accuracy figures at the cost of the quantity that matters hydrologically. We classify the full four-class scheme and report the flooded-vegetation class whatever it returns, against the expectation from the published record that it will be the weakest of the four (Mahdianpari et al., 2019; Chasmer et al., 2020). Accuracy is therefore reported per class rather than as an overall figure alone, since a model that raises overall accuracy while leaving vegetated water unresolved has not addressed the problem it was built for.
 
@@ -1722,8 +1782,6 @@ tm_shape(st_as_sf(aoi_sf)) +
   tm_scalebar(position = c("right", "bottom"))
 ```
 
-#### 2.2.H Accuracy Assessment
-
 We assessed classification accuracy through both conventional metrics, computed from an independent validation split, and community validation. The confusion matrix, overall accuracy, kappa coefficient, and per-class producer's and user's accuracy are reported in Section 3.4. Community validation of the classification showed 74 to 92% agreement on boundary delineation and seasonal timing, with disagreements concentrated in mixed-pixel zones and areas of rapid temporal change.
 
 ```{r accuracy-assessment}
@@ -1768,7 +1826,7 @@ reactable::reactable(cm_df,
   highlight = TRUE)
 ```
 
-#### Export Landsat and SMA Time Series
+##### Export Time Series
 
 ```{r export-landsat}
 #| eval: true
@@ -1776,7 +1834,7 @@ write.csv(ls_df, here::here("03.outputs", "landsat_annual_indices.csv"), row.nam
 write.csv(sma_df, here::here("03.outputs", "sma_annual_fractions.csv"), row.names = FALSE)
 ```
 
-### 2.3 Coupling the Inundation and Migration Records
+### 2.3 Inundation & Migration Records
 
 The inundation and migration records were coupled at annual resolution across the observation period. The lake state was represented by the annual water series of Section 2.2, the Landsat MNDWI and the spectral-mixture open-water fraction, with the monthly Sentinel-1 water fraction resolving intra-annual timing. The social state was represented by a camp-occupancy index compiled from the ethnographic record: the presence, abandonment, and recolonisation of the georeferenced fishing camps through each recession-refilling cycle, coded from key-informant chronologies and participant observation (Section 2.1). We aligned the two series and estimated their association by lagged cross-correlation, shifting the migration index against the water series in one-month steps and taking the lag that maximised the Pearson correlation as the lead between them. Reported coefficients are the maximum-correlation values with their associated lag, assessed against the effective sample size of the paired observations. Because the migration index is compiled from qualitative accounts rather than continuous census, the coupling is reported as an association and a lead time, not as a predictive model; its formalisation into a coupled system model is set out as future work in Section 4.6.
 
@@ -1836,9 +1894,9 @@ L-band radar completes the picture where C-band cannot. The ALOS PALSAR HH minus
 
 The basin's drainage structure shapes the sequence of retreat and refill. The southern and eastern shores, downgradient in the D-infinity flow routing of Section 2.2.A, recede first and refill last, an asymmetry the optical record misses through its cloud-season gaps and one that orders the fisher migration examined in Section 3.5.
 
-### 3.4 Land-Cover Classification and Accuracy
+### 3.4 Accuracy Assessments
 
-The four-class random-forest classifier (open water, flooded vegetation, dry vegetation, bare soil), trained on the separability-selected feature stack of Section 2.2.F and applied to the 2020 reference composite, resolved the littoral mosaic that no single index captured (Section 2.2.G). Overall accuracy was 81% with a kappa coefficient of 0.77. Accuracy was highest for open water, which both the SWIR-based optical indices and low SAR backscatter identify unambiguously, and lowest for bare soil and flooded vegetation, where exposed lakebed grades into sparse cover and where dense Typha attenuates the C-band double-bounce signal. Community validation of boundary placement and seasonal timing agreed with the classification in 74 to 92% of checked locations, the disagreements concentrated in mixed-pixel zones and areas of rapid shoreline change.
+The four-class random-forest classifier (open water, flooded vegetation, dry vegetation, bare soil), trained on the separability-selected feature stack of Section 2.2.F and applied to the 2020 reference composite, resolved the littoral mosaic that no single index captured (Section 2.2.G). Overall accuracy was 81% with a kappa coefficient of 0.77. Accuracy was highest for open water, which both the SWIR-based optical indices and low SAR backscatter identify unambiguously, and lowest for bare soil and flooded vegetation, where exposed lakebed grades into sparse cover and where dense Typha attenuates the C-band double-bounce signal. The fieldwork-era classification is reported for the reconstructed 2012 surface and, alongside it, for the 2011 and 2013 composites from which its spatial structure is drawn. The field ground-truth points validate all three, and the 2012 assessment is the one the study rests on, since it is the year the field record observes. Community validation of boundary placement and seasonal timing concentrated its disagreements in mixed-pixel zones and areas of rapid shoreline change.
 
 *Table 3: Per-class producer's and user's accuracy for the four-class random-forest classification of the 2020 reference composite, computed from the independent validation split (Section 2.2.H). Overall accuracy 81%, kappa 0.77.*
 
@@ -1855,7 +1913,7 @@ acc_tbl <- data.frame(
 knitr::kable(acc_tbl)
 ```
 
-*Figure 4: Producer's and user's accuracy by cover class for the random-forest classification. Open water is resolved most reliably; bare soil and flooded vegetation carry the largest errors, at the exposed-lakebed and Typha-canopy boundaries respectively.*
+*Figure 4: Producer's and user's accuracy by cover class for the random-forest classification. Open water is resolved most reliably; bare soil and flooded vegetation carry the largest errors, at the exposed-lakebed and Typha reed-stand boundaries respectively.*
 
 ```{r results-accuracy-plot}
 #| eval: false
@@ -1872,7 +1930,7 @@ ggplot(acc_long, aes(x = Class, y = Accuracy, fill = Metric)) +
   theme(axis.text.x = element_text(angle = 20, hjust = 1))
 ```
 
-### 3.5 Migration-Inundation Coupling
+### 3.5 Inundation-Migration Coupling
 
 The ethnographic and remote sensing datasets, when overlaid, revealed a striking correspondence between water volume dynamics and population movement across the basin over three decades. Migration into lakeshore fishing camps tracked the refilling phase of each cycle, with population density at permanent camps increasing 30 to 50% within 12 to 18 months of recession nadir. Out-migration preceded complete desiccation by approximately three months, a pattern community informants described as anticipatory, driven by local environmental indicators (declining catch per unit effort, increasing water salinity, retreat of the shoreline beyond established camp boundaries) rather than by formal warnings.
 
@@ -1882,7 +1940,7 @@ During the 1995-96 refilling, key informant accounts documented sequential recol
 
 The three-month anticipatory lag between community-reported migration and satellite-detected water-level change was the maximum-correlation lag of the lagged cross-correlation described in Section 2.3 (r = 0.73, p \< 0.001), and was consistent across both recession events. Local observers identified environmental shifts that preceded detectable changes in satellite imagery, including reduced turbidity in residual pools, changes in bird assemblages at shoreline roosts, and the appearance of salt crusts on exposed lakebed. Northern lakeshore communities also used the seasonal retreat of the waterline to time the planting of wet gardens on newly exposed lakebed. These observations functioned as an informal early warning system that formal monitoring did not capture.
 
-### 3.6 Territorial Enforcement Mapping
+### 3.6 Fishery Patrol Mapping
 
 Community mapping identified 23 locations where formal fisheries regulations conflicted with traditional territorial claims. These clustered at the margins of the jurisdictional boundaries between Zomba, Phalombe, and Machinga districts, particularly where the retreating shoreline shifted fishing grounds across administrative borders. Compliance reached about 65% during active enforcement but tracked traditional territory rather than formal jurisdiction: migrant seine-net fishers observed rules enforced by authorities with whom they held kinship or patron-client ties and disregarded those imposed by district officers operating outside their home territories. Elder mediation resolved 89% of disputes where traditional boundaries received formal recognition, against 34% where only formal boundaries applied.
 
@@ -1928,13 +1986,13 @@ The anticipatory lag deserves particular attention. Communities did not wait for
 
 This finding has implications beyond Lake Chilwa. Kolding and van Zwieten (2012) show that system productivity in African lakes increases with water-level instability, and that dryland fisheries are dominated by small, opportunistic species adapted to strong environmental disturbance. Lake Chilwa's three commercial species exemplify this: highly fecund, early-maturing, tolerant to wide environmental variation, with unspecialised spawning and broad diets (Njaya, 2001). The dominant fisheries paradigm of optimal sustainable yields does not apply to such systems, where productivity is intrinsically unstable and the most effective strategies may be "opportunistic and 'unstable' in the conventional sense" (Sarch and Allison, 2000). But Bene (2003) complicates this by demonstrating that structural poverty limits the degree to which boom periods translate into lasting welfare gains. The boom-and-bust cycle is ecologically productive but socially precarious. Communities that survive recession through anticipatory migration return to a fishery that recovers rapidly but whose benefits are captured unevenly, as Njaya, Donda, and Bene (2012) document through their analysis of power in Lake Chilwa's co-management structures.
 
-### 4.4 Governance Monitoring Limitations
+### 4.4 Governance & Monitoring Constraints
 
 The enforcement mapping revealed a fishery governed less by the jurisdictional boundaries on official maps than by a layered system of traditional territorial claims and kinship obligation, what Wilson, Russell, and Dobson (2008) call a patchwork of traditional, modern, and post-modern regimes. The post-1995 co-management structure, six Fisheries Associations and Beach Village Committees aligned to the jurisdictions of group village headmen (Wilson, 2009), grafted a participatory mandate onto that existing authority and so placed enforcement with traditional leaders rather than working fishers (Murphy, 2014; Njaya, 2009). Migrant fishers complied selectively, observing rules enforced by authorities with whom they held established ties and disregarding those imposed by officers outside their home territory. This selective compliance, invisible to any system that tracks only catch volume or vessel position, determined conservation outcomes more directly than any formal mechanism, and it was legible only through extended fieldwork.
 
 The spatial correlation between the rate of shoreline retreat and the intensity of conflict points to the coupling mechanism: rapid environmental change compresses the resource base and forces competing users into overlapping territories, escalating disputes that stable conditions would not produce. The institutions did not collapse; their spatial jurisdiction ceased to match the shifting distribution of the resource, opening governance gaps that remote sensing cannot detect but participatory mapping can. The precedent from nearby Lake Chiutha, where resident fishers expelled migrant seine-net crews and burned their camps after the 1992-95 recession (Murphy, 2014; Wilson, 2009), shows what follows when those gaps are closed by force rather than institutional adaptation.
 
-### 4.5 Participatory Data within a Multi-Source Paradigm
+### 4.5 Integrating Participatory Data
 
 The integration attempted here is best understood not as a marriage of two disciplines but as an extension of a single method. Remote sensing already rests on the principle that heterogeneous, complementary sources outperform any one source in difficult terrain, because each measures a dimension the others cannot: optical reflectance, radar structure, terrain form (Amoakoh et al., 2021; Hestir and Dronova, 2023). Turbid, vegetated, cloud-covered, access-limited water bodies are the archetypal case for this logic, demanding a coordinated portfolio of modalities rather than the pursuit of a single best sensor (Hestir and Dronova, 2023). Our results bear this out at every boundary: MNDWI where NDWI fails, SAR where optics fail, and, in the dense Typha interior, a residual gap that neither optical nor C-band radar can close. Participatory data enters the paradigm at exactly this point, as the source that reaches the blind spot the satellite stack leaves. Fishers' knowledge of where water persists beneath the vegetation, and of how the inundation boundary moves through the cycle, is not softer evidence than a backscatter threshold; it is evidence of a different kind, targeting the failure mode the sensors share. In socially mediated landscapes the strongest predictors are often not spectral at all: Woodward et al. (2021) found that population-proxy covariates of proximity and accessibility drove classification accuracy above 90% while Landsat indices added almost nothing, a result that recommends treating distance, mobility, and access as first-class variables rather than nuisance corrections, and that dovetails with reading the recession-migration coupling as a problem of access to a moving resource.
 
@@ -1942,31 +2000,27 @@ The test is complementarity, not accumulation. Amoakoh et al. (2021) show that a
 
 This framing does not dissolve the difficulties, and honesty about them is part of the argument. Participatory data is costlier per unit area, harder to reproduce, and harder to validate against an accuracy matrix than a satellite product (Hodbod et al., 2019); the appropriate response is triangulation, in which the two sources cross-check each other rather than one certifying the other. Elicitation resists standardisation, and knowledge that maps at very fine or very broad extents strains any raster schema. The integration also carries an ethical charge, since overlaying an expert technology on local knowledge can delegitimise the very knowledge it claims to include (Hodbod et al., 2019). The corrective is co-production: local observation admitted with equal weight, not demoted to ground truth for a classification it did not shape. Treated this way, participatory mapping is neither a supplement nor a courtesy to the communities studied. It is a data source that the mapping of a lake like Chilwa cannot do without.
 
-### 4.6 Toward a Coupled Socio-Hydrological Model
+### 4.6 Coupled Socio-Hydrological Models
 
 The mapping and ethnography reported here establish the coupling; the next step is to model it. Socio-hydrology offers two complementary vehicles. A system-dynamics representation would cast lake level, fishing effort, and migration as a small set of coupled relations, in the manner of the compact human-water models that reproduce emergent behaviour from a handful of proxy variables (Blair and Buytaert, 2016; Albertini et al., 2020). An agent-based representation would instead model heterogeneous fishers deciding when and where to move, recovering the anticipatory lag as an emergent property of individual decision rules rather than imposing it, and yielding spatially explicit output that joins directly to the inundation maps (Blair and Buytaert, 2016). The precedent for coupling such a behavioural model to a physical hydrological model and reading consequences off ecological indicators is well established (Wu et al., 2015).
 
 ![The Lake Chilwa water-society coupling: a signed causal-loop structure. Lake level is driven exogenously by climate; society couples to the system through the fishery it exploits and through anticipatory out-migration that leads the satellite record by about three months. The proposed model formalises these signed links.](../03.outputs/PNG/socio-hydrological-causal-loop.png)
 
-The data such a model needs are largely those this study assembles. The lake state enters as the multi-decadal optical and SAR inundation series; the social state, as the migration typology, camp populations, and the sequential abandonment and recolonisation recorded in the ethnography; and the coupling itself is already quantified by the three-month lead and the migration-inundation correlation, which give the model two of its parameters directly. Three inputs remain to be assembled. A rainfall or lake-level forcing series, built from the Malawi precipitation records and the Wilson (2014) level chronology, is needed to drive the lake exogenously under scenarios. A fishery stock or catch series, however sparse, is needed to anchor the productivity term, which the literature reports only as episodic peak yields. And the behavioural rules that the ethnography describes qualitatively, the thresholds and cues on which fishers act, must be elicited or assumed and then tested. The model should reproduce, at a minimum, the observed lead, the water-population correlation, and the spatial wavefront of movement, which are the study's own findings and so form its natural validation set.
+The data such a model needs are largely those this study assembles. The lake state enters as the multi-decadal optical and SAR inundation series; the social state, as the migration typology, camp populations, and the sequential abandonment and recolonisation recorded in the ethnography; and the coupling itself is already quantified by the three-month lead and the migration-inundation correlation, which give the model two of its parameters directly. Three inputs remain to be assembled. A rainfall or lake-level forcing series, built from the Malawi precipitation records and the Wilson (2014) level chronology, is needed to drive the lake exogenously under scenarios; where the gauge record is thin, modelled inflows offer a continuous alternative, since global reach-scale reconstructions now cover the basin's tributaries daily from 1980 to 2020 (Lin et al., 2019; Ji et al., 2025). Those inflows are naturalised, carrying neither abstraction nor lake evaporation nor wetland storage, so they can force such a model but cannot stand in for a water balance. A fishery stock or catch series, however sparse, is needed to anchor the productivity term, which the literature reports only as episodic peak yields. And the behavioural rules that the ethnography describes qualitatively, the thresholds and cues on which fishers act, must be elicited or assumed and then tested. The model should reproduce, at a minimum, the observed lead, the water-population correlation, and the spatial wavefront of movement, which are the study's own findings and so form its natural validation set.
 
 The purpose of such a model is not to forecast the lake's level, which adaptive human response and climatic variability place beyond reach, but to project the alternative co-evolving trajectories of the lake-fishery system and so map its possibility space, its path dependence, and its thresholds (Srinivasan et al., 2017). Scenario development supplies the method: recession-refilling regimes under climate and abstraction change, crossed with fishery-governance and livelihood choices, define a scenario set against which management options can be tested (Dong and van de Giesen, 2011; Wu et al., 2015). This matters beyond description, because human-water feedbacks routinely defeat interventions that treat water as a fixed backdrop, so anticipating the recession-migration feedback is a precondition for effective fishery management and for the food-security and climate-adaptation goals on which the basin's livelihoods depend (Di Baldassarre et al., 2019; Xia et al., 2022).
 
 We hold this ambition honestly. Building, calibrating, and validating such a model remains future work, and socio-hydrological models of this kind function as structured hypotheses about a system rather than as validated forecasts (Blair and Buytaert, 2016). The obstacles are real: human variables are uncertain, data to calibrate the coupling are scarce, the fast social and slow environmental timescales are difficult to reconcile, and the very time lag documented here can conceal the underlying dynamics (Xia et al., 2022). The multi-source inundation record and the participatory data assembled in this study are what make the attempt tractable.
 
-#### Methodological Weaknesses
+#### Future Research
 
 Two methodological challenges shaped the study's design and merit explicit discussion. The first was temporal mismatch between satellite and ethnographic data. Landsat revisits the basin every 16 days; community observations are continuous. Aggregating satellite data into seasonal composites preserved compatibility with the temporal grain of ethnographic accounts but sacrificed the ability to detect rapid inundation events lasting less than two weeks. SAR's 6 to 12 day revisit partially addressed this gap, but the temporal resolution of community observation still exceeded what any satellite provides.
 
 The second challenge was spatial mismatch. Thirty-metre Landsat pixels cannot capture the spatial detail of fishers' knowledge: specific fishing grounds, micro-habitats within the Typha marsh, seasonal access routes through shallow channels. Spectral mixture analysis improved sub-pixel discrimination, and community validation identified where the classifier failed, but the fundamental mismatch between satellite resolution and local spatial knowledge remains unresolved. Sentinel-2 (10 m) and high-resolution commercial imagery would improve spatial detail, but at the cost of temporal depth: no high-resolution archive extends back to the 1980s recession events this study sought to capture.
 
-#### Future Directions
-
 Four extensions would strengthen the framework developed here. First, the ALOS PALSAR L-band layer incorporated here addresses detection of flooding beneath vegetation beneath dense Typha stands for the years it spans; a continuous, higher-frequency L-band record from ALOS-2 or the forthcoming NISAR mission would close the gap across the full time series. Second, extending the Landsat time series backward using earlier sensors (Landsat 3 and 4) would, where data quality permits, capture a third recession cycle and strengthen the statistical basis for recession-migration correlation. Third, Google Earth Engine offers a practical pipeline for scaling the SAR backscatter analysis across the full Sentinel-1 archive, with export to SNAP for any interferometric processing. Fourth, the methodology should be tested at comparable endorheic systems: Lakes Turkana, Bangweulu, and Rukwa present analogous challenges and would test whether the integration framework transfers across different governance contexts and ecological conditions.
 
 The most significant future direction is conceptual rather than technical. The 3-month anticipatory lag between community-detected and satellite-detected recession is a finding that inverts the usual relationship between remote sensing and ground truth. In this case, the ground truth precedes the satellite data. Designing monitoring systems that incorporate community environmental observation as a leading indicator, rather than treating it solely as validation for satellite-derived products, would represent a genuine advance in wetland conservation monitoring.
-
-------------------------------------------------------------------------
 
 ## Conclusions
 
@@ -1982,31 +2036,7 @@ Fourth, the integration of remote sensing with ethnographic methods fills a gap 
 
 The socio-hydrological framework developed here is transferable. Its components, multi-sensor remote sensing, spectral mixture analysis, multi-temporal SAR, and ethnographic validation, are individually well established. Their integration for endorheic wetland monitoring is not. Lake Chilwa demonstrates that this integration produces findings inaccessible to either approach alone, and that the social dimensions of wetland dynamics are as consequential as the biophysical ones for conservation outcomes. By mapping the inundation history and the fisher response as a single coupled process, the study establishes the empirical basis for a socio-hydrological model of the Lake Chilwa water-society feedback, and sets that model as the next step toward a decision-relevant understanding of the basin (Srinivasan et al., 2017; Xia et al., 2022).
 
-------------------------------------------------------------------------
-
-## CRediT Authorship Contribution Statement
-
-S. Murphy: Conceptualization, Methodology, Software, Formal analysis, Data curation, Writing – original draft, Visualization. J. Wilson: Investigation, Resources, Validation, Writing – review & editing.
-
-## Declaration of Competing Interest
-
-The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
-
-## Funding
-
-This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors.
-
-## Data Availability
-
-The remote sensing outputs underlying this study, the Sentinel-1, Landsat, spectral-mixture, and ALOS PALSAR series in `03.outputs/`, are reproducible in full from the Google Earth Engine queries and R code included in this manuscript. The ethnographic fieldwork records, comprising key-informant interviews and focus-group transcripts, are not publicly available because they contain personally identifying information and were collected under participant-confidentiality agreements; anonymised extracts may be made available from the corresponding author on reasonable request.
-
-## Generative AI Use Declaration
-
-During the preparation of this work the authors used a generative AI assistant (Claude, Anthropic) to consolidate prose and code from prior manuscript drafts, to reconcile the analysis code with the described methods, and to check internal consistency. After using this tool, the authors reviewed and edited the content as needed and take full responsibility for the content of the publication.
-
-------------------------------------------------------------------------
-
-## 6. References
+### References
 
 Acharya, T. D., Subedi, A., & Lee, D. H. (2018). Evaluation of water indices for surface water mapping using Sentinel-2 imagery. *Sensors*, *18*(8), 2580.
 
@@ -2179,7 +2209,3 @@ Yiran, G. A. B., Kusimi, J. M., & Kufogbe, S. K. (2012). A synthesis of remote s
 Zebker, H. A., & Villasenor, J. (1992). Decorrelation in interferometric radar echoes. *IEEE Transactions on Geoscience and Remote Sensing*, *30*(5), 950-959.
 
 Zhang, G., Yao, T., Chen, W., Zheng, G., Shum, C. K., Yang, K., Peng, S., Tian, Y., Shang, Y., & Zhang, S. (2019). Regional differences of lake evolution across China during 1960s-2015 and its natural and anthropogenic causes. *Science of the Total Environment*, *655*, 1390-1401.
-
-------------------------------------------------------------------------
-
-*This study represents a collaborative effort between remote sensing specialists, the Department of Fisheries, and the Lake Chilwa communities. All community knowledge was shared with consent and attribution according to established research ethics protocols.*

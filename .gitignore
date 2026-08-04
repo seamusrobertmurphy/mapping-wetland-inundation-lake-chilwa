@@ -29,6 +29,9 @@ _quarto_book.yml.disabled
 *.tif
 ._*
 
+# Bulk model-output downloads (Ji et al. 2025 streamflow, 11 GB+)
+02.inputs/DATA/
+
 /.quarto/
 .quarto/
 
