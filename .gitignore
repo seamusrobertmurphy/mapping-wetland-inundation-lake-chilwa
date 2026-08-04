@@ -32,6 +32,9 @@ _quarto_book.yml.disabled
 # Bulk model-output downloads (Ji et al. 2025 streamflow, 11 GB+)
 02.inputs/DATA/
 
+# Derived RGB exports, regenerable by 05.scripts/export_rgb_photo_dates.py
+03.outputs/TIF/RGB_photo_dates/
+
 /.quarto/
 .quarto/
 
@@ -48,3 +51,6 @@ DECISIONS.md
 # Word autosave backup folders and macOS resource forks
 Backup of *
 ._*
+
+# Render artefacts written to 03.outputs root; tracked copies live in 03.outputs/CSV/
+/03.outputs/*.csv
