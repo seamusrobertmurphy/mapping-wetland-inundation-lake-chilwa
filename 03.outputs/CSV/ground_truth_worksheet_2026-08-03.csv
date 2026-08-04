@@ -1,0 +1,19 @@
+session_id,date,n_files,cover_class_reviewed,site_hint,first_capture,site_name,lon,lat,position_uncertainty_m,position_source,confidence,note
+38,2011-01-01,21,flooded vegetation,,CIMG1312.JPG,,,,,,,"zimbowera on cut-reed raft inside live reed stand, open water foreground"
+1,2011-12-21,2,dry vegetation / exposed lakebed,,landcanoe.jpg,,,,,,,"stranded dugout on grassed lakebed, hills on horizon"
+2,2012-02-20,10,open water,Phaloni; Sombani,Multiple fish fences and fish traps at Phaloni 1.JPG,Phaloni (Sombani mouth),35.6984,-15.5721,5000,toponym,low,"river inflow, fish fences and traps, reeds, hill behind"
+3,2012-02-22,17,flooded vegetation,,marshman.jpg,,,,,,,"channel cut through dense live reed stand, standing water"
+4,2012-02-22,6,open water,Zambia,CIMG1832-001.jpg,,,,,,,"zimbowera raft and shelter in open water, gulls, reed line behind"
+5,2012-02-22,13,flooded vegetation,Zambia,CIMG1838-001.jpg,,,,,,,"reed-mat shelter on cut-reed raft, live reeds behind"
+6,2012-02-22,7,open water,,CIMG1847.jpg,,,,,,,"open water with fish fences and reed islands, mountains behind"
+7,2012-02-25,1,flooded cropland (rice paddy),,CIMG1882.JPG,,,,,,,"rice transplanting into wet mud with standing water between rows; NOT one of the four study classes; sparse emergent cover, spectrally ambiguous with bare soil; author to assign or exclude"
+9,2012-03-21,2,open water,,CIMG1954-001.jpg,,,,,,,"open water foreground, fishing camp with beached boats along the shore; prominent forested hill behind, strong skyline candidate"
+11,2012-03-27,3,dry vegetation,,CIMG1999-001.jpg,,,,,,,sandy track through tall green grassland on the lake plain; reed mats carried by bicycle; low hills on the horizon
+14,2012-03-28,1,dry vegetation,,CIMG2174-001.jpg,,,,,,,"grazed grassland with livestock kraal and thatched shed, tree line behind"
+15,2012-03-29,3,flooded vegetation,,CIMG2190-001.jpg,,,,,,,"emergent grass and sedge standing in shallow water at the marsh margin, cut-grass mounds; tree line and buildings behind"
+18,2012-04-19,5,open water,,CIMG2247.JPG,,,,,,,"hazy long view from high ground across open water to a shoreline village and green plain; fish fences in the near water; elevated viewpoint, useful for placement"
+24,2012-05-20,3,flooded vegetation,,marshman1.jpg,,,,,,,"boat poled along a channel cut through a dense live reed stand; prominent mountain behind, strong skyline candidate; pairs with session 3 (marshman.jpg)"
+25,2012-05-21,1,open water,,sugarcane boatman.jpg,,,,,,,"boat loaded with cut reeds on wide open water, low emergent reed islands in the middle distance; faint distant hills"
+26,2012-05-22,1,open water,,manstandngonboat.jpg,,,,,,,"mixed frame: open water with an adjacent reed bed standing in water and sparse emergent shoots throughout; water-vegetation boundary, place points with care; hill to the right"
+28,2012-05-24,1,open water,,pushboat1.jpg,,,,,,,"same subject and site as session 25; heavily processed contrast and saturation, unusable for any spectral comparison"
+35,2012-09-26,4,open water,,DSC_2375.JPG,,,,,,,open water with a low sand spit carrying a thatched hut and a fishing camp; dry-season shoreline
