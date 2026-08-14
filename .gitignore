@@ -16,7 +16,9 @@ __pycache__/
 _staging/
 _site/
 _backups/
-.claude/
+# Claude Code local state, except the shared project memory store
+**/.claude/*
+!**/.claude/memory/
 .claudeprism/
 tasks/
 
