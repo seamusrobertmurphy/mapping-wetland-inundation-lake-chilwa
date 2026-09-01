@@ -4,12 +4,24 @@
 What is actually available over this basin, verified by query rather than
 assumed:
 
-  2011-12 to 2012-12   no Landsat at all. Thematic Mapper imaging ends
+  2011-12 to 2012-12   Landsat 7 only. Thematic Mapper imaging ends
                        18 October 2011 and the Operational Land Imager opens
-                       25 March 2013. ASTER returns zero scenes for every
-                       photo month, because it acquires on request and this
-                       basin was never tasked. The best true-colour source is
-                       therefore MODIS surface reflectance at 500 m.
+                       25 March 2013, so the Enhanced Thematic Mapper Plus is
+                       the sole 30 m sensor across the fieldwork window. It
+                       holds 41 scenes over the basin in 2012, and although
+                       the scan-line corrector gaps hole any single scene, the
+                       wedges move between passes, so 15 scenes over February
+                       to June leave 18 km2 of the 8,752 km2 basin unobserved.
+                       ASTER returns zero scenes for every photo month, because
+                       it acquires on request and this basin was never tasked.
+                       This script still writes MODIS at 500 m, which remains
+                       the better choice for a single named day, since Landsat
+                       7 near one date is thin, in that two scenes within
+                       eight days of 22 February 2012 reach only 22 per cent
+                       of the basin. For a
+                       date rather than a day, see the harmonic fit in
+                       05.scripts/harmonic_fit_2012.py, and for the coverage
+                       measurement, 05.scripts/l7_2012_coverage_test.py.
   2014-11              Landsat 8 has six scenes, so that month is exported at
                        30 m as well.
 
