@@ -59,9 +59,8 @@ format:
   html:
     theme: cosmo
     css: styles.css
-    # Sits above the right-hand table of contents on every page.
-    margin-header: |
-      ![](03.outputs/PNG/fig01_study_area.png){width="100%"}
+    # margin-header is set per page by 05.scripts/split_manuscript.R, so each
+    # chapter carries its own figure rather than all sharing one.
     toc: true
     toc-depth: 4
     number-sections: false

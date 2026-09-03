@@ -66,6 +66,23 @@ ends   <- c(starts[-1] - 1, length(body))
 # here("03.outputs", ...) call in the manuscript would resolve one level too
 # deep. here::i_am() states where this file sits relative to the true root and
 # pins it back to the repository.
+# One margin figure per chapter, sitting above the right-hand table of contents.
+# These are absolute raw.githubusercontent URLs rather than repository paths.
+# A relative path is resolved against the staged render tree, and the figure it
+# needs is not among the ones the chapters cite, so it kept arriving broken.
+# The URLs are stable as long as the figures stay on main.
+raw_png <- function(f) paste0(
+  "https://raw.githubusercontent.com/seamusrobertmurphy/",
+  "mapping-wetland-inundation-lake-chilwa/refs/heads/main/03.outputs/PNG/", f)
+
+margin_figs <- c(
+  "fig02_climate_context.png",       # Introduction
+  "fig04_inundation_hydrograph.png", # Methods
+  "fig07_sma_endmembers.png",        # Results
+  "image3.png",                      # Discussion
+  "image7.png"                       # Conclusions
+)
+
 setup_chunk <- function(chapter_file) c(
   "```{r}",
   "#| label: setup",
@@ -95,6 +112,8 @@ for (k in seq_along(starts)) {
   out <- c(
     "---",
     paste0("title: \"", names_[k], "\""),
+    "margin-header: |",
+    paste0("  ![](", raw_png(margin_figs[k]), ")"),
     "---",
     "",
     if (has_code) setup_chunk(files[k]),
@@ -109,6 +128,8 @@ for (k in seq_along(starts)) {
 writeLines(c(
   "---",
   "title: \"Abstract\"",
+  "margin-header: |",
+  paste0("  ![](", raw_png("fig01_study_area.png"), ")"),
   "---",
   "",
   # No title or subtitle here. Quarto prints both from the book metadata at the
