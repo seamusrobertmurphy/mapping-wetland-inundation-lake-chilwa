@@ -50,9 +50,6 @@ grep -oh '\.\./03\.outputs/PNG/[A-Za-z0-9_.-]*' "$STAGE"/chapters/*.qmd 2>/dev/n
       else echo "  WARNING: cited figure missing, $rel"; fi
     done
 
-# The margin-header figure is named in _quarto.yml rather than in a chapter, so
-# the citation scan above does not see it.
-cp 03.outputs/PNG/fig01_study_area.png "$STAGE/03.outputs/PNG/"
 
 sweep "$STAGE"
 echo "staged $(du -sh "$STAGE" | cut -f1) in $STAGE"
