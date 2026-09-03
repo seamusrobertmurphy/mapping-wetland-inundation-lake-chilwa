@@ -12,6 +12,7 @@
 # Project-local Python virtualenv (rebuilt on render)
 .venv/
 __pycache__/
+.gitignore
 
 _staging/
 _site/
@@ -56,3 +57,25 @@ Backup of *
 
 # Render artefacts written to 03.outputs root; tracked copies live in 03.outputs/CSV/
 /03.outputs/*.csv
+
+# Quarto book. Everything in 01.manuscript/Archive/book/ is generated from the master manuscript
+# by 05.scripts/split_manuscript.R; the only hand-written file is
+# 05.scripts/book/_quarto.yml. Build with 05.scripts/build_book.sh.
+01.manuscript/Archive/book/
+_book/
+.quarto/
+_freeze/
+site_libs/
+01.manuscript/*.html
+
+# macOS metadata, which exFAT forces into shadow files
+._*
+.__*
+__MACOSX/
+.DS_Store
+
+# Envisat ASAR products, roughly 4 GB of imagery. The order manifests and the
+# wanted-product lists beside them are small and are kept.
+02.inputs/SAR/*.N1
+02.inputs/SAR/*.N1.*
+02.inputs/SAR/*.crdownload

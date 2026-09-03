@@ -1,0 +1,93 @@
+# Quarto book generated from the master manuscript.
+#
+# The project root is the repository root, not 01.manuscript/, for two reasons.
+# Quarto only copies resources that live inside the project, and the figures sit
+# in 03.outputs/PNG/, so a project rooted at 01.manuscript/ renders every image
+# as a broken link. The `here` package also treats a _quarto.yml as a project
+# root, so one placed in 01.manuscript/ silently moves here() into that folder
+# and every here("03.outputs", ...) call in the manuscript resolves one level
+# too deep.
+#
+# This file is the book's only hand-written source. It is kept here rather than
+# at the repository root so that coauthors opening the repo see the manuscript
+# and its data, not a website project.
+#
+# Everything in 01.manuscript/Archive/book/ is generated from the master by
+# 05.scripts/split_manuscript.R and is git-ignored. Edit
+# 01.manuscript/Manuscript_2026-08-03.qmd, then run 05.scripts/build_book.sh.
+
+project:
+  type: book
+  output-dir: _book
+  # Named explicitly so the master, _staging, Archive and the script .qmd files
+  # are not picked up as stray chapters.
+  render:
+    - index.qmd
+    - chapters/01-introduction.qmd
+    - chapters/02-methods.qmd
+    - chapters/03-results.qmd
+    - chapters/04-discussion.qmd
+    - chapters/05-conclusions.qmd
+
+book:
+  title: "Mapping the wetland inundation dynamics of Lake Chilwa's recession and refilling cycles using multisource remote sensing data"
+  subtitle: "Integrating optical-radar time-series data with participatory mapping of migrant fishing communities"
+  author:
+    - name: Seamus Murphy
+      orcid: 0000-0002-1792-0351
+      email: seamusrobertmurphy@gmail.com
+    - name: John Wilson
+      email: johnwilson26313@gmail.com
+    - name: Lauren K Banks
+      email: laurenkbnks@gmail.com
+  date: today
+  reader-mode: true
+  search: true
+  chapters:
+    - index.qmd
+    - part: "Introduction"
+      chapters:
+        - chapters/01-introduction.qmd
+    - part: "Methods"
+      chapters:
+        - chapters/02-methods.qmd
+    - part: "Results"
+      chapters:
+        - chapters/03-results.qmd
+    - part: "Discussion"
+      chapters:
+        - chapters/04-discussion.qmd
+        - chapters/05-conclusions.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    code-fold: true
+    code-summary: "View code"
+    code-tools: true
+    code-link: true
+    df-print: kable
+    grid:
+      body-width: 1000px
+      margin-width: 250px
+
+execute:
+  # Off for the first publish, so the book goes up carrying the prose, the code
+  # and the PNGs already on disk, with no Earth Engine session needed. Re-run the
+  # splitter with --live once an rgee session is up; Methods is the expensive
+  # chapter at roughly twelve to fifteen minutes.
+  eval: false
+  echo: true
+  warning: false
+  message: false
+  # Off deliberately. freeze caches executed chunk output, and with eval: false
+  # there is none to cache, while a stale cache on this exFAT volume is what
+  # broke the first publish. Turn it back to auto when the render goes live.
+  freeze: false
+
+engine: knitr
+bibliography: 04.references/references.bib
+csl: 04.references/apa.csl
