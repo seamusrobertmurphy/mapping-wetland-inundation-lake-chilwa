@@ -1,0 +1,14 @@
+/* The book title already heads every page and sits in the browser tab. Quarto
+   prints it a third time above the sidebar search box, where it ran to four
+   lines and pushed the chapter list down. An empty `sidebar: title` in
+   _quarto.yml does not remove it, because Quarto falls back to the book title,
+   so it is hidden here instead. */
+.sidebar-title,
+.sidebar-header {
+  display: none;
+}
+
+/* Reclaim the space the hidden header left above the search box. */
+#quarto-sidebar .sidebar-search {
+  margin-top: 0.75rem;
+}

@@ -43,27 +43,27 @@ book:
   date: today
   reader-mode: true
   search: true
+  # No parts. Each held a single chapter of the same name, so the sidebar printed
+  # every heading twice, once as the part and once as the chapter.
   chapters:
     - index.qmd
-    - part: "Introduction"
-      chapters:
-        - chapters/01-introduction.qmd
-    - part: "Methods"
-      chapters:
-        - chapters/02-methods.qmd
-    - part: "Results"
-      chapters:
-        - chapters/03-results.qmd
-    - part: "Discussion"
-      chapters:
-        - chapters/04-discussion.qmd
-        - chapters/05-conclusions.qmd
+    - chapters/01-introduction.qmd
+    - chapters/02-methods.qmd
+    - chapters/03-results.qmd
+    - chapters/04-discussion.qmd
+    - chapters/05-conclusions.qmd
+  # The sidebar copy of the title is hidden in styles.css. Setting it empty here
+  # does nothing, because Quarto falls back to the book title.
 
 format:
   html:
     theme: cosmo
+    css: styles.css
+    # Sits above the right-hand table of contents on every page.
+    margin-header: |
+      ![](03.outputs/PNG/fig01_study_area.png){width="100%"}
     toc: true
-    toc-depth: 3
+    toc-depth: 4
     number-sections: false
     code-fold: true
     code-summary: "View code"
