@@ -36,6 +36,7 @@ rm -rf "$STAGE"
 mkdir -p "$STAGE/chapters" "$STAGE/03.outputs/PNG" "$STAGE/04.references" "$STAGE/05.scripts"
 
 cp 05.scripts/book/_quarto.yml "$STAGE/_quarto.yml"
+cp 05.scripts/book/styles.css "$STAGE/styles.css"
 cp 01.manuscript/Archive/book/index.qmd "$STAGE/index.qmd"
 cp 01.manuscript/Archive/book/0[1-5]-*.qmd "$STAGE/chapters/"
 cp 04.references/references.bib 04.references/apa.csl "$STAGE/04.references/"
@@ -48,6 +49,10 @@ grep -oh '\.\./03\.outputs/PNG/[A-Za-z0-9_.-]*' "$STAGE"/chapters/*.qmd 2>/dev/n
       if [ -f "$REPO/$rel" ]; then cp "$REPO/$rel" "$STAGE/03.outputs/PNG/"
       else echo "  WARNING: cited figure missing, $rel"; fi
     done
+
+# The margin-header figure is named in _quarto.yml rather than in a chapter, so
+# the citation scan above does not see it.
+cp 03.outputs/PNG/fig01_study_area.png "$STAGE/03.outputs/PNG/"
 
 sweep "$STAGE"
 echo "staged $(du -sh "$STAGE" | cut -f1) in $STAGE"

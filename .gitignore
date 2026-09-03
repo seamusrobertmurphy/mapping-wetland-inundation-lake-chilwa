@@ -79,3 +79,6 @@ __MACOSX/
 02.inputs/SAR/*.N1
 02.inputs/SAR/*.N1.*
 02.inputs/SAR/*.crdownload
+05.tasks/
+_staging/
+.claude/

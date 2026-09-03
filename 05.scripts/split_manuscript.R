@@ -87,6 +87,9 @@ for (k in seq_along(starts)) {
   # Promote every heading by one level, outside code chunks only.
   h <- grepl("^#{2,6} ", block) & !inner
   block[h] <- sub("^#", "", block[h])
+  # The chapter's own heading is now the YAML title, so the promoted copy would
+  # print the name twice on the page and nest it under itself in the sidebar.
+  block <- block[-1]
   has_code <- any(grepl("^```\\{", block))
   if (frozen) block[block == "#| eval: true"] <- "#| eval: false"
   out <- c(
@@ -108,13 +111,11 @@ writeLines(c(
   "title: \"Abstract\"",
   "---",
   "",
-  paste0("# ", title),
-  "",
-  paste0("*", subtitle, "*"),
-  "",
-  "## Abstract",
-  "",
+  # No title or subtitle here. Quarto prints both from the book metadata at the
+  # top of this page, and repeating them produced a second copy in the body and
+  # a third in the right-hand table of contents.
   abstract,
+  "",
   "",
   "## About this book",
   "",
