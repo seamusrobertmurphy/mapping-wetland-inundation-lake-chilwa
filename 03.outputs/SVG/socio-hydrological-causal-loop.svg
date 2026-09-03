@@ -1,82 +1,100 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 560" font-family="Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 690" font-family="Helvetica, Arial, sans-serif">
   <defs>
-    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L7,3 L0,6 Z" fill="#333"/>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3.2" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.2 L0,6.4 Z" fill="#333"/>
     </marker>
-    <marker id="arrowblue" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L7,3 L0,6 Z" fill="#2166ac"/>
+    <marker id="arrowpurple" markerWidth="10" markerHeight="10" refX="8" refY="3.2" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.2 L0,6.4 Z" fill="#762a83"/>
     </marker>
+    <!-- Labels sit close to the edges they annotate, so each is drawn with a
+         white outline behind the glyphs. Without it the arrows struck through
+         "flooding, nutrient release" and "falling level, local cues". -->
+    <style>
+      .halo { paint-order: stroke fill; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+      .box  { font-size: 12.5px; fill: #123; }
+      .sign { font-size: 16px; font-weight: bold; }
+      .pos  { fill: #1b7837; }
+      .neg  { fill: #b2182b; }
+      .note { font-size: 10.5px; fill: #555; }
+    </style>
   </defs>
 
-  <rect x="0" y="0" width="780" height="560" fill="white"/>
-  <text x="390" y="30" text-anchor="middle" font-size="17" font-weight="bold" fill="#111">The Lake Chilwa water-society coupling</text>
-  <text x="390" y="50" text-anchor="middle" font-size="12" fill="#555">Signed causal-loop structure. + reinforces, - opposes. Dashed = anticipatory human response leading the satellite record.</text>
+  <rect x="0" y="0" width="900" height="690" fill="white"/>
+  <text x="450" y="32" text-anchor="middle" font-size="17" font-weight="bold" fill="#111">The Lake Chilwa water-society coupling</text>
+  <text x="450" y="53" text-anchor="middle" font-size="12" fill="#555">Signed causal structure. + moves the same way, &#8722; the opposite. B = balancing loop. Dashed = anticipatory human response leading the satellite record.</text>
 
-  <!-- External driver -->
-  <rect x="40" y="90" width="150" height="52" rx="8" fill="#eef3f8" stroke="#2166ac" stroke-width="1.5"/>
-  <text x="115" y="112" text-anchor="middle" font-size="12.5" fill="#123">Rainfall and the</text>
-  <text x="115" y="129" text-anchor="middle" font-size="12.5" fill="#123">recession cycle</text>
-  <text x="115" y="80" text-anchor="middle" font-size="11" fill="#2166ac" font-style="italic">external climatic forcing</text>
+  <!-- ============================ variables ============================ -->
+  <rect x="40" y="100" width="165" height="54" rx="8" fill="#eef3f8" stroke="#2166ac" stroke-width="1.5"/>
+  <text x="122" y="122" text-anchor="middle" class="box">Rainfall and the</text>
+  <text x="122" y="139" text-anchor="middle" class="box">recession cycle</text>
+  <text x="122" y="90" text-anchor="middle" font-size="11" fill="#2166ac" font-style="italic">external climatic forcing</text>
 
-  <!-- Lake level -->
-  <rect x="315" y="90" width="150" height="52" rx="8" fill="#dced f0" stroke="#2166ac" stroke-width="2"/>
-  <rect x="315" y="90" width="150" height="52" rx="8" fill="#dcecf0" stroke="#2166ac" stroke-width="2"/>
-  <text x="390" y="112" text-anchor="middle" font-size="12.5" fill="#123">Lake level and</text>
-  <text x="390" y="129" text-anchor="middle" font-size="12.5" fill="#123">inundation extent</text>
+  <rect x="350" y="100" width="170" height="54" rx="8" fill="#dcecf0" stroke="#2166ac" stroke-width="2"/>
+  <text x="435" y="122" text-anchor="middle" class="box">Lake level and</text>
+  <text x="435" y="139" text-anchor="middle" class="box">inundation extent</text>
 
-  <!-- Fishery stock -->
-  <rect x="590" y="205" width="150" height="52" rx="8" fill="#eaf3ea" stroke="#1b7837" stroke-width="1.5"/>
-  <text x="665" y="227" text-anchor="middle" font-size="12.5" fill="#123">Fishery stock and</text>
-  <text x="665" y="244" text-anchor="middle" font-size="12.5" fill="#123">productivity</text>
+  <rect x="690" y="235" width="170" height="54" rx="8" fill="#eaf3ea" stroke="#1b7837" stroke-width="1.5"/>
+  <text x="775" y="257" text-anchor="middle" class="box">Fishery stock and</text>
+  <text x="775" y="274" text-anchor="middle" class="box">productivity</text>
 
-  <!-- Fisher presence -->
-  <rect x="470" y="380" width="160" height="52" rx="8" fill="#fdf0e6" stroke="#b35806" stroke-width="1.5"/>
-  <text x="550" y="402" text-anchor="middle" font-size="12.5" fill="#123">Fisher presence,</text>
-  <text x="550" y="419" text-anchor="middle" font-size="12.5" fill="#123">effort, and migration</text>
+  <rect x="560" y="440" width="180" height="54" rx="8" fill="#fdf0e6" stroke="#b35806" stroke-width="1.5"/>
+  <text x="650" y="462" text-anchor="middle" class="box">Fisher presence,</text>
+  <text x="650" y="479" text-anchor="middle" class="box">effort, and migration</text>
 
-  <!-- Fishing pressure -->
-  <rect x="190" y="380" width="160" height="52" rx="8" fill="#fdf0e6" stroke="#b35806" stroke-width="1.5"/>
-  <text x="270" y="402" text-anchor="middle" font-size="12.5" fill="#123">Fishing pressure on</text>
-  <text x="270" y="419" text-anchor="middle" font-size="12.5" fill="#123">residual refugia</text>
+  <rect x="250" y="440" width="180" height="54" rx="8" fill="#fdf0e6" stroke="#b35806" stroke-width="1.5"/>
+  <text x="340" y="462" text-anchor="middle" class="box">Fishing pressure on</text>
+  <text x="340" y="479" text-anchor="middle" class="box">residual refugia</text>
 
-  <!-- Anticipatory response -->
-  <rect x="40" y="205" width="160" height="66" rx="8" fill="#f2eef7" stroke="#762a83" stroke-width="1.5"/>
-  <text x="120" y="227" text-anchor="middle" font-size="12.5" fill="#123">Anticipatory</text>
-  <text x="120" y="244" text-anchor="middle" font-size="12.5" fill="#123">out-migration</text>
-  <text x="120" y="261" text-anchor="middle" font-size="11" fill="#762a83">(3-month lead)</text>
+  <rect x="40" y="235" width="175" height="70" rx="8" fill="#f2eef7" stroke="#762a83" stroke-width="1.5"/>
+  <text x="127" y="259" text-anchor="middle" class="box">Anticipatory</text>
+  <text x="127" y="276" text-anchor="middle" class="box">out-migration</text>
+  <text x="127" y="293" text-anchor="middle" font-size="11" fill="#762a83">(3-month lead)</text>
 
-  <!-- Arrows -->
-  <!-- Rainfall -> Lake level (+) -->
-  <line x1="190" y1="116" x2="312" y2="116" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
-  <text x="250" y="108" text-anchor="middle" font-size="14" fill="#1b7837" font-weight="bold">+</text>
+  <!-- ============================== edges ============================== -->
+  <!-- 1. Rainfall -> Lake level, positive -->
+  <line x1="205" y1="127" x2="345" y2="127" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="275" y="118" text-anchor="middle" class="sign pos halo">+</text>
 
-  <!-- Lake level -> Fishery stock (+) -->
-  <path d="M460,135 C540,160 600,180 645,201" fill="none" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
-  <text x="575" y="165" text-anchor="middle" font-size="14" fill="#1b7837" font-weight="bold">+</text>
-  <text x="565" y="182" text-anchor="middle" font-size="10.5" fill="#555">flooding, nutrient release</text>
+  <!-- 2. Lake level -> Fishery stock, positive -->
+  <path d="M520,146 C610,175 680,205 730,231" fill="none" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="596" y="163" text-anchor="middle" class="sign pos halo">+</text>
+  <text x="612" y="212" text-anchor="middle" class="note halo">flooding, nutrient release</text>
 
-  <!-- Fishery stock -> Fisher presence (+) -->
-  <path d="M655,259 C640,310 610,350 585,377" fill="none" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
-  <text x="645" y="325" text-anchor="middle" font-size="14" fill="#1b7837" font-weight="bold">+</text>
+  <!-- 3. Fishery stock -> Fisher presence, positive -->
+  <path d="M782,291 C775,350 730,405 700,436" fill="none" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="800" y="365" text-anchor="middle" class="sign pos halo">+</text>
 
-  <!-- Fisher presence -> Fishing pressure (+) -->
-  <line x1="468" y1="406" x2="352" y2="406" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
-  <text x="410" y="398" text-anchor="middle" font-size="14" fill="#1b7837" font-weight="bold">+</text>
+  <!-- 4. Fisher presence -> Fishing pressure, positive -->
+  <line x1="557" y1="467" x2="435" y2="467" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="496" y="457" text-anchor="middle" class="sign pos halo">+</text>
 
-  <!-- Fishing pressure -> Fishery stock (-) : balancing -->
-  <path d="M320,382 C420,330 560,290 640,259" fill="none" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
-  <text x="470" y="322" text-anchor="middle" font-size="14" fill="#b2182b" font-weight="bold">&#8211;</text>
-  <text x="470" y="338" text-anchor="middle" font-size="10.5" fill="#555">balancing loop B</text>
+  <!-- 5. Fishing pressure -> Fishery stock, negative. This is the one closed
+          loop in the figure, so it carries the B1 identifier below. -->
+  <path d="M395,438 C500,385 640,330 726,289" fill="none" stroke="#333" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="556" y="368" text-anchor="middle" class="sign neg halo">&#8722;</text>
 
-  <!-- Lake level -> Anticipatory (recession cue) dashed -->
-  <path d="M320,128 C230,150 160,175 128,202" fill="none" stroke="#762a83" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrowblue)"/>
-  <text x="205" y="160" text-anchor="middle" font-size="11" fill="#762a83">falling level, local cues</text>
+  <!-- 6. Lake level -> Anticipatory out-migration, negative: the level falls,
+          so people leave. Unsigned in the previous version. -->
+  <path d="M352,143 C270,170 190,205 152,231" fill="none" stroke="#762a83" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrowpurple)"/>
+  <text x="266" y="163" text-anchor="middle" class="sign neg halo">&#8722;</text>
+  <text x="228" y="212" text-anchor="middle" font-size="10.5" fill="#762a83" class="halo">falling level, local cues</text>
 
-  <!-- Anticipatory -> Fisher presence (-) dashed, the lead -->
-  <path d="M120,271 C120,340 300,420 468,414" fill="none" stroke="#762a83" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrowblue)"/>
-  <text x="250" y="470" text-anchor="middle" font-size="12" fill="#762a83" font-weight="bold">&#8211; leads the satellite record by ~3 months</text>
+  <!-- 7. Anticipatory out-migration -> Fisher presence, negative: leaving
+          removes fishers. Unsigned in the previous version. -->
+  <path d="M127,305 C118,440 210,566 420,562 C500,560 538,524 554,496" fill="none" stroke="#762a83" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrowpurple)"/>
+  <text x="150" y="410" text-anchor="middle" class="sign neg halo">&#8722;</text>
+  <text x="300" y="606" text-anchor="middle" font-size="11.5" fill="#762a83" font-weight="bold" class="halo">leads the satellite record by ~3 months</text>
 
-  <!-- caption -->
-  <text x="390" y="525" text-anchor="middle" font-size="11" fill="#444">Lake level is driven externally by climate; society couples to the system through the fishery it exploits and through</text>
-  <text x="390" y="540" text-anchor="middle" font-size="11" fill="#444">anticipatory migration that reads recession before the imagery resolves it. The proposed model formalises these signed links.</text>
+  <!-- ======================= loop identifier ========================== -->
+  <!-- Only one closed loop exists. Lake level is exogenous, so nothing returns
+       to it and the anticipatory path is a feedforward chain, not a second
+       loop. Labelling it B2 would assert a feedback the figure does not show. -->
+  <circle cx="530" cy="404" r="18" fill="#fff" stroke="#333" stroke-width="1.3"/>
+  <path d="M530,390 a14,14 0 1,1 -9.9,4.1" fill="none" stroke="#333" stroke-width="1.2"/>
+  <path d="M517,390 L520.2,394.1 L515.6,396.1 Z" fill="#333"/>
+  <text x="530" y="409" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">B1</text>
+
+  <!-- ============================= caption ============================= -->
+  <text x="450" y="648" text-anchor="middle" font-size="11" fill="#444">Lake level is driven externally by climate, so the one closed loop, B1, runs through the fishery. Society also couples to the</text>
+  <text x="450" y="664" text-anchor="middle" font-size="11" fill="#444">system by anticipatory migration that reads recession before the imagery resolves it. The proposed model formalises these signed links.</text>
 </svg>
