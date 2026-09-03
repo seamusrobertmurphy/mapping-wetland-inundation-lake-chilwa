@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Results – Mapping the wetland inundation dynamics of Lake Chilwa's recession and refilling cycles using multisource remote sensing data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/04-discussion.html" rel="next">
+<link href="../chapters/02-methods.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-ff7422cec5e84878eb97cfe8a2b00c5c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+</head>
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/03-results.html">Results</a></li><li class="breadcrumb-item"><a href="../chapters/03-results.html"><span class="chapter-title">Results</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Mapping the wetland inundation dynamics of Lake Chilwa’s recession and refilling cycles using multisource remote sensing data</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Abstract</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Introduction</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-introduction.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Methods</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-methods.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Methods</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Results</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-results.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Results</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Discussion</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-discussion.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discussion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-conclusions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Conclusions</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li>
+<a href="#results" id="toc-results" class="nav-link active" data-scroll-target="#results">Results</a>
+  <ul class="collapse">
+<li><a href="#water-extent-dynamics" id="toc-water-extent-dynamics" class="nav-link" data-scroll-target="#water-extent-dynamics">3.1 Water Extent Dynamics</a></li>
+  <li><a href="#spectral-index-performance" id="toc-spectral-index-performance" class="nav-link" data-scroll-target="#spectral-index-performance">3.2 Spectral Index Performance</a></li>
+  <li><a href="#sar-integration" id="toc-sar-integration" class="nav-link" data-scroll-target="#sar-integration">3.3 SAR Integration</a></li>
+  <li><a href="#accuracy-assessments" id="toc-accuracy-assessments" class="nav-link" data-scroll-target="#accuracy-assessments">3.4 Accuracy Assessments</a></li>
+  <li><a href="#inundation-migration-coupling" id="toc-inundation-migration-coupling" class="nav-link" data-scroll-target="#inundation-migration-coupling">3.5 Inundation-Migration Coupling</a></li>
+  <li><a href="#fishery-patrol-mapping" id="toc-fishery-patrol-mapping" class="nav-link" data-scroll-target="#fishery-patrol-mapping">3.6 Fishery Patrol Mapping</a></li>
+  </ul>
+</li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/03-results.html">Results</a></li><li class="breadcrumb-item"><a href="../chapters/03-results.html"><span class="chapter-title">Results</span></a></li></ol></nav><div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-title">Results</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><section id="results" class="level1"><h1>Results</h1>
+<section id="water-extent-dynamics" class="level2"><h2 class="anchored" data-anchor-id="water-extent-dynamics">3.1 Water Extent Dynamics</h2>
+<p>The spectral mixture analysis resolves the basin’s inundation at sub-pixel scale across the Landsat record, thirty-seven usable years between 1984 and 2024 (Figure 1). Basin-mean open-water fraction averaged 0.140 and reached its maximum of 0.238 in 2024, the wettest year in the series and among the best sampled, at an inter-annual coefficient of variation of 0.32. Three principal recession troughs punctuate the record, in 1987, 1992, and 2003, each a year when open water covered less than a tenth of the basin. Those values, 0.013 in 2003 and 0.036 in 1987, rest on three and two usable scenes and are better read as evidence of severe drawdown than as precise extents. The deepest well-sampled low is 1995, at 0.095 from thirteen scenes, which coincides with the near-total desiccation of the central basin documented by Njaya et al.&nbsp;(2011).</p>
+<p>Scaled to the 8,752 km² catchment, these fractions give a sub-pixel open-water extent averaging 1,230 km² and running from 2,083 km² in 2024 to 835 km² in 1995, two fifths of peak extent. Integrating the fraction rasters pixel by pixel, with each pixel weighted by its true area on the ellipsoid, returns 1,829 km² for 2023 against the 1,806 km² the basin-mean fraction implies, so the two routes to extent agree to within about one per cent. The combined open-water and emergent-vegetation footprint reached 2,810 km² at the 2023 refill and fell to 1,914 km² in the 2018 drawdown. Measured against the Sentinel-1 water record, which is independent of the optical mixture model, the reconstruction carries a mean absolute difference of 78 km² across the years the two overlap.</p>
+<p><em>Figure 1: Reconstructed inundation of the Lake Chilwa basin, 1984 to 2024. (a) Basin-mean open-water and emergent, flooded-vegetation fractions from spectral mixture analysis, with the record mean, the principal recession troughs, and the 2023 to 2024 refill marked. (b) Usable Landsat scenes per year, the sampling density behind each annual estimate.</em></p>
+<p><img src="../03.outputs/PNG/fig04_inundation_hydrograph.png" class="img-fluid" style="width:100.0%"></p>
+<p>Open water and emergent vegetation are only weakly related, and the sign of that relation is negative (r = -0.23). As the lake retreats, emergent macrophytes colonise part of the exposed drawdown zone; the clearest instance is 1987, when the flooded-vegetation fraction reached its record 0.165 in the same year open water fell to 0.036. The compensation is partial rather than systematic, yet it is enough to steady the total inundated footprint, which varies at a coefficient of variation of 0.22 against 0.32 for open water alone. The wetland persists by changing form, trading open water for vegetated marsh as the lake falls, without holding its total extent constant.</p>
+<p>Two events break this compensation. In 2018 both components contracted together and the combined footprint fell to 0.219, the lowest value in the densely sampled modern record, a basin-wide drawdown in which residual water persisted only in the deepest channels and the swamp refugia of the southern and eastern margins, as in the historical recessions recorded by Njaya et al.&nbsp;(2011). The refilling of 2023 and 2024 is the opposite extreme: the combined footprint reached 0.321 in 2023, and open water alone rose to 0.206 and then 0.238, the strongest sustained inundation in the series, a rise the Sentinel-1 record registers independently (Section 3.3).</p>
+<p>The early record rests on thin sampling. Several years before 2000 carry only two or three usable scenes, against roughly thirty to forty a year since 2015 (Figure 1b), which widens the uncertainty on the early fractions and explains much of their year-to-year volatility. Every apparent extreme in the series, the deepest lows and the largest combined footprints alike, falls in a year with fewer than five scenes; the dense modern record carries the seasonal and inter-annual signal with far greater confidence.</p>
+</section><section id="spectral-index-performance" class="level2"><h2 class="anchored" data-anchor-id="spectral-index-performance">3.2 Spectral Index Performance</h2>
+<p>The five water indices do not track inundation equally (Figure 2). Measured against the spectral-mixture open-water record, WRI and MNDWI follow the basin’s wetting and drying most closely, at Pearson correlations of 0.90 and 0.79, while NDWI and AWEIsh lag at 0.65 and 0.61. The two indices that lean on shortwave-infrared reflectance, WRI through its denominator and MNDWI directly, best resolve the turbid, shallow water that dominates Lake Chilwa; the near-infrared contrast of NDWI and AWEIsh is more readily confounded by suspended sediment and emergent vegetation. Basin-mean annual MNDWI ranged from -0.52 to -0.23, its troughs and peaks falling in the recession and refill years of the mixture record.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../03.outputs/PNG/fig05_index_performance.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><em>Figure 2: Spectral-index behaviour, 1984 to 2024. (a) Standardised annual anomalies of the five water indices against the spectral-mixture open-water record. (b) Pearson correlation of each index with that record; WRI and MNDWI track inundation most closely, and NDPI is the inverse of MNDWI.</em></p>
+<p>The indices also carry overlapping information (Table 2). NDPI is the exact algebraic inverse of MNDWI, correlated at r = -1.00, so the two are one index in opposite sign and only one can enter a classifier. WRI is strongly tied to MNDWI (r = 0.76) and adds little once MNDWI is present. NDWI and MNDWI, though both normalised water indices, agree only weakly (r = 0.31): the substitution of shortwave-infrared for near-infrared shifts the sensitivity enough that the two register genuinely different surfaces. AWEIsh sits closer to NDWI (r = 0.75) than to MNDWI (r = 0.54), consistent with their shared near-infrared term.</p>
+<p><em>Table 2: Pairwise Pearson correlation among the five water indices, basin-mean annual values, 1984 to 2024. NDPI is the exact inverse of MNDWI.</em></p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">NDWI</th>
+<th style="text-align: right;">MNDWI</th>
+<th style="text-align: right;">AWEIsh</th>
+<th style="text-align: right;">WRI</th>
+<th style="text-align: right;">NDPI</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NDWI</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.66</td>
+<td style="text-align: right;">-0.31</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MNDWI</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.54</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">-1.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AWEIsh</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.54</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.59</td>
+<td style="text-align: right;">-0.54</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">WRI</td>
+<td style="text-align: right;">0.66</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">0.59</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">-0.76</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NDPI</td>
+<td style="text-align: right;">-0.31</td>
+<td style="text-align: right;">-1.00</td>
+<td style="text-align: right;">-0.54</td>
+<td style="text-align: right;">-0.76</td>
+<td style="text-align: right;">1.00</td>
+</tr>
+</tbody>
+</table>
+<p>These relationships set up the variable screen of Section 2.2.F. Because NDPI duplicates MNDWI and WRI largely repeats it, the optical indices contribute far fewer independent dimensions than their count suggests; the screen retains MNDWI as the leading water term and discards its redundant partners before classification, following the principle that correlated features degrade rather than improve a random forest (Amoakoh et al., 2021). No single index spans the full range of conditions, which is the argument for combining the optical indices with the radar and mixture-analysis terms rather than choosing among them.</p>
+</section><section id="sar-integration" class="level2"><h2 class="anchored" data-anchor-id="sar-integration">3.3 SAR Integration</h2>
+<p>Sentinel-1 C-band backscatter carries an intra-annual inundation signal through the wet-season cloud that defeats the optical sensors (Figure 3a). Basin-mean VV backscatter falls from about -10 dB early in the year to a September minimum near -13.6 dB, with VH tracking it some seven decibels lower, and the thresholded water fraction rises in step from 0.11 in January to 0.17 in September. The backscatter minimum thus falls in the late dry season, when senescing emergent vegetation and smoother exposed surfaces lower the C-band return, a phase offset from the optical high stand that the coupling analysis takes up in Section 3.5.</p>
+<p><em>Figure 3: SAR dynamics of the Lake Chilwa basin. (a) Sentinel-1 monthly climatology of VV and VH backscatter and the derived water fraction, 2015 to 2024. (b) Sentinel-1 monthly water fraction through the record, showing the 2023 to 2024 step-up. (c) ALOS PALSAR L-band annual HH and HV backscatter and their difference, the double-bounce term sensitive to flooded vegetation.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../03.outputs/PNG/fig06_sar_seasonality.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p>The monthly series also records the recent refill (Figure 3b). Basin water fraction held near 0.12 from 2015 through 2022, then stepped up to 0.21 across 2023 and 2024. Optical and radar, two independent sensors, thus place the strongest inundation of the record in the same two years, the mixture analysis of Section 3.1 registering it in the annual Landsat fractions and Sentinel-1 in the monthly backscatter.</p>
+<p>L-band radar completes the picture where C-band cannot. The ALOS PALSAR HH minus HV difference, the double-bounce term that rises where standing water returns the signal through emergent vegetation, averaged 8.4 dB across the annual mosaics and peaked at 9.2 dB in 2021 (Figure 3c). The longer L-band wavelength penetrates the Typha stand that attenuates C-band, so the two radars are complementary: Sentinel-1 follows open water at fine cadence, and PALSAR flags the flooded marsh that both C-band and the optical indices under-record, the limitation in dense emergent vegetation documented by Hess et al.&nbsp;(2003) and Clement et al.&nbsp;(2018).</p>
+<p>The basin’s drainage structure shapes the sequence of retreat and refill. The southern and eastern shores, downgradient in the D-infinity flow routing of Section 2.2.A, recede first and refill last, an asymmetry the optical record misses through its cloud-season gaps and one that orders the fisher migration examined in Section 3.5.</p>
+</section><section id="accuracy-assessments" class="level2"><h2 class="anchored" data-anchor-id="accuracy-assessments">3.4 Accuracy Assessments</h2>
+<p>The four-class random-forest classifier (open water, flooded vegetation, dry vegetation, bare soil), trained on the separability-selected feature stack of Section 2.2.F and applied to the 2020 reference composite, resolved the littoral mosaic that no single index captured (Section 2.2.G). Overall accuracy was 81% with a kappa coefficient of 0.77. Accuracy was highest for open water, which both the SWIR-based optical indices and low SAR backscatter identify unambiguously, and lowest for bare soil and flooded vegetation, where exposed lakebed grades into sparse cover and where dense Typha attenuates the C-band double-bounce signal. The fieldwork-era classification is reported for the reconstructed 2012 surface and, alongside it, for the 2011 and 2013 composites from which its spatial structure is drawn. The field ground-truth points validate all three, and the 2012 assessment is the one the study rests on, since it is the year the field record observes. Community validation of boundary placement and seasonal timing concentrated its disagreements in mixed-pixel zones and areas of rapid shoreline change.</p>
+<p><em>Table 3: Per-class producer’s and user’s accuracy for the four-class random-forest classification of the 2020 reference composite, computed from the independent validation split (Section 2.2.H). Overall accuracy 81%, kappa 0.77.</em></p>
+<div class="cell">
+<details class="code-fold"><summary>View code</summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">pa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">producers</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">ua</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">consumers</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">acc_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Open water"</span>, <span class="st">"Flooded vegetation"</span>, <span class="st">"Dry vegetation"</span>, <span class="st">"Bare soil"</span><span class="op">)</span>,</span>
+<span>  `Producer's accuracy` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">pa</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  `User's accuracy`     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">ua</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">acc_tbl</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><em>Figure 4: Producer’s and user’s accuracy by cover class for the random-forest classification. Open water is resolved most reliably; bare soil and flooded vegetation carry the largest errors, at the exposed-lakebed and Typha reed-stand boundaries respectively.</em></p>
+<div class="cell">
+<details class="code-fold"><summary>View code</summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">acc_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  Class    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Open water"</span>, <span class="st">"Flooded vegetation"</span>, <span class="st">"Dry vegetation"</span>, <span class="st">"Bare soil"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  Accuracy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">producers</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">consumers</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  Metric   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Producer's"</span>, <span class="st">"User's"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">acc_long</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Class</span>, y <span class="op">=</span> <span class="va">Accuracy</span>, fill <span class="op">=</span> <span class="va">Metric</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">coord_cartesian</span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Accuracy"</span>, fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">20</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section><section id="inundation-migration-coupling" class="level2"><h2 class="anchored" data-anchor-id="inundation-migration-coupling">3.5 Inundation-Migration Coupling</h2>
+<p>The ethnographic and remote sensing datasets, when overlaid, revealed a striking correspondence between water volume dynamics and population movement across the basin over three decades. Migration into lakeshore fishing camps tracked the refilling phase of each cycle, with population density at permanent camps increasing 30 to 50% within 12 to 18 months of recession nadir. Out-migration preceded complete desiccation by approximately three months, a pattern community informants described as anticipatory, driven by local environmental indicators (declining catch per unit effort, increasing water salinity, retreat of the shoreline beyond established camp boundaries) rather than by formal warnings.</p>
+<p>Migration operates at multiple temporal scales. Daily migrants travel to inshore fishing grounds and return the same day. Short-term seasonal migrants spend weeks to months on zimbowera platforms in the lake interior, returning periodically to their home villages for agricultural obligations, particularly for field clearing and planting season (January to April) when male labour is needed in matrilineal sorority-managed gardens (Murphy, 2014). Seasonal migrants from Machinga district travel southward each year to deeper fishing grounds in Zomba and Phalombe, a pattern driven by the shallower northern waters that dry up earliest. Inter-recessional migrants settle in lakeshore areas for years following lake refilling, then leave the basin entirely during major recessions (Allison and Mvula, 2002; Murphy, 2014). These categories are not discrete: individual fishers shift between strategies as conditions change, and fishing and farming function interdependently within the household economy.</p>
+<p>During the 1995-96 refilling, key informant accounts documented sequential recolonisation of fishing camps from south to north, following the refilling wavefront visible in the SAR gradient analysis. Migrant fishers from Zomba and Machinga districts arrived first at southern camps, where water returned earliest, then progressively occupied camps further north as the lake expanded. The 2012 recession produced a mirror pattern: northern camps were abandoned first, with fishers relocating southward or leaving the basin entirely for Lake Malawi or Mozambican lakes. Northern communities along the shore from Mtengo Mtengo to Ntila reported that during drier months the open water retreated up to fifteen kilometres from their settlements, making fishing journeys too arduous for feasible livelihoods; instead, these fishers abandoned boats and gear to invest in farming until the rains returned (Murphy, 2014).</p>
+<p>The three-month anticipatory lag between community-reported migration and satellite-detected water-level change was the maximum-correlation lag of the lagged cross-correlation described in Section 2.3 (r = 0.73, p &lt; 0.001), and was consistent across both recession events. Local observers identified environmental shifts that preceded detectable changes in satellite imagery, including reduced turbidity in residual pools, changes in bird assemblages at shoreline roosts, and the appearance of salt crusts on exposed lakebed. Northern lakeshore communities also used the seasonal retreat of the waterline to time the planting of wet gardens on newly exposed lakebed. These observations functioned as an informal early warning system that formal monitoring did not capture.</p>
+</section><section id="fishery-patrol-mapping" class="level2"><h2 class="anchored" data-anchor-id="fishery-patrol-mapping">3.6 Fishery Patrol Mapping</h2>
+<p>Community mapping identified 23 locations where formal fisheries regulations conflicted with traditional territorial claims. These clustered at the margins of the jurisdictional boundaries between Zomba, Phalombe, and Machinga districts, particularly where the retreating shoreline shifted fishing grounds across administrative borders. Compliance reached about 65% during active enforcement but tracked traditional territory rather than formal jurisdiction: migrant seine-net fishers observed rules enforced by authorities with whom they held kinship or patron-client ties and disregarded those imposed by district officers operating outside their home territories. Elder mediation resolved 89% of disputes where traditional boundaries received formal recognition, against 34% where only formal boundaries applied.</p>
+<p>The spatial pattern of these conflicts corresponded to the zones where SAR imagery showed the most rapid shoreline retreat, indicating that the rate of environmental change, not merely its magnitude, drives resource conflict. The governance structure is itself a product of recession: the Beach Village Committees at 53 landing beaches grew out of the river village committees formed to protect fish refugia during the 1994 drying of the lake, an inheritance that tied enforcement to the jurisdictions of group village headmen rather than to the fishers themselves (Njaya, 2009; Murphy, 2014).</p>
+<hr>
+
+
+<!-- -->
+
+</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../chapters/02-methods.html" class="pagination-link" aria-label="Methods">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Methods</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/04-discussion.html" class="pagination-link" aria-label="Discussion">
+        <span class="nav-page-text"><span class="chapter-title">Discussion</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Results"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>here<span class="sc">::</span><span class="fu">i_am</span>(<span class="st">"chapters/03-results.qmd"</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">'05.scripts'</span>, <span class="st">'_common.R'</span>))</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu"># Results</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.1 Water Extent Dynamics</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>The spectral mixture analysis resolves the basin's inundation at sub-pixel scale across the Landsat record, thirty-seven usable years between 1984 and 2024 (Figure 1). Basin-mean open-water fraction averaged 0.140 and reached its maximum of 0.238 in 2024, the wettest year in the series and among the best sampled, at an inter-annual coefficient of variation of 0.32. Three principal recession troughs punctuate the record, in 1987, 1992, and 2003, each a year when open water covered less than a tenth of the basin. Those values, 0.013 in 2003 and 0.036 in 1987, rest on three and two usable scenes and are better read as evidence of severe drawdown than as precise extents. The deepest well-sampled low is 1995, at 0.095 from thirteen scenes, which coincides with the near-total desiccation of the central basin documented by Njaya et al. (2011).</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>Scaled to the 8,752 km² catchment, these fractions give a sub-pixel open-water extent averaging 1,230 km² and running from 2,083 km² in 2024 to 835 km² in 1995, two fifths of peak extent. Integrating the fraction rasters pixel by pixel, with each pixel weighted by its true area on the ellipsoid, returns 1,829 km² for 2023 against the 1,806 km² the basin-mean fraction implies, so the two routes to extent agree to within about one per cent. The combined open-water and emergent-vegetation footprint reached 2,810 km² at the 2023 refill and fell to 1,914 km² in the 2018 drawdown. Measured against the Sentinel-1 water record, which is independent of the optical mixture model, the reconstruction carries a mean absolute difference of 78 km² across the years the two overlap.</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>*Figure 1: Reconstructed inundation of the Lake Chilwa basin, 1984 to 2024. (a) Basin-mean open-water and emergent, flooded-vegetation fractions from spectral mixture analysis, with the record mean, the principal recession troughs, and the 2023 to 2024 refill marked. (b) Usable Landsat scenes per year, the sampling density behind each annual estimate.*</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="al">![](../03.outputs/PNG/fig04_inundation_hydrograph.png)</span>{width="100%"}</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>Open water and emergent vegetation are only weakly related, and the sign of that relation is negative (r = -0.23). As the lake retreats, emergent macrophytes colonise part of the exposed drawdown zone; the clearest instance is 1987, when the flooded-vegetation fraction reached its record 0.165 in the same year open water fell to 0.036. The compensation is partial rather than systematic, yet it is enough to steady the total inundated footprint, which varies at a coefficient of variation of 0.22 against 0.32 for open water alone. The wetland persists by changing form, trading open water for vegetated marsh as the lake falls, without holding its total extent constant.</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>Two events break this compensation. In 2018 both components contracted together and the combined footprint fell to 0.219, the lowest value in the densely sampled modern record, a basin-wide drawdown in which residual water persisted only in the deepest channels and the swamp refugia of the southern and eastern margins, as in the historical recessions recorded by Njaya et al. (2011). The refilling of 2023 and 2024 is the opposite extreme: the combined footprint reached 0.321 in 2023, and open water alone rose to 0.206 and then 0.238, the strongest sustained inundation in the series, a rise the Sentinel-1 record registers independently (Section 3.3).</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>The early record rests on thin sampling. Several years before 2000 carry only two or three usable scenes, against roughly thirty to forty a year since 2015 (Figure 1b), which widens the uncertainty on the early fractions and explains much of their year-to-year volatility. Every apparent extreme in the series, the deepest lows and the largest combined footprints alike, falls in a year with fewer than five scenes; the dense modern record carries the seasonal and inter-annual signal with far greater confidence.</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.2 Spectral Index Performance</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>The five water indices do not track inundation equally (Figure 2). Measured against the spectral-mixture open-water record, WRI and MNDWI follow the basin's wetting and drying most closely, at Pearson correlations of 0.90 and 0.79, while NDWI and AWEIsh lag at 0.65 and 0.61. The two indices that lean on shortwave-infrared reflectance, WRI through its denominator and MNDWI directly, best resolve the turbid, shallow water that dominates Lake Chilwa; the near-infrared contrast of NDWI and AWEIsh is more readily confounded by suspended sediment and emergent vegetation. Basin-mean annual MNDWI ranged from -0.52 to -0.23, its troughs and peaks falling in the recession and refill years of the mixture record.</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="al">![](../03.outputs/PNG/fig05_index_performance.png)</span>{fig-align="center"}</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>*Figure 2: Spectral-index behaviour, 1984 to 2024. (a) Standardised annual anomalies of the five water indices against the spectral-mixture open-water record. (b) Pearson correlation of each index with that record; WRI and MNDWI track inundation most closely, and NDPI is the inverse of MNDWI.*</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>The indices also carry overlapping information (Table 2). NDPI is the exact algebraic inverse of MNDWI, correlated at r = -1.00, so the two are one index in opposite sign and only one can enter a classifier. WRI is strongly tied to MNDWI (r = 0.76) and adds little once MNDWI is present. NDWI and MNDWI, though both normalised water indices, agree only weakly (r = 0.31): the substitution of shortwave-infrared for near-infrared shifts the sensitivity enough that the two register genuinely different surfaces. AWEIsh sits closer to NDWI (r = 0.75) than to MNDWI (r = 0.54), consistent with their shared near-infrared term.</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>*Table 2: Pairwise Pearson correlation among the five water indices, basin-mean annual values, 1984 to 2024. NDPI is the exact inverse of MNDWI.*</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>        <span class="pp">|</span>  NDWI <span class="pp">|</span> MNDWI <span class="pp">|</span> AWEIsh <span class="pp">|</span>   WRI <span class="pp">|</span>  NDPI <span class="pp">|</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|:-------|------:|------:|-------:|------:|------:|</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> NDWI   <span class="pp">|</span>  1.00 <span class="pp">|</span>  0.31 <span class="pp">|</span>   0.75 <span class="pp">|</span>  0.66 <span class="pp">|</span> -0.31 <span class="pp">|</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> MNDWI  <span class="pp">|</span>  0.31 <span class="pp">|</span>  1.00 <span class="pp">|</span>   0.54 <span class="pp">|</span>  0.76 <span class="pp">|</span> -1.00 <span class="pp">|</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> AWEIsh <span class="pp">|</span>  0.75 <span class="pp">|</span>  0.54 <span class="pp">|</span>   1.00 <span class="pp">|</span>  0.59 <span class="pp">|</span> -0.54 <span class="pp">|</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> WRI    <span class="pp">|</span>  0.66 <span class="pp">|</span>  0.76 <span class="pp">|</span>   0.59 <span class="pp">|</span>  1.00 <span class="pp">|</span> -0.76 <span class="pp">|</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> NDPI   <span class="pp">|</span> -0.31 <span class="pp">|</span> -1.00 <span class="pp">|</span>  -0.54 <span class="pp">|</span> -0.76 <span class="pp">|</span>  1.00 <span class="pp">|</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>These relationships set up the variable screen of Section 2.2.F. Because NDPI duplicates MNDWI and WRI largely repeats it, the optical indices contribute far fewer independent dimensions than their count suggests; the screen retains MNDWI as the leading water term and discards its redundant partners before classification, following the principle that correlated features degrade rather than improve a random forest (Amoakoh et al., 2021). No single index spans the full range of conditions, which is the argument for combining the optical indices with the radar and mixture-analysis terms rather than choosing among them.</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.3 SAR Integration</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>Sentinel-1 C-band backscatter carries an intra-annual inundation signal through the wet-season cloud that defeats the optical sensors (Figure 3a). Basin-mean VV backscatter falls from about -10 dB early in the year to a September minimum near -13.6 dB, with VH tracking it some seven decibels lower, and the thresholded water fraction rises in step from 0.11 in January to 0.17 in September. The backscatter minimum thus falls in the late dry season, when senescing emergent vegetation and smoother exposed surfaces lower the C-band return, a phase offset from the optical high stand that the coupling analysis takes up in Section 3.5.</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>*Figure 3: SAR dynamics of the Lake Chilwa basin. (a) Sentinel-1 monthly climatology of VV and VH backscatter and the derived water fraction, 2015 to 2024. (b) Sentinel-1 monthly water fraction through the record, showing the 2023 to 2024 step-up. (c) ALOS PALSAR L-band annual HH and HV backscatter and their difference, the double-bounce term sensitive to flooded vegetation.*</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="al">![](../03.outputs/PNG/fig06_sar_seasonality.png)</span>{fig-align="center"}</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>The monthly series also records the recent refill (Figure 3b). Basin water fraction held near 0.12 from 2015 through 2022, then stepped up to 0.21 across 2023 and 2024. Optical and radar, two independent sensors, thus place the strongest inundation of the record in the same two years, the mixture analysis of Section 3.1 registering it in the annual Landsat fractions and Sentinel-1 in the monthly backscatter.</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>L-band radar completes the picture where C-band cannot. The ALOS PALSAR HH minus HV difference, the double-bounce term that rises where standing water returns the signal through emergent vegetation, averaged 8.4 dB across the annual mosaics and peaked at 9.2 dB in 2021 (Figure 3c). The longer L-band wavelength penetrates the Typha stand that attenuates C-band, so the two radars are complementary: Sentinel-1 follows open water at fine cadence, and PALSAR flags the flooded marsh that both C-band and the optical indices under-record, the limitation in dense emergent vegetation documented by Hess et al. (2003) and Clement et al. (2018).</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>The basin's drainage structure shapes the sequence of retreat and refill. The southern and eastern shores, downgradient in the D-infinity flow routing of Section 2.2.A, recede first and refill last, an asymmetry the optical record misses through its cloud-season gaps and one that orders the fisher migration examined in Section 3.5.</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.4 Accuracy Assessments</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>The four-class random-forest classifier (open water, flooded vegetation, dry vegetation, bare soil), trained on the separability-selected feature stack of Section 2.2.F and applied to the 2020 reference composite, resolved the littoral mosaic that no single index captured (Section 2.2.G). Overall accuracy was 81% with a kappa coefficient of 0.77. Accuracy was highest for open water, which both the SWIR-based optical indices and low SAR backscatter identify unambiguously, and lowest for bare soil and flooded vegetation, where exposed lakebed grades into sparse cover and where dense Typha attenuates the C-band double-bounce signal. The fieldwork-era classification is reported for the reconstructed 2012 surface and, alongside it, for the 2011 and 2013 composites from which its spatial structure is drawn. The field ground-truth points validate all three, and the 2012 assessment is the one the study rests on, since it is the year the field record observes. Community validation of boundary placement and seasonal timing concentrated its disagreements in mixed-pixel zones and areas of rapid shoreline change.</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>*Table 3: Per-class producer's and user's accuracy for the four-class random-forest classification of the 2020 reference composite, computed from the independent validation split (Section 2.2.H). Overall accuracy 81%, kappa 0.77.*</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="in">```{r results-accuracy-table}</span></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>pa <span class="ot">&lt;-</span> <span class="fu">tail</span>(<span class="fu">unlist</span>(producers), <span class="dv">4</span>)</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>ua <span class="ot">&lt;-</span> <span class="fu">tail</span>(<span class="fu">unlist</span>(consumers), <span class="dv">4</span>)</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>acc_tbl <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>  <span class="at">Class =</span> <span class="fu">c</span>(<span class="st">"Open water"</span>, <span class="st">"Flooded vegetation"</span>, <span class="st">"Dry vegetation"</span>, <span class="st">"Bare soil"</span>),</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Producer's accuracy</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(pa, <span class="dv">2</span>),</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">User's accuracy</span><span class="st">`</span>     <span class="ot">=</span> <span class="fu">round</span>(ua, <span class="dv">2</span>),</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>  <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(acc_tbl)</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>*Figure 4: Producer's and user's accuracy by cover class for the random-forest classification. Open water is resolved most reliably; bare soil and flooded vegetation carry the largest errors, at the exposed-lakebed and Typha reed-stand boundaries respectively.*</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a><span class="in">```{r results-accuracy-plot}</span></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>acc_long <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>  <span class="at">Class    =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Open water"</span>, <span class="st">"Flooded vegetation"</span>, <span class="st">"Dry vegetation"</span>, <span class="st">"Bare soil"</span>), <span class="dv">2</span>),</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>  <span class="at">Accuracy =</span> <span class="fu">c</span>(<span class="fu">tail</span>(<span class="fu">unlist</span>(producers), <span class="dv">4</span>), <span class="fu">tail</span>(<span class="fu">unlist</span>(consumers), <span class="dv">4</span>)),</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>  <span class="at">Metric   =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Producer's"</span>, <span class="st">"User's"</span>), <span class="at">each =</span> <span class="dv">4</span>))</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(acc_long, <span class="fu">aes</span>(<span class="at">x =</span> Class, <span class="at">y =</span> Accuracy, <span class="at">fill =</span> Metric)) <span class="sc">+</span></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Accuracy"</span>, <span class="at">fill =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">20</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.5 Inundation-Migration Coupling</span></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>The ethnographic and remote sensing datasets, when overlaid, revealed a striking correspondence between water volume dynamics and population movement across the basin over three decades. Migration into lakeshore fishing camps tracked the refilling phase of each cycle, with population density at permanent camps increasing 30 to 50% within 12 to 18 months of recession nadir. Out-migration preceded complete desiccation by approximately three months, a pattern community informants described as anticipatory, driven by local environmental indicators (declining catch per unit effort, increasing water salinity, retreat of the shoreline beyond established camp boundaries) rather than by formal warnings.</span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>Migration operates at multiple temporal scales. Daily migrants travel to inshore fishing grounds and return the same day. Short-term seasonal migrants spend weeks to months on zimbowera platforms in the lake interior, returning periodically to their home villages for agricultural obligations, particularly for field clearing and planting season (January to April) when male labour is needed in matrilineal sorority-managed gardens (Murphy, 2014). Seasonal migrants from Machinga district travel southward each year to deeper fishing grounds in Zomba and Phalombe, a pattern driven by the shallower northern waters that dry up earliest. Inter-recessional migrants settle in lakeshore areas for years following lake refilling, then leave the basin entirely during major recessions (Allison and Mvula, 2002; Murphy, 2014). These categories are not discrete: individual fishers shift between strategies as conditions change, and fishing and farming function interdependently within the household economy.</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>During the 1995-96 refilling, key informant accounts documented sequential recolonisation of fishing camps from south to north, following the refilling wavefront visible in the SAR gradient analysis. Migrant fishers from Zomba and Machinga districts arrived first at southern camps, where water returned earliest, then progressively occupied camps further north as the lake expanded. The 2012 recession produced a mirror pattern: northern camps were abandoned first, with fishers relocating southward or leaving the basin entirely for Lake Malawi or Mozambican lakes. Northern communities along the shore from Mtengo Mtengo to Ntila reported that during drier months the open water retreated up to fifteen kilometres from their settlements, making fishing journeys too arduous for feasible livelihoods; instead, these fishers abandoned boats and gear to invest in farming until the rains returned (Murphy, 2014).</span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>The three-month anticipatory lag between community-reported migration and satellite-detected water-level change was the maximum-correlation lag of the lagged cross-correlation described in Section 2.3 (r = 0.73, p <span class="sc">\&lt;</span> 0.001), and was consistent across both recession events. Local observers identified environmental shifts that preceded detectable changes in satellite imagery, including reduced turbidity in residual pools, changes in bird assemblages at shoreline roosts, and the appearance of salt crusts on exposed lakebed. Northern lakeshore communities also used the seasonal retreat of the waterline to time the planting of wet gardens on newly exposed lakebed. These observations functioned as an informal early warning system that formal monitoring did not capture.</span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.6 Fishery Patrol Mapping</span></span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>Community mapping identified 23 locations where formal fisheries regulations conflicted with traditional territorial claims. These clustered at the margins of the jurisdictional boundaries between Zomba, Phalombe, and Machinga districts, particularly where the retreating shoreline shifted fishing grounds across administrative borders. Compliance reached about 65% during active enforcement but tracked traditional territory rather than formal jurisdiction: migrant seine-net fishers observed rules enforced by authorities with whom they held kinship or patron-client ties and disregarded those imposed by district officers operating outside their home territories. Elder mediation resolved 89% of disputes where traditional boundaries received formal recognition, against 34% where only formal boundaries applied.</span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>The spatial pattern of these conflicts corresponded to the zones where SAR imagery showed the most rapid shoreline retreat, indicating that the rate of environmental change, not merely its magnitude, drives resource conflict. The governance structure is itself a product of recession: the Beach Village Committees at 53 landing beaches grew out of the river village committees formed to protect fish refugia during the 1994 drying of the lake, an inheritance that tied enforcement to the jurisdictions of group village headmen rather than to the fishers themselves (Njaya, 2009; Murphy, 2014).</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------------------------</span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+</body></html>
