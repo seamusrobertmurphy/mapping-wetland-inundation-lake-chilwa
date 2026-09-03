@@ -17,9 +17,10 @@ __pycache__/
 _staging/
 _site/
 _backups/
-# Claude Code local state, except the shared project memory store
+# Claude Code local state, including the project memory store. The store was
+# shared until 3 September 2026; it is private now because coauthors read this
+# repository. See the Memory section of CLAUDE.md.
 **/.claude/*
-!**/.claude/memory/
 .claudeprism/
 tasks/
 
