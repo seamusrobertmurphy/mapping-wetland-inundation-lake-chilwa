@@ -80,6 +80,18 @@ __MACOSX/
 02.inputs/SAR/*.N1
 02.inputs/SAR/*.N1.*
 02.inputs/SAR/*.crdownload
+02.inputs/SAR/*.zip
+02.inputs/SAR/*.z0*
 05.tasks/
 _staging/
 .claude/
+
+# Large derived rasters. Regenerable from the scripts in 05.scripts and too big
+# for a shared repository; the manifests and the code that builds them are kept.
+03.outputs/TIF/basemap/
+03.outputs/TIF/ground_truth_aid/*.tif
+03.outputs/PNG/ground_truth_aid/
+02.inputs/CUBE/
+*.jpg
+*.vrt
+*.aux.xml

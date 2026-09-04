@@ -1,0 +1,47 @@
+{
+  "product": "Lake Chilwa inundation time series, 1984 to 2024",
+  "builder": "05.scripts/build_inundation_timeseries.py",
+  "built": "2026-09-03",
+  "rows": 22,
+  "basin_km2": 8752.0,
+  "inputs": [
+    {
+      "role": "asar",
+      "path": "03.outputs/CSV/asar_series_join.csv",
+      "sha256": "bb1841046929f8b54c2678995a523a8f0626f7daa4952e83c4bb263c36a47cac",
+      "bytes": 1597
+    },
+    {
+      "role": "mixture",
+      "path": "03.outputs/CSV/sma_harmonic_fractions.csv",
+      "sha256": "7e68164e2ac8bd7e24a59bcd2e5bcf925d361e62069e455bf53d4181cc4f3567",
+      "bytes": 575
+    },
+    {
+      "role": "modis",
+      "path": "03.outputs/CSV/modis_water_fraction_8day.csv",
+      "sha256": "4f8cc6a78886a8b42cf734aae38727ed754bce23b0ae9fe23ddd9af06aba32b9",
+      "bytes": 48723
+    },
+    {
+      "role": "open_water",
+      "path": "03.outputs/CSV/harmonic_open_water_annual.csv",
+      "sha256": "f41b2c3814a2691bd986136636f12878bd48a1247c67815f6caa63d0025488b9",
+      "bytes": 5122
+    },
+    {
+      "role": "survey",
+      "path": "03.outputs/CSV/optical_archive_survey.csv",
+      "sha256": "a67e51e62eb4b59f1038881d5bb5a7c43fa0d9d1bd9961b55ffa276ed04531bc",
+      "bytes": 3842
+    }
+  ],
+  "producers": {
+    "harmonic_open_water_annual.csv": "05.scripts/harmonic_open_water_series.py",
+    "sma_harmonic_fractions.csv": "05.scripts/sma_harmonic_flooded_veg.py",
+    "palsar_flooded_vegetation.csv": "05.scripts/palsar_flooded_vegetation.py",
+    "asar_series_join.csv": "05.scripts/asar_series_join.py",
+    "optical_archive_survey.csv": "05.scripts/survey_optical_archive.py",
+    "modis_water_fraction_8day.csv": "05.scripts/modis_gap_fill_2012.py"
+  }
+}

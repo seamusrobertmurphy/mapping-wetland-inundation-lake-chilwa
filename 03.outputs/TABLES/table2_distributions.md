@@ -1,0 +1,7 @@
+**Table 2. Distribution of each observation stream and its bias against the Landsat reference. The intercept is additive bias, the slope multiplicative.**
+
+| Stream | n | Mean (km2) | SD (km2) | Median (km2) | IQR (km2) | Skewness | Excess kurtosis | Shapiro-Wilk W | p (normality) | n paired with Landsat | Intercept (km2) | Slope | Slope 95% CI | r | Residual SD (km2) | Slope differs from 1 |
+|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
+| Landsat, 30 m | 469 | 1,273 | 364 | 1,227 | 353 | +0.21 | +1.09 | 0.947 | < 0.001 | reference | 0 by definition | 1 by definition | - | - | - | - |
+| MODIS, 500 m | 568 | 1,149 | 273 | 1,141 | 160 | +0.93 | +4.07 | 0.815 | < 0.001 | 400 | +166 | 0.969 | 0.900 to 1.039 | 0.807 | 219 | no |
+| Fused record | 936 | 1,194 | 247 | 1,203 | 184 | +0.31 | +4.23 | 0.881 | < 0.001 | 469 | +89 | 0.997 | 0.930 to 1.065 | 0.801 | 218 | no |

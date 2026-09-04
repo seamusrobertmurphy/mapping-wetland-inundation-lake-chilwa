@@ -1,0 +1,24 @@
+stratum,n_px,area_km2,HH_dB_median,HH_dB_q25,HH_dB_q75,HV_dB_median,HV_dB_q25,HV_dB_q75,HHminusHV_dB_median,HHminusHV_dB_q25,HHminusHV_dB_q75,incidence_deg_median
+open water (fitted MNDWI > 0.10),744333,646.2,-10.01,-14.54,-8.48,-23.29,-23.9,-22.27,11.09,6.62,14.37,21.2
+"belt within 5 km of the lake outline, fitted MNDWI < -0.10",508091,441.2,-8.5,-10.11,-6.44,-16.12,-17.4,-14.82,7.76,6.62,9.04,21.8
+"dry land beyond 10 km of the lake outline, fitted MNDWI < -0.10",2909239,2523.6,-8.88,-10.05,-7.52,-15.95,-16.88,-14.98,7.13,6.16,8.11,22.9
+"optical transition, -0.10 to 0.10",59763,51.9,-6.33,-9.1,-4.38,-15.76,-17.98,-14.18,9.26,7.82,10.59,21.4
+
+quantity,km2
+"open water, optical fit, MNDWI > 0.10",646.2
+"flooded vegetation, HH-HV > 9.60 dB and HH > -5.55 dB, whole basin",124.5
+flooded vegetation within 10 km of the lake outline,63.7
+"combined, open water plus flooded within 10 km",709.9
+joint rule rate on dry land beyond 10 km (noise floor),0.0215
+
+distance from lake outline,non-water km2,flooded km2,fraction
+inside the lake outline,34.0,5.8,0.1708
+0 to 1 km outside,81.1,14.8,0.1821
+1 to 2 km outside,81.3,9.6,0.1178
+2 to 3 km outside,86.6,7.1,0.0822
+3 to 5 km outside,183.2,14.3,0.0783
+5 to 7 km outside,193.3,8.3,0.043
+7 to 10 km outside,309.6,3.7,0.0121
+10 to 15 km outside,449.1,10.8,0.024
+15 to 25 km outside,823.1,31.2,0.0379
+25 to 80 km outside,1291.2,18.9,0.0147
