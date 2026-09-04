@@ -1,0 +1,119 @@
+{
+  "passed": 15,
+  "total": 16,
+  "complete": false,
+  "criteria": [
+    {
+      "id": "C01",
+      "title": "The target file exists and parses as CSV",
+      "pass": true,
+      "measured": "936 rows",
+      "detail": ""
+    },
+    {
+      "id": "C02",
+      "title": "Every required column is present",
+      "pass": true,
+      "measured": "17 columns",
+      "detail": ""
+    },
+    {
+      "id": "C03",
+      "title": "The sixteen-day grid is complete and regular",
+      "pass": true,
+      "measured": "936 of 936 steps, 1984-01-01 to 2024-12-31",
+      "detail": ""
+    },
+    {
+      "id": "C04",
+      "title": "No missing value in the three area columns",
+      "pass": true,
+      "measured": "0 empty cells",
+      "detail": ""
+    },
+    {
+      "id": "C05",
+      "title": "Every area is physically possible and the sum adds up",
+      "pass": true,
+      "measured": "0 violations",
+      "detail": ""
+    },
+    {
+      "id": "C06",
+      "title": "Every step carries an ordered credible interval",
+      "pass": true,
+      "measured": "0 faults",
+      "detail": ""
+    },
+    {
+      "id": "C07",
+      "title": "Uncertainty widens where the record is thin",
+      "pass": true,
+      "measured": "mean 95 per cent width 873 km2 before 2000 against 98 km2 from 2015",
+      "detail": "the early interval must be at least 30 per cent wider"
+    },
+    {
+      "id": "C08",
+      "title": "Every step names sources that existed at the time",
+      "pass": true,
+      "measured": "0 faults",
+      "detail": ""
+    },
+    {
+      "id": "C09",
+      "title": "Within-year range matches a lake that actually moves",
+      "pass": true,
+      "measured": "record keeps 105 km2 of the 144 km2 robust spread its own observations show (73 per cent) over 25 years",
+      "detail": "must retain at least 60 per cent"
+    },
+    {
+      "id": "C10",
+      "title": "Radar carries the vegetated class where it exists",
+      "pass": true,
+      "measured": "16 of 16 radar-era years carry a radar step",
+      "detail": ""
+    },
+    {
+      "id": "C11",
+      "title": "A holdout validation exists with error in km2",
+      "pass": true,
+      "measured": "9 tests, 4 in km2",
+      "detail": ""
+    },
+    {
+      "id": "C12",
+      "title": "Known recessions and refills appear in the right order",
+      "pass": true,
+      "measured": "4 events tested against a median of 1204 km2",
+      "detail": ""
+    },
+    {
+      "id": "C13",
+      "title": "No placeholder text",
+      "pass": true,
+      "measured": "0 suspect cells",
+      "detail": ""
+    },
+    {
+      "id": "C14",
+      "title": "A provenance record names every input with a checksum",
+      "pass": true,
+      "measured": "3 inputs",
+      "detail": ""
+    },
+    {
+      "id": "C15",
+      "title": "The builder reproduces the file exactly",
+      "pass": true,
+      "measured": "exit 0",
+      "detail": ""
+    },
+    {
+      "id": "C16",
+      "title": "The fusion model is correctly specified",
+      "pass": false,
+      "measured": "11 diagnostics read",
+      "detail": "innovations are not white (Q = 103.1, p = 0.0)"
+    }
+  ]
+}

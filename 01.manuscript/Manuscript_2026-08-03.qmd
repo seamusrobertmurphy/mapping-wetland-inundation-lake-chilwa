@@ -10,7 +10,34 @@ author:
   - name: Lauren K Banks
     email: laurenkbnks@gmail.com
 abstract: > 
-  Wetlands rank among the most valuable ecosystems on Earth and the hardest to monitor, nowhere more so than in sub-Saharan Africa. The binding constraint is the detection of water standing beneath emergent vegetation: optical sensors cannot resolve it in principle, C-band radar resolves it only conditionally, and the state of the art commonly answers by excluding the class. Because vegetated water can constitute most of a wetland's inundated area, omitting it misstates extent, hydroperiod, and flood timing. We take that problem as our primary objective in the Lake Chilwa basin, a shallow endorheic lake in southern Malawi that recedes and refills on a cycle of roughly fifteen years and whose migratory fishery tracks the water. We build one model from four components: a harmonised Landsat record spanning 1984 to 2024 with five spectral water indices; Sentinel-1 C-band and ALOS PALSAR L-band backscatter; sub-pixel cover fractions fitted by spectral endmember mixture analysis; and training labels from participatory mapping with fishing communities, who observe water beneath the vegetation directly. Within the self-derived 8,752 km² basin, sub-pixel open water averaged 1,225 km², peaking at 2,083 km² in 2024 and falling to 835 km² in the 1995 recession, two fifths of peak extent. Open water and emergent vegetation are anti-correlated, so the wetland compensates as the lake retreats and the combined footprint, 2,807 km² at the 2023 refill, varies far less than open water alone. Mapping the footprint rather than the lake changes how recession reads hydrologically, and the fieldwork records the migration and enforcement patterns satellites cannot.
+  Surface water and open water are treated as synonyms across the wetland
+  literature, so every surface water record reports only the fraction of water
+  lying open to the sky, and where a reed belt holds much of the standing water
+  that is a measurement of the wrong quantity. Few studies measure the vegetated
+  fraction directly, because no optical sensor resolves water beneath a stand
+  and the reference labels cannot be collected from above. This study built a
+  sixteen-day record of inundated area for the Lake Chilwa basin, a shallow
+  endorheic lake in southern Malawi that recedes and refills across roughly
+  fifteen years, spanning forty-one years from 1984 to 2024 (936 steps, 8,752
+  km2, 562 of them carrying a direct observation). Landsat and Moderate
+  Resolution Imaging Spectroradiometer reflectance were fused through a
+  state-space model carrying a level, a drifting slope and an annual cycle, with
+  a backward smoothing pass, and water standing within vegetation was measured
+  from the horizontally polarised double bounce recorded by Envisat Advanced
+  Synthetic Aperture Radar in 2011 and 2012 and by ALOS Phased Array L-band
+  Synthetic Aperture Radar. Open water averaged 1,187 km2 and ranged from 48 km2
+  to 2,010 km2, and water within vegetation averaged 130 km2, a tenth of the
+  combined footprint and a fifth of it on the 22 February 2012 radar date rather
+  than the majority that the framing anticipated. The deepest drawdown of the
+  satellite era fell in 2018, whose seasonal minimum of 48 km2 approached
+  desiccation, against 530 km2 in the 1995 recession and 925 km2 in 2012, so an
+  annual record built on composites had missed the largest event it contained.
+  Credible intervals averaged 873 km2 before 2000, where Landsat supplies about
+  four usable observations a year, against 98 km2 from 2015, which states rather
+  than conceals how much of the early record is measured. Reporting inundation
+  at the interval a lake actually moves, with the uncertainty that the archive
+  earns, changes which years read as recessions and therefore which years a
+  migratory fishery is understood to have responded to.
 keywords:
   - Wetland inundation dynamics
   - SAR backscatter
@@ -208,6 +235,19 @@ knitr::opts_chunk$set(
   echo = TRUE, message = FALSE, warning = FALSE,
   error = TRUE, comment = NA,   # one cell error cannot abort the whole render
   tidy.opts = list(width.cutoff = 60))
+
+# --- The analysis stack ----------------------------------------------------
+# Loaded here so every later cell can assume them. The inundation record in
+# Section 2.3 is built from these alone and needs no Earth Engine session.
+suppressPackageStartupMessages({
+  library(dplyr)      # data manipulation
+  library(tidyr)      # reshaping, pivot_wider and drop_na
+  library(readr)      # read_csv without type guessing surprises
+  library(purrr)      # map_dbl over the smoother's time steps
+  library(tibble)     # tibbles for every table
+  library(ggplot2)    # the record's figure
+  library(here)       # paths that hold wherever the render runs from
+})
 
 # --- Google Earth Engine via rgee (live init) ------------------------------
 # rgee::ee_install() saves EARTHENGINE_PYTHON (~/.virtualenvs/rgee) to .Renviron.
@@ -1834,7 +1874,352 @@ write.csv(ls_df, here::here("03.outputs", "landsat_annual_indices.csv"), row.nam
 write.csv(sma_df, here::here("03.outputs", "sma_annual_fractions.csv"), row.names = FALSE)
 ```
 
-### 2.3 Inundation & Migration Records
+### 2.3 Sixteen-Day Record
+
+Inundation was reported at sixteen-day steps, the Landsat repeat interval,
+across the whole record from 1 January 1984 to 16 December 2024, giving 936
+steps of which 562 carry a direct observation and 374 are carried forward by the
+model. An annual product was built first and discarded. Measured on twenty-five
+years whose clear observations span both the wet and the dry season, the lake
+moved a median of 144 km2 within a single year on a robust tenth to ninetieth
+percentile spread, and the annual product returned a within-year range an order
+of magnitude smaller, so it could not express the seasonal pulse the study
+exists to measure.
+
+No single instrument spans the record, so the estimate was fused rather than
+composited. Landsat 4, 5, 7, 8 and 9 Collection 2 surface reflectance supplied
+the thirty-metre detail from 1984, water being taken as a modified normalised
+difference water index above zero, and the Moderate Resolution Imaging
+Spectroradiometer supplied density at five hundred metres from February 2000,
+carrying the same index because its surface reflectance product holds both a
+green and a shortwave infrared band. The coarse stream was calibrated onto the
+fine one on 229 steps observed by both, giving a Pearson correlation of 0.986
+and a residual standard deviation of 58.9 km2.
+
+Partial views were admitted only where nearly complete, and the floor was set by
+measurement rather than judgement. Scaling the water seen inside a clear
+fraction up to the whole lake assumes water is spread evenly between the
+observed and unobserved parts, which does not hold here because cloud sits over
+the wet centre and the scan-line gaps of Landsat 7 widen from the swath edge.
+Checked against near-complete Moderate Resolution Imaging Spectroradiometer
+views on the same steps, a Landsat window seeing thirty per cent of the lake was
+out by -659 km2 and one seeing half by +439 km2, while at eighty per cent the
+error fell to +110 km2 and at ninety to +62 km2. The floor was therefore set at
+eighty per cent, which costs most of the pre-2000 observations and pays that
+cost in the credible interval rather than hiding it inside a scaled number.
+
+The fusion carried a hidden inundated area forward through all 936 steps as a
+local linear trend, a level advancing by a drifting slope, with an annual sine
+and cosine pair so the flood pulse entered as signal rather than as noise. Each
+observation entered with its own variance and a Rauch-Tung-Striebel backward
+pass allowed later observations to sharpen earlier ones, which is what makes the
+thin early years usable. The random walk standard deviation and a scale on the
+stated observation error were both fitted by maximum likelihood rather than
+assumed, at 36.5 km2 and 0.377 respectively, the second meaning the assumed
+retrieval error had been more than twice too large.
+
+Water standing within vegetation cannot be measured optically and was taken from
+radar. A horizontally polarised wave passes between vertical stems, reflects off
+the water, bounces into the stem base and returns doubled, brightening the
+co-polarised channel while the cross-polarised channel, which records volume
+scattering inside the stand, does not share the gain. Thresholds on both
+channels were set at the ninety-fifth percentile of dry land beyond ten
+kilometres of the lake, so the rule admits at most five per cent of dry ground
+by construction and admitted 2.1 to 2.8 per cent across the seven usable Envisat
+dates. Sentinel-1 cannot serve this purpose here, since of 1,966 scenes over the
+basin exactly one transmits horizontally.
+
+Advanced Very High Resolution Radiometer imagery was tested as the pre-2000
+dense stream and rejected. Nine predictors, including every reflectance band,
+brightness temperature and same-date contrast forms, were regressed against 101
+steps of known area spanning 7 km2 to 1,374 km2, and the best reached a
+correlation of 0.33. At 5.6 km the lake spans about thirty-five mixed pixels and
+exposed lakebed reads low in the vegetation index and moderate in the near
+infrared exactly as water does, so in the drought years the record most needs,
+mud and water are not separable in the bands that sensor carries.
+
+The record and its acceptance test are held in
+`03.outputs/CSV/chilwa_inundation_16day.csv` and
+`05.scripts/eval_timeseries.py`, the second deciding completeness against
+sixteen criteria covering coverage, physical bounds, interval ordering,
+seasonal amplitude retained against the record's own observations, sensor
+provenance, model specification and byte-exact reproducibility.
+
+#### 2.3.1 Closing The Gap
+
+The constraint that shaped this study was narrow and severe. Landsat 5 stopped
+imaging the Lake Chilwa basin on 18 October 2011 and Landsat 8 began on 25 March
+2013, so for seventeen months, spanning the whole of the 2012 fieldwork, the only
+optical sensor overhead was Landsat 7, whose scan-line corrector failed in May
+2003 and which therefore delivers every scene with wedge-shaped gaps widening
+from the swath edge. Forty-one Landsat 7 scenes cover the basin in 2012 and each
+one is holed.
+
+Three findings closed that gap, and none of them involved new imagery.
+
+The first is that the gaps move. Scan-line wedges fall in different places on
+successive passes, so a composite of many scenes fills what any single scene
+leaves empty. Measured over path 167, one scene observes 6,740 km2 of the basin
+and thirteen scenes together observe 7,789 km2, while fifteen scenes across
+February to June 2012 leave 18 km2 of 8,752 km2 never seen and forty-one scenes
+across the year leave none. The exclusion of Landsat 7 that preceded this work
+had rested on pixel loss measured over path 166, which covers only 7.2 per cent
+of the basin.
+
+The second is that the striping does not bias the water measurement, but naive
+scaling does. Compared against Landsat 8 on seventy-one sixteen-day windows
+where both instruments saw more than half the lake, Landsat 7 read 141 km2 high
+[t = 5.23]. That difference is not the sensor. It arises from dividing the water
+seen inside a clear fraction by that fraction, which assumes water is spread
+evenly between the observed and unobserved parts. Cloud sits over the wet centre
+and the scan-line wedges widen from the edge, so neither absence is random.
+Checked against near-complete coarse-resolution views on the same windows, a
+Landsat window seeing thirty per cent of the lake was out by -659 km2 and one
+seeing half by +439 km2, while at eighty per cent the error fell to +110 km2 and
+at ninety to +62 km2. Admitting only windows above eighty per cent removes the
+bias and costs observations rather than accuracy.
+
+The third is that the remaining gaps do not need filling with imagery, because
+the state can be carried across them with a stated uncertainty. What the
+sixteen-day record reports for a window with no clear observation is not an
+interpolation dressed as a measurement but the model's own estimate, marked as
+such in the row and accompanied by an interval that widens with the distance to
+the nearest look.
+
+Together these give 1,120 km2 of open water for the fortnight of 15 February
+2012, with a ninety-five per cent interval of 54 km2, from a direct observation
+rather than a carried state. An independent per-pixel harmonic model of the same
+date returns 1,158 km2 and agrees with an external surface-water product on 98.6
+to 99.6 per cent of pixels. The gap is closed, and no further imagery exists to
+close it further: February 2012 contains Landsat 7, a coarse-resolution daily
+sensor, and ten prior years of Landsat history, and that is the whole of it.
+
+#### 2.3.2 Observations
+
+```{r cube-observations}
+#| eval: true
+#| echo: true
+#| warning: false
+#| message: false
+#| comment: NA
+
+# Constants. Each is a measurement rather than a preference, and the origin of
+# every value is given beside it.
+
+grid_start <- as.Date("1984-01-01")   # the first Landsat scene over the basin
+grid_end   <- as.Date("2024-12-31")
+grid_step  <- 16                      # the Landsat repeat interval, in days
+basin_km2  <- 8752                    # the self-derived watershed, Section 2.2
+min_clear  <- 0.80                    # below this the scale-up error reaches
+                                      # hundreds of km2, see Section 2.3.1
+landsat_sd <- 40                      # km2, retrieval error of a clear look
+partial_k  <- 0.55                    # how fast variance grows with cloud
+
+step_dates <- seq(grid_start, grid_end, by = grid_step)
+
+# One row per sixteen-day window per instrument family, holding the water area
+# seen and the share of the lake clear enough to see it.
+
+observations <- read_csv(
+  here::here("03.outputs", "CSV", "optical_water_16day.csv"),
+  show_col_types = FALSE
+) |>
+  filter(clear_fraction >= min_clear) |>
+  transmute(
+    date   = as.Date(date),
+    family = sensor_family,
+    area   = water_km2 / clear_fraction,
+    clear  = clear_fraction
+  )
+
+observations |>
+  count(family, name = "windows") |>
+  knitr::kable(caption = "Windows passing the eighty per cent clear-cover floor.")
+```
+
+#### 2.3.3 Cross-Sensor Calibration
+
+```{r cube-calibration}
+#| eval: true
+#| echo: true
+#| warning: false
+#| message: false
+#| comment: NA
+
+# Landsat resolves the reed fringe at thirty metres and is the reference. The
+# coarse stream is regressed onto it using only windows both instruments saw
+# well, so the calibration is not itself contaminated by partial views.
+
+paired <- observations |>
+  pivot_wider(id_cols = date, names_from = family, values_from = area) |>
+  drop_na(landsat, modis)
+
+calibration <- lm(landsat ~ modis, data = paired)
+modis_sd    <- sd(residuals(calibration))
+
+tibble(
+  quantity = c("paired windows", "Pearson r", "residual standard deviation",
+               "intercept", "slope"),
+  value    = c(nrow(paired),
+               round(cor(paired$landsat, paired$modis), 3),
+               round(modis_sd, 1),
+               round(coef(calibration)[1], 1),
+               round(coef(calibration)[2], 3)),
+  units    = c("count", "correlation", "km2", "km2", "ratio")
+) |>
+  knitr::kable(caption = "Calibration of the coarse stream onto the Landsat reference.")
+```
+
+#### 2.3.4 State-Space Fusion
+
+```{r cube-fusion}
+#| eval: true
+#| echo: true
+#| warning: false
+#| message: false
+#| comment: NA
+
+# Windows seen by both instruments are combined by inverse variance, so the
+# sharper look pulls harder. Windows seen by neither stay missing, and the
+# filter carries the state across them with a widening interval.
+
+observation_variance <- function(area, clear, base_sd) {
+  base_sd^2 + (partial_k * (1 - clear) / pmax(clear, min_clear) * area)^2
+}
+
+series <- observations |>
+  mutate(
+    area = if_else(
+      family == "modis",
+      coef(calibration)[1] + coef(calibration)[2] * area,
+      area
+    ),
+    var = observation_variance(
+      area, clear,
+      if_else(family == "modis", modis_sd, landsat_sd)
+    )
+  ) |>
+  group_by(date) |>
+  summarise(
+    y       = sum(area / var) / sum(1 / var),
+    r       = 1 / sum(1 / var),
+    sensors = paste(sort(unique(family)), collapse = " + "),
+    .groups = "drop"
+  ) |>
+  right_join(tibble(date = step_dates), by = "date") |>
+  arrange(date)
+
+# The state is a level advancing by a drifting slope, plus an annual cycle so
+# the flood pulse enters as signal rather than as noise. The slope carries
+# momentum: a lake that fell last fortnight is draining and likely to fall
+# again, and a model without one treats that persistence as surprise. Its
+# column in the design row is zero because it moves the level rather than
+# entering the observation directly.
+
+design_row <- function(d) {
+  frac <- as.numeric(format(d, "%j")) / 365.25
+  c(1, 0, cos(2 * pi * frac), sin(2 * pi * frac))
+}
+
+transition <- matrix(
+  c(1, 1, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1),
+  nrow = 4, byrow = TRUE
+)
+
+kalman_smooth <- function(y, r, H, q, r_scale) {
+  n  <- length(y)
+  Tm <- transition
+  Q  <- diag(c(q, q * 0.05, q * 0.25, q * 0.25))
+  r  <- r * r_scale
+
+  xf <- matrix(0, n, 4)
+  Pf <- array(0, c(n, 4, 4))
+  xp <- matrix(0, n, 4)
+  Pp <- array(0, c(n, 4, 4))
+
+  x <- c(y[which(!is.na(y))[1]], 0, 0, 0)
+  P <- diag(1e6, 4)
+
+  for (t in seq_len(n)) {
+    x <- Tm %*% x
+    P <- Tm %*% P %*% t(Tm) + Q
+    xp[t, ]   <- x
+    Pp[t, , ] <- P
+
+    if (!is.na(y[t])) {
+      h <- H[t, ]
+      f <- as.numeric(h %*% P %*% h) + r[t]
+      k <- (P %*% h) / f
+      x <- x + k * as.numeric(y[t] - h %*% x)
+      P <- P - k %*% (h %*% P)
+    }
+    xf[t, ]   <- x
+    Pf[t, , ] <- P
+  }
+
+  # The backward pass lets later observations sharpen earlier ones, which is
+  # what makes the thin years before 2000 usable at all.
+
+  xs <- xf
+  Ps <- Pf
+  for (t in seq(n - 1, 1)) {
+    C <- Pf[t, , ] %*% t(Tm) %*% solve(Pp[t + 1, , ])
+    xs[t, ]   <- xf[t, ] + C %*% (xs[t + 1, ] - xp[t + 1, ])
+    Ps[t, , ] <- Pf[t, , ] + C %*% (Ps[t + 1, , ] - Pp[t + 1, , ]) %*% t(C)
+  }
+
+  tibble(
+    mean = map_dbl(seq_len(n), \(t) as.numeric(H[t, ] %*% xs[t, ])),
+    sd   = map_dbl(seq_len(n), \(t) sqrt(max(H[t, ] %*% Ps[t, , ] %*% H[t, ], 1)))
+  )
+}
+
+# The step size and the scale on the stated observation error were both fitted
+# by maximum likelihood rather than assumed. The second came out at 0.377,
+# meaning the assumed retrieval error had been more than twice too large.
+
+H   <- t(sapply(series$date, design_row))
+fit <- kalman_smooth(series$y, series$r, H, q = 36.5^2, r_scale = 0.377)
+
+record <- series |>
+  select(date, sensors) |>
+  bind_cols(fit) |>
+  mutate(
+    open_water = round(mean, 1),
+    lower      = round(pmax(mean - 1.96 * sd, 0), 1),
+    upper      = round(mean + 1.96 * sd, 1),
+    source     = if_else(is.na(series$y), "carried by the model", "observed"),
+    era        = case_when(
+      date <  as.Date("2000-01-01") ~ "1984-1999",
+      date <  as.Date("2015-01-01") ~ "2000-2014",
+      TRUE                          ~ "2015-2024"
+    )
+  ) |>
+  select(date, era, open_water, lower, upper, source, sensors)
+
+record |>
+  group_by(era) |>
+  summarise(
+    steps     = n(),
+    observed  = sum(source == "observed"),
+    mean_km2  = round(mean(open_water)),
+    min_km2   = round(min(open_water)),
+    max_km2   = round(max(open_water)),
+    interval  = round(mean(upper - lower)),
+    .groups   = "drop"
+  ) |>
+  knitr::kable(
+    caption = paste("The sixteen-day record by era. The interval column is the",
+                    "mean width of the ninety-five per cent credible interval,",
+                    "which states rather than conceals how much of each era is",
+                    "measured.")
+  )
+```
+
+### 2.4 Inundation & Migration Records
 
 The inundation and migration records were coupled at annual resolution across the observation period. The lake state was represented by the annual water series of Section 2.2, the Landsat MNDWI and the spectral-mixture open-water fraction, with the monthly Sentinel-1 water fraction resolving intra-annual timing. The social state was represented by a camp-occupancy index compiled from the ethnographic record: the presence, abandonment, and recolonisation of the georeferenced fishing camps through each recession-refilling cycle, coded from key-informant chronologies and participant observation (Section 2.1). We aligned the two series and estimated their association by lagged cross-correlation, shifting the migration index against the water series in one-month steps and taking the lag that maximised the Pearson correlation as the lead between them. Reported coefficients are the maximum-correlation values with their associated lag, assessed against the effective sample size of the paired observations. Because the migration index is compiled from qualitative accounts rather than continuous census, the coupling is reported as an association and a lead time, not as a predictive model; its formalisation into a coupled system model is set out as future work in Section 4.6.
 
@@ -1842,7 +2227,122 @@ The inundation and migration records were coupled at annual resolution across th
 
 ## Results
 
-### 3.1 Water Extent Dynamics
+### 3.1 The Sixteen-Day Record
+
+```{r record-headline}
+#| eval: true
+#| echo: true
+#| warning: false
+#| message: false
+#| comment: NA
+
+# The annual summary the record supports, and the seasonal extremes it reports
+# within each year. Both are read from the fused series built in Section 2.3,
+# so nothing here is a figure quoted from elsewhere.
+
+annual <- record |>
+  mutate(year = as.integer(format(date, "%Y"))) |>
+  group_by(year) |>
+  summarise(
+    mean_km2 = mean(open_water),
+    min_km2  = min(open_water),
+    max_km2  = max(open_water),
+    .groups  = "drop"
+  )
+
+tibble(
+  quantity = c("steps in the record",
+               "steps carrying a direct observation",
+               "mean open water",
+               "driest sixteen-day step",
+               "wettest sixteen-day step",
+               "deepest seasonal minimum, and its year",
+               "1995 recession minimum",
+               "2012 fieldwork minimum"),
+  value = c(
+    nrow(record),
+    sum(record$source == "observed"),
+    round(mean(record$open_water)),
+    round(min(record$open_water)),
+    round(max(record$open_water)),
+    paste0(round(min(annual$min_km2)), " (",
+           annual$year[which.min(annual$min_km2)], ")"),
+    round(annual$min_km2[annual$year == 1995]),
+    round(annual$min_km2[annual$year == 2012])
+  ),
+  units = c("count", "count", rep("km2", 6))
+) |>
+  knitr::kable(caption = "The record in summary. Areas are square kilometres.")
+```
+
+The record runs to 936 sixteen-day steps between 1 January 1984 and 16 December
+2024, of which 562 rest on a direct observation and 374 are carried by the
+model. Open water averaged 1,187 km2 across the whole record and ranged from 48
+km2 to 2,010 km2, a span of more than forty to one.
+
+The deepest drawdown of the satellite era fell in 2018 and not in 2012. Its
+seasonal minimum of 48 km2 approached desiccation, against 530 km2 in the 1995
+recession and 925 km2 in 2012, the fieldwork year on which the study was framed.
+Direct Landsat observation records 33 km2 on 29 October 2018 and 7 km2 on 14
+November, each from five or six scenes with the basin fully clear, and two
+further instruments agree independently. An annual record built from composites
+reported 2018 as 956 km2, which is the mean of a year that fell by two orders of
+magnitude within it, and that is the argument for reporting at sixteen-day steps
+stated as a measurement rather than a preference.
+
+```{r record-figure}
+#| eval: true
+#| echo: true
+#| warning: false
+#| message: false
+#| comment: NA
+#| fig-width: 11
+#| fig-height: 5
+#| fig-cap: "Lake Chilwa open water at sixteen-day steps, 1984 to 2024. The band is the ninety-five per cent credible interval, and its width is as much the result as the line: narrow where the dense coarse stream observes every step, wide through the 1980s and 1990s where Landsat alone supplies about four usable observations a year."
+
+era_shading <- tibble(
+  xmin = as.Date(c("1984-01-01", "2015-01-01")),
+  xmax = as.Date(c("2000-01-01", "2025-01-01"))
+)
+
+ggplot(record, aes(date, open_water)) +
+  geom_rect(
+    data = era_shading,
+    aes(xmin = xmin, xmax = xmax, ymin = -Inf, ymax = Inf),
+    inherit.aes = FALSE, fill = "#1F6E8C", alpha = 0.05
+  ) +
+  geom_ribbon(aes(ymin = lower, ymax = upper),
+              fill = "#1F6E8C", alpha = 0.22) +
+  geom_line(colour = "#12455A", linewidth = 0.35) +
+  scale_x_date(date_breaks = "5 years", date_labels = "%Y") +
+  labs(x = NULL, y = expression("open water (km"^2*")")) +
+  theme_minimal(base_size = 11) +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank()
+  )
+```
+
+```{r record-write}
+#| eval: true
+#| echo: true
+#| warning: false
+#| message: false
+#| comment: NA
+
+# The record is written from the document itself, so the published file and the
+# numbers in this text cannot drift apart.
+
+readr::write_csv(
+  record,
+  here::here("03.outputs", "CSV", "chilwa_inundation_16day_manuscript.csv")
+)
+
+cat(sprintf("wrote %d steps to 03.outputs/CSV/chilwa_inundation_16day_manuscript.csv\n",
+            nrow(record)))
+```
+
+### 3.2 Water Extent Dynamics
 
 The spectral mixture analysis resolves the basin's inundation at sub-pixel scale across the Landsat record, thirty-seven usable years between 1984 and 2024 (Figure 1). Basin-mean open-water fraction averaged 0.140 and reached its maximum of 0.238 in 2024, the wettest year in the series and among the best sampled, at an inter-annual coefficient of variation of 0.32. Three principal recession troughs punctuate the record, in 1987, 1992, and 2003, each a year when open water covered less than a tenth of the basin. Those values, 0.013 in 2003 and 0.036 in 1987, rest on three and two usable scenes and are better read as evidence of severe drawdown than as precise extents. The deepest well-sampled low is 1995, at 0.095 from thirteen scenes, which coincides with the near-total desiccation of the central basin documented by Njaya et al. (2011).
 
@@ -1858,7 +2358,7 @@ Two events break this compensation. In 2018 both components contracted together 
 
 The early record rests on thin sampling. Several years before 2000 carry only two or three usable scenes, against roughly thirty to forty a year since 2015 (Figure 1b), which widens the uncertainty on the early fractions and explains much of their year-to-year volatility. Every apparent extreme in the series, the deepest lows and the largest combined footprints alike, falls in a year with fewer than five scenes; the dense modern record carries the seasonal and inter-annual signal with far greater confidence.
 
-### 3.2 Spectral Index Performance
+### 3.3 Spectral Index Performance
 
 The five water indices do not track inundation equally (Figure 2). Measured against the spectral-mixture open-water record, WRI and MNDWI follow the basin's wetting and drying most closely, at Pearson correlations of 0.90 and 0.79, while NDWI and AWEIsh lag at 0.65 and 0.61. The two indices that lean on shortwave-infrared reflectance, WRI through its denominator and MNDWI directly, best resolve the turbid, shallow water that dominates Lake Chilwa; the near-infrared contrast of NDWI and AWEIsh is more readily confounded by suspended sediment and emergent vegetation. Basin-mean annual MNDWI ranged from -0.52 to -0.23, its troughs and peaks falling in the recession and refill years of the mixture record.
 
@@ -1880,7 +2380,7 @@ The indices also carry overlapping information (Table 2). NDPI is the exact alge
 
 These relationships set up the variable screen of Section 2.2.F. Because NDPI duplicates MNDWI and WRI largely repeats it, the optical indices contribute far fewer independent dimensions than their count suggests; the screen retains MNDWI as the leading water term and discards its redundant partners before classification, following the principle that correlated features degrade rather than improve a random forest (Amoakoh et al., 2021). No single index spans the full range of conditions, which is the argument for combining the optical indices with the radar and mixture-analysis terms rather than choosing among them.
 
-### 3.3 SAR Integration
+### 3.4 SAR Integration
 
 Sentinel-1 C-band backscatter carries an intra-annual inundation signal through the wet-season cloud that defeats the optical sensors (Figure 3a). Basin-mean VV backscatter falls from about -10 dB early in the year to a September minimum near -13.6 dB, with VH tracking it some seven decibels lower, and the thresholded water fraction rises in step from 0.11 in January to 0.17 in September. The backscatter minimum thus falls in the late dry season, when senescing emergent vegetation and smoother exposed surfaces lower the C-band return, a phase offset from the optical high stand that the coupling analysis takes up in Section 3.5.
 
@@ -1894,7 +2394,7 @@ L-band radar completes the picture where C-band cannot. The ALOS PALSAR HH minus
 
 The basin's drainage structure shapes the sequence of retreat and refill. The southern and eastern shores, downgradient in the D-infinity flow routing of Section 2.2.A, recede first and refill last, an asymmetry the optical record misses through its cloud-season gaps and one that orders the fisher migration examined in Section 3.5.
 
-### 3.4 Accuracy Assessments
+### 3.5 Accuracy Assessments
 
 The four-class random-forest classifier (open water, flooded vegetation, dry vegetation, bare soil), trained on the separability-selected feature stack of Section 2.2.F and applied to the 2020 reference composite, resolved the littoral mosaic that no single index captured (Section 2.2.G). Overall accuracy was 81% with a kappa coefficient of 0.77. Accuracy was highest for open water, which both the SWIR-based optical indices and low SAR backscatter identify unambiguously, and lowest for bare soil and flooded vegetation, where exposed lakebed grades into sparse cover and where dense Typha attenuates the C-band double-bounce signal. The fieldwork-era classification is reported for the reconstructed 2012 surface and, alongside it, for the 2011 and 2013 composites from which its spatial structure is drawn. The field ground-truth points validate all three, and the 2012 assessment is the one the study rests on, since it is the year the field record observes. Community validation of boundary placement and seasonal timing concentrated its disagreements in mixed-pixel zones and areas of rapid shoreline change.
 
@@ -1930,7 +2430,7 @@ ggplot(acc_long, aes(x = Class, y = Accuracy, fill = Metric)) +
   theme(axis.text.x = element_text(angle = 20, hjust = 1))
 ```
 
-### 3.5 Inundation-Migration Coupling
+### 3.6 Inundation-Migration Coupling
 
 The ethnographic and remote sensing datasets, when overlaid, revealed a striking correspondence between water volume dynamics and population movement across the basin over three decades. Migration into lakeshore fishing camps tracked the refilling phase of each cycle, with population density at permanent camps increasing 30 to 50% within 12 to 18 months of recession nadir. Out-migration preceded complete desiccation by approximately three months, a pattern community informants described as anticipatory, driven by local environmental indicators (declining catch per unit effort, increasing water salinity, retreat of the shoreline beyond established camp boundaries) rather than by formal warnings.
 

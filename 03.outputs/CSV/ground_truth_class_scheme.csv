@@ -1,0 +1,8 @@
+code,class,colour,status,definition,photo_labels_mapped,frames_with_this_evidence
+1,open water,#1F6E8C,in the study,"water open to the sky, no emergent stems breaking the surface",open water,37
+2,flooded vegetation,#5F8836,in the study,standing water beneath or between live emergent macrophytes,flooded vegetation,57
+3,dry vegetation,#B08447,in the study,rooted vegetation with no standing water at the surface,dry vegetation,4
+4,bare soil,#8C6D52,in the study,exposed lakebed or unvegetated ground,dry vegetation / exposed lakebed,2
+8,rice paddy,#7E57A0,excluded,"flooded cropland; sparse emergent cover, spectrally ambiguous with bare soil",flooded cropland (rice paddy),1
+9,settlement,#8A8F94,excluded,"built ground, market, landing site or processing area",settlement / market; settlement / built; settlement / processing; settlement / woodfuel; landing site,72
+0,unassigned,#C9CFCC,working,placed but not yet classified,,0

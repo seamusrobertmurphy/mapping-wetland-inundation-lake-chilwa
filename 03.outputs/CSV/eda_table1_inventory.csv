@@ -1,0 +1,11 @@
+Instrument,Span over the basin,Grain,Repeat,Bands read,Water rule,Scenes over basin,Contribution to the record
+Landsat 4 TM,1988-1992,30 m,16 d,"green 0.52-0.60, SWIR1 1.55-1.75",MNDWI,17,part of the Landsat stream
+Landsat 5 TM,1984-2011,30 m,16 d,"green 0.52-0.60, SWIR1 1.55-1.75",MNDWI,440,part of the Landsat stream
+Landsat 7 ETM+,1999-2024,30 m,16 d,"green 0.52-0.60, SWIR1 1.55-1.75",MNDWI,1043,part of the Landsat stream
+Landsat 8 OLI,2013-2024,30 m,16 d,"green 0.53-0.59, SWIR1 1.57-1.65",MNDWI,781,part of the Landsat stream
+Landsat 9 OLI-2,2021-2024,30 m,16 d,"green 0.53-0.59, SWIR1 1.57-1.65",MNDWI,253,part of the Landsat stream
+MODIS Terra MOD09A1,2000-2024,500 m,8 d,"green 0.545-0.565, SWIR1 1.628-1.652",MNDWI,-,568 steps (61% of the record)
+MODIS Aqua MYD09A1,2002-2024,500 m,8 d,"green 0.545-0.565, SWIR1 1.628-1.652",MNDWI,-,568 steps (61% of the record)
+Envisat ASAR APP,2011-2012,30 m,35 d,"C-band 5.3 GHz, HH and HV",HH minus HV,40,"7 usable dates, vegetated class only"
+ALOS PALSAR mosaic,2007-2024,25 m,annual,"L-band 1.27 GHz, HH and HV",HH minus HV,14,"14 annual mosaics, vegetated class only"
+"**Landsat, all platforms**",1984-2024,30 m,16 d,"green, SWIR1",MNDWI > 0,2534,469 steps (50% of the record)

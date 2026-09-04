@@ -1,0 +1,3 @@
+test,held_out,metric,value,units
+"open water, index threshold against sub-pixel mixture model","1 years, two independent retrievals",mean absolute difference,93.4,km2
+"open water, index threshold against sub-pixel mixture model","1 years, two independent retrievals",root mean square difference,93.4,km2

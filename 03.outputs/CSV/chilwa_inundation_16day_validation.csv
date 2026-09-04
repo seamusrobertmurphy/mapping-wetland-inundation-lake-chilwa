@@ -1,0 +1,10 @@
+test,held_out,metric,value,units
+MODIS calibrated onto the Landsat scale,"243 steps carrying both, both over 80 per cent clear",residual standard deviation,58.9,km2
+MODIS calibrated onto the Landsat scale,243 steps carrying both,Pearson r,0.986,correlation
+how far the lake moves in one sixteen-day step,fitted by maximum likelihood over 562 observed steps,random walk standard deviation,36.5,km2
+fitted scale on the stated observation error,fitted alongside the step size by maximum likelihood,variance multiplier,0.377,ratio
+"vegetated water as a share of open water, where radar measured both",16 radar dates,mean ratio,0.11,fraction
+"vegetated water as a share of open water, where radar measured both",16 radar dates,standard deviation of the ratio,0.102,fraction
+steps carrying a real observation,936 steps in the record,count observed,562,steps
+"credible interval width, before 2000 against from 2015",366 early and 228 recent steps,mean width before 2000,872.8,km2
+"credible interval width, before 2000 against from 2015",366 early and 228 recent steps,mean width from 2015,97.5,km2

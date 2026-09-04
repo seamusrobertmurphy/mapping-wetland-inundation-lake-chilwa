@@ -1,0 +1,12 @@
+axis,test,statistic,value,p,verdict
+temporal,Ljung-Box on standardised innovations,Q,103.1,0.0,structure remains
+temporal,calibration of the stated uncertainty,variance of standardised innovations,0.977,,well calibrated
+temporal,overall bias of the fused record,mean standardised innovation,0.009,0.8341,unbiased
+sensor,"innovation bias, landsat",mean standardised innovation,0.052,0.6539,no pull
+sensor,"innovation bias, landsat+modis",mean standardised innovation,-0.096,0.0788,no pull
+sensor,"innovation bias, modis",mean standardised innovation,0.092,0.1616,no pull
+temporal,"handover step, Landsat 7 arrives 1999",shift in standardised innovation,-0.028,0.9239,no step
+temporal,"handover step, MODIS arrives 2000",shift in standardised innovation,-0.035,0.8759,no step
+temporal,"handover step, Landsat 8 arrives 2013",shift in standardised innovation,-0.098,0.441,no step
+sensor,record rebuilt without modis,mean shift,4.1,,"r = 0.9890, largest 281 km2"
+sensor,record rebuilt without landsat,mean shift,-47.8,,"r = 0.8022, largest 749 km2"

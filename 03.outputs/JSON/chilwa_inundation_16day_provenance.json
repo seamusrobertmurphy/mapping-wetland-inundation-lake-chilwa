@@ -1,0 +1,40 @@
+{
+  "product": "Lake Chilwa sixteen-day inundation record, 1984 to 2024",
+  "builder": "05.scripts/build_inundation_16day.py",
+  "built": "2026-09-04",
+  "steps": 936,
+  "model": {
+    "modis_intercept": 58.495908689836355,
+    "modis_slope": 1.0012682250561424,
+    "modis_sd": 58.89197159909396,
+    "n_calibration": 243,
+    "r_calibration": 0.9860860636562272,
+    "process_sd": 36.53636589973716,
+    "n_process_pairs": 562,
+    "r_scale": 0.3770580184025635,
+    "radar_ratio_mean": 0.10985727235669886,
+    "radar_ratio_sd": 0.10223775352629765,
+    "n_radar": 16,
+    "n_observed_steps": 562
+  },
+  "inputs": [
+    {
+      "role": "asar",
+      "path": "03.outputs/CSV/asar_series_join.csv",
+      "sha256": "bb1841046929f8b54c2678995a523a8f0626f7daa4952e83c4bb263c36a47cac",
+      "bytes": 1597
+    },
+    {
+      "role": "optical",
+      "path": "03.outputs/CSV/optical_water_16day.csv",
+      "sha256": "79e12a56bd839cceeacb27459484109ed8c5524821e2cd97bdffa839b5eea73b",
+      "bytes": 77276
+    },
+    {
+      "role": "palsar",
+      "path": "03.outputs/CSV/palsar_flooded_vegetation.csv",
+      "sha256": "f10ba4e1572d20454ea01a7cbd52909aec074bc7206b1388b990fbc0c38f84c6",
+      "bytes": 4560
+    }
+  ]
+}

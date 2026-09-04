@@ -1,0 +1,4 @@
+stratum,n_px,area_km2,HH_dB_median,HH_dB_q25,HH_dB_q75,HV_dB_median,HV_dB_q25,HV_dB_q75,HHminusHV_dB_median,HHminusHV_dB_q25,HHminusHV_dB_q75,incidence_deg_median
+open water (fitted MNDWI > 0.10),440,0.4,-11.51,-12.14,-11.01,-17.21,-18.01,-16.04,5.71,4.2,6.73,34.6
+"dry land beyond 10 km of the lake outline, fitted MNDWI < -0.10",1774566,1538.7,-11.18,-11.97,-10.37,-17.63,-18.35,-16.82,6.33,5.47,7.21,35.3
+"optical transition, -0.10 to 0.10",102,0.1,-10.92,-11.88,-10.12,-17.52,-18.44,-16.38,6.28,4.63,7.77,34.6
