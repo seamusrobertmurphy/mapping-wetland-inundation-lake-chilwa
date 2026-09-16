@@ -338,21 +338,14 @@ GPS points were imported into a GIS environment and used to generate training an
 
 Field data collection summary:
 
-+--------------------------+-----------------------+----------------------------------------------------------------------------+
-| Component                | n                     | Description                                                                |
-+:=========================+======================:+:===========================================================================+
-| Key informant interviews | 45                    | Village leaders, camp chairmen, BVC members, Fisheries officers            |
-+--------------------------+-----------------------+----------------------------------------------------------------------------+
-| Focus group discussions  | 18                    | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
-+--------------------------+-----------------------+----------------------------------------------------------------------------+
-| Districts                | 3                     | Zomba, Phalombe, Machinga                                                  |
-+--------------------------+-----------------------+----------------------------------------------------------------------------+
-| Georeferenced sites      | 23                    | Fishing camps, landing sites, processing areas                             |
-+--------------------------+-----------------------+----------------------------------------------------------------------------+
-| Beach Village Committees | 53                    | Aligned to Group Village Headmen                                           |
-+--------------------------+-----------------------+----------------------------------------------------------------------------+
-| Fisheries Associations   | 6                     | Aligned to Traditional Authorities                                         |
-+--------------------------+-----------------------+----------------------------------------------------------------------------+
+| Component | n | Description |
+|:---|---:|:---|
+| Key informant interviews | 45 | Village leaders, camp chairmen, BVC members, Fisheries officers |
+| Focus group discussions | 18 | Seine-net, gill-net, processors, boat owners, traders, cooperative leaders |
+| Districts | 3 | Zomba, Phalombe, Machinga |
+| Georeferenced sites | 23 | Fishing camps, landing sites, processing areas |
+| Beach Village Committees | 53 | Aligned to Group Village Headmen |
+| Fisheries Associations | 6 | Aligned to Traditional Authorities |
 
 #### 2.1.1 Participatory Ground Truth
 
@@ -464,23 +457,15 @@ The three streams do not share a common window, and the gaps between them constr
 
 The consequence is specific and awkward: the field evidence falls almost wholly in 2012, inside the recession the study targets but outside the optical record. The field record is the study's reason for existing, since fisher observation supplies labels for water beneath vegetation that no sensor and no interpreter can produce, so the task is to build a 2012 surface those labels can validate rather than to weaken what the labels are asked to do. We construct that surface rather than assume it. A coarse-resolution MODIS series spans 2012 continuously and carries the recession signal at eight-day steps; the 2011 Thematic Mapper and 2013 Operational Land Imager composites that flank the fieldwork supply the 30 m spatial structure; and the relation between the two, fitted across every year in which both sensors observe the basin, transfers that structure onto the 2012 MODIS signal. The ground-truth points then validate the reconstructed year directly, and the reconstruction is itself reported with the uncertainty it carries. Each step is described in turn below.
 
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| Data stream                        | Coverage                           | Gaps                                                                       |
-+====================================+====================================+============================================================================+
-| Landsat 5 and 8, harmonised        | 1984 to 2024, 37 annual composites | 1985, 1988, 2002, and 2012 absent; Landsat 7 excluded for SLC-off loss     |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| MODIS surface reflectance          | 2000 to 2024, 8-day composites     | Bridges 2012 only; 500 m grid cannot resolve the vegetated class           |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| Sentinel-1 C-band                  | 2015 to 2024, monthly composites   | 2016 absent; 2014 scenes too few to composite                              |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| ALOS PALSAR L-band                 | 2007 to 2010, 2015 to 2024         | 2011 to 2014 absent between the two missions                               |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| Field photographs                  | 2011 to 2014, 244 frames           | 219 fall in February to June 2012; 21 carry unusable camera-clock defaults |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| Participatory and interview record | September 2012 to March 2014       | Continuous                                                                 |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
-| Climate reanalysis and satellite   | 1984 to 2024, 492 monthly steps    | Continuous; TerraClimate and SPEI end December 2024                        |
-+------------------------------------+------------------------------------+----------------------------------------------------------------------------+
+| Data stream | Coverage | Gaps |
+|----|----|----|
+| Landsat 5 and 8, harmonised | 1984 to 2024, 37 annual composites | 1985, 1988, 2002, and 2012 absent; Landsat 7 excluded for SLC-off loss |
+| MODIS surface reflectance | 2000 to 2024, 8-day composites | Bridges 2012 only; 500 m grid cannot resolve the vegetated class |
+| Sentinel-1 C-band | 2015 to 2024, monthly composites | 2016 absent; 2014 scenes too few to composite |
+| ALOS PALSAR L-band | 2007 to 2010, 2015 to 2024 | 2011 to 2014 absent between the two missions |
+| Field photographs | 2011 to 2014, 244 frames | 219 fall in February to June 2012; 21 carry unusable camera-clock defaults |
+| Participatory and interview record | September 2012 to March 2014 | Continuous |
+| Climate reanalysis and satellite | 1984 to 2024, 492 monthly steps | Continuous; TerraClimate and SPEI end December 2024 |
 
 *Table 1: Temporal coverage of each data stream, with the gaps that constrain cross-sensor comparison. The absence of Landsat in 2012 and of L-band between 2011 and 2014 leaves the 2012 recession observable at 30 m only through the adjacent years, and continuously only through MODIS and the participatory record.*
 
@@ -1876,123 +1861,33 @@ write.csv(sma_df, here::here("03.outputs", "sma_annual_fractions.csv"), row.name
 
 ### 2.3 Sixteen-Day Record
 
-Inundation was reported at sixteen-day steps, the Landsat repeat interval,
-across the whole record from 1 January 1984 to 16 December 2024, giving 936
-steps of which 562 carry a direct observation and 374 are carried forward by the
-model. An annual product was built first and discarded. Measured on twenty-five
-years whose clear observations span both the wet and the dry season, the lake
-moved a median of 144 km2 within a single year on a robust tenth to ninetieth
-percentile spread, and the annual product returned a within-year range an order
-of magnitude smaller, so it could not express the seasonal pulse the study
-exists to measure.
+Inundation was reported at sixteen-day steps, the Landsat repeat interval, across the whole record from 1 January 1984 to 16 December 2024, giving 936 steps of which 562 carry a direct observation and 374 are carried forward by the model. An annual product was built first and discarded. Measured on twenty-five years whose clear observations span both the wet and the dry season, the lake moved a median of 144 km2 within a single year on a robust tenth to ninetieth percentile spread, and the annual product returned a within-year range an order of magnitude smaller, so it could not express the seasonal pulse the study exists to measure.
 
-No single instrument spans the record, so the estimate was fused rather than
-composited. Landsat 4, 5, 7, 8 and 9 Collection 2 surface reflectance supplied
-the thirty-metre detail from 1984, water being taken as a modified normalised
-difference water index above zero, and the Moderate Resolution Imaging
-Spectroradiometer supplied density at five hundred metres from February 2000,
-carrying the same index because its surface reflectance product holds both a
-green and a shortwave infrared band. The coarse stream was calibrated onto the
-fine one on 229 steps observed by both, giving a Pearson correlation of 0.986
-and a residual standard deviation of 58.9 km2.
+No single instrument spans the record, so the estimate was fused rather than composited. Landsat 4, 5, 7, 8 and 9 Collection 2 surface reflectance supplied the thirty-metre detail from 1984, water being taken as a modified normalised difference water index above zero, and the Moderate Resolution Imaging Spectroradiometer supplied density at five hundred metres from February 2000, carrying the same index because its surface reflectance product holds both a green and a shortwave infrared band. The coarse stream was calibrated onto the fine one on 229 steps observed by both, giving a Pearson correlation of 0.986 and a residual standard deviation of 58.9 km2.
 
-Partial views were admitted only where nearly complete, and the floor was set by
-measurement rather than judgement. Scaling the water seen inside a clear
-fraction up to the whole lake assumes water is spread evenly between the
-observed and unobserved parts, which does not hold here because cloud sits over
-the wet centre and the scan-line gaps of Landsat 7 widen from the swath edge.
-Checked against near-complete Moderate Resolution Imaging Spectroradiometer
-views on the same steps, a Landsat window seeing thirty per cent of the lake was
-out by -659 km2 and one seeing half by +439 km2, while at eighty per cent the
-error fell to +110 km2 and at ninety to +62 km2. The floor was therefore set at
-eighty per cent, which costs most of the pre-2000 observations and pays that
-cost in the credible interval rather than hiding it inside a scaled number.
+Partial views were admitted only where nearly complete, and the floor was set by measurement rather than judgement. Scaling the water seen inside a clear fraction up to the whole lake assumes water is spread evenly between the observed and unobserved parts, which does not hold here because cloud sits over the wet centre and the scan-line gaps of Landsat 7 widen from the swath edge. Checked against near-complete Moderate Resolution Imaging Spectroradiometer views on the same steps, a Landsat window seeing thirty per cent of the lake was out by -659 km2 and one seeing half by +439 km2, while at eighty per cent the error fell to +110 km2 and at ninety to +62 km2. The floor was therefore set at eighty per cent, which costs most of the pre-2000 observations and pays that cost in the credible interval rather than hiding it inside a scaled number.
 
-The fusion carried a hidden inundated area forward through all 936 steps as a
-local linear trend, a level advancing by a drifting slope, with an annual sine
-and cosine pair so the flood pulse entered as signal rather than as noise. Each
-observation entered with its own variance and a Rauch-Tung-Striebel backward
-pass allowed later observations to sharpen earlier ones, which is what makes the
-thin early years usable. The random walk standard deviation and a scale on the
-stated observation error were both fitted by maximum likelihood rather than
-assumed, at 36.5 km2 and 0.377 respectively, the second meaning the assumed
-retrieval error had been more than twice too large.
+The fusion carried a hidden inundated area forward through all 936 steps as a local linear trend, a level advancing by a drifting slope, with an annual sine and cosine pair so the flood pulse entered as signal rather than as noise. Each observation entered with its own variance and a Rauch-Tung-Striebel backward pass allowed later observations to sharpen earlier ones, which is what makes the thin early years usable. The random walk standard deviation and a scale on the stated observation error were both fitted by maximum likelihood rather than assumed, at 36.5 km2 and 0.377 respectively, the second meaning the assumed retrieval error had been more than twice too large.
 
-Water standing within vegetation cannot be measured optically and was taken from
-radar. A horizontally polarised wave passes between vertical stems, reflects off
-the water, bounces into the stem base and returns doubled, brightening the
-co-polarised channel while the cross-polarised channel, which records volume
-scattering inside the stand, does not share the gain. Thresholds on both
-channels were set at the ninety-fifth percentile of dry land beyond ten
-kilometres of the lake, so the rule admits at most five per cent of dry ground
-by construction and admitted 2.1 to 2.8 per cent across the seven usable Envisat
-dates. Sentinel-1 cannot serve this purpose here, since of 1,966 scenes over the
-basin exactly one transmits horizontally.
+Water standing within vegetation cannot be measured optically and was taken from radar. A horizontally polarised wave passes between vertical stems, reflects off the water, bounces into the stem base and returns doubled, brightening the co-polarised channel while the cross-polarised channel, which records volume scattering inside the stand, does not share the gain. Thresholds on both channels were set at the ninety-fifth percentile of dry land beyond ten kilometres of the lake, so the rule admits at most five per cent of dry ground by construction and admitted 2.1 to 2.8 per cent across the seven usable Envisat dates. Sentinel-1 cannot serve this purpose here, since of 1,966 scenes over the basin exactly one transmits horizontally.
 
-Advanced Very High Resolution Radiometer imagery was tested as the pre-2000
-dense stream and rejected. Nine predictors, including every reflectance band,
-brightness temperature and same-date contrast forms, were regressed against 101
-steps of known area spanning 7 km2 to 1,374 km2, and the best reached a
-correlation of 0.33. At 5.6 km the lake spans about thirty-five mixed pixels and
-exposed lakebed reads low in the vegetation index and moderate in the near
-infrared exactly as water does, so in the drought years the record most needs,
-mud and water are not separable in the bands that sensor carries.
+Advanced Very High Resolution Radiometer imagery was tested as the pre-2000 dense stream and rejected. Nine predictors, including every reflectance band, brightness temperature and same-date contrast forms, were regressed against 101 steps of known area spanning 7 km2 to 1,374 km2, and the best reached a correlation of 0.33. At 5.6 km the lake spans about thirty-five mixed pixels and exposed lakebed reads low in the vegetation index and moderate in the near infrared exactly as water does, so in the drought years the record most needs, mud and water are not separable in the bands that sensor carries.
 
-The record and its acceptance test are held in
-`03.outputs/CSV/chilwa_inundation_16day.csv` and
-`05.scripts/eval_timeseries.py`, the second deciding completeness against
-sixteen criteria covering coverage, physical bounds, interval ordering,
-seasonal amplitude retained against the record's own observations, sensor
-provenance, model specification and byte-exact reproducibility.
+The record and its acceptance test are held in `03.outputs/CSV/chilwa_inundation_16day.csv` and `05.scripts/eval_timeseries.py`, the second deciding completeness against sixteen criteria covering coverage, physical bounds, interval ordering, seasonal amplitude retained against the record's own observations, sensor provenance, model specification and byte-exact reproducibility.
 
 #### 2.3.1 Closing The Gap
 
-The constraint that shaped this study was narrow and severe. Landsat 5 stopped
-imaging the Lake Chilwa basin on 18 October 2011 and Landsat 8 began on 25 March
-2013, so for seventeen months, spanning the whole of the 2012 fieldwork, the only
-optical sensor overhead was Landsat 7, whose scan-line corrector failed in May
-2003 and which therefore delivers every scene with wedge-shaped gaps widening
-from the swath edge. Forty-one Landsat 7 scenes cover the basin in 2012 and each
-one is holed.
+The constraint that shaped this study was narrow and severe. Landsat 5 stopped imaging the Lake Chilwa basin on 18 October 2011 and Landsat 8 began on 25 March 2013, so for seventeen months, spanning the whole of the 2012 fieldwork, the only optical sensor overhead was Landsat 7, whose scan-line corrector failed in May 2003 and which therefore delivers every scene with wedge-shaped gaps widening from the swath edge. Forty-one Landsat 7 scenes cover the basin in 2012 and each one is holed.
 
 Three findings closed that gap, and none of them involved new imagery.
 
-The first is that the gaps move. Scan-line wedges fall in different places on
-successive passes, so a composite of many scenes fills what any single scene
-leaves empty. Measured over path 167, one scene observes 6,740 km2 of the basin
-and thirteen scenes together observe 7,789 km2, while fifteen scenes across
-February to June 2012 leave 18 km2 of 8,752 km2 never seen and forty-one scenes
-across the year leave none. The exclusion of Landsat 7 that preceded this work
-had rested on pixel loss measured over path 166, which covers only 7.2 per cent
-of the basin.
+The first is that the gaps move. Scan-line wedges fall in different places on successive passes, so a composite of many scenes fills what any single scene leaves empty. Measured over path 167, one scene observes 6,740 km2 of the basin and thirteen scenes together observe 7,789 km2, while fifteen scenes across February to June 2012 leave 18 km2 of 8,752 km2 never seen and forty-one scenes across the year leave none. The exclusion of Landsat 7 that preceded this work had rested on pixel loss measured over path 166, which covers only 7.2 per cent of the basin.
 
-The second is that the striping does not bias the water measurement, but naive
-scaling does. Compared against Landsat 8 on seventy-one sixteen-day windows
-where both instruments saw more than half the lake, Landsat 7 read 141 km2 high
-[t = 5.23]. That difference is not the sensor. It arises from dividing the water
-seen inside a clear fraction by that fraction, which assumes water is spread
-evenly between the observed and unobserved parts. Cloud sits over the wet centre
-and the scan-line wedges widen from the edge, so neither absence is random.
-Checked against near-complete coarse-resolution views on the same windows, a
-Landsat window seeing thirty per cent of the lake was out by -659 km2 and one
-seeing half by +439 km2, while at eighty per cent the error fell to +110 km2 and
-at ninety to +62 km2. Admitting only windows above eighty per cent removes the
-bias and costs observations rather than accuracy.
+The second is that the striping does not bias the water measurement, but naive scaling does. Compared against Landsat 8 on seventy-one sixteen-day windows where both instruments saw more than half the lake, Landsat 7 read 141 km2 high \[t = 5.23\]. That difference is not the sensor. It arises from dividing the water seen inside a clear fraction by that fraction, which assumes water is spread evenly between the observed and unobserved parts. Cloud sits over the wet centre and the scan-line wedges widen from the edge, so neither absence is random. Checked against near-complete coarse-resolution views on the same windows, a Landsat window seeing thirty per cent of the lake was out by -659 km2 and one seeing half by +439 km2, while at eighty per cent the error fell to +110 km2 and at ninety to +62 km2. Admitting only windows above eighty per cent removes the bias and costs observations rather than accuracy.
 
-The third is that the remaining gaps do not need filling with imagery, because
-the state can be carried across them with a stated uncertainty. What the
-sixteen-day record reports for a window with no clear observation is not an
-interpolation dressed as a measurement but the model's own estimate, marked as
-such in the row and accompanied by an interval that widens with the distance to
-the nearest look.
+The third is that the remaining gaps do not need filling with imagery, because the state can be carried across them with a stated uncertainty. What the sixteen-day record reports for a window with no clear observation is not an interpolation dressed as a measurement but the model's own estimate, marked as such in the row and accompanied by an interval that widens with the distance to the nearest look.
 
-Together these give 1,120 km2 of open water for the fortnight of 15 February
-2012, with a ninety-five per cent interval of 54 km2, from a direct observation
-rather than a carried state. An independent per-pixel harmonic model of the same
-date returns 1,158 km2 and agrees with an external surface-water product on 98.6
-to 99.6 per cent of pixels. The gap is closed, and no further imagery exists to
-close it further: February 2012 contains Landsat 7, a coarse-resolution daily
-sensor, and ten prior years of Landsat history, and that is the whole of it.
+Together these give 1,120 km2 of open water for the fortnight of 15 February 2012, with a ninety-five per cent interval of 54 km2, from a direct observation rather than a carried state. An independent per-pixel harmonic model of the same date returns 1,158 km2 and agrees with an external surface-water product on 98.6 to 99.6 per cent of pixels. The gap is closed, and no further imagery exists to close it further: February 2012 contains Landsat 7, a coarse-resolution daily sensor, and ten prior years of Landsat history, and that is the whole of it.
 
 #### 2.3.2 Observations
 
@@ -2275,20 +2170,9 @@ tibble(
   knitr::kable(caption = "The record in summary. Areas are square kilometres.")
 ```
 
-The record runs to 936 sixteen-day steps between 1 January 1984 and 16 December
-2024, of which 562 rest on a direct observation and 374 are carried by the
-model. Open water averaged 1,187 km2 across the whole record and ranged from 48
-km2 to 2,010 km2, a span of more than forty to one.
+The record runs to 936 sixteen-day steps between 1 January 1984 and 16 December 2024, of which 562 rest on a direct observation and 374 are carried by the model. Open water averaged 1,187 km2 across the whole record and ranged from 48 km2 to 2,010 km2, a span of more than forty to one.
 
-The deepest drawdown of the satellite era fell in 2018 and not in 2012. Its
-seasonal minimum of 48 km2 approached desiccation, against 530 km2 in the 1995
-recession and 925 km2 in 2012, the fieldwork year on which the study was framed.
-Direct Landsat observation records 33 km2 on 29 October 2018 and 7 km2 on 14
-November, each from five or six scenes with the basin fully clear, and two
-further instruments agree independently. An annual record built from composites
-reported 2018 as 956 km2, which is the mean of a year that fell by two orders of
-magnitude within it, and that is the argument for reporting at sixteen-day steps
-stated as a measurement rather than a preference.
+The deepest drawdown of the satellite era fell in 2018 and not in 2012. Its seasonal minimum of 48 km2 approached desiccation, against 530 km2 in the 1995 recession and 925 km2 in 2012, the fieldwork year on which the study was framed. Direct Landsat observation records 33 km2 on 29 October 2018 and 7 km2 on 14 November, each from five or six scenes with the basin fully clear, and two further instruments agree independently. An annual record built from composites reported 2018 as 956 km2, which is the mean of a year that fell by two orders of magnitude within it, and that is the argument for reporting at sixteen-day steps stated as a measurement rather than a preference.
 
 ```{r record-figure}
 #| eval: true
