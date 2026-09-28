@@ -249,6 +249,58 @@ five hundred metres, and ten prior years of Landsat history. Every candidate
 alternative was tested against the basin and rejected on evidence, and the
 assessment is in `03.outputs/TABLES/table4_candidate_datasets.md`.
 
+## Gap-filling design
+
+Added 27 September 2026. The seventeen months between the last Landsat 5 image
+on 18 October 2011 and the first Landsat 8 image on 25 March 2013 were filled by
+combining satellites through time, following the design of the Highly Scalable
+Temporal Adaptive Reflectance Fusion Model, HISTARFM (Moreno-Martínez et al.,
+2020). HISTARFM runs in Google Earth Engine and joins a regression of Landsat on
+MODIS with a Kalman filter, a method that keeps a running estimate and corrects
+it each time an observation arrives according to how reliable that observation
+is, producing monthly 30 m reflectance with no gaps and an uncertainty on every
+pixel.
+
+The study applied the same structure to the water area of the whole basin
+rather than to the reflectance of each pixel, and filled the gap by three routes.
+The sixteen-day record calibrated MODIS water area onto Landsat on 243 steps
+that both observed (r = 0.986, residual 58.9 km2) and carried the lake through
+time with a Kalman filter and a backward pass, so that each estimate also used
+observations made after it. A harmonic model, a smooth yearly curve of sine and
+cosine waves, was fitted to the water index of every 30 m pixel from 243
+Landsat 5, 7 and 8 scenes between June 2010 and June 2014, giving a water map
+for the date of each photograph session. Envisat radar on seven usable dates
+between November 2011 and March 2012 supplied the water standing beneath the
+reeds, which neither optical route can see.
+
+Inside the gap, 30 of the 33 sixteen-day steps carried an observation, 24 of
+them from MODIS alone, and Landsat 7 passed the eighty per cent clear-view rule
+on only five steps, the first on 5 May 2012. The fieldwork months of February to
+April were therefore observed at 500 m and calibrated to the 30 m reference.
+
+The pixel-by-pixel version was not used for the record, because no HISTARFM
+collection covers southern Africa and because HISTARFM removes pixels with a
+vegetation index below -0.1, a threshold below which open water commonly lies.
+The basin design estimates the quantity the study reports directly, with an
+interval in square kilometres at every step, but it gives no map, so it cannot
+locate the vegetated fraction on its own. Rebuilding the record pixel by pixel on
+the HISTARFM design, with its vegetation mask replaced by one that keeps open
+water, is the open design decision and is written into the manuscript as future
+work. The full argument is in Sections 2.3.1 and 4.1.2 of
+`01.manuscript/Manuscript_2026-08-03.qmd`.
+
+The data flow from question to scores, the Earth Engine datasets and algorithms
+each step uses, and the open items are set out in a two-page workplan,
+`03.outputs/HTML/chilwa-workplan.html`, rendered from
+`03.outputs/HTML/chilwa-workplan.qmd` with every figure computed from the
+committed tables.
+
+Moreno-Martínez, Á., Izquierdo-Verdiguier, E., Maneta, M. P., Camps-Valls, G.,
+Robinson, N., Muñoz-Marí, J., Sedano, F., Clinton, N., & Running, S. W. (2020).
+Multispectral high resolution sensor fusion for smoothing and gap-filling in the
+cloud. *Remote Sensing of Environment*, *247*, 111901.
+https://doi.org/10.1016/j.rse.2020.111901
+
 ## Three findings that change the paper
 
 **2018, not 2012, is the deepest drawdown of the satellite era.** Its seasonal
