@@ -1,0 +1,640 @@
+---
+pagetitle: "Lake Chilwa Workplan"
+format:
+  html:
+    minimal: true
+    embed-resources: false
+    output-file: chilwa-workplan.html
+execute:
+  echo: false
+  warning: false
+  message: false
+knitr:
+  opts_chunk:
+    comment: NA
+---
+
+```{r setup}
+#| include: false
+library(tidyverse)
+library(here)
+```
+
+```{r data}
+#| include: false
+csv <- \(f) read_csv(here("03.outputs", "CSV", f), show_col_types = FALSE)
+fmt <- \(x) format(round(x), big.mark = ",")
+pct <- \(x) round(100 * x)
+
+rec <- csv("chilwa_inundation_16day.csv")
+n_obs <- sum(rec$dominant_source == "observed")
+veg_mean <- mean(rec$flooded_veg_km2)
+veg_share <- veg_mean / (veg_mean + mean(rec$open_water_km2))
+
+asar_ok <- csv("asar_series_join.csv") |> filter(!is.na(flooded_km2_within_10km))
+asar_feb <- asar_ok |> filter(date == as.Date("2012-02-22"))
+feb_share <- asar_feb$flooded_km2_within_10km / asar_feb$combined_km2_within_10km
+
+gap_steps <- rec |>
+  filter(date >= as.Date("2011-10-18"), date <= as.Date("2013-03-25")) |>
+  mutate(optical = str_remove(sensors, " \\+ ALOS PALSAR"))
+gap <- list(
+  steps    = nrow(gap_steps),
+  observed = sum(gap_steps$dominant_source == "observed"),
+  first_l7 = gap_steps |>
+    filter(dominant_source == "observed", str_detect(optical, "Landsat 7")) |>
+    pull(date) |> min()
+)
+feb <- rec |> filter(date == as.Date("2012-02-15"))
+feb_half <- (feb$open_water_hi95 - feb$open_water_lo95) / 2
+
+meta <- csv("field_photo_metadata.csv")
+n_photos <- nrow(meta)
+n_dated <- sum(!is.na(meta$date))
+n_field <- sum(between(meta$date, as.Date("2012-02-01"), as.Date("2012-06-30")), na.rm = TRUE)
+
+sessions <- csv("photo_sessions_labelled.csv")
+n_sessions <- nrow(sessions)
+lc <- sessions |> filter(land_cover_frame == "yes")
+n_lc_sessions <- nrow(lc)
+frames <- lc |>
+  summarise(
+    flooded = sum(n_files[cover_class_reviewed == "flooded vegetation"]),
+    open    = sum(n_files[cover_class_reviewed == "open water"]),
+    other   = sum(n_files) - flooded - open
+  )
+key_frames <- lc |> filter(date == as.Date("2012-02-22")) |> pull(n_files) |> sum()
+
+sharp <- list.files(here("03.outputs", "PNG", "pansharpened_15m"), pattern = "^[0-9].*png$")
+n_sharp <- length(sharp)
+n_sharp_dates <- n_distinct(str_sub(sharp, 1, 10))
+
+validation <- csv("chilwa_inundation_16day_validation.csv")
+val <- \(m) validation |> filter(metric == m) |> pull(value)
+
+paired <- csv("optical_water_16day.csv") |>
+  filter(clear_fraction >= 0.8) |>
+  transmute(date, family = sensor_family, area = water_km2 / clear_fraction) |>
+  pivot_wider(id_cols = date, names_from = family, values_from = area) |>
+  drop_na(landsat, modis)
+cal <- list(
+  n  = nrow(paired),
+  r  = round(cor(paired$landsat, paired$modis), 3),
+  sd = round(sd(residuals(lm(landsat ~ modis, data = paired))), 1)
+)
+
+eval_out <- system2("python3", here("05.scripts", "eval_timeseries.py"), stdout = TRUE, stderr = TRUE)
+fails <- str_subset(eval_out, "\\[FAIL\\]")
+ev <- list(
+  pass    = sum(str_detect(eval_out, "\\[PASS\\]")),
+  n       = sum(str_detect(eval_out, "\\[(PASS|FAIL)\\]")),
+  fail_id = str_extract(fails[1], "C[0-9]+"),
+  q       = str_extract(str_subset(eval_out, "Q = ")[1], "(?<=Q = )[0-9.]+")
+)
+
+ms_commit <- system2("git", c("-C", here(), "log", "-1", "--format=%h", "--",
+                              "01.manuscript/Manuscript_2026-08-03.qmd"), stdout = TRUE)
+n_chunks <- sum(str_detect(read_lines(here("01.manuscript", "Manuscript_2026-08-03.qmd")), "^```\\{r"))
+ver <- list(
+  R      = as.character(getRversion()),
+  rgee   = as.character(packageVersion("rgee")),
+  sits   = as.character(packageVersion("sits")),
+  terra  = as.character(packageVersion("terra")),
+  quarto = system2("quarto", "--version", stdout = TRUE),
+  python = system2("python3", "--version", stdout = TRUE)
+)
+```
+
+```{=html}
+<style>
+/* One landscape Letter page, same grammar as the swing-trader control centre sheet:
+   lanes read left to right as the data moves from question to score. */
+@page { size: 11in 8.5in; margin: 0; }
+:root{
+  color-scheme: light;
+  --ink:#15212b; --ink-soft:#4b5a66; --rule:#c4d0da; --paper:#ffffff; --desk:#56616a;
+  --navy:#16324a; --navy-dk:#0c2135; --navy-lt:#e9eff4;
+  --qa:#16324a; --fb:#8a5a12; --im:#1d5f99; --gp:#0c7076; --md:#2d6e2f; --sc:#5b3a8c;
+  --bad:#a01c1c; --good:#1f7a4d; --part:#a15c07; --dec:#5b3a8c;
+  --water:#1d5f99; --l7:#1d5f99; --l8:#2d6e2f; --mod:#8795a1; --sar:#0c7076; --field:#8a5a12;
+  --sans:"Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono:"SF Mono", Menlo, Consolas, monospace;
+}
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; background:var(--desk); }
+body{ font-family:var(--sans); color:var(--ink); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+.sheet{ width:11in; height:8.5in; margin:0 auto; background:var(--paper);
+  padding:0.15in 0.18in 0.07in 0.18in; display:flex; flex-direction:column; overflow:hidden; }
+
+.masthead{ display:grid; grid-template-columns:minmax(0,1fr) 4.9in; gap:0.2in; align-items:start;
+  border-bottom:1.6pt solid var(--navy); padding-bottom:4pt; margin-bottom:4pt; flex:0 0 auto; }
+h1{ margin:0; font-size:17pt; font-weight:800; letter-spacing:-0.3pt; line-height:1.05; color:var(--navy-dk); text-wrap:balance; }
+.sub{ margin:2.5pt 0 0 0; font-size:7.1pt; line-height:1.3; color:var(--ink-soft); }
+.q{ margin:2.5pt 0 0 0; font-size:8.2pt; font-weight:700; line-height:1.25; color:var(--navy); }
+.answer{ background:var(--navy-lt); border-radius:2pt; padding:4pt 7pt 3pt 7pt; }
+.answer h2{ margin:0 0 1.5pt 0; font-size:7.2pt; font-weight:800; letter-spacing:0.4pt; text-transform:uppercase; color:var(--navy-dk); }
+.answer p{ margin:0 0 1.6pt 0; font-size:6.6pt; line-height:1.27; }
+.answer p b{ font-weight:800; }
+.legend{ display:flex; gap:5pt; flex-wrap:wrap; margin-top:2pt; font-size:6pt; color:var(--ink-soft); align-items:center; }
+
+.st{ display:inline-block; font-size:5.6pt; font-weight:800; letter-spacing:0.3pt; text-transform:uppercase;
+  color:#fff; border-radius:1.4pt; padding:0.3pt 2.4pt; vertical-align:0.5pt; white-space:nowrap; }
+.st.done{ background:var(--good); } .st.part{ background:var(--part); } .st.need{ background:var(--bad); }
+.st.dec{ background:var(--dec); } .st.hand{ background:#6d7b89; }
+
+.lanes{ flex:1 1 auto; min-height:0; display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:0 0.1in; }
+.lane{ display:flex; flex-direction:column; min-height:0; min-width:0; position:relative; }
+.lane + .lane::before{ content:""; position:absolute; left:-0.085in; top:3.5pt; width:0; height:0;
+  border-top:4.5pt solid transparent; border-bottom:4.5pt solid transparent; border-left:5pt solid #9aa8b5; }
+.lane-hd{ flex:0 0 auto; border-bottom:1.4pt solid var(--c); padding:0 0 2pt 0; margin-bottom:3pt; }
+.lane-hd .k{ display:inline-block; font-size:7.2pt; font-weight:800; color:#fff; background:var(--c);
+  border-radius:1.5pt; padding:0.6pt 3pt; margin-right:3pt; }
+.lane-hd .t{ font-size:10.2pt; font-weight:800; color:var(--c); }
+.lane-hd .s{ display:block; margin-top:1pt; font-size:6.6pt; color:var(--ink-soft); }
+.card{ flex:1 1 auto; min-height:0; overflow:hidden; display:flex; flex-direction:column; gap:3pt; }
+.card > *{ flex:0 0 auto; }
+.card p{ margin:0; font-size:6.8pt; line-height:1.28; }
+.card p.small{ font-size:6pt; color:var(--ink-soft); }
+.card h3{ margin:1pt 0 0 0; font-size:6.6pt; font-weight:800; letter-spacing:0.35pt; text-transform:uppercase;
+  color:var(--navy-dk); border-bottom:0.5pt solid var(--rule); padding-bottom:0.8pt; }
+.card ol{ margin:0; padding-left:9pt; }
+.card ol li{ font-size:6.6pt; line-height:1.26; margin:0 0 1pt 0; }
+.card ol li b{ color:var(--c); }
+code{ font-family:var(--mono); font-size:5.6pt; color:var(--navy-dk); background:#eef2f6; border-radius:1pt; padding:0 1.6pt; overflow-wrap:anywhere; }
+
+table{ width:100%; border-collapse:collapse; font-size:6.3pt; }
+caption{ caption-side:top; text-align:left; font-size:5.9pt; color:var(--ink-soft); padding:0 0 1pt 0; }
+th{ text-align:left; font-size:5.7pt; font-weight:700; color:var(--ink-soft); border-bottom:0.6pt solid var(--rule); padding:0.5pt 1.4pt; }
+td{ padding:0.9pt 1.4pt; border-bottom:0.4pt solid #e3e9ef; vertical-align:top; line-height:1.2; }
+tr:last-child td{ border-bottom:none; }
+td.n, th.n{ text-align:right; font-family:var(--mono); font-size:5.9pt; white-space:nowrap; font-variant-numeric:tabular-nums; }
+td.in{ padding-left:6pt; color:var(--ink-soft); }
+td.blank{ color:#9aa6b1; text-align:right; font-family:var(--mono); font-size:5.9pt; }
+
+.f{ border:0.5pt solid; border-radius:2pt; padding:2.2pt 3.2pt 2.3pt 3.2pt; font-size:6.5pt; line-height:1.26; }
+.f b{ display:block; font-size:6.7pt; font-weight:800; margin-bottom:0.4pt; }
+.f.need{ background:#fbeeee; border-color:#e8c6c6; color:#3d1010; } .f.need b{ color:var(--bad); }
+.f.dec{ background:#f2eef8; border-color:#d6cbe6; color:#281a40; } .f.dec b{ color:var(--dec); }
+.f.part{ background:#fcf3e6; border-color:#ecd3ae; color:#3d2604; } .f.part b{ color:var(--part); }
+.f.good{ background:#ecf6f0; border-color:#bedccb; color:#0f3322; } .f.good b{ color:var(--good); }
+.f.info{ background:var(--navy-lt); border-color:#c8d5e2; color:#12263a; } .f.info b{ color:var(--navy); }
+.src{ display:block; margin-top:0.6pt; font-size:5.3pt; color:#6d7b89; font-family:var(--mono); overflow-wrap:anywhere; }
+
+svg{ display:block; width:100%; height:auto; font-family:var(--sans); }
+svg .lb{ font-size:6.4px; fill:var(--ink); }
+svg .vl{ font-size:6px; fill:var(--ink); font-family:var(--mono); font-weight:700; }
+svg .vs{ font-size:5.4px; fill:var(--ink-soft); }
+svg .vg{ font-size:5.4px; fill:#8a2a14; font-weight:700; }
+svg .vi{ font-size:5.2px; fill:#fff; font-weight:700; }
+svg .ax{ stroke:#7a8794; stroke-width:0.5; }
+svg .grid{ stroke:#e3e9ef; stroke-width:0.4; }
+svg .gap{ fill:#fbe7df; }
+svg .lsat{ fill:var(--l7); } svg .lsat7{ fill:#7fa8cc; } svg .modis{ fill:var(--mod); }
+svg .sar{ fill:var(--sar); } svg .field{ fill:var(--field); fill-opacity:0.85; }
+svg .band{ fill:#1d5f99; fill-opacity:0.14; stroke:none; }
+svg .line{ fill:none; stroke:var(--water); stroke-width:0.8; }
+svg .m-mod{ fill:var(--mod); } svg .m-l7{ fill:var(--l7); } svg .m-l8{ fill:var(--l8); }
+svg .m-car{ fill:#fff; stroke:var(--bad); stroke-width:0.7; }
+svg .bx{ fill:#f3f7f8; stroke:var(--c); stroke-width:0.6; }
+svg .bxk{ fill:var(--c); stroke:none; }
+svg .bt{ font-size:5.6px; fill:var(--ink); }
+svg .btb{ font-size:5.8px; fill:var(--ink); font-weight:700; }
+svg .btw{ font-size:5.6px; fill:#fff; font-weight:700; }
+svg .ar{ stroke:#7a8794; stroke-width:0.7; fill:none; marker-end:url(#arw); }
+svg .arh{ fill:#7a8794; }
+
+.strip{ flex:0 0 auto; display:grid; gap:0 8pt; align-items:start; margin-top:4pt;
+  background:#f3f6f9; border-top:1.2pt solid var(--navy); border-radius:0 0 2pt 2pt; padding:3pt 5pt 3pt 5pt; }
+.strip h2{ margin:0; font-size:7.2pt; font-weight:800; color:var(--navy); line-height:1.15; }
+.strip p{ margin:0; font-size:6.2pt; line-height:1.26; }
+.strip p b{ display:block; font-size:6.5pt; font-weight:800; color:var(--navy); margin-bottom:0.3pt; }
+.charts{ grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); }
+.charts h2{ margin-bottom:2pt; }
+.swcols{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:3pt 8pt; }
+.swcols p{ font-size:6pt; line-height:1.25; }
+.swcols p b{ font-size:6.3pt; }
+.charts svg{ height:0.82in; width:100%; }
+.charts figcaption{ margin-top:1pt; font-size:5.9pt; line-height:1.24; color:var(--ink-soft); }
+.charts figure{ margin:0; }
+.key{ display:flex; gap:6pt; flex-wrap:wrap; font-size:5.7pt; color:var(--ink-soft); margin-top:1pt; }
+.key i{ display:inline-block; width:5pt; height:5pt; border-radius:50%; margin-right:1.5pt; vertical-align:-0.5pt; }
+.terms{ grid-template-columns:0.72in repeat(8, minmax(0,1fr)); }
+.terms p{ font-size:5.7pt; line-height:1.2; }
+.terms p b{ font-size:6.2pt; }
+.footbar{ flex:0 0 auto; display:flex; justify-content:space-between; gap:8pt; margin-top:3pt; padding-top:1.5pt;
+  border-top:0.8pt solid var(--navy); font-size:5.3pt; color:var(--ink-soft); }
+.footbar b{ color:var(--navy-dk); }
+
+
+/* back of the sheet */
+.flow{ grid-template-columns:0.9in minmax(0,1fr); row-gap:3pt; margin-top:8pt; }
+.flow .key{ grid-column:2; }
+.stps{ display:grid; grid-template-columns:repeat(10, minmax(0,1fr)); gap:0 4pt; }
+.stp{ position:relative; border-top:3pt solid var(--gp); background:#fff; border-radius:0 0 2pt 2pt; padding:2pt 3pt 3pt 3pt; font-size:6pt; line-height:1.22; }
+.stp.local{ border-top-color:var(--fb); }
+.stp.both{ border-image:linear-gradient(90deg,var(--gp) 50%,var(--fb) 50%) 1; border-top-width:3pt; border-top-style:solid; }
+.stp + .stp::before{ content:""; position:absolute; left:-4.5pt; top:9pt; border-top:3pt solid transparent; border-bottom:3pt solid transparent; border-left:4pt solid #9aa8b5; }
+.stp .sn{ display:block; font-family:var(--mono); font-size:5.5pt; color:var(--ink-soft); }
+.stp b{ display:block; font-size:6.5pt; color:var(--navy-dk); margin:0.5pt 0; }
+.stp .sd{ display:block; color:var(--ink-soft); }
+
+.p2{ margin-top:0.25in; page-break-before:always; break-before:page; }
+.p2 .masthead{ grid-template-columns:minmax(0,1fr) 4.5in; }
+.p2grid{ flex:1 1 auto; min-height:0; display:grid; grid-template-columns:minmax(0,0.95fr) minmax(0,1.05fr) minmax(0,1.1fr) minmax(0,1.05fr); gap:0 0.14in; }
+.p2grid table{ font-size:6.2pt; }
+.p2grid td code{ font-size:5.5pt; }
+@media print{ .p2{ margin-top:0; } }
+
+/* Screens narrower than the printed sheet get a reflowed page instead of a sideways scroll. */
+@media (max-width: 1050px){
+  html,body{ background:var(--paper); }
+  .sheet{ width:auto; height:auto; overflow:visible; padding-inline:16px; padding-block:12px; }
+  .masthead{ grid-template-columns:1fr; }
+  .lanes, .p2grid{ grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px 14px; }
+  .flow{ grid-template-columns:1fr; } .flow .key{ grid-column:1; } .stps{ grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px; } .stp + .stp::before{ display:none; }
+  .lane + .lane::before{ display:none; }
+  .charts, .terms, .swcols{ grid-template-columns:1fr; gap:6px; }
+  .footbar{ flex-direction:column; }
+  .lane svg{ max-width:420px; }
+  .charts svg{ height:auto; }
+}
+@media (max-width: 600px){ .lanes, .p2grid{ grid-template-columns:1fr; } }
+
+/* Quarto's minimal page still carries Pandoc's default styles, which centre the header,
+   cap the body width and redraw table borders. These lines return the sheet to its own. */
+html, body{ max-width:none !important; padding:0 !important; margin:0 !important; line-height:normal; hyphens:manual; }
+header.masthead{ text-align:left !important; margin-bottom:4pt !important; }
+table{ display:table !important; margin:0 !important; overflow:visible !important; }
+tbody{ border:0 !important; } th{ border-top:0 !important; } caption{ margin-bottom:0 !important; }
+p{ margin:0; } ol{ margin-top:0; }
+.codepage{ width:11in; margin:0.25in auto; background:var(--paper); padding:0.3in; }
+.codepage h1{ font-size:14pt; margin:0 0 6pt 0; }
+.codepage pre{ font-family:var(--mono); font-size:7pt; line-height:1.35; white-space:pre-wrap; background:#f3f6f9; padding:8pt; border-radius:2pt; }
+@media print{ .codepage{ page-break-before:always; margin:0; } }
+</style>
+<div class="sheet">
+
+<header class="masthead">
+  <div>
+    <h1>Lake Chilwa inundation study, workplan</h1>
+    <p class="sub">Open water plus water inside the reed beds, 1984 to 2024, labelled by fisher and field evidence. For the coauthor meeting of 27 September 2026, from the manuscript at commit <code>`r ms_commit`</code>.</p>
+    <p class="q">How do photographs taken in 2012 become a scored map of flooded vegetation, when Landsat has no clean images for seventeen months around that year?</p>
+  </div>
+  <div class="answer">
+    <h2>Where it stands</h2>
+    <p><b>Built.</b> The 16-day open-water record, fused from Landsat and MODIS by a Kalman filter, passes `r ev$pass` of `r ev$n` checks. The 2012 water map, Envisat radar maps and 15 m placement images exist. <b>In hand.</b> Training points placed by hand. <b>Open.</b> Two decisions, three placeholder results, the month accuracy table, four scripts to move into the manuscript.</p>
+    <div class="legend"><span class="st done">Done</span><span class="st part">Partial</span><span class="st need">Needed</span><span class="st dec">Decide</span><span class="st hand">In hand</span></div>
+  </div>
+</header>
+
+<main class="lanes">
+
+<section class="lane" style="--c:var(--qa)">
+  <div class="lane-hd"><span class="k">A</span><span class="t">Question</span><span class="s">what is measured, and why it is hard</span></div>
+  <div class="card">
+    <p>Surface-water records count only water open to the sky. This study adds water standing within the reeds, which no optical sensor sees and no one can label from above, and labels it with fisher and field evidence.</p>
+    <h3>Hypotheses, Section 1.6</h3>
+    <ol>
+      <li><b>H1</b> Most surface water stands beneath aquatic vegetation, so open-water records understate inundation.</li>
+      <li><b>H2</b> No reference set drawn from imagery can label the vegetated class. Fisher-derived points can, and they change the mapped extent.</li>
+      <li><b>H3</b> Greenness stays high for weeks to months after water recedes, so index records date a past flood.</li>
+    </ol>
+    <div class="f info"><b>Result so far</b>Water within vegetation averaged `r fmt(veg_mean)` km², `r pct(veg_share)` per cent of the combined area, and `r pct(feb_share)` per cent on the 22 Feb 2012 radar date.</div>
+    <div class="f dec"><b><span class="st dec">Decide</span> H1 against the numbers</b>H1 expects a majority. Radar gives `r pct(veg_share)` to `r pct(feb_share)` per cent, a lower bound because C-band loses water under dense Typha. Agree how the paper reports it.</div>
+    <p class="small">Standing rule. The photographs are the validation sample and are never demoted.</p>
+  </div>
+</section>
+
+<section class="lane" style="--c:var(--fb)">
+  <div class="lane-hd"><span class="k">B</span><span class="t">Field evidence</span><span class="s">what was seen on the ground, and where</span></div>
+  <div class="card">
+    <table>
+      <tr><th>Photo record</th><th class="n">n</th></tr>
+      <tr><td>Photographs, `r n_dated` dated, `r n_field` in Feb to Jun 2012</td><td class="n">`r n_photos`</td></tr>
+      <tr><td>Sessions, `r n_lc_sessions` showing land cover</td><td class="n">`r n_sessions`</td></tr>
+      <tr><td class="in">flooded vegetation, frames</td><td class="n">`r frames$flooded`</td></tr>
+      <tr><td class="in">open water, frames</td><td class="n">`r frames$open`</td></tr>
+      <tr><td class="in">dry vegetation, bare bed, paddy</td><td class="n">`r frames$other`</td></tr>
+    </table>
+    <p>Plus 45 interviews, 18 focus groups and 23 georeferenced camps. The key session is 22 Feb 2012, `r key_frames` frames of flooded vegetation on the day of an Envisat pass.</p>
+    <h3>Training points <span class="st hand">In hand</span></h3>
+    <p>No photograph carries a GPS position, so points are placed by hand against imagery from the same fortnight and against survey and workshop coordinates. Aids built <span class="st done">Done</span></p>
+    <ol>
+      <li>`r n_sharp` Landsat 7 true-colour images sharpened to 15 m, on `r n_sharp_dates` photo dates.</li>
+      <li>30 m colour and water index per date, and the 22 Feb 2012 water map.</li>
+      <li>Esri 2.3 m and Sentinel-2 10 m basemaps, for landmarks only, and a browser placement tool.</li>
+    </ol>
+    <p class="small">No Landsat 7 scene falls between 7 Oct 2011 and 29 Jan 2012, so December 2011 frames are placed on January and February images.</p>
+    <div class="f part"><b><span class="st part">Check</span> Fieldwork dates</b>Methods 2.1 dates fieldwork Sep 2012 to Mar 2014, but `r n_field` photographs fall in Feb to Jun 2012.</div>
+  </div>
+</section>
+
+<section class="lane" style="--c:var(--im)">
+  <div class="lane-hd"><span class="k">C</span><span class="t">Imagery</span><span class="s">which sensors, when, and how fine</span></div>
+  <div class="card">
+    <table>
+      <tr><th>Stream</th><th>Years</th><th>Grain</th></tr>
+      <tr><td>Landsat 4 to 9</td><td>1984 to 2024</td><td>30 m</td></tr>
+      <tr><td>MODIS</td><td>2000 to 2024</td><td>500 m</td></tr>
+      <tr><td>Sentinel-1 VV, VH</td><td>2015 to 2024</td><td>10 m</td></tr>
+      <tr><td>PALSAR HH, HV</td><td>2007 to 2010, 2015 to 2024</td><td>25 m</td></tr>
+      <tr><td>Envisat HH, HV</td><td>Nov 2011 to Mar 2012</td><td>30 m</td></tr>
+    </table>
+    <p>Landsat and MODIS give open water. Radar that transmits horizontally, PALSAR and Envisat, sees water under the reeds. Sentinel-1 transmits vertically and times open water only.</p>
+    <div class="f info"><b>The gap</b>From 18 Oct 2011 to 25 Mar 2013 only Landsat 7 imaged the basin, every scene with strips of missing data. The strips move, so 15 scenes from Feb to Jun 2012 leave 18 of 8,752 km² unseen. A view counts only if 80 per cent of the lake is clear, since at 30 per cent clear the area was out by −659 km².</div>
+    <div class="f part"><b><span class="st part">Partial</span> Annual series</b>Rebuilt to 39 years, adding 2002 and 2012. Adopting it means recomputing Results 3.1 to 3.3.</div>
+    <div class="f need"><b><span class="st need">Needed</span> Code into the manuscript</b>The Landsat 7 coverage test, Envisat processing and 16-day extraction still run from <code>05.scripts/</code>.</div>
+  </div>
+</section>
+
+<section class="lane" style="--c:var(--gp)">
+  <div class="lane-hd"><span class="k">D</span><span class="t">Filling the gap</span><span class="s">three routes over the missing months</span></div>
+  <div class="card">
+    <svg viewBox="0 0 170 150" role="img" aria-label="Three routes from the imagery to the 2012 comparison">
+      <defs><marker id="arw" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" class="arh"/></marker></defs>
+      <text x="2" y="7" class="btb">1 Basin record, all years</text>
+      <rect x="2" y="10" width="52" height="16" rx="1.5" class="bx"/><text x="5" y="17" class="bt">Landsat area</text><text x="5" y="23.5" class="bt">30 m</text>
+      <rect x="2" y="29" width="52" height="16" rx="1.5" class="bx"/><text x="5" y="36" class="bt">MODIS area</text><text x="5" y="42.5" class="bt">500 m, calibrated</text>
+      <path d="M54,18 L64,26" class="ar"/><path d="M54,37 L64,31" class="ar"/>
+      <rect x="65" y="18" width="52" height="22" rx="1.5" class="bx"/><text x="68" y="25" class="bt">Kalman filter,</text><text x="68" y="31" class="bt">level, slope and</text><text x="68" y="37" class="bt">yearly wave</text>
+      <path d="M117,29 L126,29" class="ar"/>
+      <rect x="127" y="16" width="41" height="26" rx="1.5" class="bxk"/><text x="130" y="24" class="btw">`r nrow(rec)` steps</text><text x="130" y="31" class="btw">`r n_obs` observed</text><text x="130" y="38" class="btw">`r nrow(rec) - n_obs` by model</text>
+      <text x="2" y="57" class="btb">2 Water map for each photo date</text>
+      <rect x="2" y="60" width="52" height="22" rx="1.5" class="bx"/><text x="5" y="67" class="bt">243 Landsat 5, 7, 8</text><text x="5" y="73" class="bt">scenes, Jun 2010</text><text x="5" y="79" class="bt">to Jun 2014</text>
+      <path d="M54,71 L64,71" class="ar"/>
+      <rect x="65" y="60" width="52" height="22" rx="1.5" class="bx"/><text x="68" y="67" class="bt">Harmonic curve</text><text x="68" y="73" class="bt">of the water index</text><text x="68" y="79" class="bt">in every pixel</text>
+      <path d="M117,71 L126,71" class="ar"/>
+      <rect x="127" y="60" width="41" height="22" rx="1.5" class="bxk"/><text x="130" y="68" class="btw">30 m map,</text><text x="130" y="75" class="btw">any 2012 date</text>
+      <text x="2" y="94" class="btb">3 Water under the reeds, 2011 to 2012</text>
+      <rect x="2" y="97" width="52" height="16" rx="1.5" class="bx"/><text x="5" y="104" class="bt">Envisat HH, HV</text><text x="5" y="110.5" class="bt">7 usable dates</text>
+      <path d="M54,105 L64,105" class="ar"/>
+      <rect x="65" y="97" width="52" height="16" rx="1.5" class="bx"/><text x="68" y="104" class="bt">HH minus HV</text><text x="68" y="110.5" class="bt">above dry-land limit</text>
+      <path d="M117,105 L126,105" class="ar"/>
+      <rect x="127" y="97" width="36" height="16" rx="1.5" class="bxk"/><text x="129.5" y="104" class="btw">water under</text><text x="129.5" y="110.5" class="btw">reeds, map</text>
+      <path d="M166,82 L166,128" class="ar"/><path d="M145,113 L145,128" class="ar"/>
+      <rect x="85" y="129" width="83" height="16" rx="1.5" class="bx" style="stroke:var(--md)"/><text x="88" y="136" class="btb">Compared with the</text><text x="88" y="142.5" class="btb">field points, lane E</text>
+    </svg>
+    <table>
+      <tr><td>Gap steps observed</td><td class="n">`r gap$observed` of `r gap$steps`</td></tr>
+      <tr><td>Open water, 15 Feb</td><td class="n">`r fmt(feb$open_water_km2)` ± `r fmt(feb_half)` km²</td></tr>
+      <tr><td>Harmonic, 22 Feb</td><td class="n">1,158 km²</td></tr>
+      <tr><td>Under reeds, 22 Feb</td><td class="n">`r fmt(asar_feb$flooded_km2_within_10km)` km²</td></tr>
+    </table>
+    <h3>HISTARFM template</h3>
+    <p class="small">Moreno-Martínez et al. (2020) give monthly 30 m bands B1 to B7, each with its own standard deviation, so the water index carries an error. The study copies this at basin scale, because the product covers only Europe, Somalia and the United States and drops pixels with a vegetation index below −0.1, which removes open water.</p>
+    <div class="f dec"><b><span class="st dec">Decide</span> Per pixel or basin</b>Rebuild per pixel on HISTARFM, giving 30 m maps with an error on every pixel, or keep the basin record with the rebuild as future work, as now written.</div>
+    <div class="f need"><b><span class="st need">Needed</span> Code and label</b>Move <code>harmonic_fit_2012.py</code> into the manuscript, and fix the 2012 radar labelled ALOS PALSAR.</div>
+  </div>
+</section>
+
+<section class="lane" style="--c:var(--md)">
+  <div class="lane-hd"><span class="k">E</span><span class="t">Models</span><span class="s">how classes and areas are estimated</span></div>
+  <div class="card">
+    <ol>
+      <li><b>Feature screen.</b> Murphy et al. (2026) protocol. Separability index M, Shapiro-Wilk, Kruskal-Wallis and Wilcoxon tests, principal components, then a multinomial LASSO with tenfold cross-validation.</li>
+      <li><b>Mixture analysis.</b> Four endmembers per sensor era give the share of water, emergent vegetation, dry vegetation and bare soil in each 30 m pixel.</li>
+      <li><b>Random forest.</b> 500 trees, four classes, on the 2020 stack of optical, Sentinel-1, PALSAR and mixture layers, split 70 to 30.</li>
+      <li><b>State-space model.</b> The Kalman filter of lane D, with a backward pass so later observations improve earlier estimates.</li>
+      <li><b>2012 check.</b> Field points against the harmonic and Envisat maps, on the 30 m grid and the 500 m grid, where a point inside the 1 to 3 km reed belt is rarely mixed.</li>
+    </ol>
+    <div class="f dec"><b><span class="st dec">Decide</span> What the 2012 points test</b>The harmonic and Envisat maps, as the manuscript now says, or a separate 2012 random forest on Landsat 7.</div>
+    <div class="f need"><b><span class="st need">Needed</span> Feature stack</b>Narrow the random forest to the layers the screen selects.</div>
+    <div class="f good"><b><span class="st done">Done</span> Record fitted</b>Step size `r val("random walk standard deviation")` km² and error scale `r val("variance multiplier")` by maximum likelihood. Innovation variance 0.977 against a target of 1.</div>
+  </div>
+</section>
+
+<section class="lane" style="--c:var(--sc)">
+  <div class="lane-hd"><span class="k">F</span><span class="t">Scores</span><span class="s">how accuracy is reported</span></div>
+  <div class="card">
+    <p><b style="color:var(--sc)">Classes.</b> Confusion matrix, overall accuracy, kappa, producer's and user's accuracy per class, F-score, and McNemar's test between sensor sets, as in Amoakoh et al. (2021).</p>
+    <p><b style="color:var(--sc)">Time series.</b> Withhold whole dates and predict them. Report RMSE, MAE, bias and R² in km², the RMSE ratio with rejection above 1.1, and Theil's U bias.</p>
+    <table>
+      <caption>Most accurate months, by RMSE of withheld steps</caption>
+      <tr><th>Rank</th><th>Month</th><th class="n">RMSE</th><th class="n">MAE</th><th class="n">Bias</th><th class="n">n</th></tr>
+      <tr><td>1</td><td class="blank" style="text-align:left">to compute</td><td class="blank">·</td><td class="blank">·</td><td class="blank">·</td><td class="blank">·</td></tr>
+      <tr><td>2</td><td class="blank" style="text-align:left">to compute</td><td class="blank">·</td><td class="blank">·</td><td class="blank">·</td><td class="blank">·</td></tr>
+      <tr><td>12</td><td class="blank" style="text-align:left">to compute</td><td class="blank">·</td><td class="blank">·</td><td class="blank">·</td><td class="blank">·</td></tr>
+    </table>
+    <div class="f need"><b><span class="st need">Needed</span> Month table</b>Split withheld steps by calendar month and compare wet against dry months, since cloud is heaviest when the lake is fullest.</div>
+    <table>
+      <caption>Scores that exist now</caption>
+      <tr><td>MODIS to Landsat, `r cal$n` pairs</td><td>r `r cal$r`, `r cal$sd` km²</td><td><span class="st done">Done</span></td></tr>
+      <tr><td>Harmonic map, withheld dates</td><td>MAE 0.056 to 0.073</td><td><span class="st done">Done</span></td></tr>
+      <tr><td>Acceptance test</td><td>`r ev$pass` of `r ev$n`</td><td><span class="st part">Partial</span></td></tr>
+      <tr><td>Accuracy, kappa</td><td>81%, 0.77</td><td><span class="st need">Needed</span></td></tr>
+      <tr><td>Coupling r, agreement</td><td>0.73, 74 to 92%</td><td><span class="st need">Needed</span></td></tr>
+    </table>
+    <p class="small">Accuracy, kappa and coupling are placeholders. Check `r ev$fail_id` fails because leftover errors still follow a pattern in time, Ljung-Box Q = `r ev$q` on 20 lags, p &lt; 0.001.</p>
+  </div>
+</section>
+
+</main>
+
+<section class="strip charts">
+  <div class="sw">
+    <h2>Software and compute <span class="st dec">Decide</span></h2>
+    <div class="swcols">
+      <p><b>Now, Earth Engine through RStudio</b>A Quarto file run in RStudio, R 4.4.1, rendered to Word, `r n_chunks` R chunks in about 8 minutes. The rgee package sends the image work to Google Earth Engine, so any coauthor can run the whole study from a laptop. Setup and every algorithm are on the back.</p>
+      <p><b>Now, Python side scripts</b>Python 3.12 scripts in <code>05.scripts/</code> run the 16-day extraction, harmonic fit, Landsat 7 coverage and 15 m sharpening on Earth Engine, and read Envisat with GDAL. <span class="st need">Needed</span> Move them into the manuscript.</p>
+      <p><b>Proposed, run locally with sits</b>The sits package, 1.5.4 in R, builds image cubes from Digital Earth Africa, Planetary Computer or local GeoTIFFs, with mixture, classification, uncertainty and accuracy tools. It has no harmonic or Kalman fit, so those are written with terra.</p>
+      <p><b>Cost of going local</b>Every clear scene 1984 to 2024 is 152.6 GB, the 2010 to 2014 window 28.5 GB and the 41 annual composites 4.8 GB. Estimated at 38 to 57 working days.</p>
+    </div>
+  </div>
+  <figure>
+    <h2>The gap, fortnight by fortnight</h2>
+    
+```
+
+```{r gap-chart}
+#| results: asis
+x0 <- 34; x1 <- 554; y0 <- 8; y1 <- 92
+ta <- as.Date("2011-06-01"); tb <- as.Date("2013-07-01")
+X <- \(t) x0 + as.numeric(as.Date(t) - ta) / as.numeric(tb - ta) * (x1 - x0)
+Y <- \(v) y1 - (v - 850) / (1300 - 850) * (y1 - y0)
+z <- rec |>
+  filter(date >= ta, date <= tb) |>
+  mutate(optical = str_remove(sensors, " \\+ ALOS PALSAR"),
+         cls = case_when(dominant_source != "observed"     ~ "m-car",
+                         str_detect(optical, "Landsat 7") ~ "m-l7",
+                         str_detect(optical, "Landsat 8") ~ "m-l8",
+                         TRUE                             ~ "m-mod"))
+ticks <- seq(as.Date("2011-07-01"), as.Date("2013-07-01"), by = "quarter")
+photos <- lc |> filter(date >= ta) |> summarise(n = sum(n_files), .by = date)
+gx <- X(c("2011-10-18", "2013-03-25"))
+
+svg <- c(
+  '<svg viewBox="0 0 560 132" role="img" aria-label="Open water every sixteen days from June 2011 to June 2013, with the sensor behind each step">',
+  sprintf('<rect x="%.1f" y="%d" width="%.1f" height="%d" class="gap"/>', gx[1], y0, diff(gx), y1 - y0),
+  sprintf('<text x="%.1f" y="%d" class="vg">18 Oct 2011, last Landsat 5</text>', gx[1] + 3, y0 + 7),
+  sprintf('<text x="%.1f" y="%d" class="vg" text-anchor="end">25 Mar 2013, first Landsat 8</text>', gx[2] - 3, y0 + 7),
+  map_chr(seq(900, 1300, 100), \(v) sprintf(
+    '<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" class="grid"/><text x="%d" y="%.1f" class="vs" text-anchor="end">%s</text>',
+    x0, Y(v), x1, Y(v), x0 - 3, Y(v) + 2, fmt(v))),
+  sprintf('<text x="2" y="%d" class="vs">km²</text>', y0 + 2),
+  map_chr(ticks, \(t) sprintf(
+    '<line x1="%.1f" y1="%d" x2="%.1f" y2="%d" class="ax"/><text x="%.1f" y="%d" class="vs" text-anchor="middle">%s</text>',
+    X(t), y1, X(t), y1 + 2, X(t), y1 + 8, format(t, "%b %Y"))),
+  sprintf('<polygon points="%s" class="band"/>', paste(
+    c(sprintf("%.1f,%.1f", X(z$date), Y(z$open_water_hi95)),
+      rev(sprintf("%.1f,%.1f", X(z$date), Y(z$open_water_lo95)))), collapse = " ")),
+  sprintf('<polyline points="%s" class="line"/>',
+          paste(sprintf("%.1f,%.1f", X(z$date), Y(z$open_water_km2)), collapse = " ")),
+  sprintf('<circle cx="%.1f" cy="%.1f" r="2" class="%s"/>', X(z$date), Y(z$open_water_km2), z$cls),
+  sprintf('<text x="%.1f" y="%.1f" class="vl" text-anchor="middle">%s ± %s</text>',
+          X(feb$date), Y(feb$open_water_hi95) - 3, fmt(feb$open_water_km2), fmt(feb_half)),
+  sprintf('<text x="%d" y="%.1f" class="vs" text-anchor="end">Envisat</text>', x0 - 3, y1 + 17.5),
+  sprintf('<rect x="%.1f" y="%d" width="1.8" height="6" class="sar"/>', X(asar_ok$date) - 0.9, y1 + 12),
+  sprintf('<text x="%d" y="%.1f" class="vs" text-anchor="end">Photos</text>', x0 - 3, y1 + 27.5),
+  sprintf('<circle cx="%.1f" cy="%d" r="%.1f" class="field"/>', X(photos$date), y1 + 25, 1.2 + sqrt(photos$n) * 0.55),
+  sprintf('<text x="%.1f" y="130" class="vs">22 Feb 2012, %d frames</text>', X("2012-02-22") - 6, key_frames),
+  "</svg>"
+)
+cat("```{=html}", svg, "```", sep = "\n")
+```
+
+```{=html}
+
+    <div class="key"><span><i style="background:var(--mod)"></i>MODIS alone</span><span><i style="background:var(--l7)"></i>with Landsat 7</span><span><i style="background:var(--l8)"></i>with Landsat 8</span><span><i style="background:#fff;border:0.7pt solid var(--bad)"></i>estimated by model</span><span><i style="background:var(--sar);border-radius:0"></i>Envisat date</span><span><i style="background:var(--field)"></i>photo session</span></div>
+    <figcaption>Open water every 16 days, Jun 2011 to Jun 2013, with its 95 per cent interval. MODIS observed the fieldwork months, and Landsat 7 first passed the clear-view rule on `r paste(as.integer(format(gap$first_l7, "%d")), format(gap$first_l7, "%B %Y"))`.</figcaption>
+  </figure>
+</section>
+
+<section class="strip terms">
+  <h2>Plain terms</h2>
+  <p><b>Kalman filter</b>Keeps a running estimate of the lake and corrects it at each observation, trusting reliable views more.</p>
+  <p><b>Backward pass</b>A second run from the last step to the first, so each estimate also uses later observations.</p>
+  <p><b>Harmonic curve</b>A smooth yearly wave of sines and cosines fitted to each pixel and read on any date.</p>
+  <p><b>Water index</b>MNDWI, green minus shortwave infrared over their sum. Water is above zero.</p>
+  <p><b>Double bounce</b>A radar pulse bounces off water and then off a stem, and returns bright where reeds stand in water.</p>
+  <p><b>RMSE</b>The typical size of an error, in km², with large errors weighted more.</p>
+  <p><b>RMSE ratio</b>Error on withheld steps over error on training steps. Above 1.1 the model has fitted noise.</p>
+  <p><b>Theil's U bias</b>The share of error that runs in one direction rather than scattering both ways.</p>
+</section>
+
+<footer class="footbar">
+  <span><b>Lake Chilwa inundation study.</b> Murphy, Wilson and Banks. Coauthor meeting, 27 September 2026.</span>
+  <span>Built by <b>03.outputs/HTML/chilwa-workplan.qmd</b> from the CSVs in 03.outputs/CSV and eval_timeseries.py, rendered `r paste(as.integer(format(Sys.Date(), "%d")), format(Sys.Date(), "%b %Y"))`.</span>
+</footer>
+
+</div>
+<div class="sheet p2">
+<header class="masthead">
+  <div>
+    <h1>Software and algorithms, back of the sheet</h1>
+    <p class="sub">Which program runs each step, which Earth Engine dataset it reads, and which built-in Earth Engine algorithm does the work. Read from the code of <code>Manuscript_2026-08-03.qmd</code> at <code>`r ms_commit`</code> and <code>05.scripts/</code>.</p>
+    <p class="q">Can a coauthor run the whole study from RStudio on an ordinary laptop? Yes, while the image work stays on Earth Engine, because Google's servers do the computing and only small tables come back.</p>
+  </div>
+  <div class="answer">
+    <h2>What runs where</h2>
+    <p><b>On Earth Engine.</b> Reading the image archives, cloud masking, compositing, water indices, spectral unmixing, the random forest, its error matrix, and the harmonic regression.</p>
+    <p><b>On the laptop.</b> The Quarto document itself, the Kalman filter and backward pass on 936 numbers, terrain routing in WhiteboxTools, tables and figures, and the Envisat radar files.</p>
+    <p><b>Proposed.</b> A local sits cube for the 2010 to 2014 window and the annual composites, if the study leaves Earth Engine.</p>
+  </div>
+</header>
+
+<main class="p2grid">
+
+<section class="lane" style="--c:var(--im)">
+  <div class="lane-hd"><span class="k">1</span><span class="t">Run it from RStudio</span><span class="s">what a coauthor installs and changes</span></div>
+  <div class="card">
+    <ol>
+      <li>Install R 4.4, RStudio, Quarto 1.7 and WhiteboxTools, then clone the repository from GitHub.</li>
+      <li>In R, install <code>rgee</code> and run <code>rgee::ee_install()</code> once. It builds a small Python environment holding the Earth Engine API.</li>
+      <li>Sign in with <code>rgee::ee_Authenticate()</code> using a Google account registered for Earth Engine.</li>
+      <li>Open <code>01.manuscript/Manuscript_2026-08-03.qmd</code> and render to Word, about 8 minutes.</li>
+    </ol>
+    <p>Every data table and boundary file the render reads is on GitHub. The terrain rasters are not, and the manuscript rebuilds them when they are missing, which is why WhiteboxTools is needed.</p>
+    <div class="f info"><b>Two ways in</b>In RStudio the script needs only an Earth Engine project ID. Alternatively Google Colab runs in the browser with the Earth Engine Python library preinstalled and no setup, at the cost of writing the analysis in Python rather than R.</div>
+    <div class="f info"><b>What the laptop carries</b>Earth Engine returns only results, such as a basin total or a sample of pixels, so the 8 GB laptop never holds the 152.6 GB archive. The render needs an internet connection throughout.</div>
+    <div class="f part"><b><span class="st part">Partial</span> Web maps in Word</b>Interactive maps are captured through a hidden browser. The 2020 classification map timed out in the last render.</div>
+  </div>
+</section>
+
+<section class="lane" style="--c:var(--gp)">
+  <div class="lane-hd"><span class="k">2</span><span class="t">Earth Engine catalogue</span><span class="s">the datasets each step reads</span></div>
+  <div class="card">
+    <table>
+      <tr><th>Dataset ID</th><th>Used for</th></tr>
+      <tr><td><code>LANDSAT/LT05/C02/T1_L2</code></td><td>Thematic Mapper, 1984 to 2011</td></tr>
+      <tr><td><code>LANDSAT/LE07/C02/T1_L2</code></td><td>Landsat 7, the gap years</td></tr>
+      <tr><td><code>LANDSAT/LC08/C02/T1_L2</code></td><td>Operational Land Imager, from 2013</td></tr>
+      <tr><td>LT04, LC09, same collection</td><td>16-day record only</td></tr>
+      <tr><td><code>LANDSAT/LE07/C02/T1_TOA</code></td><td>15 m panchromatic band for sharpening</td></tr>
+      <tr><td><code>MODIS/061/MOD09A1</code>, <code>MYD09A1</code></td><td>8-day 500 m reflectance, Terra and Aqua</td></tr>
+      <tr><td><code>COPERNICUS/S1_GRD</code></td><td>Sentinel-1 backscatter, from 2015</td></tr>
+      <tr><td><code>JAXA/ALOS/PALSAR/YEARLY/SAR</code>, <code>SAR_EPOCH</code></td><td>L-band yearly mosaics</td></tr>
+      <tr><td><code>USGS/SRTMGL1_003</code></td><td>30 m elevation for flow routing</td></tr>
+      <tr><td><code>UCSB-CHG/CHIRPS/PENTAD</code></td><td>Rainfall</td></tr>
+      <tr><td><code>IDAHO_EPSCOR/TERRACLIMATE</code></td><td>Evaporative demand, temperature</td></tr>
+      <tr><td><code>ECMWF/ERA5_LAND/MONTHLY_AGGR</code></td><td>Rainfall, temperature</td></tr>
+      <tr><td><code>ESA/WorldCover/v200</code></td><td>Stand-in training strata until field points load</td></tr>
+    </table>
+    <div class="f info"><b>Not in the catalogue</b>Envisat ASAR, 40 products in 9.5 GB ordered from ESA and processed locally with GDAL. HISTARFM sits in the community catalogue but covers no part of southern Africa.</div>
+  </div>
+</section>
+
+<section class="lane" style="--c:var(--md)">
+  <div class="lane-hd"><span class="k">3</span><span class="t">Earth Engine algorithms</span><span class="s">the built-in functions doing the work</span></div>
+  <div class="card">
+    <table>
+      <tr><th>Step</th><th>Earth Engine function</th></tr>
+      <tr><td>Cloud and shadow mask</td><td><code>bitwiseAnd</code> on <code>QA_PIXEL</code>, then <code>updateMask</code></td></tr>
+      <tr><td>Composites</td><td><code>filterDate</code>, <code>filterBounds</code>, <code>median</code></td></tr>
+      <tr><td>Water index</td><td><code>normalizedDifference</code> on green and shortwave infrared</td></tr>
+      <tr><td>Radar speckle</td><td><code>focal_mean</code>, a moving-window average</td></tr>
+      <tr><td>Water share of each pixel</td><td><code>unmix</code>, linear spectral unmixing on four endmembers</td></tr>
+      <tr><td>Classification</td><td><code>ee.Classifier.smileRandomForest</code>, 500 trees, then <code>classify</code></td></tr>
+      <tr><td>Training and test split</td><td><code>sampleRegions</code>, <code>randomColumn</code> with seed 42</td></tr>
+      <tr><td>Accuracy</td><td><code>errorMatrix</code>, <code>accuracy</code>, <code>kappa</code>, <code>producersAccuracy</code>, <code>consumersAccuracy</code></td></tr>
+      <tr><td>Harmonic curve per pixel</td><td><code>ee.Reducer.linearRegression</code> on six sine, cosine and trend terms</td></tr>
+      <tr><td>Basin totals</td><td><code>reduceRegion</code> with <code>sum</code>, <code>mean</code>, <code>percentile</code></td></tr>
+      <tr><td>Sharpening</td><td><code>focal_mean</code> on the panchromatic band, then a ratio</td></tr>
+    </table>
+    <p class="small">Consumer's accuracy is Earth Engine's name for user's accuracy. The Kalman filter is not an Earth Engine function. It runs in plain R on the 16-day table, in about a second.</p>
+  </div>
+</section>
+
+<section class="lane" style="--c:var(--sc)">
+  <div class="lane-hd"><span class="k">4</span><span class="t">The local route</span><span class="s">what changes if the study leaves Earth Engine</span></div>
+  <div class="card">
+    <table>
+      <tr><th>Earth Engine step</th><th>sits or R equivalent</th></tr>
+      <tr><td>Image collections</td><td><code>sits_cube</code> from Digital Earth Africa, Planetary Computer or local files</td></tr>
+      <tr><td>Composites</td><td><code>sits_regularize</code> to a fixed time step</td></tr>
+      <tr><td><code>unmix</code></td><td><code>sits_mixture_model</code>, with an error band per pixel</td></tr>
+      <tr><td><code>smileRandomForest</code></td><td><code>sits_train</code> with <code>sits_rfor</code>, then <code>sits_classify</code></td></tr>
+      <tr><td><code>errorMatrix</code></td><td><code>sits_accuracy</code></td></tr>
+      <tr><td>none</td><td><code>sits_uncertainty</code>, a map of where the classifier is unsure</td></tr>
+      <tr><td><code>linearRegression</code> harmonic</td><td>not in sits, written with terra</td></tr>
+    </table>
+    <table>
+      <caption>Download size, six bands as 16-bit integers</caption>
+      <tr><td>Every clear scene, 1984 to 2024</td><td class="n">152.6 GB</td></tr>
+      <tr><td>Harmonic window, 2010 to 2014</td><td class="n">28.5 GB</td></tr>
+      <tr><td>41 annual composites</td><td class="n">4.8 GB</td></tr>
+    </table>
+    <p>Digital Earth Africa also offers a water classification for each Landsat scene and a ready 2012 annual median of Landsat 5 and 7, which sits does not reach but its catalogue does.</p>
+    <div class="f dec"><b><span class="st dec">Decide</span> Stay or move</b>Stay on Earth Engine, where a coauthor needs only RStudio and an account, or move to a local sits cube, which gains uncertainty maps and independence from Google, at 38 to 57 working days, 28.5 GB for the gap window, and a first test of reproducing 1,158 km² on 22 Feb 2012.</div>
+  </div>
+</section>
+
+</main>
+<section class="strip flow">
+  <h2>One render, in order</h2>
+  <div class="stps"><div class="stp ee"><span class="sn">2.2.1</span><b>Climate</b><span class="sd">Monthly rain and heat for the basin</span></div><div class="stp both"><span class="sn">2.2.2</span><b>Terrain</b><span class="sd">SRTM pulled from Earth Engine, routed in WhiteboxTools</span></div><div class="stp ee"><span class="sn">2.2.3</span><b>Radar</b><span class="sd">Sentinel-1 and PALSAR composites and water share</span></div><div class="stp ee"><span class="sn">2.2.4</span><b>Landsat and MODIS</b><span class="sd">Masked composites and 8-day MODIS water</span></div><div class="stp ee"><span class="sn">2.2.5</span><b>Water indices</b><span class="sd">Five indices per year, NDPI dropped</span></div><div class="stp ee"><span class="sn">2.2.6</span><b>Mixture analysis</b><span class="sd">unmix per sensor era, fractions per year</span></div><div class="stp both"><span class="sn">2.2.7</span><b>Feature screen</b><span class="sd">Pixels sampled on Earth Engine, tests and LASSO in R</span></div><div class="stp ee"><span class="sn">2.2.8</span><b>Random forest</b><span class="sd">Trained, applied and scored on Earth Engine</span></div><div class="stp local"><span class="sn">2.3</span><b>16-day record</b><span class="sd">Kalman filter and backward pass in plain R</span></div><div class="stp local"><span class="sn">3</span><b>Results</b><span class="sd">Tables and figures drawn in R</span></div></div>
+  <div class="key"><span><i style="background:var(--gp);border-radius:0"></i>on Earth Engine through rgee</span><span><i style="background:var(--fb);border-radius:0"></i>on the laptop</span><span><i style="background:linear-gradient(90deg,var(--gp) 50%,var(--fb) 50%);border-radius:0"></i>both</span><span>Section numbers follow the manuscript. Envisat, the harmonic fit and the 15 m images run outside the render until their scripts move in.</span></div>
+</section>
+<footer class="footbar">
+  <span><b>Lake Chilwa inundation study.</b> Back of the workplan. Coauthor meeting, 27 September 2026.</span>
+  <span>Versions read at render, R `r ver$R`, rgee `r ver$rgee`, sits `r ver$sits`, terra `r ver$terra`, Quarto `r ver$quarto`, `r ver$python`.</span>
+</footer>
+</div>
+<div class="codepage"><h1>Code that builds this sheet</h1>
+```
+
+```{r code, ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}
+```
+
+```{=html}
+</div>
+```
