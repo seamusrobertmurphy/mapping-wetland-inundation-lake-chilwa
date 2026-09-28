@@ -6,7 +6,7 @@ Seamus Murphy, John Wilson, Lauren K Banks
 
 Corresponding author: seamusrobertmurphy\@gmail.com
 
-> Outputs mirrored from the master manuscript `01.manuscript/Manuscript_2026-08-03.qmd`. Rendered draft: `01.manuscript/DOCX/Manuscript_2026-08-03.docx`.
+> Outputs mirrored from the master manuscript `01.manuscript/Manuscript_2026-08-03.qmd`, last revised 26 September 2026. Latest draft `01.manuscript/Manuscript_2026-09-26.docx`.
 
 ## Abstract
 
