@@ -100,10 +100,10 @@ h1{ margin:0; font-size:17pt; font-weight:800; letter-spacing:-0.3pt; line-heigh
 .answer p b{ font-weight:800; }
 .legend{ display:flex; gap:5pt; flex-wrap:wrap; margin-top:2pt; font-size:6pt; color:var(--ink-soft); align-items:center; }
 
-.st{ display:inline-block; font-size:5.6pt; font-weight:800; letter-spacing:0.3pt; text-transform:uppercase;
+.chip{ display:inline-block; font-size:5.6pt; font-weight:800; letter-spacing:0.3pt; text-transform:uppercase;
   color:#fff; border-radius:1.4pt; padding:0.3pt 2.4pt; vertical-align:0.5pt; white-space:nowrap; }
-.st.done{ background:var(--good); } .st.part{ background:var(--part); } .st.need{ background:var(--bad); }
-.st.dec{ background:var(--dec); } .st.hand{ background:#6d7b89; }
+.chip.done{ background:var(--good); } .chip.part{ background:var(--part); } .chip.need{ background:var(--bad); }
+.chip.dec{ background:var(--dec); } .chip.hand{ background:#6d7b89; }
 
 .lanes{ flex:1 1 auto; min-height:0; display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:0 0.1in; }
 .lane{ display:flex; flex-direction:column; min-height:0; min-width:0; position:relative; }
@@ -209,7 +209,7 @@ svg .arh{ fill:#7a8794; }
 @media print{ .p2{ margin-top:0; } }
 
 /* Screens narrower than the printed sheet get a reflowed page instead of a sideways scroll. */
-@media (max-width: 1050px){
+@media screen and (max-width: 1050px){
   html,body{ background:var(--paper); }
   .sheet{ width:auto; height:auto; overflow:visible; padding-inline:16px; padding-block:12px; }
   .masthead{ grid-template-columns:1fr; }
@@ -221,7 +221,7 @@ svg .arh{ fill:#7a8794; }
   .lane svg{ max-width:420px; }
   .charts svg{ height:auto; }
 }
-@media (max-width: 600px){ .lanes, .p2grid{ grid-template-columns:1fr; } }
+@media screen and (max-width: 600px){ .lanes, .p2grid{ grid-template-columns:1fr; } }
 
 /* Quarto's minimal page still carries Pandoc's default styles, which centre the header,
    cap the body width and redraw table borders. These lines return the sheet to its own. */
@@ -233,7 +233,7 @@ p{ margin:0; } ol{ margin-top:0; }
 .codepage{ width:11in; margin:0.25in auto; background:var(--paper); padding:0.3in; }
 .codepage h1{ font-size:14pt; margin:0 0 6pt 0; }
 .codepage pre{ font-family:var(--mono); font-size:7pt; line-height:1.35; white-space:pre-wrap; background:#f3f6f9; padding:8pt; border-radius:2pt; }
-@media print{ .codepage{ page-break-before:always; margin:0; } }
+@media print{ .codepage{ page-break-before:always; margin:0; } html, body{ background:#fff !important; } }
 </style>
 <div class="sheet">
 
@@ -246,7 +246,7 @@ p{ margin:0; } ol{ margin-top:0; }
   <div class="answer">
     <h2>Where it stands</h2>
     <p><b>Built.</b> The 16-day open-water record, fused from Landsat and MODIS by a Kalman filter, passes 15 of 16 checks. The 2012 water map, Envisat radar maps and 15 m placement images exist. <b>In hand.</b> Training points placed by hand. <b>Open.</b> Two decisions, three placeholder results, the month accuracy table, four scripts to move into the manuscript.</p>
-    <div class="legend"><span class="st done">Done</span><span class="st part">Partial</span><span class="st need">Needed</span><span class="st dec">Decide</span><span class="st hand">In hand</span></div>
+    <div class="legend"><span class="chip done">Done</span><span class="chip part">Partial</span><span class="chip need">Needed</span><span class="chip dec">Decide</span><span class="chip hand">In hand</span></div>
   </div>
 </header>
 
@@ -263,7 +263,7 @@ p{ margin:0; } ol{ margin-top:0; }
       <li><b>H3</b> Greenness stays high for weeks to months after water recedes, so index records date a past flood.</li>
     </ol>
     <div class="f info"><b>Result so far</b>Water within vegetation averaged 130 km², 10 per cent of the combined area, and 19 per cent on the 22 Feb 2012 radar date.</div>
-    <div class="f dec"><b><span class="st dec">Decide</span> H1 against the numbers</b>H1 expects a majority. Radar gives 10 to 19 per cent, a lower bound because C-band loses water under dense Typha. Agree how the paper reports it.</div>
+    <div class="f dec"><b><span class="chip dec">Decide</span> H1 against the numbers</b>H1 expects a majority. Radar gives 10 to 19 per cent, a lower bound because C-band loses water under dense Typha. Agree how the paper reports it.</div>
     <p class="small">Standing rule. The photographs are the validation sample and are never demoted.</p>
   </div>
 </section>
@@ -302,15 +302,15 @@ p{ margin:0; } ol{ margin-top:0; }
 </table>
 
     <p>Plus 45 interviews, 18 focus groups and 23 georeferenced camps. The key session is 22 Feb 2012, 43 frames of flooded vegetation on the day of an Envisat pass.</p>
-    <h3>Training points <span class="st hand">In hand</span></h3>
-    <p>No photograph carries a GPS position, so points are placed by hand against imagery from the same fortnight and against survey and workshop coordinates. Aids built <span class="st done">Done</span></p>
+    <h3>Training points <span class="chip hand">In hand</span></h3>
+    <p>No photograph carries a GPS position, so points are placed by hand against imagery from the same fortnight and against survey and workshop coordinates. Aids built <span class="chip done">Done</span></p>
     <ol>
       <li>13 Landsat 7 true-colour images sharpened to 15 m, on 7 photo dates.</li>
       <li>30 m colour and water index per date, and the 22 Feb 2012 water map.</li>
       <li>Esri 2.3 m and Sentinel-2 10 m basemaps, for landmarks only, and a browser placement tool.</li>
     </ol>
     <p class="small">No Landsat 7 scene falls between 7 Oct 2011 and 29 Jan 2012, so December 2011 frames are placed on January and February images.</p>
-    <div class="f part"><b><span class="st part">Check</span> Fieldwork dates</b>Methods 2.1 dates fieldwork Sep 2012 to Mar 2014, but 213 photographs fall in Feb to Jun 2012.</div>
+    <div class="f part"><b><span class="chip part">Check</span> Fieldwork dates</b>Methods 2.1 dates fieldwork Sep 2012 to Mar 2014, but 213 photographs fall in Feb to Jun 2012.</div>
   </div>
 </section>
 
@@ -355,8 +355,8 @@ p{ margin:0; } ol{ margin-top:0; }
 
     <p>Landsat and MODIS give open water. Radar that transmits horizontally, PALSAR and Envisat, sees water under the reeds. Sentinel-1 transmits vertically and times open water only.</p>
     <div class="f info"><b>The gap</b>From 18 Oct 2011 to 25 Mar 2013 only Landsat 7 imaged the basin, every scene with strips of missing data. The strips move, so 15 scenes from Feb to Jun 2012 leave 18 of 8,752 km² unseen. A view counts only if 80 per cent of the lake is clear, since at 30 per cent clear the area was out by −659 km².</div>
-    <div class="f part"><b><span class="st part">Partial</span> Annual series</b>Rebuilt to 39 years, adding 2002 and 2012. Adopting it means recomputing Results 3.1 to 3.3.</div>
-    <div class="f need"><b><span class="st need">Needed</span> Code into the manuscript</b>The Landsat 7 coverage test, Envisat processing and 16-day extraction still run from <code>05.scripts/</code>.</div>
+    <div class="f part"><b><span class="chip part">Partial</span> Annual series</b>Rebuilt to 39 years, adding 2002 and 2012. Adopting it means recomputing Results 3.1 to 3.3.</div>
+    <div class="f need"><b><span class="chip need">Needed</span> Code into the manuscript</b>The Landsat 7 coverage test, Envisat processing and 16-day extraction still run from <code>05.scripts/</code>.</div>
   </div>
 </section>
 
@@ -411,8 +411,8 @@ p{ margin:0; } ol{ margin-top:0; }
 
     <h3>HISTARFM template</h3>
     <p class="small">Moreno-Martínez et al. (2020) give monthly 30 m bands B1 to B7, each with its own standard deviation, so the water index carries an error. The study copies this at basin scale, because the product covers only Europe, Somalia and the United States and drops pixels with a vegetation index below −0.1, which removes open water.</p>
-    <div class="f dec"><b><span class="st dec">Decide</span> Per pixel or basin</b>Rebuild per pixel on HISTARFM, giving 30 m maps with an error on every pixel, or keep the basin record with the rebuild as future work, as now written.</div>
-    <div class="f need"><b><span class="st need">Needed</span> Code and label</b>Move <code>harmonic_fit_2012.py</code> into the manuscript, and fix the 2012 radar labelled ALOS PALSAR.</div>
+    <div class="f dec"><b><span class="chip dec">Decide</span> Per pixel or basin</b>Rebuild per pixel on HISTARFM, giving 30 m maps with an error on every pixel, or keep the basin record with the rebuild as future work, as now written.</div>
+    <div class="f need"><b><span class="chip need">Needed</span> Code and label</b>Move <code>harmonic_fit_2012.py</code> into the manuscript, and fix the 2012 radar labelled ALOS PALSAR.</div>
   </div>
 </section>
 
@@ -426,9 +426,9 @@ p{ margin:0; } ol{ margin-top:0; }
       <li><b>State-space model.</b> The Kalman filter of lane D, with a backward pass so later observations improve earlier estimates.</li>
       <li><b>2012 check.</b> Field points against the harmonic and Envisat maps, on the 30 m grid and the 500 m grid, where a point inside the 1 to 3 km reed belt is rarely mixed.</li>
     </ol>
-    <div class="f dec"><b><span class="st dec">Decide</span> What the 2012 points test</b>The harmonic and Envisat maps, as the manuscript now says, or a separate 2012 random forest on Landsat 7.</div>
-    <div class="f need"><b><span class="st need">Needed</span> Feature stack</b>Narrow the random forest to the layers the screen selects.</div>
-    <div class="f good"><b><span class="st done">Done</span> Record fitted</b>Step size 36.5 km² and error scale 0.377 by maximum likelihood. Innovation variance 0.977 against a target of 1.</div>
+    <div class="f dec"><b><span class="chip dec">Decide</span> What the 2012 points test</b>The harmonic and Envisat maps, as the manuscript now says, or a separate 2012 random forest on Landsat 7.</div>
+    <div class="f need"><b><span class="chip need">Needed</span> Feature stack</b>Narrow the random forest to the layers the screen selects.</div>
+    <div class="f good"><b><span class="chip done">Done</span> Record fitted</b>Step size 36.5 km² and error scale 0.377 by maximum likelihood. Innovation variance 0.977 against a target of 1.</div>
   </div>
 </section>
 
@@ -476,7 +476,7 @@ p{ margin:0; } ol{ margin-top:0; }
 </tbody>
 </table>
 
-    <div class="f need"><b><span class="st need">Needed</span> Month table</b>Split withheld steps by calendar month and compare wet against dry months, since cloud is heaviest when the lake is fullest.</div>
+    <div class="f need"><b><span class="chip need">Needed</span> Month table</b>Split withheld steps by calendar month and compare wet against dry months, since cloud is heaviest when the lake is fullest.</div>
     
 <table class="caption-top" data-quarto-postprocess="true">
 <caption>Scores that exist now</caption>
@@ -484,27 +484,27 @@ p{ margin:0; } ol{ margin-top:0; }
 <tr class="odd">
 <td>MODIS to Landsat, 243 pairs</td>
 <td>r 0.986, 58.9 km²</td>
-<td><span class="st done">Done</span></td>
+<td><span class="chip done">Done</span></td>
 </tr>
 <tr class="even">
 <td>Harmonic map, withheld dates</td>
 <td>MAE 0.056 to 0.073</td>
-<td><span class="st done">Done</span></td>
+<td><span class="chip done">Done</span></td>
 </tr>
 <tr class="odd">
 <td>Acceptance test</td>
 <td>15 of 16</td>
-<td><span class="st part">Partial</span></td>
+<td><span class="chip part">Partial</span></td>
 </tr>
 <tr class="even">
 <td>Accuracy, kappa</td>
 <td>81%, 0.77</td>
-<td><span class="st need">Needed</span></td>
+<td><span class="chip need">Needed</span></td>
 </tr>
 <tr class="odd">
 <td>Coupling r, agreement</td>
 <td>0.73, 74 to 92%</td>
-<td><span class="st need">Needed</span></td>
+<td><span class="chip need">Needed</span></td>
 </tr>
 </tbody>
 </table>
@@ -517,10 +517,10 @@ p{ margin:0; } ol{ margin-top:0; }
 
 <section class="strip charts">
   <div class="sw">
-    <h2>Software and compute <span class="st dec">Decide</span></h2>
+    <h2>Software and compute <span class="chip dec">Decide</span></h2>
     <div class="swcols">
       <p><b>Now, Earth Engine through RStudio</b>A Quarto file run in RStudio, R 4.4.1, rendered to Word, 53 R chunks in about 8 minutes. The rgee package sends the image work to Google Earth Engine, so any coauthor can run the whole study from a laptop. Setup and every algorithm are on the back.</p>
-      <p><b>Now, Python side scripts</b>Python 3.12 scripts in <code>05.scripts/</code> run the 16-day extraction, harmonic fit, Landsat 7 coverage and 15 m sharpening on Earth Engine, and read Envisat with GDAL. <span class="st need">Needed</span> Move them into the manuscript.</p>
+      <p><b>Now, Python side scripts</b>Python 3.12 scripts in <code>05.scripts/</code> run the 16-day extraction, harmonic fit, Landsat 7 coverage and 15 m sharpening on Earth Engine, and read Envisat with GDAL. <span class="chip need">Needed</span> Move them into the manuscript.</p>
       <p><b>Proposed, run locally with sits</b>The sits package, 1.5.4 in R, builds image cubes from Digital Earth Africa, Planetary Computer or local GeoTIFFs, with mixture, classification, uncertainty and accuracy tools. It has no harmonic or Kalman fit, so those are written with terra.</p>
       <p><b>Cost of going local</b>Every clear scene 1984 to 2024 is 152.6 GB, the 2010 to 2014 window 28.5 GB and the 41 annual composites 4.8 GB. Estimated at 38 to 57 working days.</p>
     </div>
@@ -641,7 +641,7 @@ p{ margin:0; } ol{ margin-top:0; }
 
 <footer class="footbar">
   <span><b>Lake Chilwa inundation study.</b> Murphy, Wilson and Banks. Coauthor meeting, 27 September 2026.</span>
-  <span>Built by <b>03.outputs/HTML/chilwa-workplan.qmd</b> from the CSVs in 03.outputs/CSV and eval_timeseries.py, rendered 27 Sep 2026.</span>
+  <span>Built by <b>03.outputs/HTML/chilwa-workplan.qmd</b> from the CSVs in 03.outputs/CSV and eval_timeseries.py, rendered 28 Sep 2026.</span>
 </footer>
 
 </div>
@@ -674,7 +674,7 @@ p{ margin:0; } ol{ margin-top:0; }
     <p>Every data table and boundary file the render reads is on GitHub. The terrain rasters are not, and the manuscript rebuilds them when they are missing, which is why WhiteboxTools is needed.</p>
     <div class="f info"><b>Two ways in</b>In RStudio the script needs only an Earth Engine project ID. Alternatively Google Colab runs in the browser with the Earth Engine Python library preinstalled and no setup, at the cost of writing the analysis in Python rather than R.</div>
     <div class="f info"><b>What the laptop carries</b>Earth Engine returns only results, such as a basin total or a sample of pixels, so the 8 GB laptop never holds the 152.6 GB archive. The render needs an internet connection throughout.</div>
-    <div class="f part"><b><span class="st part">Partial</span> Web maps in Word</b>Interactive maps are captured through a hidden browser. The 2020 classification map timed out in the last render.</div>
+    <div class="f part"><b><span class="chip part">Partial</span> Web maps in Word</b>Interactive maps are captured through a hidden browser. The 2020 classification map timed out in the last render.</div>
   </div>
 </section>
 
@@ -869,7 +869,7 @@ p{ margin:0; } ol{ margin-top:0; }
 </table>
 
     <p>Digital Earth Africa also offers a water classification for each Landsat scene and a ready 2012 annual median of Landsat 5 and 7, which sits does not reach but its catalogue does.</p>
-    <div class="f dec"><b><span class="st dec">Decide</span> Stay or move</b>Stay on Earth Engine, where a coauthor needs only RStudio and an account, or move to a local sits cube, which gains uncertainty maps and independence from Google, at 38 to 57 working days, 28.5 GB for the gap window, and a first test of reproducing 1,158 km² on 22 Feb 2012.</div>
+    <div class="f dec"><b><span class="chip dec">Decide</span> Stay or move</b>Stay on Earth Engine, where a coauthor needs only RStudio and an account, or move to a local sits cube, which gains uncertainty maps and independence from Google, at 38 to 57 working days, 28.5 GB for the gap window, and a first test of reproducing 1,158 km² on 22 Feb 2012.</div>
   </div>
 </section>
 
