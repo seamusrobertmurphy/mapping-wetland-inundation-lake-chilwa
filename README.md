@@ -54,6 +54,10 @@ Surface water and open water are treated as synonyms across the wetland literatu
 
 *Image-derived spectral endmembers and the fractions they resolve. (a) Median surface-reflectance spectrum of each of the four endmembers, drawn from spectrally pure pixels of the 2020 dry-season Landsat composite. (b, c) Sub-pixel open-water fraction for a wet year, 2023, and a recession year, 2018, within the self-derived basin boundary.*
 
+![](03.outputs/PNG/training_points_chilwa_2012_sitemap.png)
+
+*Training points by class and photograph date, Lake Chilwa, 2012. UTM, Universal Transverse Mercator.*
+
 ![](03.outputs/PNG/record-figure.png)
 
 *Lake Chilwa open water at sixteen-day steps, 1984 to 2024. The band is the ninety-five per cent credible interval, and its width is as much the result as the line: narrow where the dense coarse stream observes every step, wide through the 1980s and 1990s where Landsat alone supplies about four usable observations a year.*

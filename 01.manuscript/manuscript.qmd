@@ -1871,6 +1871,72 @@ if (!file.exists("03.outputs/PNG/training_points_chilwa_2012.png")) {
 }
 ```
 
+```{r chilwa-site-map}
+#| echo: true
+#| eval: true
+#| output: false
+if (!all(file.exists(c("03.outputs/PNG/training_points_chilwa_2012_sitemap.png", "03.outputs/PDF/training_points_chilwa_2012_sitemap.pdf")))) {
+  pts <- sf::st_transform(sf::st_read("03.outputs/SHP/training_points_chilwa_2012.shp", quiet = TRUE), 32736)
+  xy <- sf::st_coordinates(pts)
+  ratio <- 300000; u <- 0.0254 * ratio
+  pin <- c(6.8, 8.6); mai <- c(0.5, 0.62, 0.12, 0.12)
+  # Landsat 7 ETM+ Collection 2 Level 2 surface reflectance, median within 75 days of 20 May 2012, sharpened to 15 m with the panchromatic band
+  # https://doi.org/10.5066/P9TU80IG
+  rgb <- terra::rast("03.outputs/TIF/pansharpened_15m/2012-05-20_rgb15_gapfilled.tif")
+  e <- as.vector(terra::ext(rgb))
+  cr <- terra::crds(terra::project(terra::vect(rbind(e[c(1, 4)], e[c(2, 4)], e[c(1, 3)], e[c(2, 3)]), crs = "EPSG:4326"), "EPSG:32736"))
+  inner <- c(max(cr[c(1, 3), 1]), min(cr[c(2, 4), 1]), max(cr[3:4, 2]), min(cr[1:2, 2]))
+  half <- pin * u / 2
+  cx <- min(max(mean(range(xy[, 1])), inner[1] + half[1]), inner[2] - half[1])
+  cy <- min(max(mean(range(xy[, 2])), inner[3] + half[2]), inner[4] - half[2])
+  xl <- cx + c(-1, 1) * half[1]; yl <- cy + c(-1, 1) * half[2]
+  base <- terra::project(rgb, terra::rast(terra::ext(xl[1], xl[2], yl[1], yl[2]), resolution = u / 300, crs = "EPSG:32736"), method = "bilinear")
+  a <- terra::as.array(base)
+  for (k in 1:3) { q <- quantile(a[, , k], c(0.02, 0.98), na.rm = TRUE); a[, , k] <- pmin(pmax((a[, , k] - q[1]) / (q[2] - q[1]), 0), 1) }
+  a[is.na(a)] <- 1
+  dates <- c("2012-02-20", "2012-02-22", "2012-03-29", "2012-04-19", "2012-05-20", "2012-09-26")
+  classes <- c("Open water", "Flooded vegetation", "Dry vegetation", "Bare soil")
+  fills <- c("#2563eb", "#10b981", "#334155", "#e2e8f0")
+  star <- seq(pi / 2, 5 * pi / 2, length.out = 11)[-11]
+  shapes <- list(cbind(cos(seq(0, 2 * pi, length.out = 40)), sin(seq(0, 2 * pi, length.out = 40))), cbind(c(-1, 1, 1, -1), c(-1, -1, 1, 1)) * 0.85, cbind(c(0, 1, 0, -1), c(-1, 0, 1, 0)) * 1.2, cbind(c(-1, 1, 0), c(-0.7, -0.7, 1.05)) * 1.1, cbind(c(-1, 1, 0), c(0.7, 0.7, -1.05)) * 1.1, cbind(rep(c(1.25, 0.52), 5) * cos(star), rep(c(1.25, 0.52), 5) * sin(star)))
+  mark <- function(x, y, k, fill, s = 0.055 * u, halo = TRUE) {
+    p <- shapes[[k]]
+    if (halo) polygon(x + p[, 1] * s, y + p[, 2] * s, col = fill, border = "white", lwd = 2.4)
+    polygon(x + p[, 1] * s, y + p[, 2] * s, col = fill, border = "black", lwd = 0.6)
+  }
+  d_i <- match(as.character(pts$date), dates)
+  draw <- function() {
+    par(mai = mai, xaxs = "i", yaxs = "i", family = "sans")
+    plot.new(); plot.window(xl, yl, asp = 1)
+    rasterImage(as.raster(a), xl[1], yl[1], xl[2], yl[2], interpolate = TRUE)
+    at_x <- seq(ceiling(xl[1] / 10000) * 10000, xl[2], 10000); at_y <- seq(ceiling(yl[1] / 10000) * 10000, yl[2], 10000)
+    axis(1, at = at_x, labels = at_x / 1000, tcl = -0.2, mgp = c(1.4, 0.3, 0), cex.axis = 0.75)
+    axis(2, at = at_y, labels = at_y / 1000, tcl = -0.2, mgp = c(1.4, 0.35, 0), cex.axis = 0.75)
+    mtext("Easting (km)", 1, 1.5, cex = 0.8); mtext("Northing (km)", 2, 2.4, cex = 0.8)
+    for (i in order(-xy[, 2])) mark(xy[i, 1], xy[i, 2], d_i[i], fills[pts$code[i]])
+    box(lwd = 1)
+    lx <- xl[1] + 0.1 * u; ly <- yl[1] + 0.1 * u; lw <- 2.25 * u; row <- 0.19 * u
+    rect(lx, ly, lx + lw, ly + 16.05 * row, col = "white", border = "black", lwd = 0.7)
+    y <- ly + 15.35 * row; tx <- lx + 0.42 * u
+    text(lx + 0.12 * u, y, "Class", adj = c(0, 0.5), font = 2, cex = 0.72)
+    for (k in 1:4) { y <- y - row; mark(lx + 0.22 * u, y, 1, fills[k], s = 0.05 * u, halo = FALSE); text(tx, y, sprintf("%s, %d", classes[k], sum(pts$code == k)), adj = c(0, 0.5), cex = 0.68) }
+    y <- y - 1.4 * row; text(lx + 0.12 * u, y, "Photograph date", adj = c(0, 0.5), font = 2, cex = 0.72)
+    for (k in 1:6) { y <- y - row; mark(lx + 0.22 * u, y, k, "white", s = 0.05 * u, halo = FALSE); text(tx, y, sprintf("%s, %d", format(as.Date(dates[k]), "%d %B %Y"), sum(d_i == k)), adj = c(0, 0.5), cex = 0.68) }
+    y <- y - 1.4 * row; text(lx + 0.12 * u, y, sprintf("Scale 1:%s", formatC(ratio, format = "d", big.mark = ",")), adj = c(0, 0.5), font = 2, cex = 0.72)
+    y <- y - row; text(lx + 0.12 * u, y, "WGS 1984, UTM zone 36S", adj = c(0, 0.5), cex = 0.62)
+    y <- y - row * 0.85; text(lx + 0.12 * u, y, "Landsat 7 true colour, 15 m, 20 May 2012", adj = c(0, 0.5), cex = 0.62)
+    nx <- xl[2] - 0.38 * u; ny <- yl[2] - 0.1 * u
+    rect(nx - 0.22 * u, ny - 0.82 * u, nx + 0.22 * u, ny, col = "white", border = "black", lwd = 0.7)
+    polygon(nx + c(0, -0.12, 0) * u, ny + c(-0.3, -0.74, -0.6) * u, col = "black", border = "black", lwd = 0.7)
+    polygon(nx + c(0, 0.12, 0) * u, ny + c(-0.3, -0.74, -0.6) * u, col = "white", border = "black", lwd = 0.7)
+    text(nx, ny - 0.17 * u, "N", font = 2, cex = 0.95)
+  }
+  wh <- c(pin[1] + mai[2] + mai[4], pin[2] + mai[1] + mai[3])
+  png("03.outputs/PNG/training_points_chilwa_2012_sitemap.png", width = wh[1], height = wh[2], units = "in", res = 200); draw(); dev.off()
+  grDevices::cairo_pdf("03.outputs/PDF/training_points_chilwa_2012_sitemap.pdf", width = wh[1], height = wh[2]); draw(); dev.off()
+}
+```
+
 ```{r rf-classify}
 #| eval: true
 # The separability/LASSO-selected subset from 2.2.F: SAR VV/VH and the SMA
