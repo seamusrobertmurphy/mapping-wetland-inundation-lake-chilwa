@@ -1,0 +1,167 @@
+id,code,feature
+A1-002,1,open lake
+A1-007,1,open lake
+A1-008,1,open lake
+A1-009,1,open water among reed clumps
+A1-010,1,open lake
+A1-011,1,open lake
+A1-012,1,open lake
+A1-014,1,open water beside the shore
+A1-015,1,open water beside the shore
+A1-016,1,open water beside the reed fringe
+A1-020,2,reed marsh near open water
+A1-021,2,reed marsh near open water
+A1-022,2,reed marsh near open water
+A1-023,2,reed marsh near open water
+A1-025,2,wet grassland at the marsh edge
+A1-031,2,reed marsh at the open-water edge
+A1-036,2,reed marsh at the open-water edge
+A1-037,3,dense vegetation on dry ground
+A1-038,3,green cropland
+A1-039,3,dense vegetation on dry ground
+A1-040,3,dense vegetation on dry ground
+A1-041,3,green cropland
+A1-042,3,green cropland
+A1-043,3,green cropland
+A1-044,3,green cropland
+A1-046,3,green cropland
+A1-047,3,green vegetation on dry ground
+A1-053,4,bare cultivated ground
+A1-056,4,bare cultivated ground
+A1-059,4,bare dry ground
+A1-060,4,bare dry ground
+A2-002,1,open water beside the reed fringe
+A2-003,1,open lake
+A2-005,1,open lake
+A2-006,1,open water beside the reed fringe
+A2-008,1,open water beside the shore
+A2-009,1,open water beside the reed fringe
+A2-011,1,open lake
+A2-012,1,open lake
+A2-013,1,open water beside the shore
+A2-014,1,open lake
+A2-015,1,open lake
+A2-016,1,open lake
+A2-017,2,reed marsh near open water
+A2-018,2,reed marsh near open water
+A2-019,2,reed marsh near open water
+A2-020,2,reed fringe at the open-water edge
+A2-021,2,reed marsh at the open-water edge
+A2-024,2,reed clumps standing in water
+A2-027,2,reed clumps standing in water
+A2-028,2,reed marsh near open water
+A2-031,2,reed marsh at the open-water edge
+A2-034,3,dense vegetation on dry ground
+A2-035,3,dense vegetation on dry ground
+A2-039,3,green cropland
+A2-040,3,green cropland
+A2-047,4,bare cultivated ground
+A2-051,4,bare ground
+A2-052,4,bare cultivated ground
+A2-055,4,bare dry ground
+A2-056,4,bare dry ground
+A3-003,1,open water among reed clumps
+A3-005,1,open water beside the reed fringe
+A3-006,1,open water among reed clumps
+A3-007,1,open lake
+A3-008,1,open lake
+A3-009,1,open water beside the reed fringe
+A3-010,1,open lake
+A3-011,1,open lake
+A3-012,1,open water beside the reed fringe
+A3-013,1,open water among reed clumps
+A3-014,1,open lake
+A3-016,1,open water beside the reed fringe
+A3-017,1,open lake
+A3-018,1,open lake
+A3-019,2,reed fringe at the open-water edge
+A3-022,2,reed marsh near open water
+A3-023,2,reed marsh near open water
+A3-026,2,reed clumps standing in water
+A3-027,2,reed fringe at the open-water edge
+A3-028,2,reed marsh at the open-water edge
+A3-029,2,emergent vegetation patch in open water
+A3-035,2,reed clumps standing in water
+A3-039,2,reed marsh near open water
+A3-041,2,reed clumps standing in water
+A3-042,2,reed clumps standing in water
+A3-049,3,green cropland
+A3-050,3,dense vegetation on dry ground
+A3-051,3,green cropland
+A3-052,3,grassland
+A3-053,3,green cropland
+A3-054,3,grassland
+A3-056,3,green cropland
+A3-057,3,grassland
+A3-064,4,bare cultivated ground
+A3-073,4,bare sandy shore
+A3-074,4,bare ground
+A3-076,4,bare dry ground
+A3-078,4,bare dry ground
+A4-001,1,open lake
+A4-002,1,open water among reed clumps
+A4-012,1,open lake
+A4-013,1,open lake
+A4-014,1,open lake
+A4-015,1,open lake
+A4-016,1,open lake
+A4-017,1,open water beside the shore
+A4-025,2,emergent vegetation at the open-water edge
+A4-029,2,reed fringe at the open-water edge
+A4-031,2,reed fringe at the open-water edge
+A4-032,2,reed fringe at the open-water edge
+A4-034,3,dense vegetation on dry ground
+A4-035,3,dense vegetation on dry ground
+A4-036,3,dense vegetation on dry ground
+A4-037,3,dense vegetation on dry ground
+A4-038,3,green vegetation on dry ground
+A4-039,3,dense vegetation on dry ground
+A4-040,3,green vegetation on dry ground
+A4-041,3,green vegetation on dry ground
+A4-049,4,bare sandy shore
+A4-050,4,bare sandy shore
+A4-051,4,bare sandy shore
+A4-052,4,bare dry ground
+A4-053,4,bare dry ground
+A5-001,1,open lake
+A5-003,1,open lake
+A5-006,1,open lake
+A5-008,1,open lake
+A5-011,1,open lake
+A5-013,1,open lake
+A5-020,1,open lake
+A5-026,1,open lake
+A5-030,1,open lake
+A5-005,1,open water beside a reed island
+A5-007,1,open water beside a reed island
+A5-010,1,open water beside a reed island
+A5-012,1,open water beside a reed island
+A5-014,1,open water beside a reed island
+A5-028,1,open water beside a reed island
+A5-009,1,open lake
+A5-029,1,open water beside the reed fringe
+A5-031,2,floating reed island in open water
+A5-033,2,floating reed island in open water
+A5-036,2,floating reed island in open water
+A5-039,2,floating reed island in open water
+A5-041,2,floating reed island in open water
+A5-042,2,floating reed island in open water
+A5-043,2,floating reed island in open water
+A5-044,2,floating reed island in open water
+A5-047,2,floating reed island in open water
+A5-048,2,floating reed island in open water
+A5-054,2,floating reed island in open water
+A5-056,2,floating reed island in open water
+A5-057,2,floating reed island in open water
+A5-058,2,floating reed island in open water
+A5-050,2,reed marsh near open water
+A5-055,2,reed clumps standing in water
+A6-019,3,green cropland
+A6-020,3,green cropland
+A6-021,3,green cropland
+A6-022,3,green cropland
+A6-023,3,green cropland
+A6-024,3,green cropland
+A6-025,3,green cropland
+A6-035,4,bare ground
+A6-036,4,bare dry ground
