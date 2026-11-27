@@ -1,0 +1,196 @@
+id,code,feature
+0220-12,1,open water beside the reed fringe
+0220-15,1,open lake
+0220-25,1,open lake
+0220-33,1,open lake
+0220-35,1,open water beside the reed fringe
+0220-38,1,open lake
+0220-47,1,open water beside the reed fringe
+0220-06,2,reed marsh at the shore
+0220-27,2,reed clumps standing in water
+0220-30,2,reed clumps at the open-water edge
+0220-31,2,emergent vegetation in shallow water
+0220-43,2,reed marsh near open water
+0220-45,2,reed marsh near open water
+0220-11,3,green cropland
+0220-01,4,bare cultivated ground
+0220-03,4,bare cultivated ground
+0220-05,4,bare cultivated ground
+0220-10,4,bare cultivated ground
+0220-20,4,bare cultivated ground
+0220-29,4,bare cultivated ground
+0220-42,4,bare cultivated ground
+0222-17,1,open lake
+0222-18,1,open water beside the reed fringe
+0222-25,1,open lake
+0222-28,1,open water beside the reed fringe
+0222-31,1,open lake
+0222-45,1,open lake
+0222-04,2,reed marsh near open water
+0222-22,2,reed marsh at the open-water edge
+0222-27,2,wet grassland at the marsh edge
+0222-36,2,reed marsh near open water
+0222-05,3,green cropland
+0222-20,3,green cropland
+0222-23,3,green cropland
+0222-29,3,green cropland
+0222-13,4,bare cultivated ground
+0222-24,4,bare cultivated ground
+0222-32,4,bare cultivated ground
+0222-37,4,bare cultivated ground
+0222-41,4,bare cultivated ground
+0222-47,4,bare cultivated ground
+0329-02,1,open lake
+0329-11,1,open lake
+0329-17,1,open water beside the reed fringe
+0329-20,1,open lake
+0329-32,1,open water beside reed clumps
+0329-38,1,open lake
+0329-46,1,open lake
+0329-07,2,reed marsh near open water
+0329-10,2,reed fringe at the open-water edge
+0329-16,2,reed fringe at the open-water edge
+0329-50,2,emergent vegetation at the open-water edge
+0329-06,3,green cropland
+0329-21,3,green cropland
+0329-22,3,green cropland
+0329-23,3,green cropland
+0329-24,3,green cropland
+0329-25,3,green cropland
+0329-30,3,green cropland
+0329-40,3,green cropland
+0329-44,3,green cropland
+0329-47,3,green cropland
+0329-01,4,bare cultivated ground
+0329-04,4,bare cultivated ground
+0329-13,4,bare cultivated ground
+0329-28,4,bare cultivated ground
+0329-34,4,bare cultivated ground
+0329-36,4,bare cultivated ground
+0329-39,4,bare cultivated ground
+0419-06,1,open lake
+0419-11,1,open lake
+0419-17,1,open water beside the reed fringe
+0419-18,1,open water beside the reed fringe
+0419-29,1,open water beside the reed fringe
+0419-34,1,open lake
+0419-39,1,open lake
+0419-46,1,open water beside the shore
+0419-13,2,emergent vegetation at the open-water edge
+0419-38,2,reed fringe at the open-water edge
+0419-43,2,reed fringe at the open-water edge
+0419-01,3,green cropland
+0419-02,3,grassland
+0419-04,3,green cropland
+0419-05,3,green cropland
+0419-10,3,green cropland
+0419-25,3,green cropland
+0419-30,3,green cropland
+0419-32,3,green cropland
+0419-40,3,green cropland
+0419-08,4,bare cultivated ground
+0419-15,4,bare cultivated ground
+0419-19,4,bare cultivated ground
+0419-23,4,bare cultivated ground
+0419-26,4,bare cultivated ground
+0419-27,4,bare cultivated ground
+0419-48,4,bare cultivated ground
+0520-08,1,open lake
+0520-18,1,open water beside the reed fringe
+0520-19,1,open lake
+0520-22,1,open water among reed clumps
+0520-23,1,open water among reed clumps
+0520-26,1,open lake
+0520-30,1,open lake
+0520-33,1,open water beside the reed fringe
+0520-34,1,open water beside the shore
+0520-43,1,open water beside the reed fringe
+0520-03,2,emergent vegetation patch in open water
+0520-10,2,reed clumps standing in water
+0520-11,2,reed fringe at the open-water edge
+0520-13,2,reed clumps standing in water
+0520-35,2,reed clumps standing in water
+0520-37,2,reed fringe at the open-water edge
+0520-07,3,green cropland
+0520-15,3,green cropland
+0520-24,3,green cropland
+0520-31,3,green cropland
+0520-32,3,green cropland
+0520-36,3,green cropland
+0520-39,3,green cropland
+0520-41,3,green cropland
+0520-48,3,green cropland
+0520-04,4,bare cultivated ground
+0520-05,4,bare cultivated ground
+0520-14,4,bare ground
+0520-17,4,bare cultivated ground
+0520-29,4,bare cultivated ground
+0926-02,1,open lake
+0926-07,1,open water beside the reed fringe
+0926-10,1,open lake
+0926-14,1,open water beside the reed fringe
+0926-20,1,open lake
+0926-21,1,open water beside the reed fringe
+0926-34,1,open lake
+0926-35,1,open water beside the reed fringe
+0926-40,1,open water beside the reed fringe
+0926-44,1,open lake
+0926-01,2,reed clumps standing in water
+0926-08,2,reed marsh at the open-water edge
+0926-17,2,reed fringe at the open-water edge
+0926-19,2,reed marsh at the open-water edge
+0926-27,2,reed marsh near open water
+0926-32,2,reed clumps standing in water
+0926-38,2,reed clumps standing in water
+0926-41,2,reed clumps standing in water
+0926-48,2,reed clumps standing in water
+0926-06,3,green garden vegetation
+0926-11,3,green vegetation on dry ground
+0926-22,3,green vegetation on dry ground
+0926-29,3,green vegetation on dry ground
+0926-31,3,green vegetation on dry ground
+0926-36,3,green vegetation on dry ground
+0926-37,3,green vegetation on dry ground
+0926-39,3,green vegetation on dry ground
+0926-42,3,green vegetation on dry ground
+0926-04,4,bare dry ground
+0926-05,4,bare dry ground
+0926-15,4,bare dry ground
+0926-16,4,bare dry ground
+0926-26,4,bare dry ground
+0926-28,4,bare dry ground
+0926-30,4,bare dry ground
+0926-43,4,bare dry ground
+0926-45,4,bare dry ground
+0926-46,4,bare dry ground
+0220-S03,2,reed marsh near open water
+0220-S04,2,wet grassland at the marsh edge
+0220-S05,2,reed marsh at the open-water edge
+0220-S09,2,reed clumps standing in water
+0220-S12,2,reed marsh near open water
+0220-S13,2,reed marsh near open water
+0220-S18,2,reed marsh near open water
+0220-S19,2,reed clumps standing in water
+0220-S06,3,dense vegetation on dry ground
+0220-S10,3,green cropland
+0220-S11,3,green cropland
+0222-S03,2,reed marsh near open water
+0222-S09,2,reed marsh near open water
+0222-S11,2,reed clumps standing in water
+0222-S12,2,reed marsh at the open-water edge
+0329-S03,2,reed marsh near open water
+0329-S04,2,reed clumps standing in water
+0329-S10,2,reed clumps standing in water
+0419-S02,2,reed clumps standing in water
+0419-S04,2,reed fringe at the open-water edge
+0419-S06,2,emergent vegetation patch in open water
+0419-S09,2,reed marsh near open water
+0419-S11,2,reed clumps standing in water
+0520-S03,2,reed clumps standing in water
+0520-S04,2,reed clumps standing in water
+0520-S05,2,reed marsh at the open-water edge
+0520-S06,2,reed fringe at the open-water edge
+0520-S08,2,reed marsh near open water
+0520-S09,2,reed clumps standing in water
+0520-S11,2,reed fringe at the open-water edge
+0520-S12,2,reed marsh near open water
