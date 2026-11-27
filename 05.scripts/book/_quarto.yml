@@ -12,9 +12,9 @@
 # at the repository root so that coauthors opening the repo see the manuscript
 # and its data, not a website project.
 #
-# Everything in 01.manuscript/Archive/book/ is generated from the master by
+# Everything in 01.manuscript/archive/book/ is generated from the master by
 # 05.scripts/split_manuscript.R and is git-ignored. Edit
-# 01.manuscript/Manuscript_2026-08-03.qmd, then run 05.scripts/build_book.sh.
+# 01.manuscript/manuscript.qmd, then run 05.scripts/build_book.sh.
 
 project:
   type: book

@@ -6,7 +6,7 @@ Seamus Murphy, John Wilson, Lauren K Banks
 
 Corresponding author: seamusrobertmurphy\@gmail.com
 
-> Outputs mirrored from the master manuscript `01.manuscript/Manuscript_2026-08-03.qmd`, last revised 26 September 2026. Latest draft `01.manuscript/Manuscript_2026-09-26.docx`. Coauthor workplan `03.outputs/HTML/chilwa-workplan.html`, rendered from `03.outputs/HTML/chilwa-workplan.qmd`.
+> Outputs mirrored from the master manuscript `01.manuscript/manuscript.qmd`, last revised 26 September 2026. Coauthor workplan `03.outputs/HTML/chilwa-workplan.html`, rendered from `03.outputs/HTML/chilwa-workplan.qmd`.
 
 ## Abstract
 

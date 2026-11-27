@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # Generate the Quarto book chapters from the master manuscript.
 #
-# The master at 01.manuscript/Manuscript_2026-08-03.qmd stays the single
+# The master at 01.manuscript/manuscript.qmd stays the single
 # canonical file. The chapters this writes are build artefacts, regenerated on
 # every render, exactly as the DOCX is, so they cannot drift away from it.
 # Nothing here edits the master.
@@ -13,8 +13,8 @@
 #
 # Run from the repository root:  Rscript 05.scripts/split_manuscript.R
 
-master  <- "01.manuscript/Manuscript_2026-08-03.qmd"
-out_dir <- "01.manuscript/Archive/book"   # generated pages, git-ignored
+master  <- "01.manuscript/manuscript.qmd"
+out_dir <- "01.manuscript/archive/book"   # generated pages, git-ignored
 
 stopifnot(file.exists(master))
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)

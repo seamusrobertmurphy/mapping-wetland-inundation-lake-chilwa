@@ -264,7 +264,7 @@ ee_py <- Sys.getenv("EARTHENGINE_PYTHON",unset = Sys.getenv("RETICULATE_PYTHON",
 Sys.setenv(RETICULATE_PYTHON = ee_py)
 reticulate::use_python(ee_py, required = TRUE)
 library(rgee)
-rgee::ee_Initialize(user = "seamusrobertmurphy", drive = TRUE, project = "murphys-deforisk")
+rgee::ee_Initialize(user = "seamusrobertmurphy", drive = FALSE, project = "murphys-deforisk")
 # gcs = TRUE also works once a Service Account Key is configured (see above).
 # `ee` and rgee helpers (ee_as_sf, sf_as_ee, ee_extract, Map$addLayer) available.
 

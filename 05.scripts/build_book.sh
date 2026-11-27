@@ -12,9 +12,9 @@
 # into _book reported as "No such file or directory". So the render happens in
 # ~/chilwa-book, which is APFS, and the shadows are swept before and after.
 #
-# The chapters are generated into 01.manuscript/Archive/book/, so nothing there
+# The chapters are generated into 01.manuscript/archive/book/, so nothing there
 # is source, and they are staged as chapters/ for the render. The master at
-# 01.manuscript/Manuscript_2026-08-03.qmd is the only file to edit.
+# 01.manuscript/manuscript.qmd is the only file to edit.
 #
 # Usage:  ./05.scripts/build_book.sh          frozen, nothing executes
 #         ./05.scripts/build_book.sh --live   keep the master's own eval settings
@@ -37,8 +37,8 @@ mkdir -p "$STAGE/chapters" "$STAGE/03.outputs/PNG" "$STAGE/04.references" "$STAG
 
 cp 05.scripts/book/_quarto.yml "$STAGE/_quarto.yml"
 cp 05.scripts/book/styles.css "$STAGE/styles.css"
-cp 01.manuscript/Archive/book/index.qmd "$STAGE/index.qmd"
-cp 01.manuscript/Archive/book/0[1-5]-*.qmd "$STAGE/chapters/"
+cp 01.manuscript/archive/book/index.qmd "$STAGE/index.qmd"
+cp 01.manuscript/archive/book/0[1-5]-*.qmd "$STAGE/chapters/"
 cp 04.references/references.bib 04.references/apa.csl "$STAGE/04.references/"
 cp 05.scripts/_common.R        "$STAGE/05.scripts/"
 
