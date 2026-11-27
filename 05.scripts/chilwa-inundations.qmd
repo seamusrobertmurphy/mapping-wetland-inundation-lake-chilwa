@@ -194,7 +194,7 @@ reticulate::use_python("/opt/local/bin/python", required = TRUE)
 
 # GEE: Initialize and Authentical
 ee <- reticulate::import("ee")
-ee$Initialize(project = "murphys-deforisk")
+ee$Initialize(project = "manuscripts-december")
 
 # Helpers to handle earth engine objects in tmap/leaflet
 ee_tile_url <- function(ee_image, vis_params) {

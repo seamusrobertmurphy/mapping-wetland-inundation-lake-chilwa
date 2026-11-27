@@ -24,7 +24,7 @@ ee_py <- Sys.getenv("EARTHENGINE_PYTHON", unset = Sys.getenv("RETICULATE_PYTHON"
 Sys.setenv(RETICULATE_PYTHON = ee_py)
 reticulate::use_python(ee_py, required = TRUE)
 ee_Initialize(user = "seamusrobertmurphy", drive = FALSE,
-              project = "murphys-deforisk", quiet = TRUE)
+              project = "manuscripts-december", quiet = TRUE)
 
 basin <- st_read(here::here("03.outputs", "JSON", "chilwa_basin.geojson"), quiet = TRUE)
 aoi   <- sf_as_ee(st_geometry(basin))

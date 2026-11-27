@@ -53,7 +53,7 @@ extract_spec_df <- function(ref_all, training, ee, scale = 30L) {
   df
 }
 # Example (uncomment in the notebook, after Methods objects exist):
-# ee <- reticulate::import("ee"); ee$Initialize(project = Sys.getenv("EE_PROJECT","murphys-deforisk"))
+# ee <- reticulate::import("ee"); ee$Initialize(project = Sys.getenv("EE_PROJECT","manuscripts-december"))
 # spec_df <- extract_spec_df(ref_all, training, ee)
 # write.csv(spec_df, "03.outputs/training_spectra.csv", row.names = FALSE)
 #

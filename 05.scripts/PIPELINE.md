@@ -9,7 +9,7 @@ reconstructing it from memory.
 Everything runs against `python3` (3.12, MacPorts) with `earthengine-api`,
 `rasterio`, `geopandas`, `scipy`, `numpy` and `matplotlib`, authenticated as
 `seamusrobertmurphy@gmail.com` under the Earth Engine project
-`murphys-deforisk`. No virtual environment is needed and none should be created.
+`manuscripts-december`. No virtual environment is needed and none should be created.
 
 ## Order of execution
 

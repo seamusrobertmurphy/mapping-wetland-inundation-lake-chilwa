@@ -26,7 +26,7 @@
 
 # ------------------------- CONFIG (edit here) --------------------------------
 cfg <- list(
-  ee_project   = Sys.getenv("EE_PROJECT", unset = "murphys-deforisk"),
+  ee_project   = Sys.getenv("EE_PROJECT", unset = "manuscripts-december"),
   python       = Sys.getenv("RETICULATE_PYTHON", unset = ""),  # "" = let reticulate choose
   lon          = 35.55,     # point inside Lake Chilwa (lon)
   lat          = -15.35,    # point inside Lake Chilwa (lat)

@@ -32,7 +32,7 @@ import rasterio
 import requests
 import ee
 
-ee.Initialize(project="murphys-deforisk")
+ee.Initialize(project="manuscripts-december")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRATCH = os.path.join(ROOT, "03.outputs", "TIF", "wofs_2012")

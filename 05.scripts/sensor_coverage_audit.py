@@ -1,6 +1,6 @@
 import ee, json
 
-ee.Initialize(project="murphys-deforisk")
+ee.Initialize(project="manuscripts-december")
 
 aoi = ee.FeatureCollection(
     json.load(open("/Volumes/PortableSSD/Github/mapping-wetland-inundation-lake-chilwa/03.outputs/JSON/chilwa_basin.geojson"))

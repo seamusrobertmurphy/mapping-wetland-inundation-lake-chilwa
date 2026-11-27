@@ -11,7 +11,7 @@ reports the fraction of the basin at each count.
 import json
 import ee
 
-ee.Initialize(project="murphys-deforisk")
+ee.Initialize(project="manuscripts-december")
 
 with open("03.outputs/JSON/chilwa_basin.geojson") as fh:
     gj = json.load(fh)

@@ -1,6 +1,6 @@
 import ee, json, urllib.request, os
 
-ee.Initialize(project="murphys-deforisk")
+ee.Initialize(project="manuscripts-december")
 
 OUT = "/Volumes/PortableSSD/Github/mapping-wetland-inundation-lake-chilwa/02.inputs/L7_2012_RGB"
 os.makedirs(OUT, exist_ok=True)

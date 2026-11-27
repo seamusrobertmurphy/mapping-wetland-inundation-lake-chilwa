@@ -33,7 +33,7 @@
 
 # ------------------------- CONFIG --------------------------------------------
 cfg <- list(
-  ee_project = Sys.getenv("EE_PROJECT", unset = "murphys-deforisk"),
+  ee_project = Sys.getenv("EE_PROJECT", unset = "manuscripts-december"),
   scheme     = "SCHEME_3",          # "SCHEME_3" or "SCHEME_4"
   ref_start  = "2020-06-01",         # reference composite window (dry season)
   ref_end    = "2020-10-31",

@@ -49,7 +49,7 @@ import sma_harmonic_flooded_veg as S
 
 COMPOSITE_DAYS = 45   # Landsat looks either side of the mosaic date
 
-ee.Initialize(project="murphys-deforisk")
+ee.Initialize(project="manuscripts-december")
 
 ROOT = H.ROOT
 OUT = os.path.join(ROOT, "03.outputs", "CSV", "palsar_flooded_vegetation.csv")

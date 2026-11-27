@@ -6,7 +6,7 @@
 
 ## Prerequisites
 
-You need R (4.x) with the packages `reticulate`, `sf`, and `jsonlite`, and a Python environment with the Earth Engine API (`earthengine-api`) installed and visible to reticulate. You need a Google Earth Engine account with access to a cloud project; the script defaults to `murphys-deforisk` but reads the `EE_PROJECT` environment variable if set. You must have completed a one-time `ee$Authenticate()` (or `earthengine authenticate` at the command line) under that account before the first run.
+You need R (4.x) with the packages `reticulate`, `sf`, and `jsonlite`, and a Python environment with the Earth Engine API (`earthengine-api`) installed and visible to reticulate. You need a Google Earth Engine account with access to a cloud project; the script defaults to `manuscripts-december` but reads the `EE_PROJECT` environment variable if set. You must have completed a one-time `ee$Authenticate()` (or `earthengine authenticate` at the command line) under that account before the first run.
 
 ## One-time setup
 

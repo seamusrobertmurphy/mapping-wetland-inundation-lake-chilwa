@@ -40,7 +40,7 @@ import ee
 
 import harmonic_open_water_series as H
 
-ee.Initialize(project="murphys-deforisk")
+ee.Initialize(project="manuscripts-december")
 
 ROOT = H.ROOT
 AOI = H.AOI

@@ -51,7 +51,7 @@ import time
 import ee
 import geopandas as gpd
 
-ee.Initialize(project="murphys-deforisk")
+ee.Initialize(project="manuscripts-december")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "03.outputs", "CSV", "avhrr_index_16day.csv")

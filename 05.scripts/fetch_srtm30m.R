@@ -9,7 +9,7 @@ if (Sys.getenv("PROJ_DATA") == "") {
 suppressPackageStartupMessages({library(rgee); library(sf); library(terra)})
 ee_py <- Sys.getenv("EARTHENGINE_PYTHON", unset = Sys.getenv("RETICULATE_PYTHON"))
 Sys.setenv(RETICULATE_PYTHON = ee_py); reticulate::use_python(ee_py, required = TRUE)
-ee_Initialize(user="seamusrobertmurphy", drive=FALSE, project="murphys-deforisk", quiet=TRUE)
+ee_Initialize(user="seamusrobertmurphy", drive=FALSE, project="manuscripts-december", quiet=TRUE)
 
 basin <- st_read("03.outputs/JSON/chilwa_basin.geojson", quiet = TRUE)
 bb <- as.numeric(st_bbox(basin)); pad <- 0.05

@@ -41,7 +41,7 @@ knitr::opts_chunk$set(
 # GEE
 reticulate::use_python("/opt/local/bin/python", required = TRUE)
 ee <- reticulate::import("ee")
-ee$Initialize(project = "murphys-deforisk")
+ee$Initialize(project = "manuscripts-december")
 
 # Helpers
 ee_tile_url <- function(ee_image, vis_params) {

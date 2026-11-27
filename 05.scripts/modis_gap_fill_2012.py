@@ -17,7 +17,7 @@ import os
 
 import ee
 
-ee.Initialize(project="murphys-deforisk")
+ee.Initialize(project="manuscripts-december")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASIN = os.path.join(ROOT, "03.outputs", "JSON", "chilwa_basin.geojson")
