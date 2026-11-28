@@ -1989,6 +1989,121 @@ if (!all(file.exists(c("03.outputs/PNG/training_points_chilwa_2012_sitemap.png",
 }
 ```
 
+```{r chilwa-points-spectra}
+#| echo: true
+#| eval: true
+#| output: false
+if (!file.exists("03.outputs/CSV/training_points_chilwa_2012_spectra.csv")) {
+  pts <- readr::read_csv("03.outputs/CSV/training_points_chilwa_2012.csv", show_col_types = FALSE)
+  feat <- c("blue", "green", "red", "nir", "swir1", "swir2", "NDWI", "MNDWI", "AWEIsh", "WRI", "NDPI", "NDVI")
+  prep <- function(img) {
+    qa <- img$select("QA_PIXEL")
+    bad <- qa$bitwiseAnd(2L)$Or(qa$bitwiseAnd(4L))$Or(qa$bitwiseAnd(8L))$Or(qa$bitwiseAnd(16L))$Or(qa$bitwiseAnd(32L))
+    sr <- img$select(c("SR_B1", "SR_B2", "SR_B3", "SR_B4", "SR_B5", "SR_B7"), c("blue", "green", "red", "nir", "swir1", "swir2"))$multiply(0.0000275)$add(-0.2)$updateMask(bad$eq(0))
+    rgee::ee$Image(compute_indices(sr))$addBands(sr$normalizedDifference(c("nir", "red"))$rename("NDVI"))
+  }
+  spec <- dplyr::bind_rows(lapply(sort(unique(as.character(pts$date))), function(d) {
+    p <- dplyr::filter(pts, as.character(date) == d)
+    fc <- rgee::ee$FeatureCollection(lapply(seq_len(nrow(p)), function(i) rgee::ee$Feature(rgee::ee$Geometry$Point(c(p$lon[i], p$lat[i])), list(id = p$id[i]))))
+    t0 <- rgee::ee$Date(d)
+    # Landsat 7 ETM+ Collection 2 Tier 1 Level 2 surface reflectance, the imagery the labels were read on
+    # https://doi.org/10.5066/P9TU80IG ; no inputs manifest row exists for it
+    med <- rgee::ee$ImageCollection("LANDSAT/LE07/C02/T1_L2")$filterBounds(fc$geometry())$filterDate(t0$advance(-24, "day"), t0$advance(24, "day"))$map(prep)$median()
+    got <- med$select(feat)$sampleRegions(collection = fc, properties = list("id"), scale = 30L, geometries = FALSE)$getInfo()$features
+    dplyr::bind_rows(lapply(got, function(f) as.data.frame(f$properties)))
+  }))
+  pts |> dplyr::select(id, area, date, code, class) |> dplyr::left_join(spec, by = "id") |> readr::write_csv("03.outputs/CSV/training_points_chilwa_2012_spectra.csv")
+}
+```
+
+```{r chilwa-points-diagnostics}
+#| echo: true
+#| eval: true
+#| output: false
+if (!file.exists("03.outputs/TABLES/training_points_chilwa_2012_diagnostics.xlsx")) {
+  cl <- c("open water", "flooded vegetation", "dry vegetation", "bare soil")
+  feat <- c("blue", "green", "red", "nir", "swir1", "swir2", "NDWI", "MNDWI", "AWEIsh", "WRI", "NDPI", "NDVI")
+  bands <- feat[1:6]
+  s <- readr::read_csv("03.outputs/CSV/training_points_chilwa_2012_spectra.csv", show_col_types = FALSE) |>
+    dplyr::left_join(dplyr::select(readr::read_csv("03.outputs/CSV/training_points_chilwa_2012.csv", show_col_types = FALSE), id, lon, lat), by = "id") |>
+    dplyr::mutate(class = factor(class, levels = cl), date = as.character(date))
+  pairs <- utils::combn(cl, 2, simplify = FALSE); pair_name <- vapply(pairs, paste, "", collapse = " vs ")
+  set.seed(2016)
+  cramer <- function(t) unname(sqrt(suppressWarnings(stats::chisq.test(t))$statistic / (sum(t) * (min(dim(t)) - 1))))
+  design <- dplyr::bind_rows(lapply(c("date", "area"), function(v) {
+    t <- table(s$class, s[[v]])
+    data.frame(factor = v, cramers_v = cramer(t), fisher_p = stats::fisher.test(t, simulate.p.value = TRUE, B = 1e5)$p.value)
+  }))
+  counts <- dplyr::bind_rows(lapply(c("date", "area"), function(v) as.data.frame.matrix(table(s$class, s[[v]])) |> tibble::rownames_to_column("class") |> dplyr::mutate(by = v, .before = 1) |> tidyr::pivot_longer(-c(by, class), names_to = "level", values_to = "n")))
+  xy <- terra::crds(terra::project(terra::vect(as.data.frame(s), geom = c("lon", "lat"), crs = "EPSG:4326"), "EPSG:32736"))
+  D <- as.matrix(stats::dist(xy)); diag(D) <- Inf
+  nn <- apply(D, 1, which.min); same <- mean(s$class[nn] == s$class)
+  perm <- replicate(9999, { k <- sample(s$class); mean(k[nn] == k) })
+  Dd <- D; Dd[outer(s$date, s$date, "!=")] <- Inf
+  spatial <- data.frame(measure = c("median nearest-neighbour distance, m", "minimum nearest-neighbour distance, m", "pairs closer than 90 m, any date", "pairs closer than 300 m, same date", "share of points whose nearest neighbour has the same class", "share expected under random labels", "permutation p, one-sided, 9,999 permutations"),
+    value = c(stats::median(apply(D, 1, min)), min(D), sum(D[upper.tri(D)] < 90), sum(Dd[upper.tri(Dd)] < 300), same, mean(perm), (sum(perm >= same) + 1) / 10000))
+  long <- tidyr::pivot_longer(s, dplyr::all_of(feat), names_to = "feature")
+  describe <- long |> dplyr::summarise(n = dplyr::n(), mean = mean(value), sd = stats::sd(value), median = stats::median(value), q1 = stats::quantile(value, 0.25), q3 = stats::quantile(value, 0.75), shapiro_w = stats::shapiro.test(value)$statistic, shapiro_p = stats::shapiro.test(value)$p.value, .by = c(feature, class))
+  kw <- dplyr::bind_rows(lapply(feat, function(f) { k <- stats::kruskal.test(s[[f]] ~ s$class); data.frame(feature = f, H = unname(k$statistic), df = unname(k$parameter), p = k$p.value, eta2_H = (unname(k$statistic) - 4 + 1) / (nrow(s) - 4)) }))
+  pairwise <- dplyr::bind_rows(lapply(feat, function(f) dplyr::bind_rows(lapply(seq_along(pairs), function(i) {
+    a <- s[[f]][s$class == pairs[[i]][1]]; b <- s[[f]][s$class == pairs[[i]][2]]; w <- stats::wilcox.test(a, b, exact = FALSE)
+    data.frame(feature = f, pair = pair_name[i], M = abs(mean(a) - mean(b)) / (stats::sd(a) + stats::sd(b)), W = unname(w$statistic), p = w$p.value)
+  })))) |> dplyr::mutate(p_holm = stats::p.adjust(p, "holm"), .by = feature)
+  jm <- function(a, b) { m <- colMeans(a) - colMeans(b); S1 <- stats::cov(a); S2 <- stats::cov(b); S <- (S1 + S2) / 2; ld <- function(M) as.numeric(determinant(M, logarithm = TRUE)$modulus); B <- drop(t(m) %*% solve(S, m)) / 8 + 0.5 * (ld(S) - (ld(S1) + ld(S2)) / 2); 2 * (1 - exp(-B)) }
+  X <- as.matrix(s[, bands]) * 10000
+  jm_tbl <- dplyr::bind_rows(lapply(seq_along(pairs), function(i) {
+    a <- X[s$class == pairs[[i]][1], ]; b <- X[s$class == pairs[[i]][2], ]
+    boot <- replicate(2000, tryCatch(jm(a[sample(nrow(a), replace = TRUE), ], b[sample(nrow(b), replace = TRUE), ]), error = function(e) NA_real_))
+    data.frame(pair = pair_name[i], n_a = nrow(a), n_b = nrow(b), JM = jm(a, b), ci_low = stats::quantile(boot, 0.025, na.rm = TRUE), ci_high = stats::quantile(boot, 0.975, na.rm = TRUE), boot_failed = sum(is.na(boot)))
+  }))
+  best <- pairwise |> dplyr::summarise(best_feature = feature[which.max(M)], best_M = max(M), features_M_over_1 = sum(M > 1), features_p_holm_under_0.05 = sum(p_holm < 0.05), .by = pair) |> dplyr::left_join(jm_tbl, by = "pair")
+  rho <- stats::cor(s[, feat], method = "spearman"); hi <- which(abs(rho) >= 0.95 & upper.tri(rho), arr.ind = TRUE)
+  redundant <- data.frame(feature_a = rownames(rho)[hi[, 1]], feature_b = colnames(rho)[hi[, 2]], spearman_rho = rho[hi])
+  fz <- setdiff(feat, "NDPI")
+  pca <- stats::prcomp(s[, fz], scale. = TRUE)
+  pca_tbl <- data.frame(component = paste0("PC", 1:6), variance_share = summary(pca)$importance[2, 1:6], cumulative = summary(pca)$importance[3, 1:6])
+  set.seed(123)
+  cvl <- glmnet::cv.glmnet(as.matrix(s[, fz]), s$class, family = "multinomial", alpha = 1, nfolds = 10)
+  co <- stats::coef(cvl, s = "lambda.1se")
+  lasso <- data.frame(feature = fz, importance = sapply(fz, function(f) mean(abs(sapply(co, function(m) m[f, 1]))))) |> dplyr::arrange(dplyr::desc(importance))
+  date_eff <- dplyr::bind_rows(lapply(cl, function(k) dplyr::bind_rows(lapply(feat, function(f) { d <- s[s$class == k, ]; t <- stats::kruskal.test(d[[f]] ~ factor(d$date)); data.frame(class = k, feature = f, H = unname(t$statistic), df = unname(t$parameter), p = t$p.value) }))))
+  ld <- MASS::lda(class ~ ., data = data.frame(class = s$class, scale(X)), CV = TRUE)
+  md <- unlist(lapply(cl, function(k) { i <- which(s$class == k); stats::setNames(stats::mahalanobis(X[i, ], colMeans(X[i, ]), stats::cov(X[i, ])), i) }))
+  md <- md[order(as.integer(names(md)))]
+  check <- data.frame(id = s$id, date = s$date, class = s$class, loo_class = ld$class, loo_posterior = apply(ld$posterior, 1, max), mahalanobis_d2 = md, outlier = md > stats::qchisq(0.975, length(bands))) |> dplyr::filter(class != loo_class | outlier)
+  loo <- data.frame(measure = c("leave-one-out agreement, all classes", paste("leave-one-out agreement,", cl)), value = c(mean(ld$class == s$class), sapply(cl, function(k) mean(ld$class[s$class == k] == k))))
+  sheets <- list(
+    design_counts = list("Training points per class by photograph date and by sampling area.", counts),
+    design_tests = list("Association of class with date and with area. Cramer's V and Fisher's exact test, p simulated from 100,000 tables.", design),
+    spatial = list("Spacing and spatial clustering of classes. Nearest neighbours measured in UTM zone 36S.", spatial),
+    describe = list("Feature statistics per class, with the Shapiro-Wilk test of normality. Reflectance as a fraction, indices unitless.", describe),
+    kruskal = list("Kruskal-Wallis test of class differences per feature, with effect size eta squared H.", kw),
+    pairwise = list("Separability index M and Wilcoxon rank-sum test per feature and class pair, p adjusted by Holm within feature.", pairwise),
+    pair_summary = list("Best single feature, count of separating features and Jeffries-Matusita distance on six reflectance bands per class pair, with 95% bootstrap interval from 2,000 resamples. JM ranges from 0 to 2.", best),
+    redundancy = list("Feature pairs with Spearman rho of 0.95 or more in absolute value.", redundant),
+    pca = list("Principal components of the 11 standardised features, NDPI excluded.", pca_tbl),
+    lasso = list("Multinomial LASSO, mean absolute coefficient at lambda.1se, 10-fold cross-validation.", lasso),
+    date_effect = list("Kruskal-Wallis test of differences between photograph dates within each class.", date_eff),
+    loo_agreement = list("Leave-one-out linear discriminant analysis on six reflectance bands.", loo),
+    flagged = list("Points whose leave-one-out class differs from their label, or whose within-class Mahalanobis distance exceeds the chi-square 0.975 quantile, 6 df.", check))
+  wb <- openxlsx::createWorkbook()
+  for (n in names(sheets)) { openxlsx::addWorksheet(wb, n); openxlsx::writeData(wb, n, sheets[[n]][[1]], startRow = 1); openxlsx::writeData(wb, n, sheets[[n]][[2]], startRow = 3) }
+  openxlsx::saveWorkbook(wb, "03.outputs/TABLES/training_points_chilwa_2012_diagnostics.xlsx", overwrite = TRUE)
+  cols <- c("open water" = "#2563eb", "flooded vegetation" = "#10b981", "dry vegetation" = "#334155", "bare soil" = "#94a3b8")
+  g1 <- ggplot2::ggplot(dplyr::mutate(long, feature = factor(feature, levels = feat)), ggplot2::aes(class, value, fill = class)) +
+    ggplot2::geom_boxplot(outlier.shape = NA, width = 0.6, alpha = 0.85) + ggplot2::geom_jitter(width = 0.15, size = 0.7, alpha = 0.6) +
+    ggplot2::facet_wrap(~feature, scales = "free_y", ncol = 4) + ggplot2::scale_fill_manual(values = cols) +
+    ggplot2::labs(x = NULL, y = NULL, fill = NULL) + ggplot2::theme_bw(base_size = 10) +
+    ggplot2::theme(axis.text.x = ggplot2::element_blank(), axis.ticks.x = ggplot2::element_blank(), legend.position = "bottom")
+  ggplot2::ggsave("03.outputs/PNG/training_points_chilwa_2012_spectra.png", g1, width = 9, height = 7, dpi = 200)
+  g2 <- ggplot2::ggplot(dplyr::mutate(pairwise, feature = factor(feature, levels = rev(feat)), pair = factor(pair, levels = pair_name)), ggplot2::aes(pair, feature, fill = pmin(M, 2))) +
+    ggplot2::geom_tile(colour = "white") + ggplot2::geom_text(ggplot2::aes(label = sprintf("%.2f", M)), size = 2.8) +
+    ggplot2::scale_fill_gradient2(low = "#f8fafc", mid = "#a7f3d0", high = "#10b981", midpoint = 1, limits = c(0, 2), name = "M") +
+    ggplot2::scale_x_discrete(labels = function(x) sub(" vs ", "\nvs ", x)) + ggplot2::labs(x = NULL, y = NULL) + ggplot2::theme_minimal(base_size = 10)
+  ggplot2::ggsave("03.outputs/PNG/training_points_chilwa_2012_separability.png", g2, width = 9.5, height = 5.5, dpi = 200)
+}
+```
+
 ```{r rf-classify}
 #| eval: true
 # The separability/LASSO-selected subset from 2.2.F: SAR VV/VH and the SMA
