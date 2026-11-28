@@ -1834,9 +1834,9 @@ if (!file.exists("03.outputs/SHP/training_points_chilwa_2012.shp")) {
     pool <- dplyr::filter(lab, area == q$area[i], code == q$code[i])
     for (s in seq_len(q$take[i])) { pool <- pool[order(load[pool$date], pool$id), ]; picked <- c(picked, pool$id[1]); load[pool$date[1]] <- load[pool$date[1]] + 1; pool <- pool[-1, ] }
   }
-  pts <- dplyr::filter(lab, id %in% picked) |> dplyr::transmute(id, area, date = as.Date(date), code, class = c("open water", "flooded vegetation", "dry vegetation", "bare soil")[code], feature, lon, lat)
+  pts <- dplyr::filter(lab, id %in% picked) |> dplyr::transmute(cand = id, id = area * 1000L + as.integer(sub(".*-", "", cand)), area, date = as.Date(date), code, class = c("open water", "flooded vegetation", "dry vegetation", "bare soil")[code], feature, lon, lat) |> dplyr::relocate(id)
   readr::write_csv(pts, "03.outputs/CSV/training_points_chilwa_2012.csv")
-  sf::st_write(sf::st_as_sf(dplyr::select(pts, date, code, class, feature, lon, lat), coords = c("lon", "lat"), crs = 4326), "03.outputs/SHP/training_points_chilwa_2012.shp", quiet = TRUE)
+  sf::st_write(sf::st_as_sf(dplyr::select(pts, id, date, code, class, feature, lon, lat), coords = c("lon", "lat"), crs = 4326), "03.outputs/SHP/training_points_chilwa_2012.shp", quiet = TRUE)
 }
 ```
 

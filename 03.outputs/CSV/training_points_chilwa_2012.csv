@@ -1,112 +1,112 @@
-id,area,date,code,class,feature,lon,lat
-A1-002,1,2012-02-20,1,open water,open lake,35.737244,-15.497399
-A1-007,1,2012-03-29,1,open water,open lake,35.684655,-15.482328
-A1-008,1,2012-03-29,1,open water,open lake,35.691832,-15.497144
-A1-010,1,2012-04-19,1,open water,open lake,35.752218,-15.488678
-A1-014,1,2012-05-20,1,open water,open water beside the shore,35.675153,-15.460495
-A1-016,1,2012-09-26,1,open water,open water beside the reed fringe,35.677035,-15.46562
-A1-020,1,2012-02-20,2,flooded vegetation,reed marsh near open water,35.73047,-15.524172
-A1-021,1,2012-02-20,2,flooded vegetation,reed marsh near open water,35.716427,-15.540197
-A1-022,1,2012-02-22,2,flooded vegetation,reed marsh near open water,35.716684,-15.538432
-A1-023,1,2012-02-22,2,flooded vegetation,reed marsh near open water,35.763391,-15.519969
-A1-031,1,2012-05-20,2,flooded vegetation,reed marsh at the open-water edge,35.726211,-15.519077
-A1-036,1,2012-09-26,2,flooded vegetation,reed marsh at the open-water edge,35.705952,-15.508487
-A1-039,1,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.731528,-15.561958
-A1-041,1,2012-03-29,3,dry vegetation,green cropland,35.663243,-15.468632
-A1-043,1,2012-04-19,3,dry vegetation,green cropland,35.700106,-15.54243
-A1-044,1,2012-04-19,3,dry vegetation,green cropland,35.665267,-15.484866
-A1-053,1,2012-03-29,4,bare soil,bare cultivated ground,35.660731,-15.468797
-A1-056,1,2012-04-19,4,bare soil,bare cultivated ground,35.685648,-15.515916
-A1-059,1,2012-09-26,4,bare soil,bare dry ground,35.63682,-15.522195
-A2-002,2,2012-02-20,1,open water,open water beside the reed fringe,35.83344,-15.431026
-A2-003,2,2012-02-20,1,open water,open lake,35.842058,-15.468982
-A2-005,2,2012-02-22,1,open water,open lake,35.845646,-15.46582
-A2-011,2,2012-05-20,1,open water,open lake,35.827676,-15.428254
-A2-012,2,2012-05-20,1,open water,open lake,35.844824,-15.395251
-A2-014,2,2012-09-26,1,open water,open lake,35.831246,-15.403147
-A2-017,2,2012-02-20,2,flooded vegetation,reed marsh near open water,35.858734,-15.442351
-A2-020,2,2012-02-22,2,flooded vegetation,reed fringe at the open-water edge,35.839345,-15.43393
-A2-021,2,2012-02-22,2,flooded vegetation,reed marsh at the open-water edge,35.843729,-15.407187
-A2-024,2,2012-04-19,2,flooded vegetation,reed clumps standing in water,35.821393,-15.418038
-A2-027,2,2012-05-20,2,flooded vegetation,reed clumps standing in water,35.821834,-15.419658
-A2-031,2,2012-09-26,2,flooded vegetation,reed marsh at the open-water edge,35.836096,-15.410671
-A2-034,2,2012-02-20,3,dry vegetation,dense vegetation on dry ground,35.887494,-15.421388
-A2-035,2,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.870931,-15.435556
-A2-039,2,2012-04-19,3,dry vegetation,green cropland,35.876817,-15.416785
-A2-047,2,2012-02-22,4,bare soil,bare cultivated ground,35.851422,-15.418332
-A2-051,2,2012-04-19,4,bare soil,bare ground,35.84226,-15.422378
-A2-055,2,2012-09-26,4,bare soil,bare dry ground,35.860551,-15.452623000000001
-A2-056,2,2012-09-26,4,bare soil,bare dry ground,35.84806,-15.438018
-A3-003,3,2012-02-20,1,open water,open water among reed clumps,35.568615,-15.294147
-A3-007,3,2012-03-29,1,open water,open lake,35.55429,-15.355963
-A3-008,3,2012-03-29,1,open water,open lake,35.571193,-15.322301
-A3-009,3,2012-03-29,1,open water,open water beside the reed fringe,35.556211,-15.307297
-A3-013,3,2012-05-20,1,open water,open water among reed clumps,35.572931,-15.293149
-A3-014,3,2012-05-20,1,open water,open lake,35.567241,-15.318824
-A3-019,3,2012-02-20,2,flooded vegetation,reed fringe at the open-water edge,35.59756,-15.343268
-A3-022,3,2012-02-20,2,flooded vegetation,reed marsh near open water,35.58216,-15.260253
-A3-023,3,2012-02-22,2,flooded vegetation,reed marsh near open water,35.594127,-15.280032
-A3-026,3,2012-02-22,2,flooded vegetation,reed clumps standing in water,35.579532,-15.296461
-A3-027,3,2012-03-29,2,flooded vegetation,reed fringe at the open-water edge,35.543695,-15.322887
-A3-028,3,2012-03-29,2,flooded vegetation,reed marsh at the open-water edge,35.569739,-15.248878
-A3-029,3,2012-03-29,2,flooded vegetation,emergent vegetation patch in open water,35.568144,-15.255401
-A3-035,3,2012-05-20,2,flooded vegetation,reed clumps standing in water,35.59929,-15.313846
-A3-039,3,2012-09-26,2,flooded vegetation,reed marsh near open water,35.584035,-15.265245
-A3-041,3,2012-09-26,2,flooded vegetation,reed clumps standing in water,35.579956,-15.296862
-A3-052,3,2012-04-19,3,dry vegetation,grassland,35.513911,-15.295717
-A3-053,3,2012-04-19,3,dry vegetation,green cropland,35.521183,-15.354985
-A3-054,3,2012-04-19,3,dry vegetation,grassland,35.511131,-15.331792
-A3-056,3,2012-05-20,3,dry vegetation,green cropland,35.530539,-15.355014
-A3-057,3,2012-05-20,3,dry vegetation,grassland,35.511466,-15.313089
-A3-064,3,2012-02-22,4,bare soil,bare cultivated ground,35.522035,-15.321236
-A3-073,3,2012-05-20,4,bare soil,bare sandy shore,35.598346,-15.327813
-A3-074,3,2012-05-20,4,bare soil,bare ground,35.527237,-15.324293
-A3-076,3,2012-09-26,4,bare soil,bare dry ground,35.507865,-15.280338
-A3-078,3,2012-09-26,4,bare soil,bare dry ground,35.529028,-15.357064
-A4-001,4,2012-02-20,1,open water,open lake,35.652704,-15.353729
-A4-002,4,2012-02-20,1,open water,open water among reed clumps,35.619049,-15.375806
-A4-012,4,2012-04-19,1,open water,open lake,35.635418,-15.344856
-A4-013,4,2012-05-20,1,open water,open lake,35.636256,-15.322626
-A4-016,4,2012-09-26,1,open water,open lake,35.660641,-15.352009
-A4-017,4,2012-09-26,1,open water,open water beside the shore,35.602565,-15.35283
-A4-025,4,2012-04-19,2,flooded vegetation,emergent vegetation at the open-water edge,35.621445,-15.355183
-A4-029,4,2012-05-20,2,flooded vegetation,reed fringe at the open-water edge,35.61779,-15.353194
-A4-031,4,2012-09-26,2,flooded vegetation,reed fringe at the open-water edge,35.620733,-15.320506
-A4-032,4,2012-09-26,2,flooded vegetation,reed fringe at the open-water edge,35.612038,-15.351093
-A4-034,4,2012-02-20,3,dry vegetation,dense vegetation on dry ground,35.613826,-15.326413
-A4-036,4,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.615789,-15.327067
-A4-037,4,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.611196,-15.339451
-A4-049,4,2012-04-19,4,bare soil,bare sandy shore,35.607622,-15.321472
-A4-050,4,2012-05-20,4,bare soil,bare sandy shore,35.626798,-15.325447
-A4-051,4,2012-05-20,4,bare soil,bare sandy shore,35.608303,-15.320109
-A4-052,4,2012-09-26,4,bare soil,bare dry ground,35.623711,-15.34662
-A5-001,5,2012-02-20,1,open water,open lake,35.714409,-15.201245
-A5-003,5,2012-02-20,1,open water,open lake,35.663211,-15.123815
-A5-005,5,2012-02-20,1,open water,open water beside a reed island,35.706286,-15.155007
-A5-006,5,2012-02-22,1,open water,open lake,35.701176,-15.213869
-A5-007,5,2012-02-22,1,open water,open water beside a reed island,35.656081,-15.178366
-A5-008,5,2012-02-22,1,open water,open lake,35.646559,-15.186743
-A5-011,5,2012-03-29,1,open water,open lake,35.684701,-15.191034
-A5-012,5,2012-03-29,1,open water,open water beside a reed island,35.680496,-15.167373
-A5-013,5,2012-03-29,1,open water,open lake,35.699315,-15.221072
-A5-014,5,2012-03-29,1,open water,open water beside a reed island,35.689337,-15.171468
-A5-020,5,2012-04-19,1,open water,open lake,35.611749,-15.169671
-A5-031,5,2012-02-20,2,flooded vegetation,floating reed island in open water,35.663561,-15.174078
-A5-033,5,2012-02-20,2,flooded vegetation,floating reed island in open water,35.661513,-15.177625
-A5-036,5,2012-02-22,2,flooded vegetation,floating reed island in open water,35.674021,-15.173818
-A5-039,5,2012-02-22,2,flooded vegetation,floating reed island in open water,35.698031,-15.153074
-A5-041,5,2012-03-29,2,flooded vegetation,floating reed island in open water,35.672643,-15.17519
-A5-042,5,2012-03-29,2,flooded vegetation,floating reed island in open water,35.680182,-15.175642
-A5-043,5,2012-03-29,2,flooded vegetation,floating reed island in open water,35.668307,-15.174293
-A5-044,5,2012-03-29,2,flooded vegetation,floating reed island in open water,35.676094,-15.172303
-A5-047,5,2012-04-19,2,flooded vegetation,floating reed island in open water,35.657722,-15.197993
-A5-048,5,2012-04-19,2,flooded vegetation,floating reed island in open water,35.702445,-15.149092
-A5-050,5,2012-04-19,2,flooded vegetation,reed marsh near open water,35.600447,-15.169531
-A5-054,5,2012-05-20,2,flooded vegetation,floating reed island in open water,35.679779,-15.176866
-A5-055,5,2012-05-20,2,flooded vegetation,reed clumps standing in water,35.682705,-15.154476
-A5-056,5,2012-09-26,2,flooded vegetation,floating reed island in open water,35.656842,-15.127549
-A6-019,6,2012-02-20,3,dry vegetation,green cropland,35.504421,-15.083083
-A6-021,6,2012-02-22,3,dry vegetation,green cropland,35.514802,-15.088253
-A6-025,6,2012-04-19,3,dry vegetation,green cropland,35.528677,-15.164521
-A6-035,6,2012-05-20,4,bare soil,bare ground,35.498529,-15.115941
-A6-036,6,2012-09-26,4,bare soil,bare dry ground,35.527152,-15.165352
+id,cand,area,date,code,class,feature,lon,lat
+1002,A1-002,1,2012-02-20,1,open water,open lake,35.737244,-15.497399
+1007,A1-007,1,2012-03-29,1,open water,open lake,35.684655,-15.482328
+1008,A1-008,1,2012-03-29,1,open water,open lake,35.691832,-15.497144
+1010,A1-010,1,2012-04-19,1,open water,open lake,35.752218,-15.488678
+1014,A1-014,1,2012-05-20,1,open water,open water beside the shore,35.675153,-15.460495
+1016,A1-016,1,2012-09-26,1,open water,open water beside the reed fringe,35.677035,-15.46562
+1020,A1-020,1,2012-02-20,2,flooded vegetation,reed marsh near open water,35.73047,-15.524172
+1021,A1-021,1,2012-02-20,2,flooded vegetation,reed marsh near open water,35.716427,-15.540197
+1022,A1-022,1,2012-02-22,2,flooded vegetation,reed marsh near open water,35.716684,-15.538432
+1023,A1-023,1,2012-02-22,2,flooded vegetation,reed marsh near open water,35.763391,-15.519969
+1031,A1-031,1,2012-05-20,2,flooded vegetation,reed marsh at the open-water edge,35.726211,-15.519077
+1036,A1-036,1,2012-09-26,2,flooded vegetation,reed marsh at the open-water edge,35.705952,-15.508487
+1039,A1-039,1,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.731528,-15.561958
+1041,A1-041,1,2012-03-29,3,dry vegetation,green cropland,35.663243,-15.468632
+1043,A1-043,1,2012-04-19,3,dry vegetation,green cropland,35.700106,-15.54243
+1044,A1-044,1,2012-04-19,3,dry vegetation,green cropland,35.665267,-15.484866
+1053,A1-053,1,2012-03-29,4,bare soil,bare cultivated ground,35.660731,-15.468797
+1056,A1-056,1,2012-04-19,4,bare soil,bare cultivated ground,35.685648,-15.515916
+1059,A1-059,1,2012-09-26,4,bare soil,bare dry ground,35.63682,-15.522195
+2002,A2-002,2,2012-02-20,1,open water,open water beside the reed fringe,35.83344,-15.431026
+2003,A2-003,2,2012-02-20,1,open water,open lake,35.842058,-15.468982
+2005,A2-005,2,2012-02-22,1,open water,open lake,35.845646,-15.46582
+2011,A2-011,2,2012-05-20,1,open water,open lake,35.827676,-15.428254
+2012,A2-012,2,2012-05-20,1,open water,open lake,35.844824,-15.395251
+2014,A2-014,2,2012-09-26,1,open water,open lake,35.831246,-15.403147
+2017,A2-017,2,2012-02-20,2,flooded vegetation,reed marsh near open water,35.858734,-15.442351
+2020,A2-020,2,2012-02-22,2,flooded vegetation,reed fringe at the open-water edge,35.839345,-15.43393
+2021,A2-021,2,2012-02-22,2,flooded vegetation,reed marsh at the open-water edge,35.843729,-15.407187
+2024,A2-024,2,2012-04-19,2,flooded vegetation,reed clumps standing in water,35.821393,-15.418038
+2027,A2-027,2,2012-05-20,2,flooded vegetation,reed clumps standing in water,35.821834,-15.419658
+2031,A2-031,2,2012-09-26,2,flooded vegetation,reed marsh at the open-water edge,35.836096,-15.410671
+2034,A2-034,2,2012-02-20,3,dry vegetation,dense vegetation on dry ground,35.887494,-15.421388
+2035,A2-035,2,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.870931,-15.435556
+2039,A2-039,2,2012-04-19,3,dry vegetation,green cropland,35.876817,-15.416785
+2047,A2-047,2,2012-02-22,4,bare soil,bare cultivated ground,35.851422,-15.418332
+2051,A2-051,2,2012-04-19,4,bare soil,bare ground,35.84226,-15.422378
+2055,A2-055,2,2012-09-26,4,bare soil,bare dry ground,35.860551,-15.452623000000001
+2056,A2-056,2,2012-09-26,4,bare soil,bare dry ground,35.84806,-15.438018
+3003,A3-003,3,2012-02-20,1,open water,open water among reed clumps,35.568615,-15.294147
+3007,A3-007,3,2012-03-29,1,open water,open lake,35.55429,-15.355963
+3008,A3-008,3,2012-03-29,1,open water,open lake,35.571193,-15.322301
+3009,A3-009,3,2012-03-29,1,open water,open water beside the reed fringe,35.556211,-15.307297
+3013,A3-013,3,2012-05-20,1,open water,open water among reed clumps,35.572931,-15.293149
+3014,A3-014,3,2012-05-20,1,open water,open lake,35.567241,-15.318824
+3019,A3-019,3,2012-02-20,2,flooded vegetation,reed fringe at the open-water edge,35.59756,-15.343268
+3022,A3-022,3,2012-02-20,2,flooded vegetation,reed marsh near open water,35.58216,-15.260253
+3023,A3-023,3,2012-02-22,2,flooded vegetation,reed marsh near open water,35.594127,-15.280032
+3026,A3-026,3,2012-02-22,2,flooded vegetation,reed clumps standing in water,35.579532,-15.296461
+3027,A3-027,3,2012-03-29,2,flooded vegetation,reed fringe at the open-water edge,35.543695,-15.322887
+3028,A3-028,3,2012-03-29,2,flooded vegetation,reed marsh at the open-water edge,35.569739,-15.248878
+3029,A3-029,3,2012-03-29,2,flooded vegetation,emergent vegetation patch in open water,35.568144,-15.255401
+3035,A3-035,3,2012-05-20,2,flooded vegetation,reed clumps standing in water,35.59929,-15.313846
+3039,A3-039,3,2012-09-26,2,flooded vegetation,reed marsh near open water,35.584035,-15.265245
+3041,A3-041,3,2012-09-26,2,flooded vegetation,reed clumps standing in water,35.579956,-15.296862
+3052,A3-052,3,2012-04-19,3,dry vegetation,grassland,35.513911,-15.295717
+3053,A3-053,3,2012-04-19,3,dry vegetation,green cropland,35.521183,-15.354985
+3054,A3-054,3,2012-04-19,3,dry vegetation,grassland,35.511131,-15.331792
+3056,A3-056,3,2012-05-20,3,dry vegetation,green cropland,35.530539,-15.355014
+3057,A3-057,3,2012-05-20,3,dry vegetation,grassland,35.511466,-15.313089
+3064,A3-064,3,2012-02-22,4,bare soil,bare cultivated ground,35.522035,-15.321236
+3073,A3-073,3,2012-05-20,4,bare soil,bare sandy shore,35.598346,-15.327813
+3074,A3-074,3,2012-05-20,4,bare soil,bare ground,35.527237,-15.324293
+3076,A3-076,3,2012-09-26,4,bare soil,bare dry ground,35.507865,-15.280338
+3078,A3-078,3,2012-09-26,4,bare soil,bare dry ground,35.529028,-15.357064
+4001,A4-001,4,2012-02-20,1,open water,open lake,35.652704,-15.353729
+4002,A4-002,4,2012-02-20,1,open water,open water among reed clumps,35.619049,-15.375806
+4012,A4-012,4,2012-04-19,1,open water,open lake,35.635418,-15.344856
+4013,A4-013,4,2012-05-20,1,open water,open lake,35.636256,-15.322626
+4016,A4-016,4,2012-09-26,1,open water,open lake,35.660641,-15.352009
+4017,A4-017,4,2012-09-26,1,open water,open water beside the shore,35.602565,-15.35283
+4025,A4-025,4,2012-04-19,2,flooded vegetation,emergent vegetation at the open-water edge,35.621445,-15.355183
+4029,A4-029,4,2012-05-20,2,flooded vegetation,reed fringe at the open-water edge,35.61779,-15.353194
+4031,A4-031,4,2012-09-26,2,flooded vegetation,reed fringe at the open-water edge,35.620733,-15.320506
+4032,A4-032,4,2012-09-26,2,flooded vegetation,reed fringe at the open-water edge,35.612038,-15.351093
+4034,A4-034,4,2012-02-20,3,dry vegetation,dense vegetation on dry ground,35.613826,-15.326413
+4036,A4-036,4,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.615789,-15.327067
+4037,A4-037,4,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.611196,-15.339451
+4049,A4-049,4,2012-04-19,4,bare soil,bare sandy shore,35.607622,-15.321472
+4050,A4-050,4,2012-05-20,4,bare soil,bare sandy shore,35.626798,-15.325447
+4051,A4-051,4,2012-05-20,4,bare soil,bare sandy shore,35.608303,-15.320109
+4052,A4-052,4,2012-09-26,4,bare soil,bare dry ground,35.623711,-15.34662
+5001,A5-001,5,2012-02-20,1,open water,open lake,35.714409,-15.201245
+5003,A5-003,5,2012-02-20,1,open water,open lake,35.663211,-15.123815
+5005,A5-005,5,2012-02-20,1,open water,open water beside a reed island,35.706286,-15.155007
+5006,A5-006,5,2012-02-22,1,open water,open lake,35.701176,-15.213869
+5007,A5-007,5,2012-02-22,1,open water,open water beside a reed island,35.656081,-15.178366
+5008,A5-008,5,2012-02-22,1,open water,open lake,35.646559,-15.186743
+5011,A5-011,5,2012-03-29,1,open water,open lake,35.684701,-15.191034
+5012,A5-012,5,2012-03-29,1,open water,open water beside a reed island,35.680496,-15.167373
+5013,A5-013,5,2012-03-29,1,open water,open lake,35.699315,-15.221072
+5014,A5-014,5,2012-03-29,1,open water,open water beside a reed island,35.689337,-15.171468
+5020,A5-020,5,2012-04-19,1,open water,open lake,35.611749,-15.169671
+5031,A5-031,5,2012-02-20,2,flooded vegetation,floating reed island in open water,35.663561,-15.174078
+5033,A5-033,5,2012-02-20,2,flooded vegetation,floating reed island in open water,35.661513,-15.177625
+5036,A5-036,5,2012-02-22,2,flooded vegetation,floating reed island in open water,35.674021,-15.173818
+5039,A5-039,5,2012-02-22,2,flooded vegetation,floating reed island in open water,35.698031,-15.153074
+5041,A5-041,5,2012-03-29,2,flooded vegetation,floating reed island in open water,35.672643,-15.17519
+5042,A5-042,5,2012-03-29,2,flooded vegetation,floating reed island in open water,35.680182,-15.175642
+5043,A5-043,5,2012-03-29,2,flooded vegetation,floating reed island in open water,35.668307,-15.174293
+5044,A5-044,5,2012-03-29,2,flooded vegetation,floating reed island in open water,35.676094,-15.172303
+5047,A5-047,5,2012-04-19,2,flooded vegetation,floating reed island in open water,35.657722,-15.197993
+5048,A5-048,5,2012-04-19,2,flooded vegetation,floating reed island in open water,35.702445,-15.149092
+5050,A5-050,5,2012-04-19,2,flooded vegetation,reed marsh near open water,35.600447,-15.169531
+5054,A5-054,5,2012-05-20,2,flooded vegetation,floating reed island in open water,35.679779,-15.176866
+5055,A5-055,5,2012-05-20,2,flooded vegetation,reed clumps standing in water,35.682705,-15.154476
+5056,A5-056,5,2012-09-26,2,flooded vegetation,floating reed island in open water,35.656842,-15.127549
+6019,A6-019,6,2012-02-20,3,dry vegetation,green cropland,35.504421,-15.083083
+6021,A6-021,6,2012-02-22,3,dry vegetation,green cropland,35.514802,-15.088253
+6025,A6-025,6,2012-04-19,3,dry vegetation,green cropland,35.528677,-15.164521
+6035,A6-035,6,2012-05-20,4,bare soil,bare ground,35.498529,-15.115941
+6036,A6-036,6,2012-09-26,4,bare soil,bare dry ground,35.527152,-15.165352
