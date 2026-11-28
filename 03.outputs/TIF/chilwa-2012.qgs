@@ -3568,7 +3568,7 @@
       </spatialrefsys>
     </DefaultViewExtent>
   </ProjectViewSettings>
-  <ProjectStyleSettings projectStyleId="attachment:///wLDVvY_styles.db" iccProfileId="attachment:///qt_temp-jlYFom" colorModel="Rgb" RandomizeDefaultSymbolColor="1" DefaultSymbolOpacity="1">
+  <ProjectStyleSettings iccProfileId="attachment:///" colorModel="Rgb" RandomizeDefaultSymbolColor="1" DefaultSymbolOpacity="1">
     <databases/>
   </ProjectStyleSettings>
   <ProjectTimeSettings timeStep="1" frameRate="1" cumulativeTemporalRange="0" timeStepUnit="h" totalMovieFrames="100"/>
