@@ -11,7 +11,9 @@ id,cand,area,date,code,class,feature,lon,lat
 1023,A1-023,1,2012-02-22,2,flooded vegetation,reed marsh near open water,35.763391,-15.519969
 1031,A1-031,1,2012-05-20,2,flooded vegetation,reed marsh at the open-water edge,35.726211,-15.519077
 1036,A1-036,1,2012-09-26,2,flooded vegetation,reed marsh at the open-water edge,35.705952,-15.508487
+1037,A1-037,1,2012-02-20,3,dry vegetation,dense vegetation on dry ground,35.742023,-15.531345
 1039,A1-039,1,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.731528,-15.561958
+1040,A1-040,1,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.705326,-15.556862
 1041,A1-041,1,2012-03-29,3,dry vegetation,green cropland,35.663243,-15.468632
 1043,A1-043,1,2012-04-19,3,dry vegetation,green cropland,35.700106,-15.54243
 1044,A1-044,1,2012-04-19,3,dry vegetation,green cropland,35.665267,-15.484866
@@ -30,12 +32,7 @@ id,cand,area,date,code,class,feature,lon,lat
 2024,A2-024,2,2012-04-19,2,flooded vegetation,reed clumps standing in water,35.821393,-15.418038
 2027,A2-027,2,2012-05-20,2,flooded vegetation,reed clumps standing in water,35.821834,-15.419658
 2031,A2-031,2,2012-09-26,2,flooded vegetation,reed marsh at the open-water edge,35.836096,-15.410671
-2034,A2-034,2,2012-02-20,3,dry vegetation,dense vegetation on dry ground,35.887494,-15.421388
-2035,A2-035,2,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.870931,-15.435556
-2039,A2-039,2,2012-04-19,3,dry vegetation,green cropland,35.876817,-15.416785
-2047,A2-047,2,2012-02-22,4,bare soil,bare cultivated ground,35.851422,-15.418332
 2051,A2-051,2,2012-04-19,4,bare soil,bare ground,35.84226,-15.422378
-2055,A2-055,2,2012-09-26,4,bare soil,bare dry ground,35.860551,-15.452623000000001
 2056,A2-056,2,2012-09-26,4,bare soil,bare dry ground,35.84806,-15.438018
 3003,A3-003,3,2012-02-20,1,open water,open water among reed clumps,35.568615,-15.294147
 3007,A3-007,3,2012-03-29,1,open water,open lake,35.55429,-15.355963
@@ -74,12 +71,15 @@ id,cand,area,date,code,class,feature,lon,lat
 4031,A4-031,4,2012-09-26,2,flooded vegetation,reed fringe at the open-water edge,35.620733,-15.320506
 4032,A4-032,4,2012-09-26,2,flooded vegetation,reed fringe at the open-water edge,35.612038,-15.351093
 4034,A4-034,4,2012-02-20,3,dry vegetation,dense vegetation on dry ground,35.613826,-15.326413
+4035,A4-035,4,2012-02-20,3,dry vegetation,dense vegetation on dry ground,35.607181,-15.342208
 4036,A4-036,4,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.615789,-15.327067
 4037,A4-037,4,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.611196,-15.339451
+4038,A4-038,4,2012-04-19,3,dry vegetation,green vegetation on dry ground,35.625519,-15.334811
 4049,A4-049,4,2012-04-19,4,bare soil,bare sandy shore,35.607622,-15.321472
 4050,A4-050,4,2012-05-20,4,bare soil,bare sandy shore,35.626798,-15.325447
 4051,A4-051,4,2012-05-20,4,bare soil,bare sandy shore,35.608303,-15.320109
 4052,A4-052,4,2012-09-26,4,bare soil,bare dry ground,35.623711,-15.34662
+4053,A4-053,4,2012-09-26,4,bare soil,bare dry ground,35.627068,-15.324767
 5001,A5-001,5,2012-02-20,1,open water,open lake,35.714409,-15.201245
 5003,A5-003,5,2012-02-20,1,open water,open lake,35.663211,-15.123815
 5005,A5-005,5,2012-02-20,1,open water,open water beside a reed island,35.706286,-15.155007
@@ -105,8 +105,8 @@ id,cand,area,date,code,class,feature,lon,lat
 5054,A5-054,5,2012-05-20,2,flooded vegetation,floating reed island in open water,35.679779,-15.176866
 5055,A5-055,5,2012-05-20,2,flooded vegetation,reed clumps standing in water,35.682705,-15.154476
 5056,A5-056,5,2012-09-26,2,flooded vegetation,floating reed island in open water,35.656842,-15.127549
-6019,A6-019,6,2012-02-20,3,dry vegetation,green cropland,35.504421,-15.083083
-6021,A6-021,6,2012-02-22,3,dry vegetation,green cropland,35.514802,-15.088253
 6025,A6-025,6,2012-04-19,3,dry vegetation,green cropland,35.528677,-15.164521
-6035,A6-035,6,2012-05-20,4,bare soil,bare ground,35.498529,-15.115941
 6036,A6-036,6,2012-09-26,4,bare soil,bare dry ground,35.527152,-15.165352
+1101,A1-101,1,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.705602,-15.567291
+1105,A1-105,1,2012-02-22,4,bare soil,bare cultivated ground,35.665167,-15.520635
+3112,A3-112,3,2012-05-20,4,bare soil,bare ground,35.564232,-15.369669

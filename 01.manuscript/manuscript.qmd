@@ -1761,26 +1761,26 @@ print(paste("Total training samples:", training$size()$getInfo()))
 #| echo: true
 #| eval: true
 #| output: false
+areas <- dplyr::tibble(area = 1:6, x = c(35.70, 35.83, 35.565, 35.635, 35.66, 35.545), y = c(-15.515, -15.42, -15.31, -15.335, -15.185, -15.12), km = c(7, 7, 7, 5, 7, 6))
+dates <- c("2012-02-20", "2012-02-22", "2012-03-29", "2012-04-19", "2012-05-20", "2012-09-26")
+centres <- terra::geom(terra::project(terra::vect(as.matrix(areas[, c("x", "y")]), crs = "EPSG:4326"), "EPSG:32736"))[, c("x", "y")]
+box <- terra::ext(min(centres[, 1]) - 7500, max(centres[, 1]) + 7500, min(centres[, 2]) - 7500, max(centres[, 2]) + 7500)
+town <- terra::buffer(terra::project(terra::vect(cbind(35.578, -15.377), crs = "EPSG:4326"), "EPSG:32736"), 1500)
+layers <- function(d) {
+  rgb <- terra::crop(terra::project(terra::rast(sprintf("03.outputs/TIF/pansharpened_15m/%s_rgb15_near.tif", d)), "EPSG:32736", res = 15, method = "near"), box)
+  m30 <- terra::crop(terra::project(terra::rast(sprintf("03.outputs/TIF/ground_truth_aid/%s_mndwi_near.tif", d)), "EPSG:32736", res = 30, method = "near"), box) / 10000
+  m <- terra::resample(m30, rgb, method = "near")
+  valid <- all(rgb > 0) & !is.na(m)
+  b <- terra::mean(rgb)
+  cloud <- terra::focal(b > terra::global(b, quantile, probs = 0.98, na.rm = TRUE)[[1]] & (max(rgb) - min(rgb)) / max(rgb) < 0.25, w = 11, fun = "max", na.rm = TRUE)
+  edge <- terra::focal(!valid, w = 7, fun = "max", na.rm = TRUE)
+  valid <- valid & cloud == 0 & edge == 0
+  land_b <- terra::mask(b, terra::ifel(valid & !(m > 0), 1, NA))
+  list(rgb = rgb, m = m, valid = valid, b = b, g = rgb[[2]] - rgb[[1]], town = terra::rasterize(town, rgb, background = 0), to_water = terra::resample(terra::distance(terra::ifel(m30 > 0, 1, NA)), rgb, method = "near"), to_land = terra::resample(terra::distance(terra::ifel(m30 > 0, NA, 1)), rgb, method = "near"), b85 = terra::global(land_b, quantile, probs = 0.85, na.rm = TRUE)[[1]], b50 = terra::global(land_b, quantile, probs = 0.5, na.rm = TRUE)[[1]])
+}
+zone <- function(L, k) switch(k, L$m > 0.05 & L$to_land <= 800, L$m > -0.30 & L$m <= 0.05 & L$to_water <= 500 & L$b < L$b50, L$m <= -0.30 & L$g > 0 & L$to_water > 500 & L$town == 0, L$m <= -0.20 & L$g <= 0 & L$b >= L$b85 & L$town == 0)
 if (!file.exists("03.outputs/CSV/training_points_chilwa_2012_candidates.csv")) {
-  areas <- dplyr::tibble(area = 1:6, x = c(35.70, 35.83, 35.565, 35.635, 35.66, 35.545), y = c(-15.515, -15.42, -15.31, -15.335, -15.185, -15.12), km = c(7, 7, 7, 5, 7, 6))
   quota <- dplyr::tibble(area = rep(1:6, each = 4), code = rep(1:4, 6), n = c(6, 6, 4, 3, 6, 6, 3, 4, 6, 8, 5, 5, 6, 6, 3, 4, 9, 10, 0, 0, 2, 4, 3, 2))
-  dates <- c("2012-02-20", "2012-02-22", "2012-03-29", "2012-04-19", "2012-05-20", "2012-09-26")
-  centres <- terra::geom(terra::project(terra::vect(as.matrix(areas[, c("x", "y")]), crs = "EPSG:4326"), "EPSG:32736"))[, c("x", "y")]
-  box <- terra::ext(min(centres[, 1]) - 7500, max(centres[, 1]) + 7500, min(centres[, 2]) - 7500, max(centres[, 2]) + 7500)
-  town <- terra::buffer(terra::project(terra::vect(cbind(35.578, -15.377), crs = "EPSG:4326"), "EPSG:32736"), 1500)
-  layers <- function(d) {
-    rgb <- terra::crop(terra::project(terra::rast(sprintf("03.outputs/TIF/pansharpened_15m/%s_rgb15_near.tif", d)), "EPSG:32736", res = 15, method = "near"), box)
-    m30 <- terra::crop(terra::project(terra::rast(sprintf("03.outputs/TIF/ground_truth_aid/%s_mndwi_near.tif", d)), "EPSG:32736", res = 30, method = "near"), box) / 10000
-    m <- terra::resample(m30, rgb, method = "near")
-    valid <- all(rgb > 0) & !is.na(m)
-    b <- terra::mean(rgb)
-    cloud <- terra::focal(b > terra::global(b, quantile, probs = 0.98, na.rm = TRUE)[[1]] & (max(rgb) - min(rgb)) / max(rgb) < 0.25, w = 11, fun = "max", na.rm = TRUE)
-    edge <- terra::focal(!valid, w = 7, fun = "max", na.rm = TRUE)
-    valid <- valid & cloud == 0 & edge == 0
-    land_b <- terra::mask(b, terra::ifel(valid & !(m > 0), 1, NA))
-    list(rgb = rgb, m = m, valid = valid, b = b, g = rgb[[2]] - rgb[[1]], town = terra::rasterize(town, rgb, background = 0), to_water = terra::resample(terra::distance(terra::ifel(m30 > 0, 1, NA)), rgb, method = "near"), to_land = terra::resample(terra::distance(terra::ifel(m30 > 0, NA, 1)), rgb, method = "near"), b85 = terra::global(land_b, quantile, probs = 0.85, na.rm = TRUE)[[1]], b50 = terra::global(land_b, quantile, probs = 0.5, na.rm = TRUE)[[1]])
-  }
-  zone <- function(L, k) switch(k, L$m > 0.05 & L$to_land <= 800, L$m > -0.30 & L$m <= 0.05 & L$to_water <= 500 & L$b < L$b50, L$m <= -0.30 & L$g > 0 & L$to_water > 500 & L$town == 0, L$m <= -0.20 & L$g <= 0 & L$b >= L$b85 & L$town == 0)
   Ls <- lapply(setNames(dates, dates), layers)
   set.seed(2014)
   cand <- dplyr::bind_rows(lapply(dates, function(d) dplyr::bind_rows(lapply(which(quota$n > 0), function(i) {
@@ -1816,6 +1816,43 @@ if (!file.exists("03.outputs/CSV/training_points_chilwa_2012_candidates.csv")) {
 }
 ```
 
+```{r chilwa-candidates-extra}
+#| echo: true
+#| eval: true
+#| output: false
+if (!file.exists("03.outputs/CSV/training_points_chilwa_2012_candidates_extra.csv")) {
+  need <- dplyr::tibble(date = c("2012-02-22", "2012-02-22", "2012-05-20"), code = c(3L, 4L, 4L))
+  Lx <- lapply(setNames(unique(need$date), unique(need$date)), layers)
+  set.seed(2015)
+  extra <- dplyr::bind_rows(lapply(seq_len(nrow(need)), function(i) {
+    L <- Lx[[need$date[i]]]
+    cells <- which(terra::values(zone(L, need$code[i]) & L$valid & L$to_water <= 1500, mat = FALSE) %in% TRUE)
+    xy <- terra::xyFromCell(L$rgb, cells)
+    rel <- sapply(seq_len(nrow(areas)), function(a) sqrt((xy[, 1] - centres[a, 1])^2 + (xy[, 2] - centres[a, 2])^2) / (areas$km[a] * 1000))
+    home <- apply(rel, 1, function(r) if (min(r) <= 1) which.min(r) else 0L)
+    dplyr::bind_rows(lapply(c(1, 3, 4), function(a) {
+      k <- cells[home == a]; k <- k[sample.int(length(k), min(length(k), 4))]
+      dplyr::tibble(date = need$date[i], area = a, zone = need$code[i], cell = k, x = terra::xFromCell(L$rgb, k), y = terra::yFromCell(L$rgb, k), mndwi = terra::values(L$m)[k])
+    }))
+  })) |> dplyr::arrange(area, zone, date) |> dplyr::mutate(id = sprintf("A%d-%03d", area, 100 + dplyr::row_number()), .by = area)
+  png("03.outputs/PNG/training_points_chilwa/extra.png", width = 8 * 190, height = ceiling(nrow(extra) / 8) * 205)
+  par(mfrow = c(ceiling(nrow(extra) / 8), 8), mar = c(0.2, 0.2, 1.4, 0.2))
+  for (i in seq_len(nrow(extra))) {
+    L <- Lx[[extra$date[i]]]; rc <- terra::rowColFromCell(L$rgb, extra$cell[i])
+    A <- terra::as.array(L$rgb[max(1, rc[1] - 40):min(terra::nrow(L$rgb), rc[1] + 39), max(1, rc[2] - 40):min(terra::ncol(L$rgb), rc[2] + 39), drop = FALSE])
+    for (k in 1:3) { q <- quantile(terra::values(L$rgb[[k]]), c(0.02, 0.98), na.rm = TRUE); A[, , k] <- pmin(pmax((A[, , k] - q[1]) / (q[2] - q[1]), 0), 1) }
+    A[is.na(A)] <- 0
+    plot.new(); plot.window(c(0, 80), c(0, 80), asp = 1)
+    rasterImage(as.raster(A), 0, 0, 80, 80, interpolate = FALSE)
+    rect(38.5, 38.5, 41.5, 41.5, border = "red", lwd = 1.6); segments(c(40, 40, 30, 44), c(30, 44, 40, 40), c(40, 40, 36, 50), c(36, 50, 40, 40), col = "red", lwd = 1.2)
+    title(sprintf("%s %s %s", extra$id[i], c("OW", "FV", "DV", "BS")[extra$zone[i]], format(as.Date(extra$date[i]), "%d %b")), cex.main = 1.05, line = 0.3)
+  }
+  dev.off()
+  ll <- terra::geom(terra::project(terra::vect(as.data.frame(extra), geom = c("x", "y"), crs = "EPSG:32736"), "EPSG:4326"))
+  extra |> dplyr::mutate(lon = round(ll[, "x"], 6), lat = round(ll[, "y"], 6)) |> dplyr::select(id, date, area, zone, lon, lat, x, y, mndwi) |> readr::write_csv("03.outputs/CSV/training_points_chilwa_2012_candidates_extra.csv")
+}
+```
+
 ```{r chilwa-points}
 #| echo: true
 #| eval: true
@@ -1834,6 +1871,10 @@ if (!file.exists("03.outputs/SHP/training_points_chilwa_2012.shp")) {
     pool <- dplyr::filter(lab, area == q$area[i], code == q$code[i])
     for (s in seq_len(q$take[i])) { pool <- pool[order(load[pool$date], pool$id), ]; picked <- c(picked, pool$id[1]); load[pool$date[1]] <- load[pool$date[1]] + 1; pool <- pool[-1, ] }
   }
+  # Three points at Machinga mountain and five in the south-eastern interior, closed to travel during the fieldwork, moved to labelled points of the same class and date on other shores
+  moves <- c("A2-034" = "A1-037", "A6-019" = "A4-035", "A2-035" = "A1-040", "A6-021" = "A1-101", "A2-039" = "A4-038", "A2-047" = "A1-105", "A2-055" = "A4-053", "A6-035" = "A3-112")
+  picked[match(names(moves), picked)] <- moves
+  lab <- dplyr::bind_rows(lab, readr::read_csv("03.outputs/CSV/training_points_chilwa_2012_candidates_extra.csv", col_types = "cciiddddd") |> dplyr::inner_join(readr::read_csv("03.outputs/CSV/training_points_chilwa_2012_labels.csv", col_types = "cic"), by = "id"))
   pts <- dplyr::filter(lab, id %in% picked) |> dplyr::transmute(cand = id, id = area * 1000L + as.integer(sub(".*-", "", cand)), area, date = as.Date(date), code, class = c("open water", "flooded vegetation", "dry vegetation", "bare soil")[code], feature, lon, lat) |> dplyr::relocate(id)
   readr::write_csv(pts, "03.outputs/CSV/training_points_chilwa_2012.csv")
   sf::st_write(sf::st_as_sf(dplyr::select(pts, id, date, code, class, feature, lon, lat), coords = c("lon", "lat"), crs = 4326), "03.outputs/SHP/training_points_chilwa_2012.shp", quiet = TRUE)
@@ -1875,7 +1916,7 @@ if (!file.exists("03.outputs/PNG/training_points_chilwa_2012.png")) {
 #| echo: true
 #| eval: true
 #| output: false
-if (!all(file.exists(c("03.outputs/PNG/training_points_chilwa_2012_sitemap.png", "03.outputs/PDF/training_points_chilwa_2012_sitemap.pdf")))) {
+if (!all(file.exists(c("03.outputs/PNG/training_points_chilwa_2012_sitemap.png", "03.outputs/PDF/training_points_chilwa_2012_sitemap.pdf", "03.outputs/PNG/training_points_chilwa_2012_hillshade.png", "03.outputs/PDF/training_points_chilwa_2012_hillshade.pdf")))) {
   pts <- sf::st_transform(sf::st_read("03.outputs/SHP/training_points_chilwa_2012.shp", quiet = TRUE), 32736)
   xy <- sf::st_coordinates(pts)
   ratio <- 300000; u <- 0.0254 * ratio
@@ -1890,10 +1931,18 @@ if (!all(file.exists(c("03.outputs/PNG/training_points_chilwa_2012_sitemap.png",
   cx <- min(max(mean(range(xy[, 1])), inner[1] + half[1]), inner[2] - half[1])
   cy <- min(max(mean(range(xy[, 2])), inner[3] + half[2]), inner[4] - half[2])
   xl <- cx + c(-1, 1) * half[1]; yl <- cy + c(-1, 1) * half[2]
-  base <- terra::project(rgb, terra::rast(terra::ext(xl[1], xl[2], yl[1], yl[2]), resolution = u / 300, crs = "EPSG:32736"), method = "bilinear")
+  tmpl <- terra::rast(terra::ext(xl[1], xl[2], yl[1], yl[2]), resolution = u / 300, crs = "EPSG:32736")
+  base <- terra::project(rgb, tmpl, method = "bilinear")
   a <- terra::as.array(base)
   for (k in 1:3) { q <- quantile(a[, , k], c(0.02, 0.98), na.rm = TRUE); a[, , k] <- pmin(pmax((a[, , k] - q[1]) / (q[2] - q[1]), 0), 1) }
   a[is.na(a)] <- 1
+  # SRTM 1 arc-second elevation, USGS/SRTMGL1_003, built by the terrain-extract chunk; no inputs manifest row records its link
+  dem <- terra::crop(terra::rast("03.outputs/DEM/extracted/srtm30m_utm.tif"), terra::ext(tmpl) + 3000)
+  hs <- terra::as.matrix(terra::resample(terra::shade(terra::terrain(dem, "slope", unit = "radians"), terra::terrain(dem, "aspect", unit = "radians"), angle = 45, direction = 315, normalize = TRUE), tmpl, method = "bilinear"), wide = TRUE) / 255
+  wet <- terra::as.matrix(terra::resample(terra::project(terra::rast("03.outputs/TIF/ground_truth_aid/2012-05-20_mndwi_gapfilled.tif"), "EPSG:32736", res = 30, method = "near") > 0, tmpl, method = "near"), wide = TRUE) %in% TRUE
+  hs[is.na(hs)] <- 1
+  h <- array(rep(hs, 3), c(dim(hs), 3)); tint <- c(191, 211, 250) / 255
+  for (k in 1:3) h[, , k][wet] <- 0.35 * hs[wet] + 0.65 * tint[k]
   dates <- c("2012-02-20", "2012-02-22", "2012-03-29", "2012-04-19", "2012-05-20", "2012-09-26")
   classes <- c("Open water", "Flooded vegetation", "Dry vegetation", "Bare soil")
   fills <- c("#2563eb", "#10b981", "#334155", "#e2e8f0")
@@ -1905,10 +1954,10 @@ if (!all(file.exists(c("03.outputs/PNG/training_points_chilwa_2012_sitemap.png",
     polygon(x + p[, 1] * s, y + p[, 2] * s, col = fill, border = "black", lwd = 0.6)
   }
   d_i <- match(as.character(pts$date), dates)
-  draw <- function() {
+  draw <- function(bg, note) {
     par(mai = mai, xaxs = "i", yaxs = "i", family = "sans")
     plot.new(); plot.window(xl, yl, asp = 1)
-    rasterImage(as.raster(a), xl[1], yl[1], xl[2], yl[2], interpolate = TRUE)
+    rasterImage(as.raster(bg), xl[1], yl[1], xl[2], yl[2], interpolate = TRUE)
     at_x <- seq(ceiling(xl[1] / 10000) * 10000, xl[2], 10000); at_y <- seq(ceiling(yl[1] / 10000) * 10000, yl[2], 10000)
     axis(1, at = at_x, labels = at_x / 1000, tcl = -0.2, mgp = c(1.4, 0.3, 0), cex.axis = 0.75)
     axis(2, at = at_y, labels = at_y / 1000, tcl = -0.2, mgp = c(1.4, 0.35, 0), cex.axis = 0.75)
@@ -1924,7 +1973,7 @@ if (!all(file.exists(c("03.outputs/PNG/training_points_chilwa_2012_sitemap.png",
     for (k in 1:6) { y <- y - row; mark(lx + 0.22 * u, y, k, "white", s = 0.05 * u, halo = FALSE); text(tx, y, sprintf("%s, %d", format(as.Date(dates[k]), "%d %B %Y"), sum(d_i == k)), adj = c(0, 0.5), cex = 0.68) }
     y <- y - 1.4 * row; text(lx + 0.12 * u, y, sprintf("Scale 1:%s", formatC(ratio, format = "d", big.mark = ",")), adj = c(0, 0.5), font = 2, cex = 0.72)
     y <- y - row; text(lx + 0.12 * u, y, "WGS 1984, UTM zone 36S", adj = c(0, 0.5), cex = 0.62)
-    y <- y - row * 0.85; text(lx + 0.12 * u, y, "Landsat 7 true colour, 15 m, 20 May 2012", adj = c(0, 0.5), cex = 0.62)
+    y <- y - row * 0.85; text(lx + 0.12 * u, y, note, adj = c(0, 0.5), cex = 0.62)
     nx <- xl[2] - 0.38 * u; ny <- yl[2] - 0.1 * u
     rect(nx - 0.22 * u, ny - 0.82 * u, nx + 0.22 * u, ny, col = "white", border = "black", lwd = 0.7)
     polygon(nx + c(0, -0.12, 0) * u, ny + c(-0.3, -0.74, -0.6) * u, col = "black", border = "black", lwd = 0.7)
@@ -1932,8 +1981,11 @@ if (!all(file.exists(c("03.outputs/PNG/training_points_chilwa_2012_sitemap.png",
     text(nx, ny - 0.17 * u, "N", font = 2, cex = 0.95)
   }
   wh <- c(pin[1] + mai[2] + mai[4], pin[2] + mai[1] + mai[3])
-  png("03.outputs/PNG/training_points_chilwa_2012_sitemap.png", width = wh[1], height = wh[2], units = "in", res = 200); draw(); dev.off()
-  grDevices::cairo_pdf("03.outputs/PDF/training_points_chilwa_2012_sitemap.pdf", width = wh[1], height = wh[2]); draw(); dev.off()
+  maps <- list(sitemap = list(a, "Landsat 7 true colour, 15 m, 20 May 2012"), hillshade = list(h, "SRTM 30 m relief, lake on 20 May 2012"))
+  for (m in names(maps)) {
+    png(sprintf("03.outputs/PNG/training_points_chilwa_2012_%s.png", m), width = wh[1], height = wh[2], units = "in", res = 200); draw(maps[[m]][[1]], maps[[m]][[2]]); dev.off()
+    grDevices::cairo_pdf(sprintf("03.outputs/PDF/training_points_chilwa_2012_%s.pdf", m), width = wh[1], height = wh[2]); draw(maps[[m]][[1]], maps[[m]][[2]]); dev.off()
+  }
 }
 ```
 

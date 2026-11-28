@@ -165,3 +165,24 @@ A6-024,3,green cropland
 A6-025,3,green cropland
 A6-035,4,bare ground
 A6-036,4,bare dry ground
+A1-101,3,dense vegetation on dry ground
+A1-102,3,green cropland
+A1-104,3,green cropland
+A1-105,4,bare cultivated ground
+A1-106,4,bare cultivated ground
+A1-107,4,bare cultivated ground
+A1-109,4,bare cultivated ground
+A1-110,4,bare cultivated ground
+A1-112,4,bare cultivated ground
+A3-102,3,grassland
+A3-103,3,grassland
+A3-105,4,bare ground
+A3-110,4,bare ground
+A3-112,4,bare ground
+A4-101,3,dense vegetation on dry ground
+A4-102,3,dense vegetation on dry ground
+A4-103,3,green vegetation on dry ground
+A4-104,3,green vegetation on dry ground
+A4-110,4,bare sandy shore
+A4-111,4,bare sandy shore
+A4-112,4,bare ground
