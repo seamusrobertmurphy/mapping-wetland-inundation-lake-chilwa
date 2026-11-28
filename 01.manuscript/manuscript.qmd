@@ -1853,6 +1853,93 @@ if (!file.exists("03.outputs/CSV/training_points_chilwa_2012_candidates_extra.cs
 }
 ```
 
+```{r chilwa-candidates-more}
+#| echo: true
+#| eval: true
+#| output: false
+if (!file.exists("03.outputs/CSV/training_points_chilwa_2012_candidates_more.csv")) {
+  need <- dplyr::tibble(date = rep(dates, 2), code = rep(3:4, each = 6), n = c(3, 1, 5, 0, 4, 6, 6, 4, 5, 3, 1, 0)) |> dplyr::filter(n > 0)
+  Lm <- lapply(setNames(unique(need$date), unique(need$date)), layers)
+  set.seed(2017)
+  more <- dplyr::bind_rows(lapply(seq_len(nrow(need)), function(i) {
+    L <- Lm[[need$date[i]]]
+    tw <- terra::values(L$to_water, mat = FALSE)
+    cells <- which(terra::values(zone(L, need$code[i]) & L$valid, mat = FALSE) %in% TRUE & tw <= 1500)
+    xy <- terra::xyFromCell(L$rgb, cells)
+    rel <- sapply(seq_len(nrow(areas)), function(a) sqrt((xy[, 1] - centres[a, 1])^2 + (xy[, 2] - centres[a, 2])^2) / (areas$km[a] * 1000))
+    home <- apply(rel, 1, function(r) if (min(r) <= 1) which.min(r) else 0L)
+    dplyr::bind_rows(lapply(1:4, function(a) {
+      k <- cells[home == a & (a != 2 | tw[cells] <= 1000)]; k <- k[sample.int(length(k), min(length(k), 5))]
+      dplyr::tibble(date = need$date[i], area = a, zone = need$code[i], cell = k, x = terra::xFromCell(L$rgb, k), y = terra::yFromCell(L$rgb, k), mndwi = terra::values(L$m)[k], to_water = tw[k])
+    }))
+  })) |> dplyr::arrange(area, zone, date) |> dplyr::mutate(id = sprintf("A%d-%03d", area, 200 + dplyr::row_number()), .by = area)
+  q <- lapply(Lm, function(L) sapply(1:3, function(k) stats::quantile(terra::values(L$rgb[[k]]), c(0.02, 0.98), na.rm = TRUE)))
+  for (d in unique(more$date)) {
+    p <- dplyr::filter(more, date == d); L <- Lm[[d]]
+    png(sprintf("03.outputs/PNG/training_points_chilwa/more_%s.png", d), width = 8 * 190, height = ceiling(nrow(p) / 8) * 205)
+    par(mfrow = c(ceiling(nrow(p) / 8), 8), mar = c(0.2, 0.2, 1.4, 0.2))
+    for (i in seq_len(nrow(p))) {
+      rc <- terra::rowColFromCell(L$rgb, p$cell[i])
+      A <- terra::as.array(L$rgb[max(1, rc[1] - 40):min(terra::nrow(L$rgb), rc[1] + 39), max(1, rc[2] - 40):min(terra::ncol(L$rgb), rc[2] + 39), drop = FALSE])
+      for (k in 1:3) A[, , k] <- pmin(pmax((A[, , k] - q[[d]][1, k]) / (q[[d]][2, k] - q[[d]][1, k]), 0), 1)
+      A[is.na(A)] <- 0
+      plot.new(); plot.window(c(0, 80), c(0, 80), asp = 1)
+      rasterImage(as.raster(A), 0, 0, 80, 80, interpolate = FALSE)
+      rect(38.5, 38.5, 41.5, 41.5, border = "red", lwd = 1.6); segments(c(40, 40, 30, 44), c(30, 44, 40, 40), c(40, 40, 36, 50), c(36, 50, 40, 40), col = "red", lwd = 1.2)
+      title(sprintf("%s %s %s", p$id[i], c("OW", "FV", "DV", "BS")[p$zone[i]], format(as.Date(d), "%d %b")), cex.main = 1.05, line = 0.3)
+    }
+    dev.off()
+  }
+  ll <- terra::geom(terra::project(terra::vect(as.data.frame(more), geom = c("x", "y"), crs = "EPSG:32736"), "EPSG:4326"))
+  more |> dplyr::mutate(lon = round(ll[, "x"], 6), lat = round(ll[, "y"], 6)) |> dplyr::select(id, date, area, zone, lon, lat, x, y, mndwi, to_water) |> readr::write_csv("03.outputs/CSV/training_points_chilwa_2012_candidates_more.csv")
+}
+```
+
+```{r chilwa-candidates-fill}
+#| echo: true
+#| eval: true
+#| output: false
+if (!file.exists("03.outputs/CSV/training_points_chilwa_2012_candidates_fill.csv")) {
+  need <- dplyr::tibble(date = c("2012-02-20", "2012-02-22", "2012-03-29", "2012-04-19", "2012-09-26"), code = c(4L, 4L, 4L, 4L, 3L))
+  Lm <- lapply(setNames(unique(need$date), unique(need$date)), layers)
+  set.seed(2018)
+  more <- dplyr::bind_rows(lapply(seq_len(nrow(need)), function(i) {
+    L <- Lm[[need$date[i]]]
+    tw <- terra::values(L$to_water, mat = FALSE)
+    cells <- which(terra::values(zone(L, need$code[i]) & L$valid, mat = FALSE) %in% TRUE & tw <= 1500)
+    xy <- terra::xyFromCell(L$rgb, cells)
+    rel <- sapply(seq_len(nrow(areas)), function(a) sqrt((xy[, 1] - centres[a, 1])^2 + (xy[, 2] - centres[a, 2])^2) / (areas$km[a] * 1000))
+    home <- apply(rel, 1, function(r) if (min(r) <= 1) which.min(r) else 0L)
+    dplyr::bind_rows(lapply(1:4, function(a) {
+      k <- cells[home == a & (a != 2 | tw[cells] <= 1000)]; k <- k[sample.int(length(k), min(length(k), 400))]
+      kxy <- terra::xyFromCell(L$rgb, k); ok <- integer(0)
+      for (j in seq_along(k)) if (!length(ok) || min(sqrt((kxy[ok, 1] - kxy[j, 1])^2 + (kxy[ok, 2] - kxy[j, 2])^2)) >= 500) ok <- c(ok, j)
+      k <- k[head(ok, 8)]
+      dplyr::tibble(date = need$date[i], area = a, zone = need$code[i], cell = k, x = terra::xFromCell(L$rgb, k), y = terra::yFromCell(L$rgb, k), mndwi = terra::values(L$m)[k], to_water = tw[k])
+    }))
+  })) |> dplyr::arrange(area, zone, date) |> dplyr::mutate(id = sprintf("A%d-%03d", area, 300 + dplyr::row_number()), .by = area)
+  q <- lapply(Lm, function(L) sapply(1:3, function(k) stats::quantile(terra::values(L$rgb[[k]]), c(0.02, 0.98), na.rm = TRUE)))
+  for (d in unique(more$date)) {
+    p <- dplyr::filter(more, date == d); L <- Lm[[d]]
+    png(sprintf("03.outputs/PNG/training_points_chilwa/fill_%s.png", d), width = 8 * 190, height = ceiling(nrow(p) / 8) * 205)
+    par(mfrow = c(ceiling(nrow(p) / 8), 8), mar = c(0.2, 0.2, 1.4, 0.2))
+    for (i in seq_len(nrow(p))) {
+      rc <- terra::rowColFromCell(L$rgb, p$cell[i])
+      A <- terra::as.array(L$rgb[max(1, rc[1] - 40):min(terra::nrow(L$rgb), rc[1] + 39), max(1, rc[2] - 40):min(terra::ncol(L$rgb), rc[2] + 39), drop = FALSE])
+      for (k in 1:3) A[, , k] <- pmin(pmax((A[, , k] - q[[d]][1, k]) / (q[[d]][2, k] - q[[d]][1, k]), 0), 1)
+      A[is.na(A)] <- 0
+      plot.new(); plot.window(c(0, 80), c(0, 80), asp = 1)
+      rasterImage(as.raster(A), 0, 0, 80, 80, interpolate = FALSE)
+      rect(38.5, 38.5, 41.5, 41.5, border = "red", lwd = 1.6); segments(c(40, 40, 30, 44), c(30, 44, 40, 40), c(40, 40, 36, 50), c(36, 50, 40, 40), col = "red", lwd = 1.2)
+      title(sprintf("%s %s %s", p$id[i], c("OW", "FV", "DV", "BS")[p$zone[i]], format(as.Date(d), "%d %b")), cex.main = 1.05, line = 0.3)
+    }
+    dev.off()
+  }
+  ll <- terra::geom(terra::project(terra::vect(as.data.frame(more), geom = c("x", "y"), crs = "EPSG:32736"), "EPSG:4326"))
+  more |> dplyr::mutate(lon = round(ll[, "x"], 6), lat = round(ll[, "y"], 6)) |> dplyr::select(id, date, area, zone, lon, lat, x, y, mndwi, to_water) |> readr::write_csv("03.outputs/CSV/training_points_chilwa_2012_candidates_fill.csv")
+}
+```
+
 ```{r chilwa-points}
 #| echo: true
 #| eval: true
@@ -1875,6 +1962,16 @@ if (!file.exists("03.outputs/SHP/training_points_chilwa_2012.shp")) {
   moves <- c("A2-034" = "A1-037", "A6-019" = "A4-035", "A2-035" = "A1-040", "A6-021" = "A1-101", "A2-039" = "A4-038", "A2-047" = "A1-105", "A2-055" = "A4-053", "A6-035" = "A3-112")
   picked[match(names(moves), picked)] <- moves
   lab <- dplyr::bind_rows(lab, readr::read_csv("03.outputs/CSV/training_points_chilwa_2012_candidates_extra.csv", col_types = "cciiddddd") |> dplyr::inner_join(readr::read_csv("03.outputs/CSV/training_points_chilwa_2012_labels.csv", col_types = "cic"), by = "id"))
+  # Dry vegetation and bare soil raised to six points per date, taken in turn across areas and kept 500 m from every other point
+  more <- dplyr::bind_rows(lapply(c("more", "fill"), function(f) readr::read_csv(sprintf("03.outputs/CSV/training_points_chilwa_2012_candidates_%s.csv", f), col_types = "cciidddddd") |> dplyr::mutate(src = f))) |> dplyr::inner_join(readr::read_csv("03.outputs/CSV/training_points_chilwa_2012_labels.csv", col_types = "cic"), by = "id")
+  need <- dplyr::tibble(date = rep(dates, 2), code = rep(3:4, each = 6), n = c(3, 1, 5, 0, 4, 6, 6, 4, 5, 3, 1, 0))
+  xy <- as.matrix(dplyr::filter(lab, id %in% picked)[, c("x", "y")])
+  for (i in which(need$n > 0)) {
+    pool <- dplyr::filter(more, date == need$date[i], code == need$code[i]) |> dplyr::mutate(r = dplyr::row_number(), .by = c(src, area)) |> dplyr::arrange(src != "more", r, area)
+    got <- 0
+    for (j in seq_len(nrow(pool))) if (got < need$n[i] && min(sqrt((xy[, 1] - pool$x[j])^2 + (xy[, 2] - pool$y[j])^2)) >= 500) { picked <- c(picked, pool$id[j]); xy <- rbind(xy, c(pool$x[j], pool$y[j])); got <- got + 1 }
+  }
+  lab <- dplyr::bind_rows(lab, dplyr::select(more, -to_water, -src))
   pts <- dplyr::filter(lab, id %in% picked) |> dplyr::transmute(cand = id, id = area * 1000L + as.integer(sub(".*-", "", cand)), area, date = as.Date(date), code, class = c("open water", "flooded vegetation", "dry vegetation", "bare soil")[code], feature, lon, lat) |> dplyr::relocate(id)
   readr::write_csv(pts, "03.outputs/CSV/training_points_chilwa_2012.csv")
   sf::st_write(sf::st_as_sf(dplyr::select(pts, id, date, code, class, feature, lon, lat), coords = c("lon", "lat"), crs = 4326), "03.outputs/SHP/training_points_chilwa_2012.shp", quiet = TRUE)

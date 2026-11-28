@@ -110,3 +110,37 @@ id,cand,area,date,code,class,feature,lon,lat
 1101,A1-101,1,2012-02-22,3,dry vegetation,dense vegetation on dry ground,35.705602,-15.567291
 1105,A1-105,1,2012-02-22,4,bare soil,bare cultivated ground,35.665167,-15.520635
 3112,A3-112,3,2012-05-20,4,bare soil,bare ground,35.564232,-15.369669
+1201,A1-201,1,2012-02-20,3,dry vegetation,dense vegetation on dry ground,35.706351,-15.549804
+1206,A1-206,1,2012-02-22,3,dry vegetation,green cropland,35.668141,-15.46925
+1211,A1-211,1,2012-03-29,3,dry vegetation,green cropland,35.673939,-15.485574
+1212,A1-212,1,2012-03-29,3,dry vegetation,green cropland,35.654686,-15.498677
+1213,A1-213,1,2012-03-29,3,dry vegetation,green cropland,35.656153,-15.49324
+1216,A1-216,1,2012-05-20,3,dry vegetation,green cropland,35.722148,-15.550152
+1217,A1-217,1,2012-05-20,3,dry vegetation,green cropland,35.715734,-15.561882
+1222,A1-222,1,2012-09-26,3,dry vegetation,grassland,35.648127,-15.510272
+1223,A1-223,1,2012-09-26,3,dry vegetation,grassland,35.65158,-15.507115
+1226,A1-226,1,2012-02-20,4,bare soil,bare cultivated ground,35.656576,-15.526294
+1247,A1-247,1,2012-05-20,4,bare soil,bare cultivated ground,35.669825,-15.480746
+2202,A2-202,2,2012-02-20,3,dry vegetation,dense vegetation on dry ground,35.85201,-15.451108
+2225,A2-225,2,2012-02-20,4,bare soil,bare sandy ground,35.843577,-15.416536
+2235,A2-235,2,2012-04-19,4,bare soil,bare sandy ground,35.83578,-15.418261
+3212,A3-212,3,2012-03-29,3,dry vegetation,grassland,35.515249,-15.279171
+3213,A3-213,3,2012-03-29,3,dry vegetation,grassland,35.516005,-15.307347
+3217,A3-217,3,2012-05-20,3,dry vegetation,grassland,35.553758,-15.369654
+3224,A3-224,3,2012-09-26,3,dry vegetation,dense vegetation on dry ground,35.534421,-15.329496
+3229,A3-229,3,2012-02-20,4,bare soil,bare cultivated ground,35.521481,-15.309995
+3232,A3-232,3,2012-02-22,4,bare soil,bare ground,35.511321,-15.289242
+3236,A3-236,3,2012-03-29,4,bare soil,bare ground,35.578025,-15.2874
+3240,A3-240,3,2012-03-29,4,bare soil,bare sandy shore,35.559506,-15.268236
+4201,A4-201,4,2012-02-20,3,dry vegetation,dense vegetation on dry ground,35.602532,-15.338875
+4211,A4-211,4,2012-05-20,3,dry vegetation,dense vegetation on dry ground,35.620752,-15.333242
+1301,A1-301,1,2012-09-26,3,dry vegetation,grassland,35.655552,-15.511809
+1307,A1-307,1,2012-09-26,3,dry vegetation,grassland,35.651128,-15.51552
+1309,A1-309,1,2012-02-20,4,bare soil,bare cultivated ground,35.658328,-15.52126
+2320,A2-320,2,2012-04-19,4,bare soil,bare ground,35.844456,-15.429801
+3309,A3-309,3,2012-02-20,4,bare soil,bare cultivated ground,35.516422,-15.31886
+3317,A3-317,3,2012-02-22,4,bare soil,bare cultivated ground,35.522236,-15.314729
+3325,A3-325,3,2012-03-29,4,bare soil,bare sandy shore,35.542163,-15.34621
+3327,A3-327,3,2012-03-29,4,bare soil,bare sandy shore,35.553175,-15.275625
+3328,A3-328,3,2012-03-29,4,bare soil,bare sandy shore,35.563176,-15.260064
+3333,A3-333,3,2012-04-19,4,bare soil,bare sandy shore,35.554347,-15.280219
